@@ -1,4 +1,4 @@
-# k8s-workloads
+# gitlab-com
 
 Kubernetes Workload configurations for GitLab.com
 
