@@ -40,7 +40,7 @@ Each variable is applied to the environment defined above
 
 ### Service Account
 1. `k8s-workloads` - Deploy user for our k8s-workloads configurations
-  * This is currently manually configured
+    * This is currently manually configured
 1. Configured with Role `Kubernetes Engine Developer`
 1. A `json` formatted key is then created
 1. The downloaded file is then base64 encoded and placed into the above
