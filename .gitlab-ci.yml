@@ -33,3 +33,6 @@ deploy_pre:
     url: https://pre.gitlab.com
   only:
     - master
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
