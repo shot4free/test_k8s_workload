@@ -2,15 +2,6 @@
 
 Kubernetes Workload configurations for GitLab.com
 
-## How To
-
-This repo utilizes [GitLab Flow] method of deploying changes.  Please submit all
-required changes to the appropriate branch:
-
-| branch       | environment |
-| ------       | ----------- |
-| `master`     | `pre`       |
-
 ## Storage
 
 :warning: **WARNING** :warning:
@@ -47,10 +38,19 @@ Each variable is applied to the environment defined above
    `CLOUD_SERVICE_KEY` variable targeting the environment for which it was
    created
 
+## Create/Apply Configurations
+
+At this moment, we use our own helm charts to generate the Kubernetes
+configuration for GitLab.com. This may change in the future as currently some
+features of GitLab are [unsupported in our current Helm
+charts](https://docs.gitlab.com/charts/#limitations).  Our infrastructure is
+also [broken into multiple
+fleets](https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/),
+something our Helm chart also does not yet accomplish.  We'll address those
+problems when we get to them. Until then, see [HELM_README.md](HELM_README.md)
+to get started.
+
 ## Decisions
 
-Follow along with how this repository is governed by reading through the
-following epic: [Kubernetes Configuration Epic 64]
-
-[GitLab Flow]: https://docs.gitlab.com/ee/workflow/gitlab_flow.html#environment-branches-with-gitlab-flow
-[Kubernetes Configuration Epic 64]: https://gitlab.com/groups/gitlab-com/-/epics/64
+One can read about how we've come to decide how this repository is setup by
+viewing our design document: https://about.gitlab.com/handbook/engineering/infrastructure/design/kubernetes-configuration/

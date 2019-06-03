@@ -1,0 +1,35 @@
+---
+# Source: gitlab/charts/nginx-ingress/templates/controller-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-nginx-ingress-controller
+  namespace: gitlab
+  labels:
+    component: "controller"
+    app: nginx-ingress
+    chart: nginx-ingress-0.30.0-1
+    release: gitlab
+    heritage: Tiller
+    
+spec:
+  loadBalancerIP: "35.196.53.183"
+  externalTrafficPolicy: "Local"
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+    - name: gitlab-shell
+      port: 22
+      protocol: TCP
+      targetPort: gitlab-shell
+  selector:
+    app: nginx-ingress
+    component: "controller"
+    release: gitlab
+  type: "LoadBalancer"

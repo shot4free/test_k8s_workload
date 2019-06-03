@@ -10,7 +10,9 @@ if ! [[ -x "$(command -v kubeval)" ]]; then
 fi
 
 # Inspect code using kubeval
-find ./gitlab/ -name '*.yaml' -print0  | xargs --null  kubeval
+# Skip CRD's because they are custom
+# https://github.com/instrumenta/kubeval/pull/127
+find ./output \( -name '*.yaml' -not -name '*-crd.yaml' \) -print0  | xargs --null kubeval
 
 status_code=$?
 
