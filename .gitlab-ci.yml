@@ -12,8 +12,9 @@ stages:
     gcloud components install kubectl --quiet
     gcloud auth activate-service-account --key-file ${HOME}/service-key.json
     gcloud config set project ${PROJECT}
-    gcloud container clusters get-credentials ${CLUSTER} --zone ${ZONE}
-    kubectl apply --recursive --filename gitlab/
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/handcrafted
+    kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/gitlab
 
 kubeval:
   stage: test
