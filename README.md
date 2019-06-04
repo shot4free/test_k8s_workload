@@ -38,6 +38,18 @@ Each variable is applied to the environment defined above
    `CLOUD_SERVICE_KEY` variable targeting the environment for which it was
    created
 
+### Cluster User Configuration
+
+The bot user `k8s-workloads` will not have administrative access by default.  We
+need to create a cluster role binding to ensure that our bot user will have the
+ability to create RBAC permissions for our various components.  This only needs
+to be done the first time a cluster is configured.  Run the following,
+substituting `SERVICE_ACCOUNT_EMAIL_ADDRESS` with the name provided by the IAM
+role above:
+
+`kubectl create clusterrolebinding k8s-workloads --clusterrole=cluster-admin
+--user=<SERVICE_ACCOUNT_EMAIL_ADDRESS>`
+
 ## Create/Apply Configurations
 
 At this moment, we use our own helm charts to generate the Kubernetes
