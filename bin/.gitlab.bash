@@ -34,7 +34,7 @@ HELM_OPTS_VALUES+=(
     "--namespace" "$NAMESPACE"
 )
 KUBECTL_OPTS+=(
-    "--n" "$NAMESPACE"
+    "-n" "$NAMESPACE"
 )
 
 echo "Validating secrets.."
