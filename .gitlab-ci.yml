@@ -1,39 +1,43 @@
 ---
 
-image: google/cloud-sdk:245.0.0-alpine
+image: registry.ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest
+
+include:
+  - project: "gitlab-com/gl-infra/k8s-workloads/common"
+    file: "/ci/except-gitlab-com.yml"
+  - project: "gitlab-com/gl-infra/k8s-workloads/common"
+    file: "/ci/helm-before-script-except-com.yml"
+  - project: "gitlab-com/gl-infra/k8s-workloads/common"
+    file: "/ci/shellcheck.yml"
 
 stages:
-  - test
+  - check
   - deploy
 
+############################ CI JOBS ################################
+#####################################################################
+
+
 .deploy:
+  extends:
+    - .except-gitlab-com
+    - .cluster-init-before-script-except-com
   script: |
-    echo ${CLOUD_SERVICE_KEY} | base64 -d > ${HOME}/service-key.json
-    gcloud components install kubectl --quiet
-    gcloud auth activate-service-account --key-file ${HOME}/service-key.json
-    gcloud config set project ${PROJECT}
-    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
     kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/handcrafted
     kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/gitlab
 
 kubeval:
-  stage: test
+  stage: check
   allow_failure: true
   script: |
-    apk add findutils
-    wget https://github.com/instrumenta/kubeval/releases/download/0.9.2/kubeval-linux-amd64.tar.gz
-    tar xf kubeval-linux-amd64.tar.gz
-    cp kubeval /usr/local/bin
     ./bin/kubeval-wrapper.sh
 
 deploy_pre:
   extends: .deploy
   stage: deploy
+  when: manual
   environment:
     name: pre
     url: https://pre.gitlab.com
   only:
     - master
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
