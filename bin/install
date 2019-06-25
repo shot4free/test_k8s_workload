@@ -1,29 +1,31 @@
 #!/usr/bin/env bash
 
 ##############################
-# Generates gitlab kubernetes
-# configuration using `helm template`
+# Installs gitlab registry
+# into GKE using the gitlab
+# helm chart
 
 set -euf -o pipefail
 dir="$(cd "$(dirname "${0}")"; pwd)"
+
 source "$dir/.setup.bash"
 source "$dir/.gitlab.bash"
-
-manifests_dir="$dir/../manifests"
-rm -rf "${manifests_dir:?}/*"
 
 charts_dir=$(mktemp -d)
 update_gitlab_chart "$charts_dir"
 
-opts=(
+helm_opts=(
+    "--name" "$NAME"
     "$charts_dir"
-    "--output-dir" "$manifests_dir"
-    "--namespace" "$NAMESPACE"
     "${HELM_OPTS[@]}"
     "${HELM_OPTS_VALUES[@]}"
 )
+kubectl_opts=(
+    "${KUBECTL_OPTS[@]}"
+)
 
 set -x
-helm tiller run helm template "${opts[@]}" "$@"
-set +x
+
+helm tiller run helm install "${helm_opts[@]}" "$@"
+kubectl apply "${kubectl_opts[@]}" --recursive --filename "handcrafted/${ENV}" -n "$NAMESPACE"
 rm -rf "${charts_dir:?}"

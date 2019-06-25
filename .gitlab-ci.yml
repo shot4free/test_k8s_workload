@@ -10,6 +10,17 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
 
+.deploy:
+  extends:
+    - .except-com
+    - .cluster-init-before-script
+  stage: deploy
+
+.pre:
+  environment:
+    name: pre
+    url: https://pre.gitlab.com
+
 stages:
   - check
   - deploy
@@ -17,23 +28,21 @@ stages:
 ############################ CI JOBS ################################
 #####################################################################
 
-kubeval:
-  stage: check
-  allow_failure: true
-  script: |
-    ./bin/kubeval-wrapper.sh
+### PreProd
 
-deploy_pre:
+upgrade_pre_dryrun:
   extends:
-    - .except-com
-    - .cluster-init-before-script
-  stage: deploy
-  when: manual
-  environment:
-    name: pre
-    url: https://pre.gitlab.com
+    - .deploy
+    - .pre
   script:
-    - kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/handcrafted
-    - kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/gitlab
+    - bin/upgrade -D
+
+upgrade_pre:
+  extends:
+    - .deploy
+    - .pre
+  script:
+    - bin/upgrade
   only:
-    - master
+    refs:
+      - master

@@ -53,14 +53,15 @@ PROJECT=${PROJECT:-$(get_project "$ENV")}
 DRY_RUN="${dry_run:-}"
 CLUSTER="${CLUSTER:-$ENV-gitlab-gke}"
 REGION="${REGION:-us-east1}"
-CHART="${CHART:-gitlab-com}"
-NAME="${NAME:-gitlab-com}"
-NAMESPACE="${NAMESPACE:-gitlab}"
 
-## Setup options for helm tiller
+## Setup options for helm tiller and kubectl
 
 HELM_OPTS=()
+KUBECTL_OPTS=()
 
 if [[ -n $DRY_RUN ]]; then
     HELM_OPTS+=('--dry-run')
+    KUBECTL_OPTS+=('--server-dry-run')
 fi
+
+
