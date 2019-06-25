@@ -1,12 +1,12 @@
 ---
 
-image: registry.ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest
+image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest"
 
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/except-gitlab-com.yml"
+    file: "/ci/except-com.yml"
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/cluster-init-before-script-except-com.yml"
+    file: "/ci/cluster-init-before-script.yml"
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
 
@@ -17,15 +17,6 @@ stages:
 ############################ CI JOBS ################################
 #####################################################################
 
-
-.deploy:
-  extends:
-    - .except-gitlab-com
-    - .cluster-init-before-script-except-com
-  script: |
-    kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/handcrafted
-    kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/gitlab
-
 kubeval:
   stage: check
   allow_failure: true
@@ -33,11 +24,16 @@ kubeval:
     ./bin/kubeval-wrapper.sh
 
 deploy_pre:
-  extends: .deploy
+  extends:
+    - .except-gitlab-com
+    - .cluster-init-before-script-except-com
   stage: deploy
   when: manual
   environment:
     name: pre
     url: https://pre.gitlab.com
+  script:
+    - kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/handcrafted
+    - kubectl apply --recursive --filename output/${CI_ENVIRONMENT_SLUG}/gitlab
   only:
     - master
