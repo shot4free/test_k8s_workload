@@ -6,7 +6,7 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-gitlab-com.yml"
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/helm-before-script-except-com.yml"
+    file: "/ci/cluster-init-before-script-except-com.yml"
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
 
