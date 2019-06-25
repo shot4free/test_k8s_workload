@@ -25,8 +25,8 @@ kubeval:
 
 deploy_pre:
   extends:
-    - .except-gitlab-com
-    - .cluster-init-before-script-except-com
+    - .except-com
+    - .cluster-init-before-script
   stage: deploy
   when: manual
   environment:
