@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+##############################
+# Generates prometheus
+# configuration using `helm template`
+
+set -euf -o pipefail
+dir="$(cd "$(dirname "${0}")"; pwd)"
+source "$dir/.setup.bash"
+source "$dir/.gitlab-com.bash"
+
+charts_dir=$(mktemp -d)
+manifests_dir="$dir/../manifests"
+
+opts=(
+    "$charts_dir/prometheus-operator"
+    "--output-dir"
+    "$manifests_dir"
+    "--namespace" "$NAMESPACE"
+    "${HELM_OPTS[@]}"
+    "${HELM_OPTS_VALUES[@]}"
+)
+
+if [[ -n $DRY_RUN ]]; then
+    HELM_OPTS+=('--dry-run')
+fi
+set -x
+rm -rf "${manifests_dir:?}/*"
+helm fetch stable/prometheus-operator --untar --untardir "$charts_dir"
+helm tiller run helm template "${opts[@]}" "$@"
+
+set +x
+rm -rf "${charts_dir:?}"
