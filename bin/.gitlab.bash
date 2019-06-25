@@ -8,6 +8,7 @@ update_gitlab_chart() {
     pushd "${charts_dir}"
     set -x
     git clone -b "${GITLAB_CHART_BRANCH:-master}" https://gitlab.com/charts/gitlab.git "$charts_dir" >/dev/null
+    helm repo add gitlab 'https://charts.gitlab.io/'
     helm dependency update
     popd
 }
