@@ -61,7 +61,10 @@ KUBECTL_OPTS=()
 
 if [[ -n $DRY_RUN ]]; then
     HELM_OPTS+=('--dry-run')
-    KUBECTL_OPTS+=('--server-dry-run')
+HELM_OPTS=()
+
+if [[ -n $DRY_RUN ]]; then
+    HELM_OPTS+=('--dry-run')
 fi
 
 
