@@ -57,14 +57,7 @@ REGION="${REGION:-us-east1}"
 ## Setup options for helm tiller and kubectl
 
 HELM_OPTS=()
-KUBECTL_OPTS=()
-
-if [[ -n $DRY_RUN ]]; then
-    HELM_OPTS+=('--dry-run')
-HELM_OPTS=()
 
 if [[ -n $DRY_RUN ]]; then
     HELM_OPTS+=('--dry-run')
 fi
-
-
