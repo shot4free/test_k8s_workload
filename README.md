@@ -20,12 +20,11 @@ The following are _NOT_ allowed this repository:
 
 Each variable is applied to the environment defined above
 
-| Variable | What it is |
-| -------- | ---------- |
-| `CLUSTER` | Name of the cluster as configured in GKE |
-| `PROJECT` | Name of the project associated for the desired target cluster |
-| `CLOUD_SERVICE_KEY` | Key provided by the Service Account described below |
-| `ZONE` | GCP Zone for which the cluster resides |
+| Variable            | Default                       | What it is  |
+| --------            | --------                      | ------------|
+| `CLUSTER`           | Set in `.setup.bash`          | Name of the cluster as configured in GKE |
+| `PROJECT`           | Set in `common/common.bash`   | Name of the project
+| `CLOUD_SERVICE_KEY` | None                          | Key provided by the Service Account described below |
 
 ## GCP IAM Configuration
 
@@ -34,9 +33,7 @@ Each variable is applied to the environment defined above
     * This is currently manually configured
 1. Configured with Role `Kubernetes Engine Developer`
 1. A `json` formatted key is then created
-1. The downloaded file is then base64 encoded and placed into the above
-   `CLOUD_SERVICE_KEY` variable targeting the environment for which it was
-   created
+1. The downloaded file is then copied into the `CLOUD_SERVICE_KEY` variable
 
 ### Cluster User Configuration
 
@@ -66,3 +63,14 @@ to get started.
 
 One can read about how we've come to decide how this repository is setup by
 viewing our design document: https://about.gitlab.com/handbook/engineering/infrastructure/design/kubernetes-configuration/
+
+## Working locally
+
+Applying, updating, destroying and listing clusters can be done locally using
+the wrappers in `bin/`, these are the same scripts that are used in CI.
+
+To generate the templates in `./manifests` for what is applied by helm run
+
+```
+./bin/template -e <env>
+```

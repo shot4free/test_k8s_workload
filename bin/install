@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+##############################
+# Installs gitlab registry
+# into GKE using the gitlab
+# helm chart
+
+set -euf -o pipefail
+dir="$(cd "$(dirname "${0}")"; pwd)"
+
+source "$dir/.setup.bash"
+source "$dir/.gitlab.bash"
+
+charts_dir=$(mktemp -d)
+update_gitlab_chart "$charts_dir"
+
+helm_opts=(
+    "--name" "$NAME"
+    "$charts_dir"
+    "${HELM_OPTS[@]}"
+    "${HELM_OPTS_VALUES[@]}"
+)
+
+set -x
+helm tiller run helm install "${helm_opts[@]}" "$@"
+rm -rf "${charts_dir:?}"

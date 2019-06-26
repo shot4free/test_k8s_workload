@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+##############################
+# Upgrades gitlab registry
+# in GKE using the gitlab
+# helm chart
+
+set -euf -o pipefail
+dir="$(cd "$(dirname "${0}")"; pwd)"
+source "$dir/.setup.bash"
+source "$dir/.gitlab.bash"
+
+charts_dir=$(mktemp -d)
+update_gitlab_chart "$charts_dir"
+
+helm_opts=(
+    "$NAME"
+    "$charts_dir"
+    "${HELM_OPTS[@]}"
+    "${HELM_OPTS_VALUES[@]}"
+)
+
+set -x
+helm tiller run helm upgrade "${helm_opts[@]}" "$@"
+rm -rf "${charts_dir:?}"
