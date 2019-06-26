@@ -61,7 +61,9 @@ kubectl create secret generic registry-storage
 
 ### Secret for Token Signing Certificate
 
-1. Download the store the certificate into the `input/<ENV>/` directory (found via chef)
+1. Download the store the certificate into the `input/<ENV>/` directory.  Pull
+   it from chef, in our vaults at
+   `omnibus-gitlab:gitlab_rb:ssl:registry_certificate`
 1. `kubectl create secret generic registry-certificate \
   --namespace=gitlab \
   --from-file=registry-auth.crt=input/<ENV>/<REGISTRY_CERTIFICATE_FILENAME>`
