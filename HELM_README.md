@@ -37,8 +37,10 @@ The instructions below cover these details.
 :warning: This guide assumes you are connected to the appropriate Kubernetes
 cluster :warning:
 
-1. Copy the service account json into the `input/<ENV>/` directory (found via chef)
-1. Copy the [example gcs
+1. Copy the service account json into the `input/<ENV>/` directory.  Pull it
+   from chef and plop it here (found in our vaults at
+   `omnibus-gitlab:gitlab_server:google_creds:json_base64`):
+1. Copy and modify the [example gcs
    config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
    into the `input/<ENV>/` directory
 1. Create our secret: 
