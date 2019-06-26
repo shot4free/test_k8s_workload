@@ -2,7 +2,7 @@
 
 global:
   hosts:
-    domain: gke.gstg.gitlab.com
+    domain: gke.staging.gitlab.com
     externalIP: 34.74.14.28
   registry:
     bucket: gitlab-gstg-registry
