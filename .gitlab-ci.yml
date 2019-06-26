@@ -21,6 +21,11 @@ include:
     name: pre
     url: https://pre.gitlab.com
 
+.staging:
+  environment:
+    name: gstg
+    url: https://staging.gitlab.com
+
 stages:
   - check
   - deploy
@@ -41,6 +46,25 @@ upgrade_pre:
   extends:
     - .deploy
     - .pre
+  script:
+    - bin/upgrade
+  only:
+    refs:
+      - master
+
+### Staging
+
+upgrade_staging_dryrun:
+  extends:
+    - .deploy
+    - .staging
+  script:
+    - bin/upgrade -D
+
+upgrade_staging:
+  extends:
+    - .deploy
+    - .staging
   script:
     - bin/upgrade
   only:

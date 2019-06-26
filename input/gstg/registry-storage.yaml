@@ -1,0 +1,3 @@
+gcs:
+  bucket: gitlab-gstg-registry
+  keyfile: /etc/docker/registry/storage/gcs.json
