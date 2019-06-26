@@ -20,11 +20,11 @@ The following are _NOT_ allowed this repository:
 
 Each variable is applied to the environment defined above
 
-| Variable            | Default              | What it is  |
-| --------            | --------             | ------------|
-| `CLUSTER`           | Set in `.setup.bash` | Name of the cluster as configured in GKE |
-| `PROJECT`           | Set in `common.sh`   | Name of the project
-| `CLOUD_SERVICE_KEY` | None                 | Key provided by the Service Account described below |
+| Variable            | Default                       | What it is  |
+| --------            | --------                      | ------------|
+| `CLUSTER`           | Set in `.setup.bash`          | Name of the cluster as configured in GKE |
+| `PROJECT`           | Set in `common/common.bash`   | Name of the project
+| `CLOUD_SERVICE_KEY` | None                          | Key provided by the Service Account described below |
 
 ## GCP IAM Configuration
 
