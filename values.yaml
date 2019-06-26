@@ -415,7 +415,8 @@ postgresql:
 registry:
   enabled: true
   debug:
-    addr: 0.0.0.0:5001
+    addr_host: 0.0.0.0
+    addr_port: 5001
     prometheus:
       enabled: true
       path: '/metrics'
