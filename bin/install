@@ -20,12 +20,7 @@ helm_opts=(
     "${HELM_OPTS[@]}"
     "${HELM_OPTS_VALUES[@]}"
 )
-kubectl_opts=(
-    "${KUBECTL_OPTS[@]}"
-)
 
 set -x
-
 helm tiller run helm install "${helm_opts[@]}" "$@"
-kubectl apply "${kubectl_opts[@]}" --recursive --filename "handcrafted/${ENV}" -n "$NAMESPACE"
 rm -rf "${charts_dir:?}"

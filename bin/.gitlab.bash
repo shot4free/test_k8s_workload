@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 update_gitlab_chart() {
     set -e
     local charts_dir
@@ -12,8 +11,6 @@ update_gitlab_chart() {
     helm dependency update
     popd
 }
-
-
 
 if [[ -z ${CI_JOB_ID:-} ]]; then
     if ! pre_checks; then
@@ -33,9 +30,6 @@ HELM_OPTS_VALUES+=(
     "-f" "$dir/../values.yaml"
     "-f" "$dir/../$ENV.yaml"
     "--namespace" "$NAMESPACE"
-)
-KUBECTL_OPTS+=(
-    "-n" "$NAMESPACE"
 )
 
 echo "Validating secrets.."
