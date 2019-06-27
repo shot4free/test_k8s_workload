@@ -7,6 +7,6 @@ global:
   registry:
     bucket: gitlab-gstg-registry
 certmanager-issuer:
-  email: ops-contact+staging@gitlab.com
+  email: ops-contact+foo@gitlab.com
 registry:
   authEndpoint: https://staging.gitlab.com
