@@ -14,7 +14,7 @@ include:
   extends:
     - .except-com
     - .cluster-init-before-script
-  stage: deploy
+
 
 .pre:
   environment:
@@ -28,6 +28,7 @@ include:
 
 stages:
   - check
+  - dryrun
   - deploy
 
 ############################ CI JOBS ################################
@@ -36,18 +37,20 @@ stages:
 ### PreProd
 
 upgrade_pre_dryrun:
+  stage: dryrun
   extends:
     - .deploy
     - .pre
   script:
-    - bin/upgrade -D
+    - bin/k-ctl -D upgrade
 
 upgrade_pre:
+  stage: deploy
   extends:
     - .deploy
     - .pre
   script:
-    - bin/upgrade
+    - bin/k-ctl upgrade
   only:
     refs:
       - master
@@ -55,18 +58,20 @@ upgrade_pre:
 ### Staging
 
 upgrade_staging_dryrun:
+  stage: dryrun
   extends:
     - .deploy
     - .staging
   script:
-    - bin/upgrade -D
+    - bin/k-ctl -D upgrade
 
 upgrade_staging:
+  stage: deploy
   extends:
     - .deploy
     - .staging
   script:
-    - bin/upgrade
+    - bin/upgrade upgrade
   only:
     refs:
       - master
