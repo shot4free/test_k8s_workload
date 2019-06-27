@@ -471,3 +471,5 @@ gitlab:
     enabled: false
   task-runner:
     enabled: false
+  gitlab-monitor:
+    enabled: false
