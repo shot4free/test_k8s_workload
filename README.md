@@ -76,29 +76,3 @@ viewing our design document: https://about.gitlab.com/handbook/engineering/infra
 The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
 different environments.
 
-```
-    Usage ./bin/k-ctl [-e env] [Dgc] <install|list|remove|template|upgrade|config>
-
-    DESCRIPTION
-        This script is wrapper over the helm command for a consistent managing
-        of charts and performing maintenance on them
-
-    FLAGS
-        -e  environment
-        -D  run in Dry-run
-
-    ACTIONS
-        install:  Install the helm chart
-        list:     List all helm charts that are installed
-        upgrade:  Upgrade this chart
-        remove:   Remove this chart
-        template: Generate kubernetes config using helm template
-        config:   Display the configurations for the environment
-
-    EXAMPLES
-            ./bin/k-ctl -e pre upgrade
-            ./bin/k-ctl -e gstg list
-            ./bin/k-ctl -e pre -D upgrade # dry-run mode
-            ./bin/k-ctl -e pre config                    # displays variable configurations for environment
-```
-
