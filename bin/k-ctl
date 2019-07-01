@@ -45,7 +45,7 @@ fi
 echo "Validating secrets.."
 for secret in registry-certificate registry-httpsecret; do
     if ! kubectl get secrets -n "$NAMESPACE" $secret >/dev/null; then
-        echo "Secret \"$secret\" is not yet set, are secrets configured properly?"
+        echo -e "${_BRED}Secret \"$secret\" is not yet set, are secrets configured properly?${_NORM}"
         exit 1
     fi
 done
