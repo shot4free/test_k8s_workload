@@ -10,6 +10,7 @@ dir="$(cd "$(dirname "${0}")"; pwd)"
 GITLAB_CHARTS_BRANCH=${GITLAB_CHARTS_BRANCH:-${gitlab_charts_branch:-master}}
 CHART="${CHART:-prometheus-operator}"
 NAME="${NAME:-gitlab}"
+NAMESPACE="${NAMESPACE:-gitlab}"
 
 
 update_gitlab_chart() {
