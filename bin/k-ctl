@@ -33,7 +33,7 @@ common_registry_image="registry.gitlab.com/gitlab-com/gl-infra/k8s-workloads/com
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
     source "$COMMON_SCRIPT_PATH"
 else
-    echo "Extracting common.bash from $common_registry_image..."
+    echo -e "${_CYN}Extracting common.bash from $common_registry_image...${_NORM}"
     docker pull "$common_registry_image" >/dev/null
     tmpfile=$(mktemp)
     container_id=$(docker create $common_registry_image)
