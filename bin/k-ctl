@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+##############################
+# wrapper script for running
+# helm against this chart
+
+set -euf -o pipefail
+dir="$(cd "$(dirname "${0}")"; pwd)"
+
+GITLAB_CHARTS_BRANCH=${GITLAB_CHARTS_BRANCH:-${gitlab_charts_branch:-master}}
+CHART="${CHART:-prometheus-operator}"
+NAME="${NAME:-gitlab}"
+
+
+update_gitlab_chart() {
+    set -e
+    local charts_dir
+    charts_dir=$1
+    pushd "${charts_dir}"
+    set -x
+    git clone -b "${GITLAB_CHART_BRANCH:-master}" https://gitlab.com/charts/gitlab.git "$charts_dir" >/dev/null
+    helm repo add gitlab 'https://charts.gitlab.io/'
+    helm dependency update
+    set +x
+    popd
+}
+
+# Source common functions and variable exports
+# that are common to all charts
+
+COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
+common_registry_image="registry.gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest"
+if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
+    source "$COMMON_SCRIPT_PATH"
+else
+    echo -e "${_CYN}Extracting common.bash from $common_registry_image...${_NORM}"
+    docker pull "$common_registry_image" >/dev/null
+    tmpfile=$(mktemp)
+    container_id=$(docker create $common_registry_image)
+    docker cp "$container_id:$COMMON_SCRIPT_PATH" "$tmpfile"
+    source "$tmpfile"
+    rm -f "$tmpfile"
+fi
+
+echo "Validating secrets.."
+for secret in registry-certificate registry-httpsecret; do
+    if ! kubectl get secrets -n "$NAMESPACE" $secret >/dev/null; then
+        echo -e "${_BRED}Secret \"$secret\" is not yet set, are secrets configured properly?${_NORM}"
+        exit 1
+    fi
+done
+
+charts_dir=$(mktemp -d)
+manifests_dir="$dir/../manifests"
+
+case "$ACTION" in
+    install|upgrade)
+        update_gitlab_chart "$charts_dir"
+
+        helm_opts=(
+            "$charts_dir"
+            "${HELM_OPTS[@]}"
+            "${HELM_OPTS_VALUES[@]}"
+        )
+
+        set -x
+        if [[ $ACTION == "install" ]]; then
+            helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
+        else
+            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}"
+        fi
+        ;;
+
+    list)
+        set -x
+        helm tiller run helm list
+        ;;
+
+    remove)
+        echo -ne "${_BRED}!! You are about to remove the $CHART chart on $CLUSTER in $ENV ($PROJECT) !!${_NORM}\\n"
+        echo -ne "press enter to continue."
+        read -rp ""
+        echo -e "${_CYN}continuing...${_NORM}"
+
+        helm_opts=(
+            "--purge" "$NAME"
+            "${HELM_OPTS[@]}"
+        )
+
+        set -x
+        helm tiller run helm del "${helm_opts[@]}"
+        ;;
+
+    template)
+        update_gitlab_chart "$charts_dir"
+        helm_opts=(
+            "$charts_dir"
+            "--output-dir" "$manifests_dir"
+            "--namespace" "$NAMESPACE"
+            "${HELM_OPTS[@]}"
+            "${HELM_OPTS_VALUES[@]}"
+        )
+        set -x
+        helm tiller run helm template "${helm_opts[@]}"
+        ;;
+esac
+
+set +x
+rm -rf "${charts_dir:?}"

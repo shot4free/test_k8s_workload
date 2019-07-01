@@ -73,11 +73,6 @@ viewing our design document: https://about.gitlab.com/handbook/engineering/infra
 
 ## Working locally
 
-Applying, updating, destroying and listing clusters can be done locally using
-the wrappers in `bin/`, these are the same scripts that are used in CI.
+The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
+different environments.
 
-To generate the templates in `./manifests` for what is applied by helm run
-
-```
-./bin/template -e <env>
-```
