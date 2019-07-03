@@ -1,11 +1,4 @@
 ---
-
-global:
-  hosts:
-    domain: gke.staging.gitlab.com
-    externalIP: 34.74.14.28
-  registry:
-    bucket: gitlab-gstg-registry
 certmanager-issuer:
   email: ops-contact+staging@gitlab.com
 registry:

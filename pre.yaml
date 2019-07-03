@@ -1,11 +1,4 @@
 ---
-
-global:
-  hosts:
-    domain: gke.pre.gitlab.com
-    externalIP: 35.196.53.183
-  registry:
-    bucket: gitlab-pre-registry
 certmanager-issuer:
   email: jskarbek@gitlab.com
 registry:
