@@ -71,7 +71,7 @@ upgrade_staging:
     - .deploy
     - .staging
   script:
-    - bin/upgrade upgrade
+    - bin/k-ctl upgrade
   only:
     refs:
       - master
