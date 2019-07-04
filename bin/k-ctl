@@ -58,7 +58,6 @@ external_static_ip=$(get_static_ip "gitlab-com")
 helm_opts_values=(
     "${HELM_OPTS_VALUES[@]}"
     "--set" "global.hosts.externalIP=$external_static_ip"
-    "--set" "global.hosts.domain=gke.$ENV.gitlab.com"
     "--set" "global.registry.bucket=gitlab-$ENV-registry"
 )
 
