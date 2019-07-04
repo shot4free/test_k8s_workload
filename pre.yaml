@@ -1,4 +1,7 @@
 ---
+global:
+  hosts:
+    domain: gke.pre.gitlab.com
 certmanager-issuer:
   email: jskarbek@gitlab.com
 registry:

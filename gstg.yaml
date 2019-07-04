@@ -1,4 +1,7 @@
 ---
+global:
+  hosts:
+    domain: gke.staging.gitlab.com
 certmanager-issuer:
   email: ops-contact+staging@gitlab.com
 registry:
