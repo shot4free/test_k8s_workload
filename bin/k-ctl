@@ -8,7 +8,7 @@ set -euf -o pipefail
 dir="$(cd "$(dirname "${0}")"; pwd)"
 
 GITLAB_CHARTS_BRANCH=${GITLAB_CHARTS_BRANCH:-${gitlab_charts_branch:-master}}
-CHART="${CHART:-prometheus-operator}"
+CHART="${CHART:-gitlab}"
 NAME="${NAME:-gitlab}"
 NAMESPACE="${NAMESPACE:-gitlab}"
 
@@ -84,6 +84,8 @@ case "$ACTION" in
     list)
         set -x
         helm tiller run helm list
+
+        kubectl get secrets --namespace "${NAMESPACE}"
         ;;
 
     remove)
@@ -99,6 +101,18 @@ case "$ACTION" in
 
         set -x
         helm tiller run helm del "${helm_opts[@]}"
+
+        set +x
+        # Remove secrets that were probably created manually per our documentation
+        for item in registry-certificate registry-httpsecret registry-storage; do
+          if [[ ${dry_run:-} != "true" ]]; then
+            set -x
+            kubectl delete --namespace "${NAMESPACE}" "$item"
+          else
+            set +x
+            echo "Would run: kubectl delete --namespace $NAMESPACE $item"
+          fi
+        done
         ;;
 
     template)
