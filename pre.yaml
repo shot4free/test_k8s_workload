@@ -5,6 +5,4 @@ global:
 certmanager-issuer:
   email: jskarbek@gitlab.com
 registry:
-  image:
-    tag: '2.7.0'
   authEndpoint: https://pre.gitlab.com
