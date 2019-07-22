@@ -70,12 +70,6 @@ kubectl create secret generic registry-storage
   --namespace=gitlab \
   --from-file=registry-auth.crt=input/<ENV>/<REGISTRY_CERTIFICATE_FILENAME>`
 
-## Generate our Helm Configurations
-
-1. `./bin/generate.sh`
-1. Commit
-1. Push for Review
-
 ## Deploy
 
 1. This is handled via CI/CD when changes are merged into master
