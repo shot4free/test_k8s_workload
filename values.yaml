@@ -40,9 +40,9 @@ global:
 
   ## doc/charts/globals.md#configure-ingress-settings
   ingress:
-    configureCertmanager: true
+    configureCertmanager: false
     annotations: {}
-    enabled: true
+    enabled: false
     tls:
       enabled: true
 
@@ -297,7 +297,7 @@ global:
 ## End of global
 
 ## Settings to for the Let's Encrypt ACME Issuer
-certmanager-issuer:
+# certmanager-issuer:
   ## The email address to register certificates requested from Let's Encrypt.
   ## Required if using Let's Encrypt.
 
@@ -306,7 +306,7 @@ certmanager-issuer:
 certmanager:
   # Install cert-manager chart. Set to false if you already have cert-manager
   # installed or if you are not using cert-manager.
-  install: true
+  install: false
   # Other cert-manager configurations from upstream
   # See https://github.com/kubernetes/charts/tree/master/stable/cert-manager#configuration
   rbac:
@@ -316,7 +316,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: true
+  enabled: false
   tcpExternalConfig: "true"
   controller:
     config:
@@ -420,6 +420,12 @@ registry:
     prometheus:
       enabled: true
       path: '/metrics'
+  ingress:
+    enabled: false
+  service:
+    type: LoadBalancer
+    annotations:
+      cloud.google.com/load-balancer-type: Internal
   storage:
     secret: registry-storage
     key: config

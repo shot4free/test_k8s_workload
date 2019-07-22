@@ -53,11 +53,11 @@ done
 
 charts_dir=$(mktemp -d)
 manifests_dir="$dir/../manifests"
-external_static_ip=$(get_static_ip "gitlab-com")
+registry_static_ip=$(get_static_ip "registry-gke-${ENV}")
 
 helm_opts_values=(
     "${HELM_OPTS_VALUES[@]}"
-    "--set" "global.hosts.externalIP=$external_static_ip"
+    "--set" "registry.service.loadBalancerIP=$registry_static_ip"
     "--set" "global.registry.bucket=gitlab-$ENV-registry"
 )
 
@@ -119,6 +119,7 @@ case "$ACTION" in
         helm_opts=(
             "$charts_dir"
             "--output-dir" "$manifests_dir"
+            "--name" "${NAME}"
             "--namespace" "$NAMESPACE"
             "${HELM_OPTS[@]}"
             "${helm_opts_values[@]}"
