@@ -12,6 +12,8 @@ CHART="${CHART:-gitlab}"
 NAME="${NAME:-gitlab}"
 NAMESPACE="${NAMESPACE:-gitlab}"
 
+export HELM_TILLER_LOGS=true
+export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
 update_gitlab_chart() {
     set -e
@@ -76,7 +78,8 @@ case "$ACTION" in
         if [[ $ACTION == "install" ]]; then
             helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
         else
-            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}"
+            tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
+            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
         fi
         ;;
 
