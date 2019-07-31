@@ -28,6 +28,12 @@ update_gitlab_chart() {
     popd
 }
 
+declare -a kube_objects=(
+    registry-certificate
+    registry-httpsecret
+    registry-storage
+)
+
 # Source common functions and variable exports
 # that are common to all charts
 
@@ -46,8 +52,8 @@ else
 fi
 
 echo "Validating secrets.."
-for secret in registry-certificate registry-httpsecret; do
-    if ! kubectl get secrets -n "$NAMESPACE" $secret >/dev/null; then
+for secret in ${kube_objects[*]}; do
+    if ! kubectl get secrets -n "$NAMESPACE" "${secret}" >/dev/null; then
         echo -e "${_BRED}Secret \"$secret\" is not yet set, are secrets configured properly?${_NORM}"
         exit 1
     fi
@@ -69,6 +75,7 @@ case "$ACTION" in
 
         helm_opts=(
             "$charts_dir"
+            "--namespace" "${NAMESPACE}"
             "${HELM_OPTS[@]}"
             "${HELM_OPTS_VALUES[@]}"
             "${helm_opts_values[@]}"
@@ -106,13 +113,13 @@ case "$ACTION" in
 
         set +x
         # Remove secrets that were probably created manually per our documentation
-        for item in registry-certificate registry-httpsecret registry-storage; do
+        for item in ${kube_objects[*]}; do
           if [[ ${dry_run:-} != "true" ]]; then
             set -x
-            kubectl delete --namespace "${NAMESPACE}" "$item"
+            kubectl delete --namespace "${NAMESPACE}" --filename "$item"
           else
             set +x
-            echo "Would run: kubectl delete --namespace $NAMESPACE $item"
+            echo "Would run: kubectl delete --namespace $NAMESPACE --filename $item"
           fi
         done
         ;;
