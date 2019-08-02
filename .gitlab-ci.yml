@@ -1,7 +1,5 @@
 ---
 
-image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest"
-
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
@@ -10,7 +8,11 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
 
+variables:
+  CI_IMAGE_VERSION: 'v1.1.0'
+
 .deploy:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:$CI_IMAGE_VERSION"
   extends:
     - .except-com
     - .cluster-init-before-script

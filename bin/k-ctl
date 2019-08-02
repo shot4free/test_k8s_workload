@@ -24,17 +24,18 @@ declare -a kube_objects=(
 # that are common to all charts
 
 COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
-common_registry_image="registry.gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest"
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
     source "$COMMON_SCRIPT_PATH"
 else
-    echo "Extracting common.bash from $common_registry_image..."
-    docker pull "$common_registry_image" >/dev/null
-    tmpfile=$(mktemp)
-    container_id=$(docker create $common_registry_image)
-    docker cp "$container_id:$COMMON_SCRIPT_PATH" "$tmpfile"
-    source "$tmpfile"
-    rm -f "$tmpfile"
+    # Grab the CI image version from  the .gitlab-ci.yml
+    _BBLK="\\033[1;30m"
+    _NORM="\\033[0m"
+    version=$(grep -Po "(?<=CI_IMAGE_VERSION: ')[^']*" .gitlab-ci.yml)
+    echo -e "${_BBLK}Sourcing version $version of the common shell script"
+    echo -e "if you want to use a local version set COMMON_SCRIPT_PATH to the location of common.bash"
+    echo -e "or update .gitlab-ci.yml to set a new version${_NORM}"
+    echo ""
+    source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
 fi
 
 CHART_VERSION=${CHART_VERSION:-}
