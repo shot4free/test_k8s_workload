@@ -1,5 +1,3 @@
 ---
 registry:
-  image:
-    tag: '2.7.0'
   authEndpoint: https://staging.gitlab.com
