@@ -9,7 +9,7 @@ include:
     file: "/ci/shellcheck.yml"
 
 variables:
-  CI_IMAGE_VERSION: 'v1.1.0'
+  CI_IMAGE_VERSION: 'v1.2.0'
 
 .deploy:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:$CI_IMAGE_VERSION"

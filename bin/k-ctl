@@ -78,21 +78,6 @@ install_gitlab_chart_via_s3() {
       set +x
 }
 
-verify_installed_secrets() {
-  echo -e "${_CYN}Validating secrets...${_NORM}"
-  local exit_code=0
-  for secret in ${kube_objects[*]}; do
-      if ! kubectl get secrets -n "$NAMESPACE" "$secret" >/dev/null; then
-          echo -e "${_BRED}Secret: ${secret} is not yet set, are secrets configured properly?${_NORM}"
-          exit_code=1
-      fi
-  done
-
-  if [[ $exit_code != "0" ]]; then
-    exit $exit_code
-  fi
-}
-
 charts_dir=$(mktemp -d)
 extracted_charts_dir="${charts_dir}/${CHART}"
 manifests_dir="$dir/../manifests"
@@ -118,9 +103,9 @@ case "$ACTION" in
 
         if [[ $ACTION == "install" ]]; then
             helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
-            verify_installed_secrets
+            verify_installed_secrets "${kube_objects[@]}"
         else
-            verify_installed_secrets
+            verify_installed_secrets "${kube_objects[@]}"
             tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
             helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
         fi
@@ -134,10 +119,7 @@ case "$ACTION" in
         ;;
 
     remove)
-        echo -ne "${_BRED}!! You are about to remove the $CHART chart on $CLUSTER in $ENV ($PROJECT) !!${_NORM}\\n"
-        echo -ne "press enter to continue."
-        read -rp ""
-        echo -e "${_CYN}continuing...${_NORM}"
+        warn_removal
 
         helm_opts=(
             "--purge" "$NAME"
@@ -171,7 +153,7 @@ case "$ACTION" in
         set -x
         helm tiller run helm template "${helm_opts[@]}"
         set +x
-        verify_installed_secrets
+        verify_installed_secrets "${kube_objects[@]}"
         ;;
 esac
 
