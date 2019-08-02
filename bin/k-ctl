@@ -113,7 +113,7 @@ case "$ACTION" in
             helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
         else
             tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
-            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
+            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 60
         fi
         ;;
 
