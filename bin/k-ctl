@@ -7,26 +7,12 @@
 set -euf -o pipefail
 dir="$(cd "$(dirname "${0}")"; pwd)"
 
-GITLAB_CHARTS_BRANCH=${GITLAB_CHARTS_BRANCH:-${gitlab_charts_branch:-master}}
 CHART="${CHART:-gitlab}"
 NAME="${NAME:-gitlab}"
 NAMESPACE="${NAMESPACE:-gitlab}"
 
 export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
-
-update_gitlab_chart() {
-    set -e
-    local charts_dir
-    charts_dir=$1
-    pushd "${charts_dir}"
-    set -x
-    git clone -b "${GITLAB_CHART_BRANCH:-master}" https://gitlab.com/charts/gitlab.git "$charts_dir" >/dev/null
-    helm repo add gitlab 'https://charts.gitlab.io/'
-    helm dependency update
-    set +x
-    popd
-}
 
 declare -a kube_objects=(
     registry-certificate
@@ -51,6 +37,46 @@ else
     rm -f "$tmpfile"
 fi
 
+CHART_VERSION=${CHART_VERSION:-}
+DEFINED_CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+echo -e "${_CYN}-- Using Chart Version: ${DEFINED_CHART_VERSION} --${_NORM}"
+
+get_gitlab_chart() {
+  local charts_dir=${1}
+  pushd "$charts_dir"
+
+  if [[ "$CHART_VERSION" != "$DEFINED_CHART_VERSION" ]]; then
+    install_gitlab_chart_via_helm || install_gitlab_chart_via_s3
+  else
+    install_gitlab_chart_via_git
+  fi
+
+  popd
+}
+
+install_gitlab_chart_via_git() {
+    echo -ne "${_YELLOW}Using git to get chart...${_NORM}\\n"
+    mkdir "$extracted_charts_dir"
+    git clone -b "$CHART_VERSION" https://gitlab.com/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+    helm repo add gitlab 'https://charts.gitlab.io/'
+    pushd "$extracted_charts_dir"
+    helm dependency update
+    popd
+}
+
+install_gitlab_chart_via_helm() {
+    echo -ne "${_CYN}Using helm to get chart...${_NORM}\\n"
+    helm repo add gitlab 'https://charts.gitlab.io/' && \
+    helm fetch --version "$DEFINED_CHART_VERSION" "gitlab/${CHART}" --untar --untardir "$charts_dir"
+}
+
+install_gitlab_chart_via_s3() {
+      echo -e "${_YELLOW}Using chart directly from S3...${_NORM}"
+      set -x
+      curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+      set +x
+}
+
 echo "Validating secrets.."
 for secret in ${kube_objects[*]}; do
     if ! kubectl get secrets -n "$NAMESPACE" "${secret}" >/dev/null; then
@@ -60,6 +86,7 @@ for secret in ${kube_objects[*]}; do
 done
 
 charts_dir=$(mktemp -d)
+extracted_charts_dir="${charts_dir}/${CHART}"
 manifests_dir="$dir/../manifests"
 registry_static_ip=$(get_static_ip "registry-gke-${ENV}")
 
@@ -71,10 +98,10 @@ helm_opts_values=(
 
 case "$ACTION" in
     install|upgrade)
-        update_gitlab_chart "$charts_dir"
+        get_gitlab_chart "$charts_dir"
 
         helm_opts=(
-            "$charts_dir"
+            "$extracted_charts_dir"
             "--namespace" "${NAMESPACE}"
             "${HELM_OPTS[@]}"
             "${HELM_OPTS_VALUES[@]}"
@@ -125,9 +152,9 @@ case "$ACTION" in
         ;;
 
     template)
-        update_gitlab_chart "$charts_dir"
+        get_gitlab_chart "${charts_dir}"
         helm_opts=(
-            "$charts_dir"
+            "$extracted_charts_dir"
             "--output-dir" "$manifests_dir"
             "--name" "${NAME}"
             "--namespace" "$NAMESPACE"
