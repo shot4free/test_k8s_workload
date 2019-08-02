@@ -56,7 +56,7 @@ get_gitlab_chart() {
 }
 
 install_gitlab_chart_via_git() {
-    echo -ne "${_YELLOW}Using git to get chart...${_NORM}\\n"
+    echo -ne "${_YEL}Using git to get chart...${_NORM}\\n"
     mkdir "$extracted_charts_dir"
     git clone -b "$CHART_VERSION" https://gitlab.com/charts/gitlab.git "$extracted_charts_dir" >/dev/null
     helm repo add gitlab 'https://charts.gitlab.io/'
@@ -72,19 +72,26 @@ install_gitlab_chart_via_helm() {
 }
 
 install_gitlab_chart_via_s3() {
-      echo -e "${_YELLOW}Using chart directly from S3...${_NORM}"
+      echo -e "${_YEL}Using chart directly from S3...${_NORM}"
       set -x
       curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
       set +x
 }
 
-echo "Validating secrets.."
-for secret in ${kube_objects[*]}; do
-    if ! kubectl get secrets -n "$NAMESPACE" "${secret}" >/dev/null; then
-        echo -e "${_BRED}Secret \"$secret\" is not yet set, are secrets configured properly?${_NORM}"
-        exit 1
-    fi
-done
+verify_installed_secrets() {
+  echo -e "${_CYN}Validating secrets...${_NORM}"
+  local exit_code=0
+  for secret in ${kube_objects[*]}; do
+      if ! kubectl get secrets -n "$NAMESPACE" "$secret" >/dev/null; then
+          echo -e "${_BRED}Secret: ${secret} is not yet set, are secrets configured properly?${_NORM}"
+          exit_code=1
+      fi
+  done
+
+  if [[ $exit_code != "0" ]]; then
+    exit $exit_code
+  fi
+}
 
 charts_dir=$(mktemp -d)
 extracted_charts_dir="${charts_dir}/${CHART}"
@@ -109,10 +116,11 @@ case "$ACTION" in
             "${helm_opts_values[@]}"
         )
 
-        set -x
         if [[ $ACTION == "install" ]]; then
             helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
+            verify_installed_secrets
         else
+            verify_installed_secrets
             tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
             helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
         fi
@@ -138,16 +146,14 @@ case "$ACTION" in
 
         set -x
         helm tiller run helm del "${helm_opts[@]}"
-
         set +x
+
         # Remove secrets that were probably created manually per our documentation
         for item in ${kube_objects[*]}; do
           if [[ ${dry_run:-} != "true" ]]; then
-            set -x
-            kubectl delete --namespace "${NAMESPACE}" --filename "$item"
+            kubectl delete secret --namespace "$NAMESPACE" "$item"
           else
-            set +x
-            echo "Would run: kubectl delete --namespace $NAMESPACE --filename $item"
+            echo "Would run: kubectl delete secret --namespace $NAMESPACE $item"
           fi
         done
         ;;
@@ -164,6 +170,8 @@ case "$ACTION" in
         )
         set -x
         helm tiller run helm template "${helm_opts[@]}"
+        set +x
+        verify_installed_secrets
         ;;
 esac
 
