@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
+# vim: ai:ts=2:sw=2:et
 
 ##############################
 # wrapper script for running
 # helm against this chart
 
 set -euf -o pipefail
-dir="$(cd "$(dirname "${0}")"; pwd)"
+dir="$(
+  cd "$(dirname "${0}")"
+  pwd
+)"
 
 CHART="${CHART:-gitlab}"
 NAME="${NAME:-gitlab}"
@@ -15,9 +19,9 @@ export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
 declare -a kube_objects=(
-    registry-certificate
-    registry-httpsecret
-    registry-storage
+  registry-certificate
+  registry-httpsecret
+  registry-storage
 )
 
 # Source common functions and variable exports
@@ -25,17 +29,17 @@ declare -a kube_objects=(
 
 COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
-    source "$COMMON_SCRIPT_PATH"
+  source "$COMMON_SCRIPT_PATH"
 else
-    # Grab the CI image version from  the .gitlab-ci.yml
-    _BBLK="\\033[1;30m"
-    _NORM="\\033[0m"
-    version=$(grep -Po "(?<=CI_IMAGE_VERSION: ')[^']*" .gitlab-ci.yml)
-    echo -e "${_BBLK}Sourcing version $version of the common shell script"
-    echo -e "if you want to use a local version set COMMON_SCRIPT_PATH to the location of common.bash"
-    echo -e "or update .gitlab-ci.yml to set a new version${_NORM}"
-    echo ""
-    source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
+  # Grab the CI image version from  the .gitlab-ci.yml
+  _BBLK="\\033[1;30m"
+  _NORM="\\033[0m"
+  version=$(grep -Po "(?<=CI_IMAGE_VERSION: ')[^']*" .gitlab-ci.yml)
+  echo -e "${_BBLK}Sourcing version $version of the common shell script"
+  echo -e "if you want to use a local version set COMMON_SCRIPT_PATH to the location of common.bash"
+  echo -e "or update .gitlab-ci.yml to set a new version${_NORM}"
+  echo ""
+  source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
 fi
 
 CHART_VERSION=${CHART_VERSION:-}
@@ -56,26 +60,26 @@ get_gitlab_chart() {
 }
 
 install_gitlab_chart_via_git() {
-    echo -ne "${_YEL}Using git to get chart...${_NORM}\\n"
-    mkdir "$extracted_charts_dir"
-    git clone -b "$CHART_VERSION" https://gitlab.com/charts/gitlab.git "$extracted_charts_dir" >/dev/null
-    helm repo add gitlab 'https://charts.gitlab.io/'
-    pushd "$extracted_charts_dir"
-    helm dependency update
-    popd
+  echo -ne "${_YEL}Using git to get chart...${_NORM}\\n"
+  mkdir "$extracted_charts_dir"
+  git clone -b "$CHART_VERSION" https://gitlab.com/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+  helm repo add gitlab 'https://charts.gitlab.io/'
+  pushd "$extracted_charts_dir"
+  helm dependency update
+  popd
 }
 
 install_gitlab_chart_via_helm() {
-    echo -ne "${_CYN}Using helm to get chart...${_NORM}\\n"
-    helm repo add gitlab 'https://charts.gitlab.io/' && \
+  echo -ne "${_CYN}Using helm to get chart...${_NORM}\\n"
+  helm repo add gitlab 'https://charts.gitlab.io/' &&
     helm fetch --version "$DEFINED_CHART_VERSION" "gitlab/${CHART}" --untar --untardir "$charts_dir"
 }
 
 install_gitlab_chart_via_s3() {
-      echo -e "${_YEL}Using chart directly from S3...${_NORM}"
-      set -x
-      curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
-      set +x
+  echo -e "${_YEL}Using chart directly from S3...${_NORM}"
+  set -x
+  curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  set +x
 }
 
 charts_dir=$(mktemp -d)
@@ -84,77 +88,77 @@ manifests_dir="$dir/../manifests"
 registry_static_ip=$(get_static_ip "registry-gke-${ENV}")
 
 helm_opts_values=(
-    "${HELM_OPTS_VALUES[@]}"
-    "--set" "registry.service.loadBalancerIP=$registry_static_ip"
-    "--set" "global.registry.bucket=gitlab-$ENV-registry"
+  "${HELM_OPTS_VALUES[@]}"
+  "--set" "registry.service.loadBalancerIP=$registry_static_ip"
+  "--set" "global.registry.bucket=gitlab-$ENV-registry"
 )
 
 case "$ACTION" in
-    install|upgrade)
-        get_gitlab_chart "$charts_dir"
+  install | upgrade)
+    get_gitlab_chart "$charts_dir"
 
-        helm_opts=(
-            "$extracted_charts_dir"
-            "--namespace" "${NAMESPACE}"
-            "${HELM_OPTS[@]}"
-            "${HELM_OPTS_VALUES[@]}"
-            "${helm_opts_values[@]}"
-        )
+    helm_opts=(
+      "$extracted_charts_dir"
+      "--namespace" "${NAMESPACE}"
+      "${HELM_OPTS[@]}"
+      "${HELM_OPTS_VALUES[@]}"
+      "${helm_opts_values[@]}"
+    )
 
-        if [[ $ACTION == "install" ]]; then
-            helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
-            verify_installed_secrets "${kube_objects[@]}"
-        else
-            verify_installed_secrets "${kube_objects[@]}"
-            tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
-            helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
-        fi
-        ;;
+    if [[ $ACTION == "install" ]]; then
+      helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
+      verify_installed_secrets "${kube_objects[@]}"
+    else
+      verify_installed_secrets "${kube_objects[@]}"
+      tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
+      helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
+    fi
+    ;;
 
-    list)
-        set -x
-        helm tiller run helm list
+  list)
+    set -x
+    helm tiller run helm list
 
-        kubectl get secrets --namespace "${NAMESPACE}"
-        ;;
+    kubectl get secrets --namespace "${NAMESPACE}"
+    ;;
 
-    remove)
-        warn_removal
+  remove)
+    warn_removal
 
-        helm_opts=(
-            "--purge" "$NAME"
-            "${HELM_OPTS[@]}"
-        )
+    helm_opts=(
+      "--purge" "$NAME"
+      "${HELM_OPTS[@]}"
+    )
 
-        set -x
-        helm tiller run helm del "${helm_opts[@]}"
-        set +x
+    set -x
+    helm tiller run helm del "${helm_opts[@]}"
+    set +x
 
-        # Remove secrets that were probably created manually per our documentation
-        for item in ${kube_objects[*]}; do
-          if [[ ${dry_run:-} != "true" ]]; then
-            kubectl delete secret --namespace "$NAMESPACE" "$item"
-          else
-            echo "Would run: kubectl delete secret --namespace $NAMESPACE $item"
-          fi
-        done
-        ;;
+    # Remove secrets that were probably created manually per our documentation
+    for item in ${kube_objects[*]}; do
+      if [[ ${dry_run:-} != "true" ]]; then
+        kubectl delete secret --namespace "$NAMESPACE" "$item"
+      else
+        echo "Would run: kubectl delete secret --namespace $NAMESPACE $item"
+      fi
+    done
+    ;;
 
-    template)
-        get_gitlab_chart "${charts_dir}"
-        helm_opts=(
-            "$extracted_charts_dir"
-            "--output-dir" "$manifests_dir"
-            "--name" "${NAME}"
-            "--namespace" "$NAMESPACE"
-            "${HELM_OPTS[@]}"
-            "${helm_opts_values[@]}"
-        )
-        set -x
-        helm tiller run helm template "${helm_opts[@]}"
-        set +x
-        verify_installed_secrets "${kube_objects[@]}"
-        ;;
+  template)
+    get_gitlab_chart "${charts_dir}"
+    helm_opts=(
+      "$extracted_charts_dir"
+      "--output-dir" "$manifests_dir"
+      "--name" "${NAME}"
+      "--namespace" "$NAMESPACE"
+      "${HELM_OPTS[@]}"
+      "${helm_opts_values[@]}"
+    )
+    set -x
+    helm tiller run helm template "${helm_opts[@]}"
+    set +x
+    verify_installed_secrets "${kube_objects[@]}"
+    ;;
 esac
 
 set +x

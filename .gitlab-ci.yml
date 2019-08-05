@@ -1,15 +1,26 @@
 ---
 
+#############################################################
+# Unfortunately the version tag needs to be repeated
+# in multiple places here because variables are not supported
+# in the include section
+# https://gitlab.com/gitlab-org/gitlab-ce/issues/65621
+
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
+    ref: 'v1.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
+    ref: 'v1.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
+    ref: 'v1.3.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v1.2.0'
+  CI_IMAGE_VERSION: 'v1.3.0'
+
+#############################################################
 
 .deploy:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:$CI_IMAGE_VERSION"
