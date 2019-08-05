@@ -414,6 +414,26 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: true
+  networkpolicy:
+    enabled: true
+    egress:
+      enabled: true
+      # The following rules enable traffic to all external
+      # endpoints, blocks the local network except for
+      # kube dns lookups
+      # https://github.com/kubernetes/kubernetes/issues/55406#issuecomment-343248450
+      rules:
+      - to:
+        - namespaceSelector:
+            matchLabels: {"kube-system": "true"}
+        ports:
+        - protocol: "UDP"
+          port: 53
+      - to:
+        - ipBlock:
+            cidr: "0.0.0.0/0"
+            except:
+            - "10.0.0.0/8"
   debug:
     addr:
       port: 5001
@@ -460,19 +480,19 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
-## doc/charts/gitlab/migrations
+  # doc/charts/gitlab/migrations
   migrations:
     enabled: false
-## doc/charts/gitlab/unicorn
+  # doc/charts/gitlab/unicorn
   unicorn:
     enabled: false
-## doc/charts/gitlab/sidekiq
+  # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: false
-## doc/charts/gitlab/gitaly
+  # doc/charts/gitlab/gitaly
   gitaly:
     enabled: false
-## doc/charts/gitlab/gitlab-shell
+  # doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     enabled: false
   task-runner:

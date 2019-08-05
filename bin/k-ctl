@@ -78,8 +78,15 @@ install_gitlab_chart_via_helm() {
 install_gitlab_chart_via_s3() {
   echo -e "${_YEL}Using chart directly from S3...${_NORM}"
   set -x
-  curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
   set +x
+}
+
+label_kube_system_pods() {
+  if [[ $(kubectl label namespace/kube-system --list) != "kube-system=true" ]]; then
+    echo -e "${_YEL}Applying system label to kube-system pods"
+    kubectl label namespace/kube-system kube-system=true --overwrite=true
+  fi
 }
 
 charts_dir=$(mktemp -d)
@@ -96,6 +103,9 @@ helm_opts_values=(
 case "$ACTION" in
   install | upgrade)
     get_gitlab_chart "$charts_dir"
+    # kubectl pods are labeled with kube-system=true
+    # for network policies
+    label_kube_system_pods
 
     helm_opts=(
       "$extracted_charts_dir"
