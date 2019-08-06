@@ -82,13 +82,6 @@ install_gitlab_chart_via_s3() {
   set +x
 }
 
-label_kube_system_pods() {
-  if [[ $(kubectl label namespace/kube-system --list) != "kube-system=true" ]]; then
-    echo -e "${_YEL}Applying system label to kube-system pods"
-    kubectl label namespace/kube-system kube-system=true --overwrite=true
-  fi
-}
-
 charts_dir=$(mktemp -d)
 extracted_charts_dir="${charts_dir}/${CHART}"
 manifests_dir="$dir/../manifests"
@@ -103,9 +96,6 @@ helm_opts_values=(
 case "$ACTION" in
   install | upgrade)
     get_gitlab_chart "$charts_dir"
-    # kubectl pods are labeled with kube-system=true
-    # for network policies
-    label_kube_system_pods
 
     helm_opts=(
       "$extracted_charts_dir"
