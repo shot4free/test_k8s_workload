@@ -76,3 +76,72 @@ viewing our design document: https://about.gitlab.com/handbook/engineering/infra
 The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
 different environments.
 
+### minikube
+
+#### Get Started
+
+1. `minikube start`
+1. `./bin/k-ctl -e minikube install`
+1. Follow [HELM_README.md](HELM_README.md) to install the secrets
+  * Use the `pre` as the environment to pull secrets from
+
+#### Logging In
+
+At this point the pods should be running, validate:
+```
+% kubectl get pods -n gitlab
+NAME                               READY   STATUS    RESTARTS   AGE
+gitlab-registry-6995fbcf5b-jdw9h   1/1     Running   0          5m42s
+gitlab-registry-6995fbcf5b-p9bgg   1/1     Running   0          5m38s
+```
+
+Get the service, example:
+```
+% minikube service list
+|-------------|------------------------------------|--------------------------------|
+|  NAMESPACE  |                NAME                |              URL               |
+|-------------|------------------------------------|--------------------------------|
+| default     | kubernetes                         | No node port                   |
+| gitlab      | gitlab-registry                    | http://192.168.99.103:30799    |
+|             |                                    | http://192.168.99.103:30449    |
+| kube-system | gitlab-monitoring-promethe-kubelet | No node port                   |
+<snip>
+```
+
+This is ordered in the same as the service port definition.  In the above we see
+`gitlab-registry` has two entries, one for port 30799; this will map to port
+5000.  The other port, 30449, will map to port 5001.  This can be validated by
+       getting the service:
+```
+% kubectl get service -n gitlab
+NAME              TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
+gitlab-registry   NodePort   10.107.176.29   <none>        5000:30799/TCP,5001:30449/TCP   22m
+```
+
+Docker client forcibly allows connections via SSL, so we need to make a
+configuration change locally.  This requires a configuration change to your
+local docker configuration: https://docs.docker.com/registry/insecure/#deploy-a-plain-http-registry
+
+Using the steps provided, and the example provided above, we'd utilize:
+```
+{
+  "insecure-registries" : ["192.168.99.103:30799"]
+}
+```
+
+At this point performing a docker login should work:
+```
+% docker login http://192.168.99.103:30799
+Username: jskarbek@gitlab.com
+Password:
+Login Succeeded
+```
+
+As well as a docker pull/push
+```
+% docker pull 192.168.99.103:30799/jskarbek/test0:1
+1: Pulling from jskarbek/test0
+Digest: sha256:1aa64ee3ef2c169c249cb64eae0a59adf9fd4df5de9712c140d2739d057c270d
+Status: Downloaded newer image for 192.168.99.103:30799/jskarbek/test0:1
+192.168.99.103:30799/jskarbek/test0:1
+```
