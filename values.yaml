@@ -422,15 +422,18 @@ registry:
       # endpoints, except the metadata service and the local
       # network (except DNS requests)
       rules:
-      - ports:
-        - protocol: "UDP"
-          port: 53
       - to:
         - ipBlock:
-            cidr: "0.0.0.0/0"
+            cidr: 10.0.0.0/8
+        ports:
+        - port: 53
+          protocol: UDP
+      - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
             except:
-            - "10.0.0.0/8"
-            - "169.254.169.254/32" # metadata.google.internal
+            - 10.0.0.0/8
+            - 169.254.169.254/32
   debug:
     addr:
       port: 5001
