@@ -94,7 +94,8 @@ helm_opts_values=(
 )
 
 # Adds annotations for auto-devops
-if [[ -n "$CI" ]]; then
+CI=${CI:-''}
+if [[ -n ${CI} ]]; then
   helm_opts_values+=(
     "--set" "registry.annotations.app\\.gitlab\\.com/app=$CI_PROJECT_PATH_SLUG"
     "--set" "registry.annotations.app\\.gitlab\\.com/env=$CI_ENVIRONMENT_SLUG"
