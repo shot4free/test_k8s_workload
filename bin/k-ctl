@@ -60,7 +60,7 @@ get_gitlab_chart() {
 }
 
 install_gitlab_chart_via_git() {
-  echo -ne "${_YEL}Using git to get chart...${_NORM}\\n"
+  echo -ne "${_YEL}Using git to clone chart version \"${CHART_VERSION}\"...${_NORM}\\n"
   mkdir "$extracted_charts_dir"
   git clone -b "$CHART_VERSION" https://gitlab.com/charts/gitlab.git "$extracted_charts_dir" >/dev/null
   helm repo add gitlab 'https://charts.gitlab.io/'
@@ -78,7 +78,7 @@ install_gitlab_chart_via_helm() {
 install_gitlab_chart_via_s3() {
   echo -e "${_YEL}Using chart directly from S3...${_NORM}"
   set -x
-  curl "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
   set +x
 }
 

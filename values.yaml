@@ -414,6 +414,26 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: true
+  networkpolicy:
+    enabled: true
+    egress:
+      enabled: true
+      # The following rules enable traffic to all external
+      # endpoints, except the metadata service and the local
+      # network (except DNS requests)
+      rules:
+      - to:
+        - ipBlock:
+            cidr: 10.0.0.0/8
+        ports:
+        - port: 53
+          protocol: UDP
+      - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+            - 10.0.0.0/8
+            - 169.254.169.254/32
   debug:
     addr:
       port: 5001
@@ -460,19 +480,19 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
-## doc/charts/gitlab/migrations
+  # doc/charts/gitlab/migrations
   migrations:
     enabled: false
-## doc/charts/gitlab/unicorn
+  # doc/charts/gitlab/unicorn
   unicorn:
     enabled: false
-## doc/charts/gitlab/sidekiq
+  # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: false
-## doc/charts/gitlab/gitaly
+  # doc/charts/gitlab/gitaly
   gitaly:
     enabled: false
-## doc/charts/gitlab/gitlab-shell
+  # doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     enabled: false
   task-runner:
