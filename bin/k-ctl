@@ -93,6 +93,15 @@ helm_opts_values=(
   "--set" "global.registry.bucket=gitlab-$ENV-registry"
 )
 
+# Adds annotations for auto-devops
+CI=${CI:-''}
+if [[ -n ${CI} ]]; then
+  helm_opts_values+=(
+    "--set" "registry.annotations.app\\.gitlab\\.com/app=$CI_PROJECT_PATH_SLUG"
+    "--set" "registry.annotations.app\\.gitlab\\.com/env=$CI_ENVIRONMENT_SLUG"
+  )
+fi
+
 case "$ACTION" in
   install | upgrade)
     get_gitlab_chart "$charts_dir"
