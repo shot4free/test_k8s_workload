@@ -75,6 +75,7 @@ viewing our design document: https://about.gitlab.com/handbook/engineering/infra
 
 The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
 different environments.
+<<<<<<< HEAD
 
 ### minikube
 

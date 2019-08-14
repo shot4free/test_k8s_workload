@@ -46,7 +46,6 @@ For example, to copy secrets from the preprod environment for minikube:
 ## Example
 export ENV="pre"
 export CHEF_REPO="$HOME/workspace/chef-repo"
-cd input/minikube
 ```
 
 1. The service account json for GCS is configured in secrets

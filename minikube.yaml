@@ -1,0 +1,5 @@
+---
+registry:
+  service:
+    type: NodePort
+  authEndpoint: https://pre.gitlab.com
