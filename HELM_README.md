@@ -44,7 +44,7 @@ For example, to copy secrets from the preprod environment for minikube:
 
 ```
 ## Example
-export ENV="pre"
+export REMOTE_ENV="pre"
 export CHEF_REPO="$HOME/workspace/chef-repo"
 ```
 
@@ -55,22 +55,25 @@ export CHEF_REPO="$HOME/workspace/chef-repo"
    the secrets:
 
 ```
-$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $ENV \
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
   | jq -r '."gitlab-server"."google-creds".json_base64_registry' \
   | base64 -D > service-account-key.json
 
 
-HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $ENV| \
+HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV| \
   jq -r '."omnibus-gitlab".gitlab_rb.registry.http_secret')
 
 
-$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $ENV | \
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
   jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
 ```
 
-2. Copy and modify the [example gcs
-   config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
-   into the `input/<ENV>/` directory or copy from an existing environment.
+2. Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with the
+   [example gcs config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
+
+```
+cd input/$REMOTE_ENV
+```
 
 3. Create the secrets
 
