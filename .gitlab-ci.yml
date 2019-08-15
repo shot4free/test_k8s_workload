@@ -39,10 +39,17 @@ variables:
     name: gstg
     url: https://staging.gitlab.com
 
+.production:
+  environment:
+    name: gprd
+    url: https://gitlab.com
+
 stages:
   - check
   - dryrun
   - deploy
+  - deploy-canary
+  - deploy-production
 
 ############################ CI JOBS ################################
 #####################################################################
@@ -83,6 +90,49 @@ upgrade_staging:
   extends:
     - .deploy
     - .staging
+  script:
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+
+### Canary
+
+upgrade_canary_dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .production
+  script:
+    - bin/k-ctl -D -s cny upgrade
+
+upgrade_canary:
+  stage: deploy-canary
+  extends:
+    - .deploy
+    - .production
+  script:
+    - bin/k-ctl -s cny upgrade
+  only:
+    refs:
+      - master
+
+### Producion
+
+upgrade_production_dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .production
+  script:
+    - bin/k-ctl -D upgrade
+
+upgrade_production:
+  stage: deploy-production
+  extends:
+    - .deploy
+    - .production
+  when: manual
   script:
     - bin/k-ctl upgrade
   only:
