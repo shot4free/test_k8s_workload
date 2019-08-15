@@ -75,12 +75,11 @@ viewing our design document: https://about.gitlab.com/handbook/engineering/infra
 
 The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
 different environments.
-<<<<<<< HEAD
 
 ### minikube
 
 1. `minikube start`
-1. `./bin/k-ctl -e minikube install`
+1. `./bin/k-ctl -e pre -l minikube install`
 1. Follow [HELM_README.md](HELM_README.md) to install the secrets
   * Use the `pre` as the environment to pull secrets from
 
@@ -104,7 +103,7 @@ Get the service, example:
 1. export KUBECONFIG=$(k3d get-kubeconfig)
 1. Create the namespace `kubectl create namespace gitlab`
 1. Configure secrets (See `HELM_README.md`)
-1. Install the cluster `./bin/k-ctl -e k3d install`
+1. Install the cluster `./bin/k-ctl -e pre -l k3d install`
 
 ### docker-desktop
 
@@ -112,7 +111,7 @@ Get the service, example:
 1. Switch to the docker-desktop context
 1. Create the namespace `kubectl create namespace gitlab`
 1. Configure secrets (See `HELM_README.md`)
-1. Install the cluster `./bin/k-ctl -e docker-desktop install`
+1. Install the cluster `./bin/k-ctl -e pre -l docker-desktop install`
 
 
 ### Using the local registry
