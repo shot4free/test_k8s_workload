@@ -12,8 +12,6 @@ dir="$(
 )"
 
 CHART="${CHART:-gitlab}"
-NAME="${NAME:-gitlab}"
-NAMESPACE="${NAMESPACE:-gitlab}"
 
 export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
@@ -41,6 +39,9 @@ else
   echo ""
   source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
 fi
+
+NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
+NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 
 CHART_VERSION=${CHART_VERSION:-}
 DEFINED_CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
@@ -85,7 +86,7 @@ install_gitlab_chart_via_s3() {
 charts_dir=$(mktemp -d)
 extracted_charts_dir="${charts_dir}/${CHART}"
 manifests_dir="$dir/../manifests"
-registry_static_ip=$(get_static_ip "registry-gke-${ENV}")
+registry_static_ip=$(get_static_ip "registry-gke-${ENV}${STAGE_SUFFIX}")
 
 helm_opts_values=(
   "${HELM_OPTS_VALUES[@]}"
@@ -94,8 +95,7 @@ helm_opts_values=(
 )
 
 # Adds annotations for auto-devops
-CI=${CI:-''}
-if [[ -n ${CI} ]]; then
+if [[ -n ${CI:-} ]]; then
   helm_opts_values+=(
     "--set" "registry.annotations.app\\.gitlab\\.com/app=$CI_PROJECT_PATH_SLUG"
     "--set" "registry.annotations.app\\.gitlab\\.com/env=$CI_ENVIRONMENT_SLUG"
@@ -104,6 +104,7 @@ fi
 
 case "$ACTION" in
   install | upgrade)
+    overview
     get_gitlab_chart "$charts_dir"
 
     helm_opts=(
@@ -132,6 +133,7 @@ case "$ACTION" in
     ;;
 
   remove)
+    overview
     warn_removal
 
     helm_opts=(
@@ -154,6 +156,7 @@ case "$ACTION" in
     ;;
 
   template)
+    overview
     get_gitlab_chart "${charts_dir}"
     helm_opts=(
       "$extracted_charts_dir"
