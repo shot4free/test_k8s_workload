@@ -40,67 +40,53 @@ cluster :warning:
 These steps assume that secrets are copied from one of the existing
 environments.
 
-For example, to copy secrets from the preprod environment:
+For example, to copy secrets from the preprod environment for minikube:
 
 ```
-export ENV=pre
+## Example
+export REMOTE_ENV="pre"
+export CHEF_REPO="$HOME/workspace/chef-repo"
 ```
 
 1. The service account json for GCS is configured in secrets
    and can be copied from one of the existing GitLab environments.
    From the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/)
-    project, using the gkms helper script:
+   project, using the gkms helper script. Run the following to extract
+   the secrets:
 
 ```
-./bin/gkms-vault-show gitlab-omnibus-secrets $ENV\
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
   | jq -r '."gitlab-server"."google-creds".json_base64_registry' \
   | base64 -D > service-account-key.json
+
+
+HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV| \
+  jq -r '."omnibus-gitlab".gitlab_rb.registry.http_secret')
+
+
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
+  jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
 ```
 
-2. Copy and modify the [example gcs
-   config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
-   into the `input/<ENV>/` directory
+2. Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with the
+   [example gcs config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
 
-3. Create the secret
+```
+cd input/$REMOTE_ENV
+```
+
+3. Create the secrets
 
 ```
 kubectl create secret generic registry-storage \
   --namespace=gitlab \
   --from-file=config=registry-storage.yaml \
   --from-file=gcs.json=service-account-key.json
-```
 
-### Secret for JWT Token
-
-1. This token is configured in secrets and can be copied from
-   one of the existing GitLab environments.
-
-```
-HTTP_SECRET=$(./bin/gkms-vault-show gitlab-omnibus-secrets $ENV| \
-  jq -r '."omnibus-gitlab".gitlab_rb.registry.http_secret')
-```
-
-2.  Create the secret
-
-```
 kubectl create secret generic registry-httpsecret \
   --namespace=gitlab \
-  --from-literal=secret=$HTTP_SECRET`
-```
+  --from-literal=secret=$HTTP_SECRET
 
-### Secret for Token Signing Certificate
-
-1. The registry certificate is configured in secrets and can
-   be copied from one of the existing GitLab environments.
-
-```
-./bin/gkms-vault-show gitlab-omnibus-secrets $ENV | \
-  jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
-```
-
-2. Create the secret
-
-```
 kubectl create secret generic registry-certificate \
   --namespace=gitlab \
   --from-file=registry-auth.crt=registry-auth.crt

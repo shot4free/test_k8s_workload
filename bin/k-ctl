@@ -92,6 +92,7 @@ helm_opts_values=(
   "${HELM_OPTS_VALUES[@]}"
   "--set" "registry.service.loadBalancerIP=$registry_static_ip"
   "--set" "global.registry.bucket=gitlab-$ENV-registry"
+  "--set" "registry.authEndpoint=$GITLAB_ENDPOINT"
 )
 
 # Adds annotations for auto-devops
