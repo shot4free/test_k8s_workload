@@ -65,7 +65,7 @@ HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV|
 
 
 $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
-  jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
+  jq -r '."omnibus-gitlab".ssl.internal_certificate' > registry-auth.crt
 ```
 
 2. Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with the
