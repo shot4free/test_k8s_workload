@@ -1,0 +1,6 @@
+---
+
+registry:
+  resources:
+    requests:
+      memory: 476Mi  # == 500MB
