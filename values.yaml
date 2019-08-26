@@ -442,6 +442,8 @@ registry:
       path: '/metrics'
   ingress:
     enabled: false
+  log:
+    formatter: json
   maxReplicas: 100
   service:
     type: LoadBalancer
