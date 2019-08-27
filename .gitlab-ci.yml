@@ -90,7 +90,7 @@ gprd_container_scanning:
       export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gprd.yaml)
     - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
 
-container_scanning_staging:
+gstg_container_scanning:
   extends:
     - container_scanning
     - .except-ops
