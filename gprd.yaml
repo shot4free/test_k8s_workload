@@ -1,6 +1,8 @@
 ---
 
 registry:
+  image:
+    tag: '2.7.1'
   resources:
     requests:
       memory: 476Mi  # == 500MB

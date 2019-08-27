@@ -1,0 +1,5 @@
+---
+
+registry:
+  image:
+    tag: '2.7.1'
