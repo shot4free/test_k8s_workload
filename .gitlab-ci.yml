@@ -76,7 +76,7 @@ container_scanning:
 # except they read the tag version from the corresponding
 # environment file
 
-container_scanning_production:
+gprd_container_scanning:
   extends:
     - container_scanning
     - .except-ops
