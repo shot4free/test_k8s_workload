@@ -16,6 +16,7 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
     ref: 'v1.7.0'
+  - template: Container-Scanning.gitlab-ci.yml
 
 variables:
   CI_IMAGE_VERSION: 'v1.7.0'
@@ -50,6 +51,9 @@ stages:
   - deploy
   - deploy-canary
   - deploy-production
+
+container_scanning:
+  stage: check
 
 ############################ CI JOBS ################################
 #####################################################################
