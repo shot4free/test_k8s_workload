@@ -11,11 +11,15 @@ include:
     file: "/ci/except-com.yml"
     ref: 'v1.7.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
+    file: "/ci/except-ops.yml"
+    ref: 'v1.7.0'
+  - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
     ref: 'v1.7.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
     ref: 'v1.7.0'
+  - template: Container-Scanning.gitlab-ci.yml
 
 variables:
   CI_IMAGE_VERSION: 'v1.7.0'
@@ -27,7 +31,6 @@ variables:
   extends:
     - .except-com
     - .cluster-init-before-script
-
 
 .pre:
   environment:
@@ -50,6 +53,72 @@ stages:
   - deploy
   - deploy-canary
   - deploy-production
+
+#########################################
+# Container scanning for Registry
+# This is takes the tag that is currently set in
+# the production value file
+
+container_scanning:
+  stage: check
+  # This is the imported job
+  # and will never run due to the
+  # following except condition because the imported
+  # job only runs on branches.
+  #
+  # It is necessary
+  # so we can import the job and extend it for
+  # the different environments.
+  except:
+    - branches
+
+# The following environment jobs are identical
+# except they read the tag version from the corresponding
+# environment file
+
+gprd_container_scanning:
+  extends:
+    - container_scanning
+    - .except-ops
+  variables:
+    GIT_STRATEGY: fetch
+  stage: check
+  before_script:
+    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
+    - apk add grep
+    - >
+      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gprd.yaml)
+    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+
+gstg_container_scanning:
+  extends:
+    - container_scanning
+    - .except-ops
+  variables:
+    GIT_STRATEGY: fetch
+  stage: check
+  before_script:
+    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
+    - apk add grep
+    - >
+      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gstg.yaml)
+    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+
+pre_container_scanning:
+  extends:
+    - container_scanning
+    - .except-ops
+  variables:
+    GIT_STRATEGY: fetch
+  stage: check
+  before_script:
+    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
+    - apk add grep
+    - >
+      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" pre.yaml)
+    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+
+#########################################
 
 ############################ CI JOBS ################################
 #####################################################################
