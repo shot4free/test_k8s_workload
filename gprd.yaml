@@ -3,6 +3,7 @@
 registry:
   image:
     tag: '2.7.1'
+  maxReplicas: 150
   resources:
     requests:
       memory: 476Mi  # == 500MB
