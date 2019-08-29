@@ -1,6 +1,10 @@
 gcs:
   bucket: gitlab-pre-registry
   keyfile: /etc/docker/registry/storage/gcs.json
-  maintenance:
-    uploadpurging:
-      enabled: false
+maintenance:
+  uploadpurging:
+    enabled: false
+cache:
+  blobdescriptor: 'inmemory'
+delete:
+  enabled: true
