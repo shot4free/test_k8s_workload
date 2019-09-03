@@ -52,6 +52,7 @@ spec:
               protocol: TCP
           args:
             - "--module=http-forwarded"
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -66,3 +67,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        - name: conf
+          configMap:
+            name: nginx

@@ -17,16 +17,14 @@ spec:
     - secretName: {{ .secretName }}
   {{- end }}
 {{- end }}
+  backend:
+    serviceName: {{ $fullName }}
+    servicePort: {{ .Values.service.port }}
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
+    - http:
         paths:
-        {{- range .paths }}
-          - path: {{ . }}
+          - path: /*
             backend:
               serviceName: {{ $fullName }}
-              servicePort: http
-        {{- end }}
-  {{- end }}
+              servicePort: {{ .Values.service.port }}
 {{- end }}
