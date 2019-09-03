@@ -22,7 +22,7 @@ service:
   type: NodePort
   port: 80
   annotations:
-    beta.cloud.google.com/backend-config: '{"ports": {"80":"http"}}'
+    beta.cloud.google.com/backend-config: '{"ports": {"80":"plantuml"}}'
 
 ingress:
   enabled: true
