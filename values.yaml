@@ -5,14 +5,15 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: plantuml/plantuml-server
+  tag: latest
   pullPolicy: IfNotPresent
 
 nginx_sidecar:
   repository: nginx
   tag: 1.17
-  image: nginx:1.17
+  image: nginx
+  server_name: www.example.com
 
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +25,7 @@ service:
     beta.cloud.google.com/backend-config: '{"ports": {"80":"http"}}'
 
 ingress:
-  enabled: false
+  enabled: true
   annotations:
     kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.global-static-ip-name: plantuml-gke-pre
@@ -43,6 +44,9 @@ networkpolicy:
     enabled: false
     rules: []
   annotations: {}
+
+backendconfig:
+  enabled: false
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

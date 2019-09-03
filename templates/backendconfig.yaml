@@ -1,0 +1,16 @@
+{{- if .Values.backendconfig.enabled -}}
+{{- $fullName := include "plantuml.fullname" . -}}
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{ include "plantuml.labels" . | nindent 4 | trim }}
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
+{{- end -}}
