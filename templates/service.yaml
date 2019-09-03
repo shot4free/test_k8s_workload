@@ -12,9 +12,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: 80
       protocol: TCP
-      name: http
+      name: plantuml
   selector:
     app.kubernetes.io/name: {{ include "plantuml.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

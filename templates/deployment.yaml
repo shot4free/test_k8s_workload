@@ -70,4 +70,4 @@ spec:
       volumes:
         - name: conf
           configMap:
-            name: nginx
+            name: {{ include "plantuml.fullname" . }}
