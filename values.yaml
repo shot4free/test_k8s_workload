@@ -26,14 +26,8 @@ service:
 
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.allow-http: "false"
-    kubernetes.io/ingress.global-static-ip-name: plantuml-gke-pre
-
   tls:
     - secretName: plantuml-cert
-      hosts:
-        - chart-example.local
 
 networkpolicy:
   enabled: false
