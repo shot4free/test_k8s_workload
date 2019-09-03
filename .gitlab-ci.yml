@@ -1,0 +1,12 @@
+---
+
+image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:$CI_IMAGE_VERSION"
+
+stages:
+  - lint
+
+lint:
+  script:
+    - helm init --client-only
+    - helm repo add plantuml https://$GITLAB_ENDPOINT/gitlab-com/gl-infra/charts/plantuml/raw/$CI_COMMIT_REF_NAME/
+    - helm lint
