@@ -4,7 +4,7 @@ stages:
   - test
 
 lint:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:$CI_IMAGE_VERSION"
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base
   stage: test
   script:
     - helm init --client-only
