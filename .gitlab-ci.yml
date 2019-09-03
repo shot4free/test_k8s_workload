@@ -8,5 +8,5 @@ lint:
   stage: test
   script:
     - helm init --client-only
-    - helm repo add plantuml https://$CI_PROJECT_URL/raw/$CI_COMMIT_REF_NAME/
+    - helm repo add plantuml $CI_PROJECT_URL/raw/$CI_COMMIT_REF_NAME/
     - helm lint
