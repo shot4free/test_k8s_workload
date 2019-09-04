@@ -103,10 +103,37 @@ if [[ -n ${CI:-} ]]; then
   )
 fi
 
+helm_diff() {
+  debug "-- Helm Diff --" "${_CYN}"
+  helm_opts=(
+    "--detailed-exitcode"
+    "--suppress-secrets"
+    "--namespace" "${NAMESPACE}"
+    "--version" "$DEFINED_CHART_VERSION"
+    "${HELM_OPTS_VALUES[@]}"
+    "${helm_opts_values[@]}"
+    "$NAME"
+    "gitlab/${CHART}"
+  )
+
+  set -x +e
+  helm tiller run helm diff upgrade "${helm_opts[@]}"
+  RC=$?
+  set +x -e
+  if [[ $RC != 0 ]]; then
+    debug "Changes found!" "${_YEL}"
+  else
+    debug "No changes found." "${_GRN}"
+  fi
+  debug "-------" "${_CYN}"
+}
+
 case "$ACTION" in
   install | upgrade)
     overview
     get_gitlab_chart "$charts_dir"
+
+    helm_diff
 
     helm_opts=(
       "$extracted_charts_dir"

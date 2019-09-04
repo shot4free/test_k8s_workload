@@ -9,20 +9,20 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v1.7.0'
+    ref: 'v1.8.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v1.7.0'
+    ref: 'v1.8.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v1.7.0'
+    ref: 'v1.8.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.7.0'
+    ref: 'v1.8.0'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.7.0'
+  CI_IMAGE_VERSION: 'v1.8.0'
 
 #############################################################
 
@@ -76,35 +76,7 @@ container_scanning:
 # except they read the tag version from the corresponding
 # environment file
 
-gprd_container_scanning:
-  extends:
-    - container_scanning
-    - .except-ops
-  variables:
-    GIT_STRATEGY: fetch
-  stage: check
-  before_script:
-    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
-    - apk add grep
-    - >
-      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gprd.yaml)
-    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
-
-gstg_container_scanning:
-  extends:
-    - container_scanning
-    - .except-ops
-  variables:
-    GIT_STRATEGY: fetch
-  stage: check
-  before_script:
-    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
-    - apk add grep
-    - >
-      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gstg.yaml)
-    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
-
-pre_container_scanning:
+pre_container_scan:
   extends:
     - container_scanning
     - .except-ops
@@ -118,6 +90,34 @@ pre_container_scanning:
       export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" pre.yaml)
     - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
 
+gstg_container_scan:
+  extends:
+    - container_scanning
+    - .except-ops
+  variables:
+    GIT_STRATEGY: fetch
+  stage: check
+  before_script:
+    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
+    - apk add grep
+    - >
+      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gstg.yaml)
+    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+
+gprd_container_scan:
+  extends:
+    - container_scanning
+    - .except-ops
+  variables:
+    GIT_STRATEGY: fetch
+  stage: check
+  before_script:
+    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
+    - apk add grep
+    - >
+      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gprd.yaml)
+    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
+
 #########################################
 
 ############################ CI JOBS ################################
@@ -125,7 +125,7 @@ pre_container_scanning:
 
 ### PreProd
 
-upgrade_pre_dryrun:
+pre_dryrun:
   stage: dryrun
   extends:
     - .deploy
@@ -133,7 +133,7 @@ upgrade_pre_dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-upgrade_pre:
+pre_upgrade:
   stage: deploy
   extends:
     - .deploy
@@ -146,7 +146,7 @@ upgrade_pre:
 
 ### Staging
 
-upgrade_staging_dryrun:
+gstg_dryrun:
   stage: dryrun
   extends:
     - .deploy
@@ -154,7 +154,7 @@ upgrade_staging_dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-upgrade_staging:
+gstg_upgrade:
   stage: deploy
   extends:
     - .deploy
@@ -167,7 +167,7 @@ upgrade_staging:
 
 ### Canary
 
-upgrade_canary_dryrun:
+canary_dryrun:
   stage: dryrun
   extends:
     - .deploy
@@ -175,7 +175,7 @@ upgrade_canary_dryrun:
   script:
     - bin/k-ctl -D -s cny upgrade
 
-upgrade_canary:
+canary_upgrade:
   stage: deploy-canary
   extends:
     - .deploy
@@ -188,7 +188,7 @@ upgrade_canary:
 
 ### Producion
 
-upgrade_production_dryrun:
+gprd_dryrun:
   stage: dryrun
   extends:
     - .deploy
@@ -196,7 +196,7 @@ upgrade_production_dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-upgrade_production:
+gprd_upgrade:
   stage: deploy-production
   extends:
     - .deploy
