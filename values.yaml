@@ -414,6 +414,13 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: true
+  deployment:
+    readinessProbe:
+      path: /debug/health
+      port: 5001
+    livenessProbe:
+      path: /debug/health
+      port: 5001
   networkpolicy:
     enabled: true
     egress:
