@@ -457,7 +457,7 @@ registry:
     storagedriver:
       enabled: true
       interval: '10s'
-      threshold: '3'
+      threshold: 3
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
