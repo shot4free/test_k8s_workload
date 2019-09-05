@@ -505,3 +505,5 @@ gitlab:
     enabled: false
   gitlab-monitor:
     enabled: false
+  gitlab-exporter:
+    enabled: false
