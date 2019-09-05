@@ -54,6 +54,22 @@ role above:
 `kubectl create clusterrolebinding k8s-workloads --clusterrole=cluster-admin
 --user=<SERVICE_ACCOUNT_EMAIL_ADDRESS>`
 
+## Kubernetes integration on ops.gitlab.net
+
+Each Kubernetes cluster is connected to the ops.gitlab.net instance
+by GitLab's own Kubernetes integration. The cluster is added manually
+by following the following steps
+[to add an existing kubernetes cluster](https://docs.gitlab.com/ee/user/project/clusters/#add-existing-kubernetes-cluster)
+
+A service account with cluster-admin privileges is needed for the integration,
+this is created by applying `gitlab-admin-service-account.yaml` in the
+`input/<env>` directory
+
+* Ensure that `RBAC-enabled cluster` and `GitLab-managed cluster` are **not**
+  checked
+* For the `Project namespace (optional, unique)` use the project's namespace,
+  in this case `gitlab`
+
 ## Create/Apply Configurations
 
 At this moment, we use our own helm charts to generate the Kubernetes
