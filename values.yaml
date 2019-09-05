@@ -453,7 +453,11 @@ registry:
     key: config
     extraKey: gcs.json
   tokenIssuer: omnibus-gitlab-issuer
-
+  health:
+    storagedriver:
+      enabled: true
+      interval: '10s'
+      threshold: '3'
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
