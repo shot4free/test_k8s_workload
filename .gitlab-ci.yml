@@ -42,6 +42,11 @@ variables:
     name: gstg
     url: https://staging.gitlab.com
 
+.gprd-cny:
+  environment:
+    name: gprd-cny
+    url: https://gitlab.com
+
 .gprd:
   environment:
     name: gprd
@@ -171,7 +176,7 @@ gprd-cny:dryrun:
   stage: dryrun
   extends:
     - .deploy
-    - .gprd
+    - .gprd-cny
   script:
     - bin/k-ctl -D -s cny upgrade
 
@@ -179,7 +184,7 @@ gprd-cny:upgrade:
   stage: gprd-cny:deploy
   extends:
     - .deploy
-    - .gprd
+    - .gprd-cny
   script:
     - bin/k-ctl -s cny upgrade
   only:
