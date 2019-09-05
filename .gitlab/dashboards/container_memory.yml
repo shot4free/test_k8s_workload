@@ -1,0 +1,12 @@
+dashboard: 'Container memory'
+panel_groups:
+  - group: 'memory'
+    panels:
+      - type: area-chart
+        title: "Container memory usage in bytes"
+        y_label: "bytes"
+        metrics:
+          - id: container_memory_usage_bytes
+            query_range: 'container_memory_usage_bytes{environment=%{ci_environment_slug}}'
+            label: "Container memory usage"
+            unit: "bytes"
