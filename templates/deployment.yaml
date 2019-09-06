@@ -4,6 +4,8 @@ metadata:
   name: {{ include "plantuml.fullname" . }}
   labels:
     {{ include "plantuml.labels" . | indent 4 | trim }}
+  annotations:
+    {{ toYaml .Values.deployment.annotations | nindent 4 | trim }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -15,6 +17,8 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "plantuml.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        {{ toYaml .Values.annotations | nindent 6 | trim }}
     spec:
       containers:
         - name: nginx
