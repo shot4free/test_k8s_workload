@@ -27,11 +27,11 @@ spec:
           # using favicon.ico for a simple check
           livenessProbe:
             httpGet:
-              path: /favicon.ico
+              path: /png
               port: 80
           readinessProbe:
             httpGet:
-              path: /favicon.ico
+              path: /png
               port: 80
           resources:
             limits:
