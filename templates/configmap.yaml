@@ -11,7 +11,7 @@ data:
       listen [::]:{{ .Values.service.port }} default_server;
 
       server_name {{ .Values.nginx_sidecar.server_name }};
-
+      server_tokens off;
       location / {
           return 301 {{ .Values.nginx_sidecar.redirect_url }};
       }
@@ -28,6 +28,8 @@ data:
         }
         proxy_pass http://localhost:8080/png;
         proxy_hide_header access-control-allow-origin;
+        proxy_hide_header x-powered-by;
+
         add_header X-Frame-Options SAMEORIGIN always;
       }
     }
