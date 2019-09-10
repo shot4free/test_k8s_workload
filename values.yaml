@@ -20,6 +20,15 @@ nginx_sidecar:
   server_name: www.example.com
   redirect_url: https://redirect.example.com
   resources: {}
+  # Note: that rate limits are per-pod
+  rate_limit:
+    enabled: true
+    rate: '10r/s'
+    burst: '20'
+    # State information for about 16,000 IP addresses takes 1 megabyte,
+    # so the zone for png images can store about 160,000 addresses
+    zone_size: '10m'
+    status_code: '429'
 
 nameOverride: ""
 fullnameOverride: ""
