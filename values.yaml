@@ -413,6 +413,7 @@ postgresql:
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
+  draintimeout: '60s'
   enabled: true
   deployment:
     readinessProbe:
