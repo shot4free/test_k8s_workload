@@ -413,7 +413,15 @@ postgresql:
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
+  draintimeout: '60s'
   enabled: true
+  deployment:
+    readinessProbe:
+      path: /debug/health
+      port: 5001
+    livenessProbe:
+      path: /debug/health
+      port: 5001
   networkpolicy:
     enabled: true
     egress:
