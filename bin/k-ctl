@@ -32,7 +32,7 @@ else
   # Grab the CI image version from  the .gitlab-ci.yml
   _BBLK="\\033[1;30m"
   _NORM="\\033[0m"
-  version=$(grep -Po "(?<=CI_IMAGE_VERSION: ')[^']*" .gitlab-ci.yml)
+  version=$(sed -E -e "s/[[:space:]]+CI_IMAGE_VERSION:[[:space:]]'(v[0-9\\.]+)'/\\1/" -e "t" -e "d" .gitlab-ci.yml)
   echo -e "${_BBLK}Sourcing version $version of the common shell script"
   echo -e "if you want to use a local version set COMMON_SCRIPT_PATH to the location of common.bash"
   echo -e "or update .gitlab-ci.yml to set a new version${_NORM}"
