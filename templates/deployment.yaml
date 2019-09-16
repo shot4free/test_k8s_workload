@@ -21,6 +21,19 @@ spec:
         {{ toYaml .Values.annotations | nindent 6 | trim }}
     spec:
       containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: web
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          args:
+            - "-Djetty.port={{ .Values.port }}"
+            - "--module=http-forwarded"
+          resources:
+            {{ toYaml .Values.resources | nindent 12 | trim }}
+        {{- if .Values.nginx_sidecar.enabled }}
         - name: nginx
           image: "{{ .Values.nginx_sidecar.repository }}:{{ .Values.nginx_sidecar.tag }}"
           imagePullPolicy: IfNotPresent
@@ -42,17 +55,7 @@ spec:
           volumeMounts:
             - mountPath: /etc/nginx/conf.d
               name: conf
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: web
-              containerPort: 8080
-              protocol: TCP
-          args:
-            - "--module=http-forwarded"
-          resources:
-            {{ toYaml .Values.resources | nindent 12 | trim }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -65,7 +68,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+    {{- if .Values.nginx_sidecar.enabled }}
       volumes:
         - name: conf
           configMap:
             name: {{ include "plantuml.fullname" . }}
+    {{- end }}
