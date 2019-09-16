@@ -1,13 +1,16 @@
+{{- if .Values.nginx_sidecar.enabled -}}
+{{- $values := .Values -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "plantuml.fullname" . }}
   labels:
     {{ include "plantuml.labels" . | indent 4 | trim }}
+{{- with .Values.nginx_sidecar }}
 data:
   nginx.conf: |
-    {{- if .Values.nginx_sidecar.rate_limit.enabled }}
-    limit_req_zone $http_x_forwarded_for zone=pnglimit:{{ .Values.nginx_sidecar.rate_limit.zone_size }} rate={{ .Values.nginx_sidecar.rate_limit.rate }};
+    {{- if .rate_limit.enabled }}
+    limit_req_zone $http_x_forwarded_for zone=rlimit:{{ .rate_limit.zone_size }} rate={{ .rate_limit.rate }};
     {{- end }}
     log_format json_combined escape=json
     '{'
@@ -30,34 +33,41 @@ data:
       '"connections_waiting": "$connections_waiting"'
     '}';
     server {
-      listen {{ .Values.service.port }} default_server;
-      listen [::]:{{ .Values.service.port }} default_server;
+      listen {{ .port | default $values.service.port }} default_server;
+      listen [::]:{{ .port | default $values.service.port }} default_server;
 
-      server_name {{ .Values.nginx_sidecar.server_name }};
+      server_name {{ .server_name }};
       access_log /var/log/nginx/access.log json_combined;
       server_tokens off;
+      {{- if .redirect.enabled }}
       location / {
-          return 301 {{ .Values.nginx_sidecar.redirect_url }};
+          return 301 {{ .redirect.url }};
       }
-
-      location /png {
-        {{- if .Values.nginx_sidecar.rate_limit.enabled }}
-        limit_req zone=pnglimit burst={{ .Values.nginx_sidecar.rate_limit.burst }} nodelay;
-        limit_req_status {{ .Values.nginx_sidecar.rate_limit.status_code }};
+      {{- end }}
+      location ~ ^/({{ join "|" .enabled_urls }}) {
+        {{- if .rate_limit.enabled }}
+        limit_req zone=rlimit burst={{ .rate_limit.burst }} nodelay;
+        limit_req_status {{ .rate_limit.status_code }};
         {{- end }}
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        {{- range .set_headers }}
+        proxy_set_header {{ . }};
+        {{- end }}
         if ($http_x_forwarded_proto = 'http') {
              return 301 https://$server_name$request_uri;
         }
-        limit_except GET {
+        {{- if .limit_except.enabled }}
+        limit_except {{ join " " .limit_except.req_methods }} {
             deny all;
         }
-        proxy_pass http://localhost:8080/png;
-        proxy_hide_header access-control-allow-origin;
-        proxy_hide_header x-powered-by;
-
-        add_header X-Frame-Options SAMEORIGIN always;
+        {{- end }}
+        proxy_pass http://localhost:{{ .proxy_port | default $values.port }};
+        {{- range .hide_headers }}
+        proxy_hide_header {{ . }};
+        {{- end }}
+        {{- range .add_headers }}
+        add_header {{ . }};
+        {{- end }}
       }
     }
+{{- end }}
+{{- end }}

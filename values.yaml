@@ -5,7 +5,7 @@
 minReplicas: 2
 maxReplicas: 10
 maxUnavailable: 1
-
+port: 8080
 annotations: {}
 
 image:
@@ -14,11 +14,20 @@ image:
   pullPolicy: IfNotPresent
 
 nginx_sidecar:
+  enabled: true
+  # Defaults to the service port
+  # port: 80
+  # Defaults to the application port, 8080
+  # proxy_port: 8080
   repository: nginx
   tag: 1.17
   image: nginx
   server_name: www.example.com
-  redirect_url: https://redirect.example.com
+  # If no location matches, set this to a
+  # URL for redirect
+  redirect:
+    enabled: true
+    url: https://redirect.example.com
   resources: {}
   # Note: that rate limits are per-pod
   rate_limit:
@@ -30,6 +39,44 @@ nginx_sidecar:
     zone_size: '10m'
     status_code: '429'
 
+  # Limit request methods
+  # By default limit to just GET requests
+  # if you the /uml endpoint is enabled
+  # POST needs to be added to this list
+  limit_except:
+    enabled: true
+    req_methods:
+      - GET
+
+  # Enabled URLs, by default only
+  # /png is enabled for generating
+  # diagrams
+  #
+  # !Important! `png` is
+  # required for the livenss check
+  # and must be included
+  enabled_urls:
+    - png
+    # - uml
+    # - proxy
+
+  # The following headers are added
+  # by PlantUML and will be removed
+  # on the response.
+  # Note: x-powered-by exposes the
+  #       server version
+  hide_headers:
+    - access-control-allow-origin
+    - x-powered-by
+  # Additional headers to add to the
+  # response
+  add_headers:
+    - X-Frame-Options SAMEORIGIN always
+  set_headers:
+    - 'X-Forwarded-Host $host'
+    - 'X-Real-IP $remote_addr'
+    - 'X-Forwarded-For $proxy_add_x_forwarded_for'
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -39,8 +86,7 @@ deployment:
 service:
   type: NodePort
   port: 80
-  annotations:
-    beta.cloud.google.com/backend-config: '{"ports": {"80":"plantuml"}}'
+  annotations: {}
 
 ingress:
   enabled: true
@@ -58,6 +104,9 @@ networkpolicy:
   annotations: {}
 
 backendconfig:
+  enabled: false
+
+hpa:
   enabled: false
 
 resources: {}
