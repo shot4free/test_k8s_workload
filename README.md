@@ -20,6 +20,7 @@ and their default values.
 | Parameter | Description | Default |
 | --------- | ----------- | ------- |
 | `image.tag` | Tagged version of PlantUML | `latest` |
+| `image.sha256` | Use sha256 instead of a tag | _none_ |
 | `nginx_sidecar.enabled` | Enables the nginx sidecar container | true |
 | `nginx_sidecar.server_name` | Endpoint of the PlantUML server | `example.com` |
 | `nginx_sidecar.redirect.enabled` | Enable a default redirect for a non-matching URL | true |

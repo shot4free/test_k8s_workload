@@ -10,6 +10,10 @@ annotations: {}
 
 image:
   repository: plantuml/plantuml-server
+  # Use sha256 instead of a tag, this is the only option
+  # for using a stable image until there is an
+  # official tag upstream
+  # sha256:
   tag: latest
   pullPolicy: IfNotPresent
 
