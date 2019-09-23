@@ -71,52 +71,37 @@ container_scanning:
   # the different environments.
   except:
     - branches
+  variables:
+    GIT_STRATEGY: fetch
+    CI_APPLICATION_REPOSITORY: library/registry
 
 # The following environment jobs are identical
 # except they read the tag version from the corresponding
 # environment file
 
 pre:container_scan:
+  variables:
+    CI_APPLICATION_TAG: 2.7.1
   extends:
     - container_scanning
     - .except-ops
-  variables:
-    GIT_STRATEGY: fetch
   stage: check
-  before_script:
-    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
-    - apk add grep
-    - >
-      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" pre.yaml)
-    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
 
 gstg:container_scan:
+  variables:
+    CI_APPLICATION_TAG: 2.7.1
   extends:
     - container_scanning
     - .except-ops
-  variables:
-    GIT_STRATEGY: fetch
   stage: check
-  before_script:
-    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
-    - apk add grep
-    - >
-      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gstg.yaml)
-    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
 
 gprd:container_scan:
+  variables:
+    CI_APPLICATION_TAG: 2.7.1
   extends:
     - container_scanning
     - .except-ops
-  variables:
-    GIT_STRATEGY: fetch
   stage: check
-  before_script:
-    - export CI_APPLICATION_REPOSITORY=docker.io/library/registry
-    - apk add grep
-    - >
-      export CI_APPLICATION_TAG=$(grep -Po "(?<=tag: ')[^']*" gprd.yaml)
-    - echo "Scanning $CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
 
 #########################################
 

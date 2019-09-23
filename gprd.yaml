@@ -2,7 +2,11 @@
 
 registry:
   image:
-    tag: '2.7.1'
+    # Note: if this version changes you must
+    # also update the corresponding
+    # CI_APPLICATION_TAG for this environment
+    # in the container_scanning job
+    tag: 2.7.1
   maxReplicas: 150
   resources:
     requests:
