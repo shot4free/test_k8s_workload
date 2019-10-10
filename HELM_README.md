@@ -50,7 +50,7 @@ kubectl create secret generic gitlab-mailroom-imap-pass --namespace=gitlab  \
   --from-literal=secret=$incoming_pass
 
 > **Note:** this is not needed for the PreProd environment
-kubectl create secret generic gitlab-redis-secret --namespace=gitlab  \
+kubectl create secret generic gitlab-redis-credential --namespace=gitlab  \
   --from-literal=secret=$redis_pass
 ```
 
