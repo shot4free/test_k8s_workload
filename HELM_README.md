@@ -49,7 +49,7 @@ redis_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
 kubectl create secret generic gitlab-mailroom-secret --namespace=gitlab  \
   --from-literal=secret=$incoming_pass
 
-## Note: this is not needed for the PreProd environment
+> **Note:** this is not needed for the PreProd environment
 kubectl create secret generic gitlab-redis-secret --namespace=gitlab  \
   --from-literal=secret=$redis_pass
 ```
