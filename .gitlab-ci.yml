@@ -89,7 +89,8 @@ pre:container_scan:
 
 gstg:container_scan:
   variables:
-    CI_APPLICATION_TAG: 2.7.1
+    CI_APPLICATION_TAG: v2.7.2-gitlab
+    CI_APPLICATION_REPOSITORY: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
   extends:
     - container_scanning
     - .except-ops

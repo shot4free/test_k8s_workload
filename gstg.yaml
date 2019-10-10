@@ -6,4 +6,5 @@ registry:
     # also update the corresponding
     # CI_APPLICATION_TAG for this environment
     # in the container_scanning job
-    tag: 2.7.1
+    tag: v2.7.2-gitlab
+    repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
