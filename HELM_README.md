@@ -44,7 +44,7 @@ incoming_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_EN
   | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".incoming_email_password')
 
 redis_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
-  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".redis_password'
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".redis_password')
 
 kubectl create secret generic gitlab-mailroom-imap-pass --namespace=gitlab  \
   --from-literal=secret=$incoming_pass
