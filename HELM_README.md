@@ -11,6 +11,49 @@ created, namely secrets. The guide below will assist us with inputting the
 manual generated configuration into our cluster as well as generating the
 configurations to be handled via CI.
 
+## Mailroom
+
+The Mailroom subchart runs the mailroom application which is a standalone
+gem, separate from the GitLab application code. It polls an IMAP mailbox for
+incoming mail and adds them to a redis queue for processing by GitLab.
+
+### Secrets for the MailRoom service
+
+The Mailroom service requires two secrets, one for mail authentication
+and another for redis.
+
+_Note that the PreProd environment uses cloud memorystore which does
+[not support redis auth](https://stackoverflow.com/questions/52122294/how-to-add-password-to-google-cloud-memorystore),
+access is granted by network_
+
+For example, to copy secrets from the preprod environment for minikube:
+
+```
+## Example
+export REMOTE_ENV="pre"
+export CHEF_REPO="$HOME/workspace/chef-repo"
+```
+
+1. The imap account credentials and redis password
+   can be copied from one of the existing GitLab environments.
+   From the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/)
+   project, using the gkms helper script.
+
+```
+incoming_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".incoming_email_password')
+
+redis_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".redis_password'
+
+kubectl create secret generic gitlab-mailroom-secret --namespace=gitlab  \
+  --from-literal=secret=$incoming_pass
+
+## Note: this is not needed for the PreProd environment
+kubectl create secret generic gitlab-redis-secret --namespace=gitlab  \
+  --from-literal=secret=$redis_pass
+```
+
 ## Container Registry
 
 In order to work with the existing omnibus installation of GitLab.com, we will

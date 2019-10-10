@@ -7,3 +7,26 @@ registry:
     # CI_APPLICATION_TAG for this environment
     # in the container_scanning job
     tag: 2.7.1
+
+mailroom:
+  image:
+    tag: 0.9.1
+
+gitlab:
+  mailroom:
+    enabled: true
+
+global:
+  appConfig:
+    incomingEmail:
+      enabled: true
+      # Note: The address needs to be updated after
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8127
+      # is resolved
+      address: "incoming-pre+%{key}@gitlab.com"
+      user: "incoming-pre@gitlab.com"
+  redis:
+    password:
+      enabled: false
+    host: "10.232.7.3"
+    port: 6379
