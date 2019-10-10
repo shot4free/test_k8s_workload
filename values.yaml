@@ -67,7 +67,7 @@ global:
   redis:
     password:
       enabled: true
-      secret: gitlab-redis-secret
+      secret: gitlab-redis-credential
       key: secret
     # host: redis.hostedsomewhere.else
     # port: 6379
@@ -183,7 +183,7 @@ global:
       startTls: false
       user: ""
       password:
-        secret: "gitlab-mailroom-secret"
+        secret: "gitlab-mailroom-imap-pass"
         key: password
       mailbox: inbox
       idleTimeout: 60
@@ -516,4 +516,4 @@ gitlab:
   gitlab-exporter:
     enabled: false
   mailroom:
-    enabled: true
+    enabled: false
