@@ -8,3 +8,5 @@ registry:
     # in the container_scanning job
     tag: v2.7.2-gitlab
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
+    pullSecrets:
+    - name: dev-registry-access
