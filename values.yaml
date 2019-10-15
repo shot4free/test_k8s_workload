@@ -415,6 +415,8 @@ postgresql:
 registry:
   image:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
+    pullSecrets:
+    - name: dev-registry-access
   draintimeout: '60s'
   enabled: true
   deployment:
