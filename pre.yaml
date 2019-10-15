@@ -7,5 +7,3 @@ registry:
     # CI_APPLICATION_TAG for this environment
     # in the container_scanning job
     tag: v2.7.2-gitlab
-    pullSecrets:
-    - name: dev-registry-access
