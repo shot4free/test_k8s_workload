@@ -37,8 +37,14 @@ The instructions below cover these details.
 :warning: This guide assumes you are connected to the appropriate Kubernetes
 cluster :warning:
 
-These steps assume that secrets are copied from one of the existing
-environments.
+The following secrets are needed for the Registry service:
+
+* `registry-storage`: For accessing object storage, local to the registry service and contains the json credential for the service account
+* `registry-httpsecret`: Random data used to sign state, local to the registry service
+* `registry-certificate`: Used for signing tokens
+* `dev-registry-access`: Deploy token used for pulling down the GitLab fork of the Registry image
+
+Follow these steps to bootstrap secrets, it is assumed that secrets are copied from one of the existing environments.
 
 For example, to copy secrets from the preprod environment for minikube:
 
@@ -90,6 +96,16 @@ kubectl create secret generic registry-httpsecret \
 kubectl create secret generic registry-certificate \
   --namespace=gitlab \
   --from-file=registry-auth.crt=registry-auth.crt
+```
+
+The deploy token for pulling the registry image can be found in the 1password production vault:
+
+```
+kubectl create secret docker-registry dev-registry-access \
+  --namespace=gitlab \
+  --docker-server=dev.gitlab.org:5005 \
+  --docker-username=k8s-workloads-deploy-token \
+  --docker-password=<token value from 1password>
 ```
 
 ## Deploy
