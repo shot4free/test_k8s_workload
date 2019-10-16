@@ -8,13 +8,11 @@ registry:
     # in the container_scanning job
     tag: v2.7.2-gitlab
 
-mailroom:
-  image:
-    tag: 0.9.1
-
 gitlab:
   mailroom:
     enabled: true
+    image:
+      tag: 0.9.1
 
 global:
   appConfig:

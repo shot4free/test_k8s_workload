@@ -521,3 +521,7 @@ gitlab:
     enabled: false
   mailroom:
     enabled: false
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
+      pullSecrets:
+      - name: dev-registry-access
