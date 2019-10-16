@@ -183,7 +183,7 @@ global:
       startTls: false
       user: ""
       password:
-        secret: "gitlab-mailroom-imap-pass"
+        secret: "gitlab-mailroom-imap"
         key: password
       mailbox: inbox
       idleTimeout: 60
