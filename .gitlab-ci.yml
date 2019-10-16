@@ -73,7 +73,7 @@ container_scanning:
     - branches
   variables:
     GIT_STRATEGY: fetch
-    CI_APPLICATION_REPOSITORY: library/registry
+    CI_APPLICATION_REPOSITORY: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
 
 # The following environment jobs are identical
 # except they read the tag version from the corresponding
@@ -81,7 +81,7 @@ container_scanning:
 
 pre:container_scan:
   variables:
-    CI_APPLICATION_TAG: 2.7.1
+    CI_APPLICATION_TAG: v2.7.2-gitlab
   extends:
     - container_scanning
     - .except-ops
@@ -89,7 +89,7 @@ pre:container_scan:
 
 gstg:container_scan:
   variables:
-    CI_APPLICATION_TAG: 2.7.1
+    CI_APPLICATION_TAG: v2.7.2-gitlab
   extends:
     - container_scanning
     - .except-ops
@@ -97,7 +97,7 @@ gstg:container_scan:
 
 gprd:container_scan:
   variables:
-    CI_APPLICATION_TAG: 2.7.1
+    CI_APPLICATION_TAG: v2.7.2-gitlab
   extends:
     - container_scanning
     - .except-ops
