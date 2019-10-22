@@ -417,6 +417,9 @@ registry:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
     - name: dev-registry-access
+  hpa:
+    cpu:
+      targetAverageUtilization: 80
   draintimeout: '60s'
   enabled: true
   deployment:
