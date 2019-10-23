@@ -97,7 +97,7 @@ gstg:container_scan:
 
 gprd:container_scan:
   variables:
-    CI_APPLICATION_TAG: v2.7.2-gitlab
+    CI_APPLICATION_TAG: v2.7.4-gitlab
   extends:
     - container_scanning
     - .except-ops
