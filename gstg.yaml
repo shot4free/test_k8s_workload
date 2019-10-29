@@ -19,7 +19,7 @@ global:
     incomingEmail:
       enabled: true
       address: "incoming-staging+%{key}@incoming.gitlab.com"
-      user: "incoming-staging@incoming.gitlab.com"
+      user: "incoming-staging@gitlab.com"
   redis:
     sentinels:
     - host: "redis-01-db-gstg.c.gitlab-staging-1.internal"
