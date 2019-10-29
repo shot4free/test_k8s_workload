@@ -18,11 +18,8 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-      # Note: The address needs to be updated after
-      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8127
-      # is resolved
-      address: "incoming-pre+%{key}@gitlab.com"
-      user: "incoming-pre@gitlab.com"
+      address: "incoming-pre+%{key}@incoming.gitlab.com"
+      user: "incoming-pre@incoming.gitlab.com"
   redis:
     password:
       enabled: false
