@@ -7,3 +7,24 @@ registry:
     # CI_APPLICATION_TAG for this environment
     # in the container_scanning job
     tag: v2.7.4-gitlab
+
+gitlab:
+  mailroom:
+    enabled: true
+    image:
+      tag: 0.9.1
+
+global:
+  appConfig:
+    incomingEmail:
+      enabled: true
+      address: "incoming-staging+%{key}@incoming.gitlab.com"
+      user: "incoming-staging@incoming.gitlab.com"
+  redis:
+    sentinels:
+    - host: "redis-01-db-gstg.c.gitlab-staging-1.internal"
+      port: "26379"
+    - host: "redis-02-db-gstg.c.gitlab-staging-1.internal"
+      port: "26379"
+    - host: "redis-03-db-gstg.c.gitlab-staging-1.internal"
+      port: "26379"
