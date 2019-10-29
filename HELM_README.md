@@ -47,7 +47,7 @@ redis_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
   | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".redis_password')
 
 kubectl create secret generic gitlab-mailroom-imap --namespace=gitlab  \
-  --from-literal=secret=$incoming_pass
+  --from-literal=password=$incoming_pass
 
 > **Note:** this is not needed for the PreProd environment
 kubectl create secret generic gitlab-redis-credential --namespace=gitlab  \
