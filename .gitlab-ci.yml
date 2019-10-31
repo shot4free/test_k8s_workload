@@ -81,7 +81,7 @@ container_scanning:
 
 pre:container_scan:
   variables:
-    CI_APPLICATION_TAG: v2.7.4-gitlab
+    CI_APPLICATION_TAG: v2.7.5-gitlab
   extends:
     - container_scanning
     - .except-ops
@@ -89,7 +89,7 @@ pre:container_scan:
 
 gstg:container_scan:
   variables:
-    CI_APPLICATION_TAG: v2.7.4-gitlab
+    CI_APPLICATION_TAG: v2.7.5-gitlab
   extends:
     - container_scanning
     - .except-ops
