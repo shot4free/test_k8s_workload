@@ -6,7 +6,7 @@ registry:
     # also update the corresponding
     # CI_APPLICATION_TAG for this environment
     # in the container_scanning job
-    tag: v2.7.4-gitlab
+    tag: v2.7.5-gitlab
   hpa:
     maxReplicas: 150
   resources:
