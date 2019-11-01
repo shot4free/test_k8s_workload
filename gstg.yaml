@@ -18,7 +18,7 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-      address: "incoming-staging+%{key}@incoming.gitlab.com"
+      address: "incoming-staging+%{key}@gitlab.com"
       user: "incoming-staging@gitlab.com"
   redis:
     host: "gstg-redis"
