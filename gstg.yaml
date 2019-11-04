@@ -21,11 +21,11 @@ global:
       address: "incoming-staging+%{key}@gitlab.com"
       user: "incoming-staging@gitlab.com"
   redis:
-    host: "gstg-redis"
+    host: "gstg-redis-sidekiq"
     sentinels:
-    - host: "redis-01-db-gstg.c.gitlab-staging-1.internal"
+    - host: "redis-sidekiq-01-db-gstg.c.gitlab-staging-1.internal"
       port: "26379"
-    - host: "redis-02-db-gstg.c.gitlab-staging-1.internal"
+    - host: "redis-sidekiq-02-db-gstg.c.gitlab-staging-1.internal"
       port: "26379"
-    - host: "redis-03-db-gstg.c.gitlab-staging-1.internal"
+    - host: "redis-sidekiq-03-db-gstg.c.gitlab-staging-1.internal"
       port: "26379"
