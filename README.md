@@ -69,7 +69,7 @@ to get started.
 ## Decisions
 
 One can read about how we've come to decide how this repository is setup by
-viewing our design document: https://about.gitlab.com/handbook/engineering/infrastructure/design/kubernetes-configuration/
+viewing our [design document](https://about.gitlab.com/handbook/engineering/infrastructure/library/kubernetes/configuration/).
 
 ## Working locally
 
