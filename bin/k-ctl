@@ -47,6 +47,26 @@ CHART_VERSION=${CHART_VERSION:-}
 DEFINED_CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
 echo -e "${_CYN}-- Using Chart Version: ${DEFINED_CHART_VERSION} --${_NORM}"
 
+create_version_from_ci() {
+  if [[ -n ${CI:-} ]]; then
+    ci_generated_conf="$dir/../ci.yaml"
+
+    cat <<EOF >"$ci_generated_conf"
+gitlab:
+  mailroom:
+    image:
+      tag: $MAILROOM_VERSION
+registry:
+  image:
+    tag: $REGISTRY_VERSION
+EOF
+
+    helm_opts_values+=(
+      "-f" "$ci_generated_conf"
+    )
+  fi
+}
+
 get_gitlab_chart() {
   local charts_dir=${1}
   pushd "$charts_dir"
@@ -112,7 +132,6 @@ helm_diff() {
     "--suppress-secrets"
     "--namespace" "${NAMESPACE}"
     "--version" "$DEFINED_CHART_VERSION"
-    "${HELM_OPTS_VALUES[@]}"
     "${helm_opts_values[@]}"
     "$NAME"
     "gitlab/${CHART}"
@@ -135,13 +154,14 @@ case "$ACTION" in
     overview
     get_gitlab_chart "$charts_dir"
 
+    create_version_from_ci
+
     helm_diff
 
     helm_opts=(
       "$extracted_charts_dir"
       "--namespace" "${NAMESPACE}"
       "${HELM_OPTS[@]}"
-      "${HELM_OPTS_VALUES[@]}"
       "${helm_opts_values[@]}"
     )
 
