@@ -527,4 +527,39 @@ gitlab:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       pullSecrets:
-      - name: dev-registry-access
+        - name: dev-registry-access
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+          # Allow DNS
+          - to:
+              - ipBlock:
+                  cidr: 10.0.0.0/8
+            ports:
+              - port: 53
+                protocol: UDP
+
+          # Allow IMAP
+          - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  except:
+                    - 10.0.0.0/8
+            ports:
+              - port: 993
+                protocol: TCP
+
+          # Allow Redis
+          - to:
+              - ipBlock:
+                  cidr: 10.0.0.0/8
+            ports:
+              # pre Memorystore instance
+              - port: 6379
+                protocol: TCP
+
+              # gstg, gprd
+              - port: 26379
+                protocol: TCP
