@@ -112,7 +112,6 @@ helm_diff() {
     "--suppress-secrets"
     "--namespace" "${NAMESPACE}"
     "--version" "$DEFINED_CHART_VERSION"
-    "${HELM_OPTS_VALUES[@]}"
     "${helm_opts_values[@]}"
     "$NAME"
     "gitlab/${CHART}"
@@ -141,7 +140,6 @@ case "$ACTION" in
       "$extracted_charts_dir"
       "--namespace" "${NAMESPACE}"
       "${HELM_OPTS[@]}"
-      "${HELM_OPTS_VALUES[@]}"
       "${helm_opts_values[@]}"
     )
 
