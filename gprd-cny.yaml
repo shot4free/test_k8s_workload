@@ -1,3 +1,10 @@
 ---
 
 # This value file can be used to override settings in the canary namespace
+
+# Mailroom is disabled on canary as we have no way to partition mails
+# for the canary stage
+
+gitlab:
+  mailroom:
+    enabled: false
