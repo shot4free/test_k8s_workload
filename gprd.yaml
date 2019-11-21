@@ -13,3 +13,25 @@ registry:
     requests:
       cpu: 200m
       memory: 476Mi  # == 500MB
+
+gitlab:
+  mailroom:
+    enabled: true
+    image:
+      tag: 0.9.1
+
+global:
+  appConfig:
+    incomingEmail:
+      enabled: true
+      address: "incoming+%{key}@incoming.gitlab.com"
+      user: "incoming@gitlab.com"
+  redis:
+    host: "gprd-redis-sidekiq"
+    sentinels:
+    - host: "redis-sidekiq-01-db-gprd.c.gitlab-production.internal"
+      port: "26379"
+    - host: "redis-sidekiq-02-db-gprd.c.gitlab-production.internal"
+      port: "26379"
+    - host: "redis-sidekiq-03-db-gprd.c.gitlab-production.internal"
+      port: "26379"
