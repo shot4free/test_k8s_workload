@@ -449,6 +449,9 @@ registry:
             except:
             - 10.0.0.0/8
             - 169.254.169.254/32
+  resources:
+    limits:
+      memory: 4G
   debug:
     addr:
       port: 5001
