@@ -14,30 +14,12 @@ gitlab:
     image:
       tag: 0.9.1
 
-  sidekiq:
-    enabled: true
-    image:
-      tag: 12-5-stable-ee
-
 global:
   appConfig:
     incomingEmail:
       enabled: true
       address: "incoming-pre+%{key}@incoming.gitlab.com"
       user: "incoming-pre@incoming.gitlab.com"
-
-  gitaly:
-    external:
-      - name: gitaly-01
-        hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
-        port: 9999
-
-  psql:
-    password:
-      secret: gitlab-postgresql-credential
-      key: secret
-    host: 10.48.96.3
-
   redis:
     password:
       enabled: false
