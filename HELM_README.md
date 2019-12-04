@@ -11,20 +11,15 @@ created, namely secrets. The guide below will assist us with inputting the
 manual generated configuration into our cluster as well as generating the
 configurations to be handled via CI.
 
-## Mailroom
+## GitLab Secrets
 
-The Mailroom subchart runs the mailroom application which is a standalone
-gem, separate from the GitLab application code. It polls an IMAP mailbox for
-incoming mail and adds them to a redis queue for processing by GitLab.
+In order to work with the existing omnibus installation of GitLab.com, we will
+need to bring in a few already configured items that exist in that environment.
+These items will ensure that when the Deployment is spun up inside of Kubernetes
+we interact appropriately with our existing infrastructure.
 
-### Secrets for the MailRoom service
-
-The Mailroom service requires two secrets, one for mail authentication
-and another for redis.
-
-_Note that the PreProd environment uses cloud memorystore which does
-[not support redis auth](https://stackoverflow.com/questions/52122294/how-to-add-password-to-google-cloud-memorystore),
-access is granted by network_
+:warning: This guide assumes you are connected to the appropriate Kubernetes
+cluster :warning:
 
 For example, to copy secrets from the preprod environment for minikube:
 
@@ -34,74 +29,119 @@ export REMOTE_ENV="pre"
 export CHEF_REPO="$HOME/workspace/chef-repo"
 ```
 
-1. The imap account credentials and redis password
-   can be copied from one of the existing GitLab environments.
-   From the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/)
-   project, using the gkms helper script.
+### Dev Registry Access
+
+In order to ensure that we can always pull our images, we override the location
+where our clusters pull images.  If GitLab.com were down, so would the ability
+to pull images.  Therefore, we must ensure the following secret is available to
+all clusters.
+
+* `dev-registry-access`: Deploy token used for pulling down the GitLab fork of
+  the Registry image
+
+The deploy token for pulling the registry image can be found in the 1password production vault:
 
 ```
-incoming_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
-  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".incoming_email_password')
+kubectl create secret docker-registry dev-registry-access \
+  --namespace=gitlab \
+  --docker-server=dev.gitlab.org:5005 \
+  --docker-username=k8s-workloads-deploy-token \
+  --docker-password=<token value from 1password>
+```
 
+### Postgresql
+
+```
+pg=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb.postgresql.sql_password')
+
+kubectl create secret generic gitlab-postgres-credential \
+  --namespace gitlab \
+  --from-literal=secret=$pg
+```
+
+### Redis
+
+_Note that the PreProd environment uses cloud memorystore which does
+[not support redis auth](https://stackoverflow.com/questions/52122294/how-to-add-password-to-google-cloud-memorystore),
+access is granted by network_
+
+```
 redis_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
   | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".redis_password')
-
-kubectl create secret generic gitlab-mailroom-imap --namespace=gitlab  \
-  --from-literal=password=$incoming_pass
 
 > **Note:** this is not needed for the PreProd environment
 kubectl create secret generic gitlab-redis-credential --namespace=gitlab  \
   --from-literal=secret=$redis_pass
 ```
 
-## Container Registry
+### Gitaly
 
-In order to work with the existing omnibus installation of GitLab.com, we will
-need to bring in a few already configured items that exist in that environment.
-These items will ensure that when the Container Registry is spun up inside of
-Kubernetes we interact appropriately with our existing infrastructure.  These
-include the following:
-  * The JWT Authentication mechanism, which includes the auth token itself, as
-    well as the certificate
-  * The default helm chart configures the JWT issuer differently than our
-    omnibus installation.  The values.yml file contains a change to make them
-    the same.
-      * In this case the `registry.tokenIssuer` must be set to match our omnibus
-        installation.
-  * The other difference is that it is necessary to disable the other services
-    The configuration in `values.yml` will have this configured.
-  * And then we simply need to ensure that the registry is configured to utilize
-    our existing object storage configuration.
+```
+gitaly=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".gitaly_token')
 
-The instructions below cover these details.
+kubectl create secret generic gitlab-gitaly-credential \
+  --namespace gitlab \
+  --from-literal=secret=$gitaly
+```
 
-### Secret for GCS Configuration
+### GitLab Rails
 
-:warning: This guide assumes you are connected to the appropriate Kubernetes
-cluster :warning:
+* Create a temporary file named `secrets.yml`, populate it with the following:
 
-The following secrets are needed for the Registry service:
+```yaml
+production:
+  secret_key_base: something
+  otp_key_base: something
+  db_key_base: something
+  openid_connect_signing_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    something
+    -----END RSA PRIVATE KEY-----
+```
+
+One can find the necessary values for the above in our chef vault.  Replace
+`something` with the value noted when finding the same key using the following
+command:
+
+```
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails"'
+```
+
+After the values are populated, simply run the following:
+
+```
+kubectl create secret generic gitlab-rails-secret --namespace gitlab --from-file secrets.yml
+```
+
+Delete this file from your workspace.
+
+
+### Mailroom
+
+The following secrets are needed for the Mailroom service:
+
+* `gitlab-mailroom-imap`: Provides IMAP credentials
+* `gitlab-redis-credential`: Provides credentials for redis
+  * The Redis credential is provided above
+
+```
+incoming_pass=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".incoming_email_password')
+
+kubectl create secret generic gitlab-mailroom-imap --namespace=gitlab  \
+  --from-literal=password=$incoming_pass
+```
+
+### Container Registry
+
+The following secrets are needed for the Container Registry service:
 
 * `registry-storage`: For accessing object storage, local to the registry service and contains the json credential for the service account
 * `registry-httpsecret`: Random data used to sign state, local to the registry service
 * `registry-certificate`: Used for signing tokens
-* `dev-registry-access`: Deploy token used for pulling down the GitLab fork of the Registry image
-
-Follow these steps to bootstrap secrets, it is assumed that secrets are copied from one of the existing environments.
-
-For example, to copy secrets from the preprod environment for minikube:
-
-```
-## Example
-export REMOTE_ENV="pre"
-export CHEF_REPO="$HOME/workspace/chef-repo"
-```
-
-1. The service account json for GCS is configured in secrets
-   and can be copied from one of the existing GitLab environments.
-   From the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/)
-   project, using the gkms helper script. Run the following to extract
-   the secrets:
 
 ```
 $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
@@ -117,14 +157,14 @@ $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
   jq -r '."omnibus-gitlab".ssl.internal_certificate' > registry-auth.crt
 ```
 
-2. Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with the
-   [example gcs config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
+Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with
+the [example gcs_config](https://gitlab.com/charts/gitlab/blob/master/examples/objectstorage/registry.gcs.yaml)
 
 ```
 cd input/$REMOTE_ENV
 ```
 
-3. Create the secrets
+Create the secrets
 
 ```
 kubectl create secret generic registry-storage \
@@ -139,16 +179,6 @@ kubectl create secret generic registry-httpsecret \
 kubectl create secret generic registry-certificate \
   --namespace=gitlab \
   --from-file=registry-auth.crt=registry-auth.crt
-```
-
-The deploy token for pulling the registry image can be found in the 1password production vault:
-
-```
-kubectl create secret docker-registry dev-registry-access \
-  --namespace=gitlab \
-  --docker-server=dev.gitlab.org:5005 \
-  --docker-username=k8s-workloads-deploy-token \
-  --docker-password=<token value from 1password>
 ```
 
 ## Deploy
