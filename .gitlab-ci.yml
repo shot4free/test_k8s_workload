@@ -31,6 +31,8 @@ variables:
   extends:
     - .except-com
     - .cluster-init-before-script
+  tags:
+    - release
 
 .pre:
   environment:
