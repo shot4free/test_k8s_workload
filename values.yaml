@@ -74,9 +74,9 @@ global:
 
   ## doc/charts/globals.md#configure-gitaly-settings
   gitaly:
-    authToken: {}
-      # secret:
-      # key:
+    authToken:
+      secret: gitlab-gitaly-credential
+      key: secret
     internal:
       names: ['default']
     external: []
@@ -139,23 +139,28 @@ global:
 
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
-      bucket: git-lfs
-      connection: {}
-        # secret:
-        # key:
+      enabled: false
+      proxy_download: true
+      connection:
+        secret: gitlab-object-storage
+        key: gitlab-object-storage.yml
     artifacts:
-      bucket: gitlab-artifacts
-      connection: {}
-        # secret:
-        # key:
+      enabled: false
+      connection:
+        secret: gitlab-object-storage
+        key: gitlab-object-storage.yml
     uploads:
-      bucket: gitlab-uploads
-      connection: {}
-        # secret:
-        # key:
+      enabled: false
+      proxy_download: true
+      connection:
+        secret: gitlab-object-storage
+        key: gitlab-object-storage.yml
     packages:
-      bucket: gitlab-packages
-      connection: {}
+      enabled: false
+      proxy_download: true
+      connection:
+        secret: gitlab-object-storage
+        key: gitlab-object-storage.yml
     externalDiffs:
       when:
       bucket: gitlab-mr-diffs

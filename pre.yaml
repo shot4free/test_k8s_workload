@@ -20,6 +20,31 @@ global:
       enabled: true
       address: "incoming-pre+%{key}@incoming.gitlab.com"
       user: "incoming-pre@incoming.gitlab.com"
+    lfs:
+      enabled: true
+      bucket: gitlab-pre-lfs-objects
+    artifacts:
+      enabled: true
+      bucket: gitlab-pre-artifacts
+    uploads:
+      enabled: true
+      bucket: gitlab-pre-uploads
+    packages:
+      enabled: true
+      bucket: gitlab-pre-packages-repo
+
+  gitaly:
+    external:
+      - name: gitaly-01
+        hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
+        port: 9999
+
+  psql:
+    password:
+      secret: gitlab-postgres-credential
+      key: secret
+    host: 10.48.96.3
+
   redis:
     password:
       enabled: false
