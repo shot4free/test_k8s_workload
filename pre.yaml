@@ -14,6 +14,11 @@ gitlab:
     image:
       tag: 0.9.1
 
+  sidekiq:
+    enabled: true
+    image:
+      tag: 12-5-stable-ee
+
 global:
   appConfig:
     incomingEmail:
