@@ -39,7 +39,8 @@ all clusters.
 * `dev-registry-access`: Deploy token used for pulling down the GitLab fork of
   the Registry image
 
-The deploy token for pulling the registry image can be found in the 1password production vault:
+The deploy token for pulling the registry image can be found in the 1password
+production vault:
 
 ```
 kubectl create secret docker-registry dev-registry-access \
@@ -49,11 +50,40 @@ kubectl create secret docker-registry dev-registry-access \
   --docker-password=<token value from 1password>
 ```
 
+### Object Storage
+
+We utilize object storage in a variety of ways, one of them is for `lfs`,
+`artifacts`, and `uploads`.  For this we need a differently formatted
+configuration file compared to the Container Registry.
+
+1. Create a file called `gitlab-object-storage.yml` with the following content:
+
+```yaml
+provider: Google
+google_json_key_string: |
+  {
+  }
+```
+
+1. The `google_json_key_string` can be found via:
+
+```
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."gitlab-server"."google-creds".json_base64' | base64 -d
+```
+
+1. Apply this handcraft file to the cluster:
+
+```
+kubectl create secret generic gitlab-object-storage \
+  --from-file gitlab-object-storage.yml
+```
+
 ### Postgresql
 
 ```
 pg=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
-  | jq -r '."omnibus-gitlab".gitlab_rb.postgresql.sql_password')
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".db_password')
 
 kubectl create secret generic gitlab-postgres-credential \
   --namespace gitlab \
@@ -154,7 +184,10 @@ HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV|
 
 
 $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
-  jq -r '."omnibus-gitlab".ssl.internal_certificate' > registry-auth.crt
+  jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
+
+$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
+  jq -r '."omnibus-gitlab".ssl.registry_private_key' > registry-auth.key
 ```
 
 Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with
@@ -178,7 +211,8 @@ kubectl create secret generic registry-httpsecret \
 
 kubectl create secret generic registry-certificate \
   --namespace=gitlab \
-  --from-file=registry-auth.crt=registry-auth.crt
+  --from-file=registry-auth.crt=registry-auth.crt \
+  --from-file=registry-auth.key=registry-auth.key
 ```
 
 ## Deploy
