@@ -45,9 +45,6 @@ global:
         port: 9999
 
   psql:
-    password:
-      secret: gitlab-postgres-credential
-      key: secret
     host: 10.48.96.3
 
   redis:
