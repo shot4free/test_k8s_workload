@@ -9,6 +9,10 @@ registry:
     tag: v2.7.5-gitlab
 
 gitlab:
+  gitlab:
+    email_from: notify@mg.pre.gitlab.com
+    email_reply_to:
+    url: pre.gitlab.com
   mailroom:
     enabled: true
     image:
@@ -18,6 +22,9 @@ gitlab:
     enabled: true
     image:
       tag: 12-5-stable-ee
+    registry:
+      host: registry.pre.gitlab.com
+      tokenIssuer: omnibus-gitlab-issuer
 
 global:
   appConfig:
