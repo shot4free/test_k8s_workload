@@ -91,19 +91,19 @@ global:
   ## Rails based portions of this chart share many settings
   appConfig:
     ## doc/charts/globals.md#general-application-settings
-    enableUsagePing: true
+    enableUsagePing:
     enableImpersonation:
     defaultCanCreateGroup: true
     usernameChangingEnabled: true
     issueClosingPattern:
     defaultTheme:
     defaultProjectsFeatures:
-      issues: true
-      mergeRequests: true
-      wiki: true
-      snippets: true
-      builds: true
-    webhookTimeout:
+      issues:
+      mergeRequests:
+      wiki:
+      snippets:
+      builds:
+    webhookTimeout: 3
 
     ## doc/charts/globals.md#cron-jobs-related-settings
     cron_jobs: {}
@@ -140,12 +140,15 @@ global:
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
       enabled: false
+      background_upload: true
       proxy_download: true
       connection:
         secret: gitlab-object-storage
         key: gitlab-object-storage.yml
     artifacts:
       enabled: false
+      background_upload: true
+      proxy_download: false
       connection:
         secret: gitlab-object-storage
         key: gitlab-object-storage.yml
@@ -277,7 +280,7 @@ global:
     subject_suffix: ''
 
   ## Timezone for containers.
-  time_zone: UTC
+  time_zone:
 
   ## Global Service Annotations
   service:
@@ -518,6 +521,10 @@ gitlab:
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: false
+    metrics:
+      enabled: true
+    trusted_proxies:
+      - 10.0.0.0/8
   # doc/charts/gitlab/gitaly
   gitaly:
     enabled: false
