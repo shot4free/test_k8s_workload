@@ -37,6 +37,10 @@ global:
     # hostSuffix:
     https: true
     ssh: ~
+    gitlab:
+      https: true
+    registry:
+      https: true
 
   ## doc/charts/globals.md#configure-ingress-settings
   ingress:
@@ -78,7 +82,7 @@ global:
       secret: gitlab-gitaly-credential
       key: secret
     internal:
-      names: ['default']
+      names: []
     external: []
 
   ## doc/charts/globals.md#configure-minio-settings
@@ -523,6 +527,8 @@ gitlab:
     enabled: false
     metrics:
       enabled: true
+    registry:
+      tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
   # doc/charts/gitlab/gitaly

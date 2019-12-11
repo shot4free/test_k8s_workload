@@ -84,6 +84,18 @@ kubectl create secret generic gitlab-object-storage \
   --from-file gitlab-object-storage.yml
 ```
 
+### Omniauth Configuration
+
+```
+omni=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".omniauth_providers[0]')
+
+kubectl create secret generic gitlab-google-oauth2 \
+  --namespace gitlab \
+  --from-literal=provider=$omni
+```
+
+
 ### Postgresql
 
 ```
