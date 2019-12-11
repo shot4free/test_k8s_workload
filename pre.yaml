@@ -9,10 +9,6 @@ registry:
     tag: v2.7.5-gitlab
 
 gitlab:
-  gitlab:
-    email_from: notify@mg.pre.gitlab.com
-    email_reply_to:
-    url: pre.gitlab.com
   mailroom:
     enabled: true
     image:
@@ -22,9 +18,6 @@ gitlab:
     enabled: true
     image:
       tag: 12-5-stable-ee
-    registry:
-      host: registry.pre.gitlab.com
-      tokenIssuer: omnibus-gitlab-issuer
 
 global:
   appConfig:
@@ -44,12 +37,29 @@ global:
     packages:
       enabled: true
       bucket: gitlab-pre-packages-repo
+    omniauth:
+      enabled: true
+      blockAutoCreatedUsers: false
+      providers:
+        - secret: gitlab-google-oauth2
+          key: provider
+  email:
+    from: notify@mg.pre.gitlab.com
 
   gitaly:
     external:
-      - name: gitaly-01
+      - name: default  # Naming something `default` is REQUIRED by GitLab
         hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
         port: 9999
+      - name: praefect-01
+        hostname: praefect-01-sv-pre.c.gitlab-pre.internal
+        port: 2305
+
+  hosts:
+    gitlab:
+      name: pre.gitlab.com
+    registry:
+      name: registry.pre.gitlab.com
 
   psql:
     host: 10.48.96.3
