@@ -122,6 +122,17 @@ kubectl create secret generic gitlab-redis-credential --namespace=gitlab  \
   --from-literal=secret=$redis_pass
 ```
 
+### SMTP
+
+```
+smtp=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-rails".smtp_password')
+
+kubectl create secret generic gitlab-smtp-credential \
+  --namespace gitlab \
+  --from-literal=secret=$smtp
+```
+
 ### Gitaly
 
 ```
