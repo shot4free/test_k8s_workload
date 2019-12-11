@@ -60,6 +60,8 @@ configuration file compared to the Container Registry.
 
 ```yaml
 provider: Google
+google_project: <GCP PROJECT>
+google_client_email: <SERVICE ACCOUNT EMAIL>
 google_json_key_string: |
   {
   }
@@ -71,6 +73,9 @@ google_json_key_string: |
 $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
   | jq -r '."gitlab-server"."google-creds".json_base64' | base64 -d
 ```
+
+Populate the `google_project` and `google_client_email` keys appropriately as
+well.
 
 1. Apply this handcraft file to the cluster:
 
