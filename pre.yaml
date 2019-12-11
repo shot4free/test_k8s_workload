@@ -62,3 +62,14 @@ global:
       enabled: false
     host: "10.232.7.3"
     port: 6379
+
+  smtp:
+    address: smtp.mailgun.org
+    authentication: plain
+    domain: mg.pre.gitlab.com
+    enabled: true
+    password:
+      key: secret
+      secret: gitlab-smtp-credential
+    starttls_auto: true
+    user_name: postmaster@mg.pre.gitlab.com
