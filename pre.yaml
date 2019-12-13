@@ -45,6 +45,7 @@ global:
           key: provider
   email:
     from: notify@mg.pre.gitlab.com
+    reply_to: noreply@gitlab.com
 
   gitaly:
     external:

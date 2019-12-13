@@ -176,12 +176,12 @@ global:
     ## doc/charts/globals.md#pseudonymizer-settings
     pseudonymizer:
       configMap:
-      bucket: gitlab-pseudo
+      bucket: ''
       connection: {}
         # secret:
         # key:
     backups:
-      bucket: gitlab-backups
+      bucket: ''
       tmpBucket: tmp
 
     ## doc/charts/globals.md#incoming-email-settings
