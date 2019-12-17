@@ -527,6 +527,13 @@ gitlab:
     enabled: false
     metrics:
       enabled: true
+    pods:
+      - name: export
+        concurrency: 1
+        minReplicas: 1
+        maxReplicas: 16
+        queues:
+          - [project_export, 1]
     registry:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
