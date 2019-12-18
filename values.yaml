@@ -144,14 +144,12 @@ global:
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
       enabled: false
-      background_upload: true
       proxy_download: true
       connection:
         secret: gitlab-object-storage
         key: gitlab-object-storage.yml
     artifacts:
       enabled: false
-      background_upload: true
       proxy_download: false
       connection:
         secret: gitlab-object-storage
