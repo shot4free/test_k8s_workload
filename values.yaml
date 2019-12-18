@@ -219,7 +219,7 @@ global:
       autoSignInWithProvider:
       syncProfileFromProvider: []
       syncProfileAttributes: ['email']
-      allowSingleSignOn: ['saml']
+      allowSingleSignOn: true
       blockAutoCreatedUsers: true
       autoLinkLdapUser: false
       autoLinkSamlUser: false
