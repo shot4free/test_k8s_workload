@@ -94,7 +94,6 @@ kubectl create secret generic gitlab-google-oauth2 \
   --from-literal=provider=$omni
 ```
 
-
 ### Postgresql
 
 ```
@@ -130,6 +129,17 @@ smtp=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
 kubectl create secret generic gitlab-smtp-credential \
   --namespace gitlab \
   --from-literal=secret=$smtp
+```
+
+### Workhorse
+
+```
+work=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-workhorse".secret_token')
+
+kubectl create secret generic gitlab-workhorse-credential \
+  --namespace gitlab \
+  --from-literal=secret=$work
 ```
 
 ### Gitaly

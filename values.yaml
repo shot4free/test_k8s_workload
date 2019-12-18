@@ -291,9 +291,9 @@ global:
   antiAffinity: soft
 
   ## doc/installation/secrets.md#gitlab-workhorse-secret
-  workhorse: {}
-    # secret:
-    # key:
+  workhorse:
+    secret: gitlab-workhorse-credential
+    key: secret
 
   ## doc/charts/globals.md#custom-certificate-authorities
   # configuration of certificates container & custom CA injection
