@@ -61,7 +61,6 @@ configuration file compared to the Container Registry.
 ```yaml
 provider: Google
 google_project: <GCP PROJECT>
-google_client_email: <SERVICE ACCOUNT EMAIL>
 google_json_key_string: |
   {
   }
