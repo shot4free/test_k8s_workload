@@ -110,25 +110,25 @@ global:
     webhookTimeout: 3
 
     ## doc/charts/globals.md#cron-jobs-related-settings
-    cron_jobs: {}
-      # stuck_ci_jobs_worker:
-      #   cron: "0 * * * *"
-      # pipeline_schedule_worker:
-      #   cron: "19 * * * *"
-      # expire_build_artifacts_worker:
-      #   cron: "50 * * * *"
-      # repository_check_worker:
-      #   cron: "20 * * * *"
-      # admin_email_worker:
-      #   cron: "0 0 * * 0"
-      # repository_archive_cache_worker:
-      #   cron: "0 * * * *"
-      # pages_domain_verification_cron_worker:
-      #   cron: "*/15 * * * *"
-      # pseudonymizer_worker:
-      #   cron: "0 * * * *"
-      # schedule_migrate_external_diffs_worker
-      #   cron: "15 * * * *"
+    cron_jobs:
+      stuck_ci_jobs_worker:
+        cron: "0 * * * *"
+      pipeline_schedule_worker:
+        cron: "*/5 * * * *"
+      expire_build_artifacts_worker:
+        cron: "50 * * * *"
+      repository_check_worker:
+        cron: "20 * * * *"
+      admin_email_worker:
+        cron: "0 0 * * 0"
+      repository_archive_cache_worker:
+        cron: "30 * * * *"
+      pages_domain_verification_cron_worker:
+        cron: "*/15 * * * *"
+      pseudonymizer_worker:
+        cron: "0 23 * * *"
+      schedule_migrate_external_diffs_worker:
+        cron: "15 * * * *"
 
     ## doc/charts/globals.md#gravatarlibravatar-settings
     gravatar:
@@ -144,14 +144,12 @@ global:
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
       enabled: false
-      background_upload: true
       proxy_download: true
       connection:
         secret: gitlab-object-storage
         key: gitlab-object-storage.yml
     artifacts:
       enabled: false
-      background_upload: true
       proxy_download: false
       connection:
         secret: gitlab-object-storage
@@ -221,7 +219,7 @@ global:
       autoSignInWithProvider:
       syncProfileFromProvider: []
       syncProfileAttributes: ['email']
-      allowSingleSignOn: ['saml']
+      allowSingleSignOn: true
       blockAutoCreatedUsers: true
       autoLinkLdapUser: false
       autoLinkSamlUser: false
@@ -293,9 +291,9 @@ global:
   antiAffinity: soft
 
   ## doc/installation/secrets.md#gitlab-workhorse-secret
-  workhorse: {}
-    # secret:
-    # key:
+  workhorse:
+    secret: gitlab-workhorse-credential
+    key: secret
 
   ## doc/charts/globals.md#custom-certificate-authorities
   # configuration of certificates container & custom CA injection
@@ -527,6 +525,7 @@ gitlab:
     enabled: false
     metrics:
       enabled: true
+      port: 8083
     pods:
       - name: export
         concurrency: 1

@@ -61,7 +61,6 @@ configuration file compared to the Container Registry.
 ```yaml
 provider: Google
 google_project: <GCP PROJECT>
-google_client_email: <SERVICE ACCOUNT EMAIL>
 google_json_key_string: |
   {
   }
@@ -94,7 +93,6 @@ kubectl create secret generic gitlab-google-oauth2 \
   --namespace gitlab \
   --from-literal=provider=$omni
 ```
-
 
 ### Postgresql
 
@@ -131,6 +129,17 @@ smtp=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
 kubectl create secret generic gitlab-smtp-credential \
   --namespace gitlab \
   --from-literal=secret=$smtp
+```
+
+### Workhorse
+
+```
+work=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV \
+  | jq -r '."omnibus-gitlab".gitlab_rb."gitlab-workhorse".secret_token')
+
+kubectl create secret generic gitlab-workhorse-credential \
+  --namespace gitlab \
+  --from-literal=secret=$work
 ```
 
 ### Gitaly
