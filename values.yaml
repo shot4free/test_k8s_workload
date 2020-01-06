@@ -533,6 +533,13 @@ gitlab:
         maxReplicas: 16
         queues:
           - [project_export, 1]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 16G
     registry:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
