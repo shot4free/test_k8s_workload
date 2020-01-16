@@ -31,7 +31,7 @@ global:
       bucket: gitlab-gstg-uploads
     packages:
       enabled: true
-      bucket: gitlab-gstg-packages-repo
+      bucket: gitlab-gstg-package-repo
     omniauth:
       enabled: true
       blockAutoCreatedUsers: false
