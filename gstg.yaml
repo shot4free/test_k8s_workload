@@ -124,7 +124,8 @@ global:
       name: registry.staging.gitlab.com
 
   psql:
-    host: 10.48.96.3
+    host: pgbouncer-sidekiq.int.gstg.gitlab.net
+    port: 6432
 
   redis:
     host: "gstg-redis-sidekiq"
