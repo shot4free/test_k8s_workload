@@ -36,7 +36,7 @@ global:
       bucket: gitlab-pre-uploads
     packages:
       enabled: true
-      bucket: gitlab-pre-packages-repo
+      bucket: gitlab-pre-package-repo
     omniauth:
       enabled: true
       blockAutoCreatedUsers: false
