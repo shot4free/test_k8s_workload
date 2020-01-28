@@ -528,7 +528,7 @@ gitlab:
         enabled: true
         # The following rules enable traffic to all external
         # endpoints, except the metadata service and the local
-        # network (except DNS, redis and postgres)
+        # network (except DNS, gitaly, redis and postgres)
         rules:
           # Allow all traffic except internal network and metadata service
         - to:
@@ -568,6 +568,15 @@ gitlab:
             # gstg, gprd pgbouncer
           - port: 6432
             protocol: TCP
+
+          # Allow internal traffic to Gitaly
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 9999
+            protocol: TCP
+
     pods:
       - name: export
         concurrency: 1
