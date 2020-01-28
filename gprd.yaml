@@ -26,12 +26,19 @@ global:
       enabled: true
       address: "incoming+%{key}@incoming.gitlab.com"
       user: "incoming@gitlab.com"
+
+  gitaly:
+    external:
+      - name: default
+        hostname: unused
+        port: 9999
+
   redis:
     host: "gprd-redis-sidekiq"
     sentinels:
-    - host: "redis-sidekiq-01-db-gprd.c.gitlab-production.internal"
-      port: "26379"
-    - host: "redis-sidekiq-02-db-gprd.c.gitlab-production.internal"
-      port: "26379"
-    - host: "redis-sidekiq-03-db-gprd.c.gitlab-production.internal"
-      port: "26379"
+      - host: "redis-sidekiq-01-db-gprd.c.gitlab-production.internal"
+        port: "26379"
+      - host: "redis-sidekiq-02-db-gprd.c.gitlab-production.internal"
+        port: "26379"
+      - host: "redis-sidekiq-03-db-gprd.c.gitlab-production.internal"
+        port: "26379"
