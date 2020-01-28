@@ -78,6 +78,7 @@ global:
 
   ## doc/charts/globals.md#configure-gitaly-settings
   gitaly:
+    enabled: false
     authToken:
       secret: gitlab-gitaly-credential
       key: secret
@@ -398,12 +399,7 @@ prometheus:
 ## doc/architecture/decisions.md#redis
 ## doc/charts/redis
 redis:
-  enabled: false
-## doc/architecture/decisions.md#redis-ha
-## doc/charts/redis-ha
-redis-ha:
-  enabled: false
-  nameOverride: redis
+  install: false
 
 ## Instllation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
@@ -552,9 +548,6 @@ gitlab:
       - name: sidekiq-shared
         emptyDir:
           sizeLimit: 50G
-  # doc/charts/gitlab/gitaly
-  gitaly:
-    enabled: false
   # doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     enabled: false
