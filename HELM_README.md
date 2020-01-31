@@ -221,10 +221,7 @@ HTTP_SECRET=$($CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV|
 
 
 $CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
-  jq -r '."omnibus-gitlab".ssl.registry_certificate' > registry-auth.crt
-
-$CHEF_REPO/bin/gkms-vault-show gitlab-omnibus-secrets $REMOTE_ENV | \
-  jq -r '."omnibus-gitlab".ssl.registry_private_key' > registry-auth.key
+  jq -r '."omnibus-gitlab".gitlab_rb.registry.internal_certificate' > registry-auth.crt
 ```
 
 Use the `$REMOTE_ENV` version of `registry.gcs.yaml` or create a new one with
@@ -248,8 +245,7 @@ kubectl create secret generic registry-httpsecret \
 
 kubectl create secret generic registry-certificate \
   --namespace=gitlab \
-  --from-file=registry-auth.crt=registry-auth.crt \
-  --from-file=registry-auth.key=registry-auth.key
+  --from-file=registry-auth.crt=registry-auth.crt
 ```
 
 ## Deploy
