@@ -15,7 +15,6 @@ helmfiles:
       - gitlab_endpoint: {{ .Values.gitlab_endpoint }}
 
 environments:
-  default:
   ops:
     values:
       - google_project: "gitlab-ops"
