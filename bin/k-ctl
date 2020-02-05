@@ -17,6 +17,17 @@ export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
 declare -a kube_objects=(
+  default-token-sstb7
+  dev-registry-access
+  gitlab-gitaly-credential
+  gitlab-google-oauth2
+  gitlab-mailroom-imap
+  gitlab-object-storage
+  gitlab-postgres-credential
+  gitlab-rails-secret
+  gitlab-redis-credential
+  gitlab-smtp-credential
+  gitlab-workhorse-credential
   registry-certificate
   registry-httpsecret
   registry-storage
@@ -173,14 +184,12 @@ case "$ACTION" in
     helm tiller run helm del "${helm_opts[@]}"
     set +x
 
-    # Remove secrets that were probably created manually per our documentation
-    for item in ${kube_objects[*]}; do
-      if [[ ${dry_run:-} != "true" ]]; then
-        kubectl delete secret --namespace "$NAMESPACE" "$item"
-      else
-        echo "Would run: kubectl delete secret --namespace $NAMESPACE $item"
-      fi
-    done
+    # Remove secrets by removing gitlab-secrets release via helmfile
+    if [[ ${dry_run:-} != "true" ]]; then
+      helmfile -e ${environment} delete --purge
+    else
+      echo "Would run: helmfile -e ${environment} delete --purge"
+    fi
     ;;
 
   template)
