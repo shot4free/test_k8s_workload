@@ -186,9 +186,9 @@ case "$ACTION" in
 
     # Remove secrets by removing gitlab-secrets release via helmfile
     if [[ ${dry_run:-} != "true" ]]; then
-      helmfile -e ${environment} delete --purge
+      helmfile -e "${ENV}" delete --purge
     else
-      echo "Would run: helmfile -e ${environment} delete --purge"
+      echo "Would run: helmfile -e ${ENV} delete --purge"
     fi
     ;;
 
