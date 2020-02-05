@@ -61,7 +61,7 @@ different environments.
 all the secrets needed from the appropriate location
   * Use the `pre` as the environment to pull secrets from
   ```
-  helmfile -e pre apply
+  helmfile -e pre apply --suppress-secrets
   ```
 
 Get the service, example:
@@ -83,7 +83,7 @@ Get the service, example:
 1. `k3d create`
 1. export KUBECONFIG=$(k3d get-kubeconfig)
 1. Create the namespace `kubectl create namespace gitlab`
-1. Configure secrets e.g. `helmfile -e pre apply`
+1. Configure secrets e.g. `helmfile -e pre apply --suppress-secrets`
 1. Install the cluster `./bin/k-ctl -e pre -l k3d install`
 
 ### docker-desktop
@@ -91,7 +91,7 @@ Get the service, example:
 1. Enable Kubernetes in the Docker preferences
 1. Switch to the docker-desktop context
 1. Create the namespace `kubectl create namespace gitlab`
-1. Configure secrets e.g. `helmfile -e pre apply`
+1. Configure secrets e.g. `helmfile -e pre apply --suppress-secrets`
 1. Install the cluster `./bin/k-ctl -e pre -l docker-desktop install`
 
 

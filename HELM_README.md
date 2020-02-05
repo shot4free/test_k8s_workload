@@ -31,7 +31,7 @@ installs the helm chart (specifying the environment you wish to use secrets
 from with the `-e` flag)
 
 ```
-helmfile -e pre apply
+helmfile -e pre apply --suppress-secrets
 ```
 
 If you wish to cleanup all the secrets out of your environment, simply run
