@@ -43,6 +43,8 @@ variables:
   environment:
     name: gprd
     url: https://gitlab.com
+  except:
+    - branches
 
 stages:
   - check
