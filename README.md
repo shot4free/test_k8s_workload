@@ -16,6 +16,7 @@ The following are _NOT_ allowed this repository:
 | ----------- | --- |
 | `pre`       | `https://pre.gitlab.com`     |
 | `gstg`      | `https://staging.gitlab.com` |
+| `gprd`      | `https://gitlab.com`         |
 
 ## GitLab CI/CD Variables Configuration
 
@@ -26,6 +27,12 @@ Each variable is applied to the environment defined above
 | `CLUSTER`     | Set in `.setup.bash`        | Name of the cluster as configured in GKE |
 | `PROJECT`     | Set in `common/common.bash` | Name of the project
 | `SERVICE_KEY` | None                        | Key provided by the Service Account described below |
+
+Note that the `SERVICE_KEY` is a `Protected` variable for the Production
+Environment.  This is to ensure that only protected branches in this project
+have access to this variable.  We leverage this in order to prevent mistakes on
+work that is still in progress from negatively impacting changes to the
+Production environment.
 
 ## GCP IAM Configuration
 
@@ -41,6 +48,7 @@ Each variable is applied to the environment defined above
 1. A `json` formatted key needs to be created manually
 1. The downloaded file is then copied into the `SERVICE_KEY` variable as type
    File
+1. This variable should be marked as `Protected` for the Production Environment
 
 ### Cluster User Configuration
 
