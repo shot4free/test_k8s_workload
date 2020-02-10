@@ -26,41 +26,11 @@ Each variable is applied to the environment defined above
 | --------      | --------                    | ------------|
 | `CLUSTER`     | Set in `.setup.bash`        | Name of the cluster as configured in GKE |
 | `PROJECT`     | Set in `common/common.bash` | Name of the project
-| `SERVICE_KEY` | None                        | Key provided by the Service Account described below |
+| `SERVICE_KEY` | None                        | Key provided by the Service Account |
+| `SERVICE_KEY_RO`| None                      | Key provided by the Service Account |
 
-Note that the `SERVICE_KEY` is a `Protected` variable for the Production
-Environment.  This is to ensure that only protected branches in this project
-have access to this variable.  We leverage this in order to prevent mistakes on
-work that is still in progress from negatively impacting changes to the
-Production environment.
-
-## GCP IAM Configuration
-
-### Service Account
-1. `k8s-workloads` - Deploy user for our k8s-workloads configurations
-    * This is currently created via Terraform
-1. The user needs to be added to the correct IAM roles,
-   `roles/container.developer` and `roles/compute.networkUser` you can use this example:
-    * `gcloud projects add-iam-policy-binding gitlab-staging-1 --member 'serviceAccount:k8s-workloads@gitlab-staging-1.iam.gserviceaccount.com' --role 'roles/container.developer'`
-    * `gcloud projects add-iam-policy-binding gitlab-staging-1 --member 'serviceAccount:k8s-workloads@gitlab-staging-1.iam.gserviceaccount.com' --role 'roles/compute.networkUser'`
-    * To validate the above worked, run this, only the desired role should be
-      printed: `gcloud projects get-iam-policy gitlab-staging-1 --flatten="bindings[].members" --format='table(bindings.role)' --filter="bindings.members:k8s-workloads@gitlab-staging-1.iam.gserviceaccount.com"`
-1. A `json` formatted key needs to be created manually
-1. The downloaded file is then copied into the `SERVICE_KEY` variable as type
-   File
-1. This variable should be marked as `Protected` for the Production Environment
-
-### Cluster User Configuration
-
-The bot user `k8s-workloads` will not have administrative access by default.  We
-need to create a cluster role binding to ensure that our bot user will have the
-ability to create RBAC permissions for our various components.  This only needs
-to be done the first time a cluster is configured.  Run the following,
-substituting `SERVICE_ACCOUNT_EMAIL_ADDRESS` with the name provided by the IAM
-role above:
-
-`kubectl create clusterrolebinding k8s-workloads --clusterrole=cluster-admin
---user=<SERVICE_ACCOUNT_EMAIL_ADDRESS>`
+View our common repo README for details on the above:
+https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common#gitlab-cicd-variables-configuration
 
 ## Create/Apply Configurations
 

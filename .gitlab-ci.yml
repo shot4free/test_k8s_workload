@@ -9,23 +9,23 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v1.8.4'
+    ref: 'v1.10.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v1.8.4'
+    ref: 'v1.10.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v1.8.4'
+    ref: 'v1.10.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v1.8.4'
+    ref: 'v1.10.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.8.4'
+    ref: 'v1.10.0'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.8.4'
+  CI_IMAGE_VERSION: 'v1.10.0'
 
 #############################################################
 
@@ -127,6 +127,8 @@ pre:upgrade:
   only:
     refs:
       - master
+  variables:
+    DRY_RUN: "false"
 
 ### Staging
 
@@ -148,6 +150,8 @@ gstg:upgrade:
   only:
     refs:
       - master
+  variables:
+    DRY_RUN: "false"
 
 ### Canary
 
@@ -169,6 +173,8 @@ gprd-cny:upgrade:
   only:
     refs:
       - master
+  variables:
+    DRY_RUN: "false"
 
 ### Producion
 
@@ -191,3 +197,5 @@ gprd:upgrade:
   only:
     refs:
       - master
+  variables:
+    DRY_RUN: "false"
