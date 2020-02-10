@@ -1,0 +1,22 @@
+---
+environments:
+  ops:
+    values:
+      - google_project: "gitlab-ops"
+      - gitlab_endpoint: "https://ops.gitlab.net"
+  pre:
+    values:
+      - google_project: "gitlab-pre"
+      - gitlab_endpoint: "https://pre.gitlab.com"
+  gstg:
+    values:
+      - google_project: "gitlab-staging-1"
+      - gitlab_endpoint: "https://staging.gitlab.com"
+  cny:
+    values:
+      - google_project: "gitlab-production"
+      - gitlab_endpoint: "https://gitlab.com"
+  gprd:
+    values:
+      - google_project: "gitlab-production"
+      - gitlab_endpoint: "https://gitlab.com"
