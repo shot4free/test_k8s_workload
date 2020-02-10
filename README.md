@@ -32,6 +32,35 @@ Each variable is applied to the environment defined above
 View our common repo README for details on the above:
 https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common#gitlab-cicd-variables-configuration
 
+## GitLab Secrets
+
+In order to work with the existing omnibus installation of GitLab.com, we will
+need to bring in a few already configured items that exist in that environment.
+These items will ensure that when the Deployment is spun up inside of Kubernetes
+we interact appropriately with our existing infrastructure.
+
+:warning: This guide assumes you are connected to the appropriate Kubernetes
+cluster :warning:
+
+There is an upstream helm chart wrapped into a helm release 
+called `gitlab-secrets` which we can install in order to populate all the secrets
+needed to run the Gitlab helm chart. We use [helmfile](https://github.com/roboll/helmfile)
+to obtain the values for these secrets from our existing infrastructure, and populate
+the values for the helm chart in the appropriate locations. In order to install
+this chart, you need to have a working `gcloud` setup. The following command
+installs the helm chart (specifying the environment you wish to use secrets
+from with the `-e` flag)
+
+```
+helmfile -e pre apply --suppress-secrets
+```
+
+If you wish to cleanup all the secrets out of your environment, simply run
+
+```
+helmfile -e pre destroy
+```
+
 ## Create/Apply Configurations
 
 At this moment, we use our own helm charts to generate the Kubernetes
