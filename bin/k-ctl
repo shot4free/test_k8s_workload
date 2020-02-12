@@ -17,17 +17,6 @@ export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
 declare -a kube_objects=(
-  default-token-sstb7
-  dev-registry-access
-  gitlab-gitaly-credential
-  gitlab-google-oauth2
-  gitlab-mailroom-imap
-  gitlab-object-storage
-  gitlab-postgres-credential
-  gitlab-rails-secret
-  gitlab-redis-credential
-  gitlab-smtp-credential
-  gitlab-workhorse-credential
   registry-certificate
   registry-httpsecret
   registry-storage
