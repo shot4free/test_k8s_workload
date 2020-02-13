@@ -294,11 +294,6 @@ gprd:secrets:dryrun:
     - .gprd
   script:
     - helmfile -e gprd diff --suppress-secrets
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
 
 gprd:secrets:deploy:
   stage: gprd:secrets:deploy
