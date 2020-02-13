@@ -46,11 +46,13 @@ variables:
 
 stages:
   - check
+  - dryrun-check
   - dryrun
+  - non-prod:secrets:deploy
   - non-prod:deploy
-  - non-prod:secrets
+  - gprd-cny:secrets:deploy
   - gprd-cny:deploy
-  - prod:secrets
+  - gprd:secrets:deploy
   - gprd:deploy
 
 #########################################
@@ -117,15 +119,30 @@ pre:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-pre:secrets:
-  stage: non-prod:secrets
+pre:secrets:check:
+  stage: dryrun-check
+  extends:
+    - .deploy
+    - .pre
+  allow_failure: true
+  script:
+    - helmfile -e pre diff --suppress-secrets --detailed-exitcode
+
+pre:secrets:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre
+  script:
+    - helmfile -e pre diff --suppress-secrets
+
+pre:secrets:deploy:
+  stage: non-prod:secrets:deploy
   extends:
     - .deploy
     - .pre
   script:
     - helmfile -e pre apply --suppress-secrets
-  allow_failure: true
-  when: manual
   only:
     refs:
       - master
@@ -155,15 +172,30 @@ gstg:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-gstg:secrets:
-  stage: non-prod:secrets
+gstg:secrets:check:
+  stage: dryrun-check
+  extends:
+    - .deploy
+    - .gstg
+  allow_failure: true
+  script:
+    - helmfile -e gstg diff --suppress-secrets --detailed-exitcode
+
+gstg:secrets:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg
+  script:
+    - helmfile -e gstg diff --suppress-secrets
+
+gstg:secrets:deploy:
+  stage: non-prod:secrets:deploy
   extends:
     - .deploy
     - .gstg
   script:
     - helmfile -e gstg apply --suppress-secrets
-  allow_failure: true
-  when: manual
   only:
     refs:
       - master
@@ -193,15 +225,30 @@ gprd-cny:dryrun:
   script:
     - bin/k-ctl -D -s cny upgrade
 
-gprd-cny:secrets:
-  stage: prod:secrets
+gprd-cny:secrets:check:
+  stage: dryrun-check
+  extends:
+    - .deploy
+    - .gprd
+  allow_failure: true
+  script:
+    - helmfile -e cny apply --suppress-secrets --detailed-exitcode
+
+gprd-cny:secrets:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd
+  script:
+    - helmfile -e cny apply --suppress-secrets --detailed-exitcode
+
+gprd-cny:secrets:deploy:
+  stage: gprd-cny:secrets:deploy
   extends:
     - .deploy
     - .gprd
   script:
     - helmfile -e cny apply --suppress-secrets
-  allow_failure: true
-  when: manual
   only:
     refs:
       - master
@@ -231,13 +278,33 @@ gprd:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-gprd:secrets:
-  stage: prod:secrets
+gprd:secrets:check:
+  stage: dryrun-check
   extends:
     - .deploy
     - .gprd
-  when: manual
   allow_failure: true
+  script:
+    - helmfile -e gprd diff --suppress-secrets --detailed-exitcode
+
+gprd:secrets:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd
+  script:
+    - helmfile -e gprd diff --suppress-secrets
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gprd:secrets:deploy:
+  stage: gprd:secrets:deploy
+  extends:
+    - .deploy
+    - .gprd
   script:
     - helmfile -e gprd apply --suppress-secrets
   only:
