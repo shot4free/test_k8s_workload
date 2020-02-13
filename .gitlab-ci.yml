@@ -232,7 +232,7 @@ gprd-cny:secrets:check:
     - .gprd
   allow_failure: true
   script:
-    - helmfile -e cny apply --suppress-secrets --detailed-exitcode
+    - helmfile -e cny diff --suppress-secrets --detailed-exitcode
 
 gprd-cny:secrets:dryrun:
   stage: dryrun
@@ -240,7 +240,7 @@ gprd-cny:secrets:dryrun:
     - .deploy
     - .gprd
   script:
-    - helmfile -e cny apply --suppress-secrets --detailed-exitcode
+    - helmfile -e cny apply --suppress-secrets
 
 gprd-cny:secrets:deploy:
   stage: gprd-cny:secrets:deploy
