@@ -240,7 +240,7 @@ gprd-cny:secrets:dryrun:
     - .deploy
     - .gprd
   script:
-    - helmfile -e cny apply --suppress-secrets
+    - helmfile -e cny diff --suppress-secrets
 
 gprd-cny:secrets:deploy:
   stage: gprd-cny:secrets:deploy
