@@ -173,14 +173,12 @@ case "$ACTION" in
     helm tiller run helm del "${helm_opts[@]}"
     set +x
 
-    # Remove secrets that were probably created manually per our documentation
-    for item in ${kube_objects[*]}; do
-      if [[ ${dry_run:-} != "true" ]]; then
-        kubectl delete secret --namespace "$NAMESPACE" "$item"
-      else
-        echo "Would run: kubectl delete secret --namespace $NAMESPACE $item"
-      fi
-    done
+    # Remove secrets by removing gitlab-secrets release via helmfile
+    if [[ ${dry_run:-} != "true" ]]; then
+      helmfile -e "${ENV}" delete --purge
+    else
+      echo "Would run: helmfile -e ${ENV} delete --purge"
+    fi
     ;;
 
   template)

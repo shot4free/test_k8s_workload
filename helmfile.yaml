@@ -1,0 +1,7 @@
+---
+bases:
+  - "bases/helmDefaults.yaml"
+  - "bases/environments.yaml"
+
+helmfiles:
+  - path: releases/gitlab-secrets.yaml

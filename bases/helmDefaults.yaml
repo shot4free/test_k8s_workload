@@ -1,0 +1,9 @@
+---
+helmDefaults:
+  tillerNamespace: kube-system
+  tillerless: true
+  cleanupOnFail: false
+  wait: true
+  timeout: 300
+  recreatePods: true
+  force: true

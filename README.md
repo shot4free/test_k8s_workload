@@ -32,6 +32,35 @@ Each variable is applied to the environment defined above
 View our common repo README for details on the above:
 https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common#gitlab-cicd-variables-configuration
 
+## GitLab Secrets
+
+In order to work with the existing omnibus installation of GitLab.com, we will
+need to bring in a few already configured items that exist in that environment.
+These items will ensure that when the Deployment is spun up inside of Kubernetes
+we interact appropriately with our existing infrastructure.
+
+:warning: This guide assumes you are connected to the appropriate Kubernetes
+cluster :warning:
+
+There is an upstream helm chart wrapped into a helm release 
+called `gitlab-secrets` which we can install in order to populate all the secrets
+needed to run the Gitlab helm chart. We use [helmfile](https://github.com/roboll/helmfile)
+to obtain the values for these secrets from our existing infrastructure, and populate
+the values for the helm chart in the appropriate locations. In order to install
+this chart, you need to have a working `gcloud` setup. The following command
+installs the helm chart (specifying the environment you wish to use secrets
+from with the `-e` flag)
+
+```
+helmfile -e pre apply --suppress-secrets
+```
+
+If you wish to cleanup all the secrets out of your environment, simply run
+
+```
+helmfile -e pre destroy
+```
+
 ## Create/Apply Configurations
 
 At this moment, we use our own helm charts to generate the Kubernetes
@@ -41,8 +70,7 @@ charts](https://docs.gitlab.com/charts/#limitations).  Our infrastructure is
 also [broken into multiple
 fleets](https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/),
 something our Helm chart also does not yet accomplish.  We'll address those
-problems when we get to them. Until then, see [HELM_README.md](HELM_README.md)
-to get started.
+problems when we get to them.
 
 ## Decisions
 
@@ -58,8 +86,12 @@ different environments.
 
 1. `minikube start`
 1. `./bin/k-ctl -e pre -l minikube install`
-1. Follow [HELM_README.md](HELM_README.md) to install the secrets
+1. Use helmfile to install the `gitlab-secrets` helm chart which will populate
+all the secrets needed from the appropriate location
   * Use the `pre` as the environment to pull secrets from
+  ```
+  helmfile -e pre apply --suppress-secrets
+  ```
 
 Get the service, example:
 ```
@@ -80,7 +112,7 @@ Get the service, example:
 1. `k3d create`
 1. export KUBECONFIG=$(k3d get-kubeconfig)
 1. Create the namespace `kubectl create namespace gitlab`
-1. Configure secrets (See `HELM_README.md`)
+1. Configure secrets e.g. `helmfile -e pre apply --suppress-secrets`
 1. Install the cluster `./bin/k-ctl -e pre -l k3d install`
 
 ### docker-desktop
@@ -88,7 +120,7 @@ Get the service, example:
 1. Enable Kubernetes in the Docker preferences
 1. Switch to the docker-desktop context
 1. Create the namespace `kubectl create namespace gitlab`
-1. Configure secrets (See `HELM_README.md`)
+1. Configure secrets e.g. `helmfile -e pre apply --suppress-secrets`
 1. Install the cluster `./bin/k-ctl -e pre -l docker-desktop install`
 
 
