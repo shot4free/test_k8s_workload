@@ -126,7 +126,7 @@ pre:secrets:check:
     - .pre
   allow_failure: true
   script:
-    - helmfile -e pre diff --suppress-secrets --detailed-exitcode
+    - helmfile -l name=gitlab-secrets -e pre diff --suppress-secrets --detailed-exitcode
 
 pre:secrets:dryrun:
   stage: dryrun
@@ -134,7 +134,7 @@ pre:secrets:dryrun:
     - .deploy
     - .pre
   script:
-    - helmfile -e pre diff --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e pre diff --suppress-secrets
 
 pre:secrets:deploy:
   stage: non-prod:secrets:deploy
@@ -142,7 +142,7 @@ pre:secrets:deploy:
     - .deploy
     - .pre
   script:
-    - helmfile -e pre apply --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e pre apply --suppress-secrets
   only:
     refs:
       - master
@@ -179,7 +179,7 @@ gstg:secrets:check:
     - .gstg
   allow_failure: true
   script:
-    - helmfile -e gstg diff --suppress-secrets --detailed-exitcode
+    - helmfile -l name=gitlab-secrets -e gstg diff --suppress-secrets --detailed-exitcode
 
 gstg:secrets:dryrun:
   stage: dryrun
@@ -187,7 +187,7 @@ gstg:secrets:dryrun:
     - .deploy
     - .gstg
   script:
-    - helmfile -e gstg diff --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e gstg diff --suppress-secrets
 
 gstg:secrets:deploy:
   stage: non-prod:secrets:deploy
@@ -195,7 +195,7 @@ gstg:secrets:deploy:
     - .deploy
     - .gstg
   script:
-    - helmfile -e gstg apply --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e gstg apply --suppress-secrets
   only:
     refs:
       - master
@@ -232,7 +232,7 @@ gprd-cny:secrets:check:
     - .gprd
   allow_failure: true
   script:
-    - helmfile -e cny diff --suppress-secrets --detailed-exitcode
+    - helmfile -l name=gitlab-secrets-cny -e cny diff --suppress-secrets --detailed-exitcode
 
 gprd-cny:secrets:dryrun:
   stage: dryrun
@@ -240,7 +240,7 @@ gprd-cny:secrets:dryrun:
     - .deploy
     - .gprd
   script:
-    - helmfile -e cny diff --suppress-secrets
+    - helmfile -l name=gitlab-secrets-cny -e cny diff --suppress-secrets
 
 gprd-cny:secrets:deploy:
   stage: gprd-cny:secrets:deploy
@@ -248,7 +248,7 @@ gprd-cny:secrets:deploy:
     - .deploy
     - .gprd
   script:
-    - helmfile -e cny apply --suppress-secrets
+    - helmfile -l name=gitlab-secrets-cny -e cny apply --suppress-secrets
   only:
     refs:
       - master
@@ -285,7 +285,7 @@ gprd:secrets:check:
     - .gprd
   allow_failure: true
   script:
-    - helmfile -e gprd diff --suppress-secrets --detailed-exitcode
+    - helmfile -l name=gitlab-secrets -e gprd diff --suppress-secrets --detailed-exitcode
 
 gprd:secrets:dryrun:
   stage: dryrun
@@ -293,7 +293,7 @@ gprd:secrets:dryrun:
     - .deploy
     - .gprd
   script:
-    - helmfile -e gprd diff --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e gprd diff --suppress-secrets
 
 gprd:secrets:deploy:
   stage: gprd:secrets:deploy
@@ -301,7 +301,7 @@ gprd:secrets:deploy:
     - .deploy
     - .gprd
   script:
-    - helmfile -e gprd apply --suppress-secrets
+    - helmfile -l name=gitlab-secrets -e gprd apply --suppress-secrets
   only:
     refs:
       - master
