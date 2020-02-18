@@ -73,9 +73,7 @@ install_gitlab_chart_via_helm() {
 
 install_gitlab_chart_via_s3() {
   echo -e "${_YEL}Using chart directly from S3...${_NORM}"
-  set -x
   curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
-  set +x
 }
 
 charts_dir=$(mktemp -d)
