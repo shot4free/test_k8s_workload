@@ -43,19 +43,14 @@ fi
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 
-CHART_VERSION=${CHART_VERSION:-}
-DEFINED_CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
-echo -e "${_CYN}-- Using Chart Version: ${DEFINED_CHART_VERSION} --${_NORM}"
+CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+echo -e "${_CYN}-- Using Chart Version: ${CHART_VERSION} --${_NORM}"
 
 get_gitlab_chart() {
   local charts_dir=${1}
   pushd "$charts_dir"
 
-  if [[ "$CHART_VERSION" != "$DEFINED_CHART_VERSION" ]]; then
-    install_gitlab_chart_via_helm || install_gitlab_chart_via_s3
-  else
-    install_gitlab_chart_via_git
-  fi
+  install_gitlab_chart_via_helm || install_gitlab_chart_via_s3 || install_gitlab_chart_via_git
 
   popd
 }
@@ -73,13 +68,13 @@ install_gitlab_chart_via_git() {
 install_gitlab_chart_via_helm() {
   echo -ne "${_CYN}Using helm to get chart...${_NORM}\\n"
   helm repo add gitlab 'https://charts.gitlab.io/' &&
-    helm fetch --version "$DEFINED_CHART_VERSION" "gitlab/${CHART}" --untar --untardir "$charts_dir"
+    helm fetch --version "$CHART_VERSION" "gitlab/${CHART}" --untar --untardir "$charts_dir"
 }
 
 install_gitlab_chart_via_s3() {
   echo -e "${_YEL}Using chart directly from S3...${_NORM}"
   set -x
-  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
   set +x
 }
 
@@ -111,7 +106,7 @@ helm_diff() {
     "--detailed-exitcode"
     "--suppress-secrets"
     "--namespace" "${NAMESPACE}"
-    "--version" "$DEFINED_CHART_VERSION"
+    "--version" "$CHART_VERSION"
     "${helm_opts_values[@]}"
     "$NAME"
     "gitlab/${CHART}"
