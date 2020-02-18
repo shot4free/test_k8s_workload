@@ -60,7 +60,7 @@ global:
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
     password:
-      secret: gitlab-postgres-credential
+      secret: gitlab-postgres-credential-v1
       key: secret
     # host: postgresql.hostedsomewhere.else
     # port: 123
@@ -71,7 +71,7 @@ global:
   redis:
     password:
       enabled: true
-      secret: gitlab-redis-credential
+      secret: gitlab-redis-credential-v1
       key: secret
     # host: redis.hostedsomewhere.else
     # port: 6379
@@ -80,7 +80,7 @@ global:
   gitaly:
     enabled: false
     authToken:
-      secret: gitlab-gitaly-credential
+      secret: gitlab-gitaly-credential-v1
       key: secret
     internal:
       names: []
@@ -147,25 +147,25 @@ global:
       enabled: false
       proxy_download: true
       connection:
-        secret: gitlab-object-storage
+        secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     artifacts:
       enabled: false
       proxy_download: false
       connection:
-        secret: gitlab-object-storage
+        secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     uploads:
       enabled: false
       proxy_download: true
       connection:
-        secret: gitlab-object-storage
+        secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     packages:
       enabled: false
       proxy_download: true
       connection:
-        secret: gitlab-object-storage
+        secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     externalDiffs:
       when:
@@ -194,7 +194,7 @@ global:
       startTls: false
       user: ""
       password:
-        secret: "gitlab-mailroom-imap"
+        secret: gitlab-mailroom-imap-v1
         key: password
       mailbox: inbox
       idleTimeout: 60
@@ -247,9 +247,9 @@ global:
   ## doc/charts/globals.md#configure-registry-settings
   registry:
     certificate:
-      secret: registry-certificate
+      secret: registry-certificate-v1
     httpSecret:
-      secret: registry-httpsecret
+      secret: registry-httpsecret-v1
 
   ## GitLab Runner
   ## Secret created according to doc/installation/secrets.md#gitlab-runner-secret
@@ -293,7 +293,7 @@ global:
 
   ## doc/installation/secrets.md#gitlab-workhorse-secret
   workhorse:
-    secret: gitlab-workhorse-credential
+    secret: gitlab-workhorse-credential-v1
     key: secret
 
   ## doc/charts/globals.md#custom-certificate-authorities
@@ -422,7 +422,7 @@ registry:
   image:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
-    - name: dev-registry-access
+    - name: dev-registry-access-v1
   hpa:
     cpu:
       targetAverageUtilization: 80
@@ -473,7 +473,7 @@ registry:
     annotations:
       cloud.google.com/load-balancer-type: Internal
   storage:
-    secret: registry-storage
+    secret: registry-storage-v1
     key: config
     extraKey: gcs.json
   tokenIssuer: omnibus-gitlab-issuer
@@ -617,7 +617,7 @@ gitlab:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       pullSecrets:
-        - name: dev-registry-access
+        - name: dev-registry-access-v1
     networkpolicy:
       enabled: true
       egress:

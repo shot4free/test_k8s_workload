@@ -17,9 +17,9 @@ export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
 declare -a kube_objects=(
-  registry-certificate
-  registry-httpsecret
-  registry-storage
+  registry-certificate-v1
+  registry-httpsecret-v1
+  registry-storage-v1
 )
 
 # Source common functions and variable exports

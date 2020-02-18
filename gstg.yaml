@@ -40,7 +40,7 @@ global:
       enabled: true
       blockAutoCreatedUsers: false
       providers:
-        - secret: gitlab-google-oauth2
+        - secret: gitlab-google-oauth2-v1
           key: provider
   email:
     from: gitlab@mg.gitlab.com
@@ -145,6 +145,6 @@ global:
     enabled: true
     password:
       key: secret
-      secret: gitlab-smtp-credential
+      secret: gitlab-smtp-credential-v1
     starttls_auto: true
     user_name: postmaster@mg.staging.gitlab.com
