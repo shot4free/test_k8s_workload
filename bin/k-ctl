@@ -37,7 +37,7 @@ else
   echo -e "if you want to use a local version set COMMON_SCRIPT_PATH to the location of common.bash"
   echo -e "or update .gitlab-ci.yml to set a new version${_NORM}"
   echo ""
-  source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
+  source <(curl --fail -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
 fi
 
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
@@ -74,7 +74,7 @@ install_gitlab_chart_via_helm() {
 install_gitlab_chart_via_s3() {
   echo -e "${_YEL}Using chart directly from S3...${_NORM}"
   set -x
-  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
   set +x
 }
 
