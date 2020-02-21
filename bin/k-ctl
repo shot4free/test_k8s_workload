@@ -44,6 +44,12 @@ NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 
 CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+# Update the version of the chart to what is set in CHART_VERSION
+# if there '/' in the chart version, replace them with dashes
+# this is only for when the version is not an official tag
+CHART_REF=$CHART_VERSION
+CHART_VERSION=${CHART_VERSION//\//-}
+
 echo -e "${_CYN}-- Using Chart Version: ${CHART_VERSION} --${_NORM}"
 
 get_gitlab_chart() {
@@ -58,11 +64,18 @@ get_gitlab_chart() {
 install_gitlab_chart_via_git() {
   echo -ne "${_YEL}Using git to clone chart version \"${CHART_VERSION}\"...${_NORM}\\n"
   mkdir "$extracted_charts_dir"
-  git clone -b "$CHART_VERSION" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+  git clone -b "$CHART_REF" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
   helm repo add gitlab 'https://charts.gitlab.io/'
   helm repo add jetstack 'https://charts.jetstack.io'
   pushd "$extracted_charts_dir"
   helm dependency update
+  sed -E -i "s/(version:) .*/\\1 $CHART_VERSION/" Chart.yaml
+  helm package .
+  tar -C "$charts_dir" -xmzf "$CHART-$CHART_VERSION.tgz"
+  pushd "$charts_dir"
+  helm repo index gitlab --merge gitlab/index.yaml
+  cat "$charts_dir/gitlab/index.yaml"
+  popd
   popd
 }
 
