@@ -16,7 +16,7 @@ gitlab:
   sidekiq:
     enabled: true
     image:
-      tag: 12-7-202001151606-567a7811ae4-5db6dd45482
+      tag: 12-9-202002191723-d42c6afcade-d99b3393e62
 
 global:
   appConfig:
