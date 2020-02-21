@@ -518,6 +518,10 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/sidekiq
   sidekiq:
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
+      pullSecrets:
+      - name: dev-registry-access-v1
     enabled: false
     metrics:
       enabled: true
