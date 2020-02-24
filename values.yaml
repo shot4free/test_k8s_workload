@@ -432,6 +432,8 @@ registry:
     readinessProbe:
       path: /debug/health
       port: 5001
+      # TODO: Consider removal after https://gitlab.com/gitlab-org/container-registry/issues/37
+      initialDelaySeconds: 40
     livenessProbe:
       path: /debug/health
       port: 5001
