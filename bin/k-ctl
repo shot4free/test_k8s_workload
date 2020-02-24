@@ -16,12 +16,6 @@ CHART="${CHART:-gitlab}"
 export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
-declare -a kube_objects=(
-  registry-certificate-v1
-  registry-httpsecret-v1
-  registry-storage-v1
-)
-
 # Source common functions and variable exports
 # that are common to all charts
 
@@ -43,159 +37,116 @@ fi
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 
-CHART_VERSION=${CHART_VERSION:-}
-DEFINED_CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
-echo -e "${_CYN}-- Using Chart Version: ${DEFINED_CHART_VERSION} --${_NORM}"
+export CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+debug "-- Using Chart Version: ${CHART_VERSION} --" "${_CYN}"
 
 get_gitlab_chart() {
-  local charts_dir=${1}
-  pushd "$charts_dir"
+  install_gitlab_chart_via_helm || install_gitlab_chart_via_s3 || install_gitlab_chart_via_git
+  get_chart_source "$chart_install_method"
+}
 
-  if [[ "$CHART_VERSION" != "$DEFINED_CHART_VERSION" ]]; then
-    install_gitlab_chart_via_helm || install_gitlab_chart_via_s3
-  else
-    install_gitlab_chart_via_git
-  fi
-
-  popd
+get_chart_source() {
+  case $1 in
+    git)
+      debug "Using chart from git repo..." "${_YEL}"
+      export CHART_SOURCE='gitlab-git/gitlab'
+      ;;
+    helm)
+      debug "Using chart from helm repo..." "${_YEL}"
+      export CHART_SOURCE='gitlab/gitlab'
+      ;;
+    s3)
+      debug "Using chart from S3..." "${_YEL}"
+      export CHART_SOURCE='gitlab-s3/gitlab'
+      ;;
+  esac
 }
 
 install_gitlab_chart_via_git() {
-  echo -ne "${_YEL}Using git to clone chart version \"${CHART_VERSION}\"...${_NORM}\\n"
+  chart_install_method='git'
   mkdir "$extracted_charts_dir"
-  git clone -b "$CHART_VERSION" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
-  helm repo add gitlab 'https://charts.gitlab.io/'
-  pushd "$extracted_charts_dir"
-  helm dependency update
-  popd
+  git clone -b "${CHART_VERSION}" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+  RC=$?
+  if [[ "$RC" != 0 ]]; then
+    exit 1
+  fi
 }
 
 install_gitlab_chart_via_helm() {
-  echo -ne "${_CYN}Using helm to get chart...${_NORM}\\n"
-  helm repo add gitlab 'https://charts.gitlab.io/' &&
-    helm fetch --version "$DEFINED_CHART_VERSION" "gitlab/${CHART}" --untar --untardir "$charts_dir"
+  chart_install_method='helm'
+  curl --fail -s -o /dev/null "https://charts.gitlab.io"
 }
 
 install_gitlab_chart_via_s3() {
-  echo -e "${_YEL}Using chart directly from S3...${_NORM}"
-  set -x
-  curl -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${DEFINED_CHART_VERSION}.tgz" | tar xzC "$charts_dir"
-  set +x
+  chart_install_method='s3'
+  curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
 }
 
 charts_dir=$(mktemp -d)
 extracted_charts_dir="${charts_dir}/${CHART}"
-manifests_dir="$dir/../manifests"
-registry_static_ip=$(get_static_ip "registry-gke-${ENV}${STAGE_SUFFIX}")
-
-helm_opts_values=(
-  "${HELM_OPTS_VALUES[@]}"
-  "--set" "registry.service.loadBalancerIP=$registry_static_ip"
-  "--set" "global.registry.bucket=gitlab-$ENV-registry"
-  "--set" "registry.authEndpoint=$GITLAB_ENDPOINT"
+environment=${ENV}${STAGE_SUFFIX}
+helmfile_common_options=(
+  "--log-level" "${LOG_LEVEL:-info}"
+  "--environment" "${environment}"
 )
 
-# Adds annotations for auto-devops
-if [[ -n ${CI:-} ]]; then
-  helm_opts_values+=(
-    "--set" "registry.annotations.app\\.gitlab\\.com/app=$CI_PROJECT_PATH_SLUG"
-    "--set" "registry.annotations.app\\.gitlab\\.com/env=$CI_ENVIRONMENT_SLUG"
-    "--set" "global.deployment.annotations.app\\.gitlab\\.com/app=$CI_PROJECT_PATH_SLUG"
-    "--set" "global.deployment.annotations.app\\.gitlab\\.com/env=$CI_ENVIRONMENT_SLUG"
-  )
-fi
+helmfile_cmd_options=(
+  "--concurrency" "1"
+  "--skip-deps"
+  "--suppress-secrets"
+)
+
+manifests_dir="$dir/../manifests"
 
 helm_diff() {
   debug "-- Helm Diff --" "${_CYN}"
-  helm_opts=(
-    "--detailed-exitcode"
-    "--suppress-secrets"
-    "--namespace" "${NAMESPACE}"
-    "--version" "$DEFINED_CHART_VERSION"
-    "${helm_opts_values[@]}"
-    "$NAME"
-    "gitlab/${CHART}"
-  )
 
-  set -x +e
-  helm tiller run helm diff upgrade "${helm_opts[@]}"
-  RC=$?
-  set +x -e
-  if [[ $RC != 0 ]]; then
-    debug "Changes found!" "${_YEL}"
-  else
-    debug "No changes found." "${_GRN}"
-  fi
+  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}"
+
   debug "-------" "${_CYN}"
 }
 
 case "$ACTION" in
   install | upgrade)
     overview
-    get_gitlab_chart "$charts_dir"
 
-    helm_diff
+    get_gitlab_chart
 
-    helm_opts=(
-      "$extracted_charts_dir"
-      "--namespace" "${NAMESPACE}"
-      "${HELM_OPTS[@]}"
-      "${helm_opts_values[@]}"
-    )
+    helmfile "${helmfile_common_options[@]}" repos
 
-    if [[ $ACTION == "install" ]]; then
-      helm tiller run helm install --name "$NAME" "${helm_opts[@]}"
-      verify_installed_secrets "${kube_objects[@]}"
+    if [[ ${dry_run:-} == "true" ]]; then
+      helm_diff
     else
-      verify_installed_secrets "${kube_objects[@]}"
       tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
-      helm tiller run helm upgrade "$NAME" "${helm_opts[@]}" --atomic --wait --timeout 300
+
+      helmfile "${helmfile_common_options[@]}" apply "${helmfile_cmd_options[@]}"
     fi
     ;;
 
   list)
-    set -x
+    # `helmfile` outputs less information for this command
+    # since `helm` does better, let's leave that in place
+    debug "-- Helm List --" "${_CYN}"
     helm tiller run helm list
-
-    kubectl get secrets --namespace "${NAMESPACE}"
     ;;
 
   remove)
     overview
     warn_removal
 
-    helm_opts=(
-      "--purge" "$NAME"
-      "${HELM_OPTS[@]}"
-    )
-
-    set -x
-    helm tiller run helm del "${helm_opts[@]}"
-    set +x
-
     # Remove secrets by removing gitlab-secrets release via helmfile
     if [[ ${dry_run:-} != "true" ]]; then
-      helmfile -e "${ENV}" delete --purge
+      helmfile "${helmfile_common_options[@]}" destroy
     else
-      echo "Would run: helmfile -e ${ENV} delete --purge"
+      debug "Would run: helmfile ${helmfile_common_options[*]} destroy"
     fi
     ;;
 
   template)
     overview
-    get_gitlab_chart "${charts_dir}"
-    helm_opts=(
-      "$extracted_charts_dir"
-      "--output-dir" "$manifests_dir"
-      "--name" "${NAME}"
-      "--namespace" "$NAMESPACE"
-      "${HELM_OPTS[@]}"
-      "${helm_opts_values[@]}"
-    )
-    set -x
-    helm tiller run helm template "${helm_opts[@]}"
-    set +x
-    verify_installed_secrets "${kube_objects[@]}"
+    get_gitlab_chart
+
+    helmfile "${helmfile_common_options[@]}" template --output-dir "$manifests_dir" --concurrency 1
     ;;
 esac
 

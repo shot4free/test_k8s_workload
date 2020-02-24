@@ -246,6 +246,7 @@ global:
 
   ## doc/charts/globals.md#configure-registry-settings
   registry:
+    authEndPoint: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}
     certificate:
       secret: registry-certificate-v1
     httpSecret:

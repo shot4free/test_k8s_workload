@@ -7,7 +7,7 @@ Kubernetes Workload configurations for GitLab.com
 :warning: **WARNING** :warning:
 
 The following are _NOT_ allowed this repository:
-* Files that create Kubernetes Objects of type `Secret`
+* Files that contain Kubernetes Objects of type `Secret`
 * Files that contain secrets in plain text
 
 ## GitLab Environments Configuration
@@ -42,24 +42,14 @@ we interact appropriately with our existing infrastructure.
 :warning: This guide assumes you are connected to the appropriate Kubernetes
 cluster :warning:
 
-There is an upstream helm chart wrapped into a helm release 
-called `gitlab-secrets` which we can install in order to populate all the secrets
-needed to run the Gitlab helm chart. We use [helmfile](https://github.com/roboll/helmfile)
-to obtain the values for these secrets from our existing infrastructure, and populate
-the values for the helm chart in the appropriate locations. In order to install
-this chart, you need to have a working `gcloud` setup. The following command
-installs the helm chart (specifying the environment you wish to use secrets
-from with the `-e` flag)
-
-```
-helmfile -e pre apply --suppress-secrets
-```
-
-If you wish to cleanup all the secrets out of your environment, simply run
-
-```
-helmfile -e pre destroy
-```
+There is an upstream helm chart wrapped into a helm release called
+`gitlab-secrets` which we install in order to populate all the secrets
+needed to run the Gitlab helm chart. We use
+[helmfile](https://github.com/roboll/helmfile) to obtain the values for these
+secrets from our existing infrastructure that is used for chef, and populate the values for the helm
+chart in the appropriate locations. In order to install this chart, you need to
+have a working `gcloud` setup. These secrets will be deployed along with our
+gitlab helm chart at the same time using the `k-ctl` wrapper script
 
 ## Create/Apply Configurations
 
