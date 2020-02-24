@@ -1,0 +1,6 @@
+---
+{{ readFile "gprd.yaml.gotmpl" | fromYaml | toYaml }}
+
+gitlab:
+  mailroom:
+    enabled: false

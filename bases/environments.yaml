@@ -8,17 +8,16 @@ environments:
     values:
       - google_project: "gitlab-pre"
       - gitlab_endpoint: "https://pre.gitlab.com"
-      - registry_bucket_name: "gitlab-{{ .Environment.Name }}-registry"
   gstg:
     values:
       - google_project: "gitlab-staging-1"
       - gitlab_endpoint: "https://staging.gitlab.com"
-      - registry_bucket_name: "gitlab-{{ .Environment.Name }}-registry"
-  cny:
+  gprd-cny:
     values:
       - google_project: "gitlab-production"
       - gitlab_endpoint: "https://gitlab.com"
       - gitlab_secrets_gkms_source: "gprd"
+      - gitlab_release_name: "gitlab-cny"
       - gitlab_secrets_release_name: "gitlab-secrets-cny"
       - gitlab_secrets_namespace: "gitlab-cny"
       # Canary uses the same bucket as production
@@ -27,4 +26,3 @@ environments:
     values:
       - google_project: "gitlab-production"
       - gitlab_endpoint: "https://gitlab.com"
-      - registry_bucket_name: "gitlab-{{ .Environment.Name }}-registry"

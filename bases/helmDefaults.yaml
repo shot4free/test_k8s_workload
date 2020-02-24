@@ -5,5 +5,6 @@ helmDefaults:
   cleanupOnFail: false
   wait: true
   timeout: 300
-  recreatePods: true
+  # Do not recreate pods during upgrade when not required
+  recreatePods: false
   force: true
