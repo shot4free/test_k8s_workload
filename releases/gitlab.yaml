@@ -15,7 +15,7 @@ repositories:
   url: https://gitlab-charts.s3.amazonaws.com/
 {{- else if eq $chart_source "gitlab-git/gitlab" }}
 - name: gitlab-git
-  url: {{ (printf "git+https://gitlab.com/gitlab-org/charts/gitlab@?ref=%s&sparse=0" $chart_version) }}
+  url: http://127.0.0.1:8879/charts
 {{- end }}
 
 releases:

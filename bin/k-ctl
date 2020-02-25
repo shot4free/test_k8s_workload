@@ -20,6 +20,7 @@ export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 # that are common to all charts
 
 COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
+
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
   source "$COMMON_SCRIPT_PATH"
 else
@@ -36,54 +37,92 @@ fi
 
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
-
-export CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
-debug "-- Using Chart Version: ${CHART_VERSION} --" "${_CYN}"
+CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+CHARTS_DIR=$(mktemp -d)
+MANIFESTS_DIR="$dir/../manifests"
 
 get_gitlab_chart() {
-  install_gitlab_chart_via_helm || install_gitlab_chart_via_s3 || install_gitlab_chart_via_git
-  get_chart_source "$chart_install_method"
+  if is_semver "$CHART_VERSION"; then
+    if install_gitlab_chart_via_helm; then
+      chart_install_method=helm
+    elif install_gitlab_chart_via_s3; then
+      chart_install_method=s3
+    else
+      debug "Unable to install chart using semver!" "${_RED}"
+      exit 1
+    fi
+  else
+    install_gitlab_chart_via_git
+    chart_install_method=git
+    # For non-semvers, attempt to install from git
+    # and override CHART_VERSION to version+ref
+    # Example: 3.1.0+0035def7
+    CHART_VERSION="$CHART_VERSION_SHA"
+  fi
+  CHART_SOURCE=$(get_chart_source "$chart_install_method")
+  debug "Setting CHART_SOURCE=$CHART_SOURCE" "${_YEL}"
+  debug "Setting CHART_VERSION=$CHART_VERSION" "${_YEL}"
+
+  # CHART_VERSION and CHART_SOURCE are needed
+  # by releases/gitlab.yaml
+  export CHART_VERSION
+  export CHART_SOURCE
+}
+
+is_semver() {
+  if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 get_chart_source() {
   case $1 in
     git)
-      debug "Using chart from git repo..." "${_YEL}"
-      export CHART_SOURCE='gitlab-git/gitlab'
+      echo 'gitlab-git/gitlab'
       ;;
     helm)
-      debug "Using chart from helm repo..." "${_YEL}"
-      export CHART_SOURCE='gitlab/gitlab'
+      echo 'gitlab/gitlab'
       ;;
     s3)
-      debug "Using chart from S3..." "${_YEL}"
-      export CHART_SOURCE='gitlab-s3/gitlab'
+      echo 'gitlab-s3/gitlab'
       ;;
   esac
 }
 
 install_gitlab_chart_via_git() {
-  chart_install_method='git'
+  local chart_ref="$CHART_VERSION"
+  local extracted_charts_dir="${CHARTS_DIR}/${CHART}"
+
   mkdir "$extracted_charts_dir"
-  git clone -b "${CHART_VERSION}" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
-  RC=$?
-  if [[ "$RC" != 0 ]]; then
-    exit 1
-  fi
+  git clone -b "${chart_ref}" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+
+  pushd "$extracted_charts_dir"
+
+  local version sha chart_version_sha
+  version=$(grep version Chart.yaml | awk '{print $2}')
+  sha=$(git rev-parse --short HEAD)
+  chart_version_sha="${version}+${sha}"
+
+  helm repo add cert-manager https://charts.jetstack.io/
+  helm repo add gitlab https://charts.gitlab.io/
+  helm dependencies build
+  helm package ./ --save --version "$chart_version_sha"
+  helm serve &
+  popd
+  CHART_VERSION_SHA="$chart_version_sha"
+  debug "Setting CHART_VERSION_SHA=$chart_version_sha"
 }
 
 install_gitlab_chart_via_helm() {
-  chart_install_method='helm'
   curl --fail -s -o /dev/null "https://charts.gitlab.io"
 }
 
 install_gitlab_chart_via_s3() {
-  chart_install_method='s3'
-  curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$charts_dir"
+  curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$CHARTS_DIR"
 }
 
-charts_dir=$(mktemp -d)
-extracted_charts_dir="${charts_dir}/${CHART}"
 environment=${ENV}${STAGE_SUFFIX}
 helmfile_common_options=(
   "--log-level" "${LOG_LEVEL:-info}"
@@ -95,8 +134,6 @@ helmfile_cmd_options=(
   "--skip-deps"
   "--suppress-secrets"
 )
-
-manifests_dir="$dir/../manifests"
 
 helm_diff() {
   debug "-- Helm Diff --" "${_CYN}"
@@ -146,9 +183,9 @@ case "$ACTION" in
     overview
     get_gitlab_chart
 
-    helmfile "${helmfile_common_options[@]}" template --output-dir "$manifests_dir" --concurrency 1
+    helmfile "${helmfile_common_options[@]}" template --output-dir "$MANIFESTS_DIR" --concurrency 1
     ;;
 esac
 
 set +x
-rm -rf "${charts_dir:?}"
+rm -rf "${CHARTS_DIR:?}"
