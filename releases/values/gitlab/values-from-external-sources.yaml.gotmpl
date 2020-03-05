@@ -1,5 +1,11 @@
 ---
+{{ $gitlab_ops_api_token := requiredEnv "GITLAB_OPS_API_TOKEN" }}
+{{- $chef_base_role := exec "curl" (list "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base.json/raw?ref=master" )) }}
+global:
+  gitaly:
+    external:
+{{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" "-rf" "jq/global-gitaly-external.jq" | join " ")) | indent 6 }}
+
 registry:
   service:
     loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)") }}
-
