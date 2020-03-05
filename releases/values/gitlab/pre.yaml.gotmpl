@@ -45,15 +45,6 @@ global:
     from: notify@mg.pre.gitlab.com
     reply_to: noreply@gitlab.com
 
-  gitaly:
-    external:
-      - name: default  # Naming something `default` is REQUIRED by GitLab
-        hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
-        port: 9999
-      - name: praefect-01
-        hostname: praefect-01-sv-pre.c.gitlab-pre.internal
-        port: 2305
-
   hosts:
     gitlab:
       name: pre.gitlab.com

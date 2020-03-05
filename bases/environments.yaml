@@ -22,6 +22,7 @@ environments:
       - gitlab_secrets_namespace: "gitlab-cny"
       # Canary uses the same bucket as production
       - registry_bucket_name: "gitlab-gprd-registry"
+      - gitlab_chef_source_name: "gprd"
   gprd:
     values:
       - google_project: "gitlab-production"
