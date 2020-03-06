@@ -6,6 +6,10 @@ global:
     external:
 {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" "-rf" "jq/global-gitaly-external.jq" | join " ")) | indent 6 }}
 
+  hosts:
+    registry:
+      name: {{ regexReplaceAll "https://" (exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.registry_external_url" | join " "))) "" }}
+
 registry:
   service:
     loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)") }}
