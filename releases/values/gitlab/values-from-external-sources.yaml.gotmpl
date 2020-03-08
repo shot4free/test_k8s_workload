@@ -6,6 +6,14 @@ global:
     external:
 {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" "-rf" "jq/global-gitaly-external.jq" | join " ")) | indent 6 }}
 
+  email:
+    from: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".gitlab_email_from" | join " ")) }}
+
+  appConfig:
+    incomingEmail:
+      address: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_address" | join " ")) }}
+      user: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_email" | join " ")) }}
+
   hosts:
     registry:
       name: {{ regexReplaceAll "https://" (exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.registry_external_url" | join " "))) "" }}
