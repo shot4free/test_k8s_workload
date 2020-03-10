@@ -1,5 +1,6 @@
 ---
 helmDefaults:
+  atomic: true
   tillerNamespace: kube-system
   tillerless: true
   cleanupOnFail: false
