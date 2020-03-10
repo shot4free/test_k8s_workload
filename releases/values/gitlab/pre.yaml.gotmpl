@@ -21,8 +21,6 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-      address: "incoming-pre+%{key}@incoming.gitlab.com"
-      user: "incoming-pre@incoming.gitlab.com"
     lfs:
       enabled: true
       bucket: gitlab-pre-lfs-objects
@@ -42,7 +40,6 @@ global:
         - secret: gitlab-google-oauth2-v1
           key: provider
   email:
-    from: notify@mg.pre.gitlab.com
     reply_to: noreply@gitlab.com
 
   hosts:

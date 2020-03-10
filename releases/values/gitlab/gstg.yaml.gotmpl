@@ -20,8 +20,6 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-      address: "incoming-staging+%{key}@gitlab.com"
-      user: "incoming-staging@gitlab.com"
     lfs:
       enabled: true
       bucket: gitlab-gstg-lfs-objects
@@ -41,7 +39,6 @@ global:
         - secret: gitlab-google-oauth2-v1
           key: provider
   email:
-    from: gitlab@mg.gitlab.com
     reply_to: noreply@gitlab.com
 
   hosts:
