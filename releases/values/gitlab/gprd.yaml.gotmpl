@@ -18,14 +18,57 @@ gitlab:
   mailroom:
     enabled: true
 
+  sidekiq:
+    enabled: true
+    pods:
+      - name: export
+        concurrency: 1
+        minReplicas: 1
+        maxReplicas: 1
+        queues:
+          - [null, 1]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 16G
+
 global:
   appConfig:
     incomingEmail:
       enabled: true
+    lfs:
+      enabled: true
+      bucket: gitlab-gprd-lfs-objects
+    artifacts:
+      enabled: true
+      bucket: gitlab-gprd-artifacts
+    uploads:
+      enabled: true
+      bucket: gitlab-gprd-uploads
+    packages:
+      enabled: true
+      bucket: gitlab-gprd-package-repo
+    omniauth:
+      enabled: true
+      blockAutoCreatedUsers: false
+      providers:
+        - secret: gitlab-google-oauth2-v1
+          key: provider
+  email:
+    reply_to: noreply@gitlab.com
 
   hosts:
     gitlab:
       name: gitlab.com
+
+  psql:
+    database: gitlabhq_production_sidekiq
+    host: pgbouncer-sidekiq.int.gprd.gitlab.net
+    port: 6432
+    prepared_statements: false
 
   redis:
     host: "gprd-redis-sidekiq"
@@ -36,3 +79,14 @@ global:
         port: "26379"
       - host: "redis-sidekiq-03-db-gprd.c.gitlab-production.internal"
         port: "26379"
+
+  smtp:
+    address: smtp.mailgun.org
+    authentication: plain
+    domain: mg.gitlab.com
+    enabled: true
+    password:
+      key: secret
+      secret: gitlab-smtp-credential-v1
+    starttls_auto: true
+    user_name: postmaster@mg.staging.gitlab.com
