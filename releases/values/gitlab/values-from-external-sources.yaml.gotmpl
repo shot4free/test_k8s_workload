@@ -47,6 +47,12 @@ global:
     database: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_database" | join " ")) }}
     host: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_sidekiq_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_host" | join " ")) }}
     port: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_port" | join " ")) }}
+  smtp:
+    address: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_address" | join " ")) }}
+    authentication: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_authentication" | join " ")) }}
+    domain: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_domain" | join " ")) }}
+    starttls_auto: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_enable_starttls_auto" | join " ")) }}
+    user_name: {{ exec "bash" (list "-c" (list "echo" ($gkms_omnibus_secrets | squote) "|" "jq" ".\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_user_name" | join " ")) }}
 
   redis:
   {{- $redis_cluster_name := exec "bash" (list "-c" (list "echo" ($chef_base_db_redis_server_sidekiq_role | squote) "|" "jq" "-j" ".override_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.redis.master_name" | join " ")) }}
