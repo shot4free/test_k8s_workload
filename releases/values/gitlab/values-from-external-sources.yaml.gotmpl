@@ -14,17 +14,6 @@ global:
       address: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_address" | join " ")) }}
       user: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_email" | join " ")) }}
 
-    lfs:
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".lfs_object_store_remote_directory" | join " ")) }}
-    artifacts:
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".artifacts_object_store_remote_directory" | join " ")) }}
-    uploads:
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".uploads_object_store_remote_directory" | join " ")) }}
-    packages:
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".packages_object_store_remote_directory" | join " ")) }}
-    omniauth:
-      blockAutoCreatedUsers: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".omniauth_block_auto_created_users" | join " ")) }}
-
   hosts:
     registry:
       name: {{ regexReplaceAll "https://" (exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.registry_external_url" | join " "))) "" }}
