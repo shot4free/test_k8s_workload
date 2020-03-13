@@ -25,8 +25,8 @@ gitlab:
     pods:
       - name: export
         concurrency: 1
-        minReplicas: 1
-        maxReplicas: 1
+        minReplicas: 4
+        maxReplicas: 4
         queues:
           - [project_export, 1]
         resources:
