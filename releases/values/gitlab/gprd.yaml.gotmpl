@@ -39,21 +39,7 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-    lfs:
-      enabled: true
-      bucket: gitlab-gprd-lfs-objects
-    artifacts:
-      enabled: true
-      bucket: gitlab-gprd-artifacts
-    uploads:
-      enabled: true
-      bucket: gitlab-gprd-uploads
-    packages:
-      enabled: true
-      bucket: gitlab-gprd-package-repo
     omniauth:
-      enabled: true
-      blockAutoCreatedUsers: false
       providers:
         - secret: gitlab-google-oauth2-v1
           key: provider
