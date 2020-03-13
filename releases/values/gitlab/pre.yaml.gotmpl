@@ -21,21 +21,7 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
-    lfs:
-      enabled: true
-      bucket: gitlab-pre-lfs-objects
-    artifacts:
-      enabled: true
-      bucket: gitlab-pre-artifacts
-    uploads:
-      enabled: true
-      bucket: gitlab-pre-uploads
-    packages:
-      enabled: true
-      bucket: gitlab-pre-package-repo
     omniauth:
-      enabled: true
-      blockAutoCreatedUsers: false
       providers:
         - secret: gitlab-google-oauth2-v1
           key: provider
