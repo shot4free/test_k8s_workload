@@ -25,10 +25,10 @@ gitlab:
     pods:
       - name: export
         concurrency: 1
-        minReplicas: 4
-        maxReplicas: 4
+        minReplicas: 1
+        maxReplicas: 1
         queues:
-          - [project_export, 1]
+          - [null, 1]
         resources:
           requests:
             cpu: 50m
