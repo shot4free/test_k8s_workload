@@ -1,8 +1,8 @@
 ---
 {{ $gitlab_ops_api_token := requiredEnv "GITLAB_OPS_API_TOKEN" }}
-{{- $chef_base_role := exec "curl" (list "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base.json/raw?ref=master" )) }}
-{{- $chef_base_be_role := exec "curl" (list "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be.json/raw?ref=master" )) }}
-{{- $chef_base_be_sidekiq_role := exec "curl" (list "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be-sidekiq.json/raw?ref=master" )) }}
+{{- $chef_base_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base.json/raw?ref=master" )) }}
+{{- $chef_base_be_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be.json/raw?ref=master" )) }}
+{{- $chef_base_be_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be-sidekiq.json/raw?ref=master" )) }}
 global:
   gitaly:
     external:
