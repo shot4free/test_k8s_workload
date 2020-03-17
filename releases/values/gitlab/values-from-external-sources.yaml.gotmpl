@@ -28,6 +28,10 @@ global:
     packages:
       enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".packages_object_store_enabled" | join " ")) }}
       bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".packages_object_store_remote_directory" | join " ")) }}
+    externalDiffs:
+      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".external_diffs_object_store_enabled" | join " ")) }}
+      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".external_diffs_object_store_remote_directory" | join " ")) }}
+
     omniauth:
       enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".omniauth_enabled" | join " ")) }}
       blockAutoCreatedUsers: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".omniauth_block_auto_created_users" | join " ")) }}
