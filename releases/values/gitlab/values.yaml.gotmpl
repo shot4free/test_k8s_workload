@@ -168,9 +168,12 @@ global:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     externalDiffs:
-      when:
+      enabled: false
+      proxy_download: true
       bucket: gitlab-mr-diffs
-      connection: {}
+      connection:
+        secret: gitlab-object-storage-v1
+        key: gitlab-object-storage.yml
 
     ## doc/charts/globals.md#pseudonymizer-settings
     pseudonymizer:
