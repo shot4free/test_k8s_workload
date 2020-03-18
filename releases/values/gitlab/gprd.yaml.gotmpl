@@ -55,16 +55,6 @@ global:
   psql:
     prepared_statements: false
 
-  redis:
-    host: "gprd-redis-sidekiq"
-    sentinels:
-      - host: "redis-sidekiq-01-db-gprd.c.gitlab-production.internal"
-        port: "26379"
-      - host: "redis-sidekiq-02-db-gprd.c.gitlab-production.internal"
-        port: "26379"
-      - host: "redis-sidekiq-03-db-gprd.c.gitlab-production.internal"
-        port: "26379"
-
   smtp:
     address: smtp.mailgun.org
     authentication: plain
