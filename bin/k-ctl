@@ -37,7 +37,7 @@ fi
 
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
-CHART_VERSION=${CHART_VERSION:-$(get_chart_version)}
+CHART_VERSION=$(get_chart_version)
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"
 

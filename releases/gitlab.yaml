@@ -5,7 +5,7 @@ bases:
 
 ---
 {{- $chart_source := env "CHART_SOURCE" | default (.Environment.Values | getOrNil "gitlab_chart" | default "gitlab/gitlab") }}
-{{- $chart_version := env "CHART_VERSION" | default (.Environment.Values | getOrNil "gitlab_chart_version") | default (readFile "../CHART_VERSION") | trim }}
+{{- $chart_version := env "CHART_VERSION" | default (.Environment.Values | getOrNil "gitlab_chart_version") | trim }}
 repositories:
 {{- if eq $chart_source "gitlab/gitlab" }}
 - name: gitlab
