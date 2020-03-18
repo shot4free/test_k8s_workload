@@ -1,8 +1,11 @@
 ---
-{{ $gitlab_ops_api_token := requiredEnv "GITLAB_OPS_API_TOKEN" }}
+{{- $gitlab_ops_api_token := requiredEnv "GITLAB_OPS_API_TOKEN" }}
 {{- $chef_base_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base.json/raw?ref=master" )) }}
 {{- $chef_base_be_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be.json/raw?ref=master" )) }}
 {{- $chef_base_be_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be-sidekiq.json/raw?ref=master" )) }}
+{{- $chef_base_db_redis_server_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-db-redis-server-sidekiq.json/raw?ref=master" )) }}
+{{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default .Environment.Name }}
+{{- $gkms_omnibus_secrets_base64 := (exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) | b64enc | quote) }}
 global:
   gitaly:
     external:
@@ -44,6 +47,18 @@ global:
     database: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_database" | join " ")) }}
     host: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_sidekiq_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_host" | join " ")) }}
     port: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_port" | join " ")) }}
+
+  redis:
+  {{- $redis_cluster_name := exec "bash" (list "-c" (list "echo" ($chef_base_db_redis_server_sidekiq_role | squote) "|" "jq" "-j" ".override_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.redis.master_name" | join " ")) }}
+  {{- if eq "null" $redis_cluster_name  }}
+    host: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_host" | join " ")) }}
+    port: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_port" | join " ")) }}
+    password:
+      enabled: {{ ne "null" (exec "bash" (list "-c" (print "echo " $gkms_omnibus_secrets_base64 "| base64 -d | jq -j '.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_password'"))) }}
+  {{- else }}
+    host: {{ $redis_cluster_name }}
+    sentinels: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_queues_sentinels" | join " ")) }}
+  {{- end }}
 
 registry:
   service:
