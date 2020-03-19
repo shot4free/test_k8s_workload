@@ -25,7 +25,7 @@ include:
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.11.3'
+  CI_IMAGE_VERSION: '40481aa7'
 
 #############################################################
 
@@ -51,6 +51,16 @@ stages:
   - non-prod:deploy
   - gprd-cny:deploy
   - gprd:deploy
+
+#########################################
+# Attempts to find an MR on .com and add
+# a link to the pipeline that runs on ops
+
+notify_com_mr:
+  extends: .except-com
+  stage: check
+  script:
+    - /k8s-workloads/notify-mr
 
 #########################################
 # Container scanning for Registry
