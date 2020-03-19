@@ -57,6 +57,7 @@ stages:
 # a link to the pipeline that runs on ops
 
 notify_com_mr:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   extends: .except-com
   stage: check
   script:
