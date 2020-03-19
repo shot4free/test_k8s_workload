@@ -25,7 +25,7 @@ include:
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: '40481aa7'
+  CI_IMAGE_VERSION: 'a54096ea'
 
 #############################################################
 
