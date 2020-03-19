@@ -21,7 +21,7 @@ include:
     ref: 'v1.11.3'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
