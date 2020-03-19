@@ -62,6 +62,10 @@ notify_com_mr:
   stage: check
   script:
     - /k8s-workloads/notify-mr
+  # It is possible that this job will fail if a branch is created
+  # without a corresponding MR, for this reason we allow it to
+  # fail
+  allow_failure: true
 
 #########################################
 # Container scanning for Registry
