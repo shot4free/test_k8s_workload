@@ -9,23 +9,23 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.11.3'
+    ref: 'v1.12.0'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.11.3'
+  CI_IMAGE_VERSION: 'v1.12.0'
 
 #############################################################
 
@@ -51,6 +51,21 @@ stages:
   - non-prod:deploy
   - gprd-cny:deploy
   - gprd:deploy
+
+#########################################
+# Attempts to find an MR on .com and add
+# a link to the pipeline that runs on ops
+
+notify_com_mr:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  extends: .except-com
+  stage: check
+  script:
+    - /k8s-workloads/notify-mr
+  # It is possible that this job will fail if a branch is created
+  # without a corresponding MR, for this reason we allow it to
+  # fail
+  allow_failure: true
 
 #########################################
 # Container scanning for Registry
