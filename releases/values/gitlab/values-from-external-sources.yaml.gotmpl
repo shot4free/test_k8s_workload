@@ -5,65 +5,65 @@
 {{- $chef_base_be_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be-sidekiq.json/raw?ref=master" )) }}
 {{- $chef_base_db_redis_server_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-db-redis-server-sidekiq.json/raw?ref=master" )) }}
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default .Environment.Name }}
-{{- $gkms_omnibus_secrets_base64 := (exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) | b64enc | quote) }}
+{{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) }}
 global:
   gitaly:
     external:
-{{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" "-rf" "jq/global-gitaly-external.jq" | join " ")) | indent 6 }}
+{{ $chef_base_role | exec "jq" (list "-rf" "jq/global-gitaly-external.jq") | indent 6 }}
 
   email:
-    from: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".gitlab_email_from" | join " ")) }}
+    from: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".gitlab_email_from") }}
 
   appConfig:
     incomingEmail:
-      address: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_address" | join " ")) }}
-      user: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".incoming_email_email" | join " ")) }}
+      address: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_address") }}
+      user: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_email") }}
 
     lfs:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".lfs_object_store_enabled" | join " ")) }}
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".lfs_object_store_remote_directory" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".lfs_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".lfs_object_store_remote_directory") }}
     artifacts:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".artifacts_object_store_enabled" | join " ")) }}
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".artifacts_object_store_remote_directory" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".artifacts_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".artifacts_object_store_remote_directory") }}
     uploads:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".uploads_object_store_enabled" | join " ")) }}
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".uploads_object_store_remote_directory" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".uploads_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" ( list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".uploads_object_store_remote_directory") }}
     packages:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".packages_object_store_enabled" | join " ")) }}
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".packages_object_store_remote_directory" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".packages_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".packages_object_store_remote_directory") }}
     externalDiffs:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".external_diffs_object_store_enabled" | join " ")) }}
-      bucket: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".external_diffs_object_store_remote_directory" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".external_diffs_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".external_diffs_object_store_remote_directory") }}
 
     omniauth:
-      enabled: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".omniauth_enabled" | join " ")) }}
-      blockAutoCreatedUsers: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".omniauth_block_auto_created_users" | join " ")) }}
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_enabled") }}
+      blockAutoCreatedUsers: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_block_auto_created_users") }}
 
   hosts:
     registry:
-      name: {{ regexReplaceAll "https://" (exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.registry_external_url" | join " "))) "" }}
+      name: {{ regexReplaceAll "https://" ($chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.registry_external_url")) "" }}
 
   psql:
-    database: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_database" | join " ")) }}
-    host: {{ exec "bash" (list "-c" (list "echo" ($chef_base_be_sidekiq_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_host" | join " ")) }}
-    port: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".db_port" | join " ")) }}
+    database: {{ $chef_base_be_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_database") }}
+    host: {{ $chef_base_be_sidekiq_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
+    port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_port") }}
   smtp:
-    address: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_address" | join " ")) }}
-    authentication: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_authentication" | join " ")) }}
-    domain: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_domain" | join " ")) }}
-    starttls_auto: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_enable_starttls_auto" | join " ")) }}
-    user_name: {{ exec "bash" (list "-c" (list "echo" $gkms_omnibus_secrets_base64 "|" "base64" "-d" "|" "jq" ".\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".smtp_user_name" | join " ")) }}
+    address: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_address") }}
+    authentication: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_authentication") }}
+    domain: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_domain") }}
+    starttls_auto: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_enable_starttls_auto") }}
+    user_name: {{ $gkms_omnibus_secrets | exec "jq" (list ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_user_name") }}
 
   redis:
-  {{- $redis_cluster_name := exec "bash" (list "-c" (list "echo" ($chef_base_db_redis_server_sidekiq_role | squote) "|" "jq" "-j" ".override_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.redis.master_name" | join " ")) }}
+  {{- $redis_cluster_name := $chef_base_db_redis_server_sidekiq_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- if eq "null" $redis_cluster_name  }}
-    host: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_host" | join " ")) }}
-    port: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_port" | join " ")) }}
+    host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_host") }}
+    port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_port") }}
     password:
-      enabled: {{ ne "null" (exec "bash" (list "-c" (print "echo " $gkms_omnibus_secrets_base64 "| base64 -d | jq -j '.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_password'"))) }}
+      enabled: {{ ne "null" ($gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_password")) }}
   {{- else }}
     host: {{ $redis_cluster_name }}
-    sentinels: {{ exec "bash" (list "-c" (list "echo" ($chef_base_role | squote) "|" "jq" ".default_attributes.\\\"omnibus-gitlab\\\".gitlab_rb.\\\"gitlab-rails\\\".redis_queues_sentinels" | join " ")) }}
+    sentinels: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_queues_sentinels") }}
   {{- end }}
 
 registry:
