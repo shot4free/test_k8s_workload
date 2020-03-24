@@ -14,7 +14,21 @@ gitlab:
   sidekiq:
     enabled: true
     image:
-      tag: 12-10-202003231636-078ec117afa
+      tag: 12-9-202003130835-672812de738
+    pods:
+      - name: export
+        concurrency: 1
+        minReplicas: 16
+        maxReplicas: 16
+        queues:
+          - [project_export, 1]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 16G
 
 global:
   appConfig:
