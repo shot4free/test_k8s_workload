@@ -424,6 +424,8 @@ postgresql:
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
+  nodeSelector:
+    type: default
   image:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
@@ -525,6 +527,8 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/sidekiq
   sidekiq:
+    nodeSelector:
+      type: sidekiq
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
       pullSecrets:
@@ -626,6 +630,8 @@ gitlab:
   gitlab-exporter:
     enabled: false
   mailroom:
+    nodeSelector:
+      type: default
     enabled: false
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
