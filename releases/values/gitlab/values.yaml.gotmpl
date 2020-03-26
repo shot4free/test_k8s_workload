@@ -531,6 +531,24 @@ gitlab:
       type: sidekiq
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
+
+{{/*
+
+We hope the below is temporary, we query the cluster to determine the running version of the image being
+utilized by sidekiq.  We then query to determine if an image was passed in to the environment via
+IMAGE_TAG.  If IMAGE_TAG is empty, we fall back to what is currently in the cluster.  Otherwise we must
+but performing an auto-deploy and upgrade the desired image.
+
+This is being done until we can update our helm charts with our desired images.  This is being tracked in issue
+https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
+
+*/}}
+
+{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" "gitlab-sidekiq-export-v1" "-o" "json") }}
+{{- $sidekiq_current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
+{{- $provided_image_tag := env "IMAGE_TAG" }}
+
+      tag: {{ default $sidekiq_current_tag $provided_image_tag }}
       pullSecrets:
       - name: dev-registry-access-v1
     enabled: false
