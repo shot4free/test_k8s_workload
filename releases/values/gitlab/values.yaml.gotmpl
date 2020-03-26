@@ -544,7 +544,8 @@ https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
 
 */}}
 
-{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" "gitlab-sidekiq-export-v1" "-o" "json") }}
+{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
+{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" "gitlab-sidekiq-export-v1" "--namespace" $namespace "-o" "json") }}
 {{- $sidekiq_current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
 {{- $provided_image_tag := env "IMAGE_TAG" }}
 
