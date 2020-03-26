@@ -179,9 +179,7 @@ pre:auto-deploy:
     refs:
       - triggers
     variables:
-      - $ENVIRONMENT == "pre"
-  variables:
-    DRY_RUN: "false"
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false"
 
 ### Staging
 
@@ -232,9 +230,7 @@ gstg:auto-deploy:
     refs:
       - triggers
     variables:
-      - $ENVIRONMENT == "gstg"
-  variables:
-    DRY_RUN: "false"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false"
 
 ### Canary
 
@@ -285,9 +281,7 @@ gprd-cny:auto-deploy:
     refs:
       - triggers
     variables:
-      - $ENVIRONMENT == "gprd-cny"
-  variables:
-    DRY_RUN: "false"
+      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false"
 
 ### Producion
 
@@ -339,6 +333,4 @@ gprd:auto-deploy:
     refs:
       - triggers
     variables:
-      - $ENVIRONMENT == "gprd"
-  variables:
-    DRY_RUN: "false"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false"
