@@ -552,7 +552,7 @@ https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
       tag: {{ default $sidekiq_current_tag $provided_image_tag }}
       pullSecrets:
       - name: dev-registry-access-v1
-    enabled: false
+    enabled: true
     metrics:
       enabled: true
       port: 8083

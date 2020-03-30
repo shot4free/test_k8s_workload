@@ -19,14 +19,13 @@ gitlab:
     enabled: true
 
   sidekiq:
-    enabled: true
     pods:
       - name: export
         concurrency: 1
-        minReplicas: 1
-        maxReplicas: 1
+        minReplicas: 4
+        maxReplicas: 16
         queues:
-          - [null, 1]
+          - [project_export, 1]
         resources:
           requests:
             cpu: 50m
