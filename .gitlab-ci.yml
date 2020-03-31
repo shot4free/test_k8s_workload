@@ -92,7 +92,8 @@ container_scanning:
   except:
     refs:
       - branches
-      - triggers
+    variables:
+      - $AUTO_DEPLOY == "true"
   variables:
     GIT_STRATEGY: fetch
     CI_APPLICATION_REPOSITORY: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
@@ -163,10 +164,8 @@ pre:dryrun:auto-deploy:
   script:
     - bin/k-ctl -D upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "pre"
+      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
 
 pre:auto-deploy:
   stage: non-prod:deploy
@@ -176,10 +175,8 @@ pre:auto-deploy:
   script:
     - bin/k-ctl upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false"
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 ### Staging
 
@@ -214,10 +211,8 @@ gstg:dryrun:auto-deploy:
   script:
     - bin/k-ctl -D upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gstg"
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
 
 gstg:auto-deploy:
   stage: non-prod:deploy
@@ -227,10 +222,8 @@ gstg:auto-deploy:
   script:
     - bin/k-ctl upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 ### Canary
 
@@ -265,10 +258,8 @@ gprd-cny:dryrun:auto-deploy:
   script:
     - bin/k-ctl -D -s cny upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gprd-cny"
+      - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true"
 
 gprd-cny:auto-deploy:
   stage: gprd-cny:deploy
@@ -278,10 +269,8 @@ gprd-cny:auto-deploy:
   script:
     - bin/k-ctl -s cny upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false"
+      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 ### Producion
 
@@ -317,10 +306,8 @@ gprd:dryrun:auto-deploy:
   script:
     - bin/k-ctl -D upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gprd"
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
 
 gprd:auto-deploy:
   stage: gprd:deploy
@@ -330,7 +317,5 @@ gprd:auto-deploy:
   script:
     - bin/k-ctl upgrade
   only:
-    refs:
-      - triggers
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
