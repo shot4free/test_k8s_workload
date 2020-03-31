@@ -9,23 +9,24 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v1.12.2'
+    ref: 'v1.12.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v1.12.2'
+    ref: 'v1.12.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v1.12.2'
+    ref: 'v1.12.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v1.12.2'
+    ref: 'v1.12.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.12.2'
+    ref: 'v1.12.7'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.12.2'
+  CI_IMAGE_VERSION: 'v1.12.7'
+  AUTO_DEPLOY: 'false'
 
 #############################################################
 
@@ -44,10 +45,10 @@ variables:
     name: gprd
     url: https://gitlab.com
 
-.except-auto-deploy:
-  except:
-    refs:
-      - triggers
+.only-auto-deploy-false:
+  only:
+    variables:
+      - $AUTO_DEPLOY == "false"
 
 stages:
   - check
@@ -65,7 +66,7 @@ notify_com_mr:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   extends:
     - .except-com
-    - .except-auto-deploy
+    - .only-auto-deploy-false
   stage: check
   script:
     - /k8s-workloads/notify-mr
@@ -138,7 +139,7 @@ pre:dryrun:
   extends:
     - .deploy
     - .pre
-    - .except-auto-deploy
+    - .only-auto-deploy-false
   script:
     - bin/k-ctl -D upgrade
 
@@ -147,7 +148,7 @@ pre:upgrade:
   extends:
     - .deploy
     - .pre
-    - .except-auto-deploy
+    - .only-auto-deploy-false
   script:
     - bin/k-ctl upgrade
   only:
@@ -155,6 +156,93 @@ pre:upgrade:
       - master
   variables:
     DRY_RUN: "false"
+
+### Staging
+
+gstg:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg
+    - .only-auto-deploy-false
+  script:
+    - bin/k-ctl -D upgrade
+
+gstg:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg
+    - .only-auto-deploy-false
+  script:
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+### Canary
+
+gprd-cny:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd
+    - .only-auto-deploy-false
+  script:
+    - bin/k-ctl -D -s cny upgrade
+
+gprd-cny:upgrade:
+  stage: gprd-cny:deploy
+  extends:
+    - .deploy
+    - .gprd
+    - .only-auto-deploy-false
+  script:
+    - bin/k-ctl -s cny upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+### Producion
+
+gprd:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd
+    - .only-auto-deploy-false
+  script:
+    - bin/k-ctl -D upgrade
+
+gprd:upgrade:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd
+    - .only-auto-deploy-false
+  when: manual
+  script:
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+###############################################################################
+### Auto Deploy Jobs ###
+#
+# Jobs here are specific to auto-deploys.  These are triggered by deployer
+# using the specific variables:
+#   * ENVIRONMENT
+#   * DRY_RUN
+#   * AUTO_DEPLOY
+
+### PreProd
 
 pre:dryrun:auto-deploy:
   stage: dryrun
@@ -180,29 +268,6 @@ pre:auto-deploy:
 
 ### Staging
 
-gstg:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .gstg
-    - .except-auto-deploy
-  script:
-    - bin/k-ctl -D upgrade
-
-gstg:upgrade:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .gstg
-    - .except-auto-deploy
-  script:
-    - bin/k-ctl upgrade
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
-
 gstg:dryrun:auto-deploy:
   stage: dryrun
   extends:
@@ -227,29 +292,6 @@ gstg:auto-deploy:
 
 ### Canary
 
-gprd-cny:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .gprd
-    - .except-auto-deploy
-  script:
-    - bin/k-ctl -D -s cny upgrade
-
-gprd-cny:upgrade:
-  stage: gprd-cny:deploy
-  extends:
-    - .deploy
-    - .gprd
-    - .except-auto-deploy
-  script:
-    - bin/k-ctl -s cny upgrade
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
-
 gprd-cny:dryrun:auto-deploy:
   stage: dryrun
   extends:
@@ -273,30 +315,6 @@ gprd-cny:auto-deploy:
       - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 ### Producion
-
-gprd:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .gprd
-    - .except-auto-deploy
-  script:
-    - bin/k-ctl -D upgrade
-
-gprd:upgrade:
-  stage: gprd:deploy
-  extends:
-    - .deploy
-    - .gprd
-    - .except-auto-deploy
-  when: manual
-  script:
-    - bin/k-ctl upgrade
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
 
 gprd:dryrun:auto-deploy:
   stage: dryrun
