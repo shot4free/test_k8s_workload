@@ -68,4 +68,4 @@ global:
 
 registry:
   service:
-    loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)") }}
+    loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
