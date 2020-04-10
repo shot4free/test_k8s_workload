@@ -9,23 +9,23 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v1.12.7'
+    ref: 'v2.0.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v1.12.7'
+    ref: 'v2.0.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v1.12.7'
+    ref: 'v2.0.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v1.12.7'
+    ref: 'v2.0.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v1.12.7'
+    ref: 'v2.0.1'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v1.12.7'
+  CI_IMAGE_VERSION: 'v2.0.1'
   AUTO_DEPLOY: 'false'
 
 #############################################################
