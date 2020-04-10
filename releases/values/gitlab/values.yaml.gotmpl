@@ -534,20 +534,22 @@ gitlab:
 
 {{/*
 
-We hope the below is temporary, we query the cluster to determine the running version of the image being
-utilized by sidekiq.  We then query to determine if an image was passed in to the environment via
-IMAGE_TAG.  If IMAGE_TAG is empty, we fall back to what is currently in the cluster.  Otherwise we must
-but performing an auto-deploy and upgrade the desired image.
+Here a query is made to determine the running version of the image being
+utilized by sidekiq for the sidekiq project-exporter queue.
+It is possible to set a new version by setting $GITLAB_IMAGE_TAG
+in the environment.
 
-This is being done until we can update our helm charts with our desired images.  This is being tracked in issue
-https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
+If GITLAB_IMAGE_TAG is not set, this will fall back to what is currently in the cluster.
+
+This is being done now for normal deploys until deployments switch to using a helm chart release.
+This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
 
 */}}
 
 {{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
 {{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" "gitlab-sidekiq-export-v1" "--namespace" $namespace "-o" "json") }}
 {{- $sidekiq_current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
-{{- $provided_image_tag := env "IMAGE_TAG" }}
+{{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
       tag: {{ default $sidekiq_current_tag $provided_image_tag }}
       pullSecrets:
