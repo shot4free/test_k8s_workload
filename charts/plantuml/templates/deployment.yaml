@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plantuml.fullname" . }}
+  labels:
+    {{ include "plantuml.labels" . | indent 4 | trim }}
+  annotations:
+    {{ toYaml .Values.deployment.annotations | nindent 4 | trim }}
+spec:
+  replicas: {{ .Values.minReplicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "plantuml.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "plantuml.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        {{ toYaml .Values.annotations | nindent 6 | trim }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- if .Values.image.sha256 }}
+          image: "{{ .Values.image.repository }}@sha256:{{ .Values.image.sha256 }}"
+          {{- else }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: web
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          args:
+            - "-Djetty.port={{ .Values.port }}"
+            - "--module=http-forwarded"
+          resources:
+            {{ toYaml .Values.resources | nindent 12 | trim }}
+        {{- if .Values.nginx_sidecar.enabled }}
+        - name: nginx
+          image: "{{ .Values.nginx_sidecar.repository }}:{{ .Values.nginx_sidecar.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: nginx
+          # PlantUML does not have a health endpoint
+          # using favicon.ico for a simple check
+          livenessProbe:
+            httpGet:
+              path: /png
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /png
+              port: 80
+          resources:
+            {{ toYaml .Values.nginx_sidecar.resources | nindent 12 | trim }}
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: conf
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.nginx_sidecar.enabled }}
+      volumes:
+        - name: conf
+          configMap:
+            name: {{ include "plantuml.fullname" . }}
+    {{- end }}

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "plantuml.fullname" . }}
+  labels:
+    {{ include "plantuml.labels" . | nindent 4 | trim }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
+      protocol: TCP
+      name: plantuml
+  selector:
+    app.kubernetes.io/name: {{ include "plantuml.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
