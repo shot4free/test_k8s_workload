@@ -1,0 +1,5 @@
+---
+nginx_sidecar:
+  server_name: plantuml.gitlab-static.net
+  redirect:
+    url: https://gitlab.com

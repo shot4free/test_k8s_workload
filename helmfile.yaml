@@ -6,3 +6,4 @@ bases:
 helmfiles:
   - path: releases/gitlab-secrets.yaml
   - path: releases/gitlab.yaml
+  - path: releases/plantuml/helmfile.yaml

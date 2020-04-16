@@ -1,0 +1,5 @@
+---
+nginx_sidecar:
+  server_name: gstg.plantuml.gitlab-static.net
+  redirect:
+    url: https://staging.gitlab.com

@@ -1,0 +1,67 @@
+---
+image:
+  # Note: if this version changes you must
+  # also update the corresponding
+  # CI_APPLICATION_TAG for this environment
+  # in the container_scanning job
+  #
+  # Set to a sha256 because of
+  # https://gitlab.com/gitlab-com/gl-infra/delivery/issues/492
+  # When there is a release next month we can change this back to a tag
+  sha256: ac327e13ec2613591621ad5f47e796589e3d813e3e67c5755223af5bbfacd9ee
+  # tag: jetty-v1.2019.11
+
+minReplicas: 1
+maxReplicas: 10
+
+backendconfig:
+  enabled: true
+
+hpa:
+  enabled: true
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+
+service:
+  annotations:
+    beta.cloud.google.com/backend-config: '{"ports": {"80":"plantuml"}}'
+
+networkpolicy:
+  enabled: true
+  egress:
+    enabled: true
+    # The following rules enable traffic to all external
+    # endpoints, except the metadata service and the local
+    # network (except DNS requests)
+    rules:
+    - to:
+      - ipBlock:
+          cidr: 10.0.0.0/8
+      ports:
+      - port: 53
+        protocol: UDP
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+          except:
+          - 10.0.0.0/8
+          - 169.254.169.254/32
+
+nginx_sidecar:
+  rate_limit:
+    rate: '2r/s'
+    burst: '5'
+  resources:
+    requests:
+      cpu: 100m
+      memory: 50Mi
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2048Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi

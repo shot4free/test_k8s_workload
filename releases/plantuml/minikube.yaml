@@ -1,0 +1,6 @@
+---
+backendconfig:
+  enabled: false
+
+hpa:
+  enabled: false

@@ -1,0 +1,17 @@
+---
+# TODO: this duplicates the bases declared in the top-level helmfile, but is
+# needed to run helmfile operations from this directory, which is useful when
+# iterating on changes to one release only.
+bases:
+  - "../../bases/helmDefaults.yaml"
+  - "../../bases/environments.yaml"
+
+releases:
+  - name: "plantuml"
+    chart: "../../charts/plantuml"
+    namespace: "plantuml"
+    labels:
+      helmfile_release: plantuml
+    values:
+      - "values.yaml"
+      - "{{ .Environment.Name }}.yaml"
