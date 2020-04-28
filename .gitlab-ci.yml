@@ -8,24 +8,27 @@
 
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
+    file: "/ci/version-checks.yml"
+    ref: 'v2.1.0'
+  - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v2.0.1'
+    ref: 'v2.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v2.0.1'
+    ref: 'v2.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v2.0.1'
+    ref: 'v2.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v2.0.1'
+    ref: 'v2.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v2.0.1'
+    ref: 'v2.1.0'
   - template: Container-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v2.0.1'
+  CI_IMAGE_VERSION: 'v2.1.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
