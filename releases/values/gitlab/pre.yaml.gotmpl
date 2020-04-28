@@ -12,6 +12,25 @@ gitlab:
   mailroom:
     enabled: true
 
+  sidekiq:
+    cluster: true
+    experimentalQueueSelector: true
+    pods:
+      - name: memory-bound
+        concurrency: 1
+        minReplicas: 1
+        maxReplicas: 16
+        nodeSelector:
+          type: memory-bound
+        queues: resource_boundary=memory
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 16G
+
 global:
   appConfig:
     incomingEmail:
