@@ -548,7 +548,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 
 {{/* sidekiq_deployment will change to gitlab-sidekiq-memory-bound-v1 when https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/807 is complete */}}
 {{- $sidekiq_deployment := "gitlab-sidekiq-export-v1" }}
-{{- if eq "pre" .Environment.Name }}
+{{- if or (eq "pre" .Environment.Name) (eq "gstg" .Environment.Name) }}
   {{- $sidekiq_deployment = "gitlab-sidekiq-memory-bound-v1" }}
 {{- end }}
 
