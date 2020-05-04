@@ -18,22 +18,6 @@ gitlab:
   mailroom:
     enabled: true
 
-  sidekiq:
-    pods:
-      - name: export
-        concurrency: 1
-        minReplicas: 4
-        maxReplicas: 16
-        queues:
-          - [project_export, 1]
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 2
-            memory: 16G
-
 global:
   appConfig:
     incomingEmail:

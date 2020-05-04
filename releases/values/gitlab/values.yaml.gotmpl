@@ -527,6 +527,8 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/sidekiq
   sidekiq:
+    cluster: true
+    experimentalQueueSelector: true
     nodeSelector:
       type: sidekiq
     image:
@@ -622,12 +624,13 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
             protocol: TCP
 
     pods:
-      - name: export
+      - name: memory-bound
         concurrency: 1
         minReplicas: 1
         maxReplicas: 16
-        queues:
-          - [project_export, 1]
+        nodeSelector:
+          type: memory-bound
+        queues: resource_boundary=memory
         resources:
           requests:
             cpu: 50m
