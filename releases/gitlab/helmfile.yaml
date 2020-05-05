@@ -1,7 +1,7 @@
 ---
 bases:
-  - "../bases/helmDefaults.yaml"
-  - "../bases/environments.yaml"
+  - "../../bases/helmDefaults.yaml"
+  - "../../bases/environments.yaml"
 
 ---
 {{- $chart_source := env "CHART_SOURCE" | default (.Environment.Values | getOrNil "gitlab_chart" | default "gitlab/gitlab") }}
@@ -36,6 +36,6 @@ releases:
       - name: "registry.annotations.app\\.gitlab\\.com/env"
         value: {{env "CI_ENVIRONMENT_SLUG" | default .Environment.Name}}
     values:
-      - values/gitlab/values.yaml.gotmpl
-      - values/gitlab/{{.Environment.Name}}.yaml.gotmpl
-      - values/gitlab/values-from-external-sources.yaml.gotmpl
+      - values/values.yaml.gotmpl
+      - values/{{.Environment.Name}}.yaml.gotmpl
+      - values/values-from-external-sources.yaml.gotmpl

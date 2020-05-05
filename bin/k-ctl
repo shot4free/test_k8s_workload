@@ -64,7 +64,7 @@ get_gitlab_chart() {
   debug "Setting CHART_VERSION=$CHART_VERSION" "${_YEL}"
 
   # CHART_VERSION and CHART_SOURCE are needed
-  # by releases/gitlab.yaml
+  # by releases/gitlab
   export CHART_VERSION
   export CHART_SOURCE
 }

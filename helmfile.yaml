@@ -4,5 +4,5 @@ bases:
   - "bases/environments.yaml"
 
 helmfiles:
-  - path: releases/gitlab-secrets.yaml
-  - path: releases/gitlab.yaml
+  - path: releases/gitlab-secrets/helmfile.yaml
+  - path: releases/gitlab/helmfile.yaml
