@@ -11,6 +11,36 @@ registry:
 gitlab:
   mailroom:
     enabled: true
+  sidekiq:
+    pods:
+      - name: memory-bound
+        concurrency: 1
+        minReplicas: 1
+        maxReplicas: 16
+        nodeSelector:
+          type: memory-bound
+        queues: resource_boundary=memory
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 16G
+      - name: elasticsearch
+        concurrency: 2
+        minReplicas: 2
+        maxReplicas: 2
+        nodeSelector:
+          type: default
+        queues: feature_category=global_search&urgency=throttled
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 8GB
 
 global:
   appConfig:
