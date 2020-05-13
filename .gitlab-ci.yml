@@ -33,19 +33,24 @@ variables:
 
 #############################################################
 
-.pre:
+.pre-env:
   environment:
     name: pre
     url: https://pre.gitlab.com
 
-.gstg:
+.gstg-env:
   environment:
     name: gstg
     url: https://staging.gitlab.com
 
-.gprd:
+.gprd-env:
   environment:
     name: gprd
+    url: https://gitlab.com
+
+.gprd-cny-env:
+  environment:
+    name: gprd-cny
     url: https://gitlab.com
 
 .only-auto-deploy-false:
@@ -141,7 +146,6 @@ pre:dryrun:
   stage: dryrun
   extends:
     - .deploy
-    - .pre
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -D upgrade
@@ -150,7 +154,7 @@ pre:upgrade:
   stage: non-prod:deploy
   extends:
     - .deploy
-    - .pre
+    - .pre-env
     - .only-auto-deploy-false
   script:
     - bin/k-ctl upgrade
@@ -166,7 +170,6 @@ gstg:dryrun:
   stage: dryrun
   extends:
     - .deploy
-    - .gstg
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -D upgrade
@@ -175,7 +178,7 @@ gstg:upgrade:
   stage: non-prod:deploy
   extends:
     - .deploy
-    - .gstg
+    - .gstg-env
     - .only-auto-deploy-false
   script:
     - bin/k-ctl upgrade
@@ -191,7 +194,6 @@ gprd-cny:dryrun:
   stage: dryrun
   extends:
     - .deploy
-    - .gprd
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -D -s cny upgrade
@@ -200,7 +202,7 @@ gprd-cny:upgrade:
   stage: gprd-cny:deploy
   extends:
     - .deploy
-    - .gprd
+    - .gprd-cny-env
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -s cny upgrade
@@ -216,7 +218,6 @@ gprd:dryrun:
   stage: dryrun
   extends:
     - .deploy
-    - .gprd
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -D upgrade
@@ -225,7 +226,7 @@ gprd:upgrade:
   stage: gprd:deploy
   extends:
     - .deploy
-    - .gprd
+    - .gprd-env
     - .only-auto-deploy-false
   when: manual
   script:
@@ -251,7 +252,6 @@ pre:dryrun:auto-deploy:
   stage: dryrun
   extends:
     - .deploy
-    - .pre
   script:
     - bin/k-ctl -D upgrade
   only:
@@ -262,7 +262,7 @@ pre:auto-deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
-    - .pre
+    - .pre-env
   script:
     - bin/k-ctl upgrade
   only:
@@ -275,7 +275,6 @@ gstg:dryrun:auto-deploy:
   stage: dryrun
   extends:
     - .deploy
-    - .gstg
   script:
     - bin/k-ctl -D upgrade
   only:
@@ -286,7 +285,7 @@ gstg:auto-deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
-    - .gstg
+    - .gstg-env
   script:
     - bin/k-ctl upgrade
   only:
@@ -299,7 +298,6 @@ gprd-cny:dryrun:auto-deploy:
   stage: dryrun
   extends:
     - .deploy
-    - .gprd
   script:
     - bin/k-ctl -D -s cny upgrade
   only:
@@ -310,7 +308,7 @@ gprd-cny:auto-deploy:
   stage: gprd-cny:deploy
   extends:
     - .deploy
-    - .gprd
+    - .gprd-cny-env
   script:
     - bin/k-ctl -s cny upgrade
   only:
@@ -323,7 +321,6 @@ gprd:dryrun:auto-deploy:
   stage: dryrun
   extends:
     - .deploy
-    - .gprd
   script:
     - bin/k-ctl -D upgrade
   only:
@@ -334,7 +331,7 @@ gprd:auto-deploy:
   stage: gprd:deploy
   extends:
     - .deploy
-    - .gprd
+    - .gprd-env
   script:
     - bin/k-ctl upgrade
   only:
