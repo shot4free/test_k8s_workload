@@ -634,20 +634,6 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 2
             memory: 16G
-      - name: elasticsearch
-        concurrency: 2
-        minReplicas: 2
-        maxReplicas: 2
-        nodeSelector:
-          type: default
-        queues: feature_category=global_search&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 2
-            memory: 8G
     registry:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
