@@ -25,7 +25,6 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
     ref: 'v2.2.0'
-  - template: Container-Scanning.gitlab-ci.yml
 
 variables:
   CI_IMAGE_VERSION: 'v2.2.0'
@@ -77,60 +76,6 @@ notify_com_mr:
   # without a corresponding MR, for this reason we allow it to
   # fail
   allow_failure: true
-
-#########################################
-# Container scanning for Registry
-# This is takes the tag that is currently set in
-# the production value file
-
-container_scanning:
-  stage: check
-  # This is the imported job
-  # and will never run due to the
-  # following except condition because the imported
-  # job only runs on branches.
-  #
-  # It is necessary
-  # so we can import the job and extend it for
-  # the different environments.
-  except:
-    refs:
-      - branches
-    variables:
-      - $AUTO_DEPLOY == "true"
-  variables:
-    GIT_STRATEGY: fetch
-    CI_APPLICATION_REPOSITORY: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
-
-# The following environment jobs are identical
-# except they read the tag version from the corresponding
-# environment file
-
-pre:container_scan:
-  variables:
-    CI_APPLICATION_TAG: v2.9.1-gitlab
-  extends:
-    - container_scanning
-    - .except-ops
-  stage: check
-
-gstg:container_scan:
-  variables:
-    CI_APPLICATION_TAG: v2.9.1-gitlab
-  extends:
-    - container_scanning
-    - .except-ops
-  stage: check
-
-gprd:container_scan:
-  variables:
-    CI_APPLICATION_TAG: v2.9.1-gitlab
-  extends:
-    - container_scanning
-    - .except-ops
-  stage: check
-
-#########################################
 
 ############################ CI JOBS ################################
 #####################################################################
