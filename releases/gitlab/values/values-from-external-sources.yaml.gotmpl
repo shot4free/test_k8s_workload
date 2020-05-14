@@ -93,13 +93,6 @@ global:
         enabled: true
         secret: gitlab-redis-credential-v1
         key: secret
-    actioncable:
-      host: {{ $redis_cluster_name }}
-      sentinels: {{ $redis_sentinels }}
-      password:
-        enabled: true
-        secret: gitlab-redis-credential-v1
-        key: secret
   {{- end }}
 
 registry:
