@@ -93,11 +93,7 @@ container_scanning:
   # It is necessary
   # so we can import the job and extend it for
   # the different environments.
-  except:
-    refs:
-      - branches
-    variables:
-      - $AUTO_DEPLOY == "true"
+  when: never
   variables:
     GIT_STRATEGY: fetch
     CI_APPLICATION_REPOSITORY: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
