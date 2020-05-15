@@ -64,7 +64,7 @@ global:
   {{- $redis_cache_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_cache_sentinels") }}
   {{- $redis_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_sentinels") }}
 
-  {{- if eq "null" $redis_sentinels }}
+  {{- if eq "null" $redis_queues_cluster_name }}
     host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_host") }}
     port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_port") }}
     password:
