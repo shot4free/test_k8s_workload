@@ -4,6 +4,7 @@
 {{- $chef_base_be_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be.json/raw?ref=master" )) }}
 {{- $chef_base_be_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-be-sidekiq.json/raw?ref=master" )) }}
 {{- $chef_base_db_redis_server_sidekiq_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-db-redis-server-sidekiq.json/raw?ref=master" )) }}
+{{- $chef_base_db_redis_server_cache_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base-db-redis-sentinel-cache.json/raw?ref=master" )) }}
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default .Environment.Name }}
 {{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) }}
 global:
@@ -56,15 +57,42 @@ global:
     user_name: {{ $gkms_omnibus_secrets | exec "jq" (list ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_user_name") }}
 
   redis:
-  {{- $redis_cluster_name := $chef_base_db_redis_server_sidekiq_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
-  {{- if eq "null" $redis_cluster_name  }}
+  {{- $redis_queues_cluster_name := $chef_base_db_redis_server_sidekiq_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
+  {{- $redis_cache_cluster_name := $chef_base_db_redis_server_cache_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
+  {{- $redis_cluster_name := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
+  {{- $redis_queues_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_queues_sentinels") }}
+  {{- $redis_cache_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_cache_sentinels") }}
+  {{- $redis_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_sentinels") }}
+
+  {{- if eq "null" $redis_sentinels }}
     host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_host") }}
     port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_port") }}
     password:
       enabled: {{ ne "null" ($gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_password")) }}
   {{- else }}
     host: {{ $redis_cluster_name }}
-    sentinels: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_queues_sentinels") }}
+    sentinels: {{ $redis_sentinels }}
+    cache:
+      host: {{ $redis_cache_cluster_name }}
+      sentinels: {{ $redis_cache_sentinels }}
+      password:
+        enabled: true
+        secret: gitlab-redis-credential-v1
+        key: secret
+    sharedState:
+      host: {{ $redis_cluster_name }}
+      sentinels: {{ $redis_sentinels }}
+      password:
+        enabled: true
+        secret: gitlab-redis-credential-v1
+        key: secret
+    queues:
+      host: {{ $redis_queues_cluster_name }}
+      sentinels: {{ $redis_queues_sentinels }}
+      password:
+        enabled: true
+        secret: gitlab-redis-credential-v1
+        key: secret
   {{- end }}
 
 registry:
