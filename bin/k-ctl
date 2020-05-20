@@ -96,9 +96,10 @@ install_gitlab_chart_via_git() {
   local extracted_charts_dir="${CHARTS_DIR}/${CHART}"
 
   mkdir "$extracted_charts_dir"
-  git clone -b "${chart_ref}" https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
+  git clone https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
 
   pushd "$extracted_charts_dir"
+  git checkout "${chart_ref}"
 
   local version sha chart_version_sha
   version=$(grep version Chart.yaml | awk '{print $2}')
