@@ -675,6 +675,11 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
     enabled: false
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
+      # Tag is locked to 0.0.3 until
+      # auto-deploy is enabled that will allow
+      # use to use the chart default
+      # https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/125
+      tag: 0.0.3
       pullSecrets:
         - name: dev-registry-access-v1
     networkpolicy:
