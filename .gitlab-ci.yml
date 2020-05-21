@@ -56,6 +56,9 @@ variables:
   extends:
     - .except-com
   image: alpine
+  # This script can be replaced with the `trigger:` keyword
+  # when the product supports retries for triggers
+  # https://gitlab.com/gitlab-org/gitlab/-/issues/32559
   # TODO: Remove allow_failure when these jobs are reliable
   allow_failure: true
   script:
