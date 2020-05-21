@@ -99,6 +99,7 @@ pre:upgrade:
     - .only-auto-deploy-false
   script:
     - bin/k-ctl upgrade
+  resource_group: pre
   only:
     refs:
       - master
@@ -124,6 +125,7 @@ gstg:upgrade:
     - .only-auto-deploy-false
   script:
     - bin/k-ctl upgrade
+  resource_group: gstg
   only:
     refs:
       - master
@@ -149,6 +151,7 @@ gprd-cny:upgrade:
     - .only-auto-deploy-false
   script:
     - bin/k-ctl -s cny upgrade
+  resource_group: gprd-cny
   only:
     refs:
       - master
@@ -175,6 +178,7 @@ gprd:upgrade:
   when: manual
   script:
     - bin/k-ctl upgrade
+  resource_group: gprd
   only:
     refs:
       - master
@@ -210,6 +214,7 @@ pre:auto-deploy:
     - .pre
   script:
     - bin/k-ctl upgrade
+  resource_group: pre
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -234,6 +239,7 @@ gstg:auto-deploy:
     - .gstg
   script:
     - bin/k-ctl upgrade
+  resource_group: gstg
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -258,6 +264,7 @@ gprd-cny:auto-deploy:
     - .gprd
   script:
     - bin/k-ctl -s cny upgrade
+  resource_group: gprd-cny
   only:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -282,6 +289,7 @@ gprd:auto-deploy:
     - .gprd
   script:
     - bin/k-ctl upgrade
+  resource_group: gprd
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
