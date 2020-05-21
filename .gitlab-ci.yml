@@ -52,11 +52,45 @@ variables:
     variables:
       - $AUTO_DEPLOY == "false"
 
+.trigger-qa-smoke:
+  extends:
+    - .except-com
+  image: alpine
+  # TODO: Remove allow_failure when these jobs are reliable
+  allow_failure: true
+  script:
+    - apk add curl jq
+    # project=full/path/to/project
+    - |
+      echo "Sending trigger to $project"
+      # URL encode the project
+      project=$(echo -n "$project" | jq -sRr @uri)
+      trigger_url="$CI_API_V4_URL/projects/$project/trigger/pipeline"
+      resp=$(curl -s --request POST --form "variables[SMOKE_ONLY]=true" --form "token=$CI_JOB_TOKEN" --form ref=master $trigger_url)
+      id=$(echo "$resp" | jq -r ".id")
+      web_url=$(echo "$resp" | jq -r ".web_url")
+    - |
+      echo "Waiting for pipeline $web_url ..."
+      status_url="$CI_API_V4_URL/projects/$project/pipelines/$id"
+      for retry in $(seq 1 120); do
+        resp=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_OPS_API_TOKEN" "$status_url")
+        status=$(echo "$resp" | jq -r '.status')
+        echo "Got pipeline status $status, retry $retry/10"
+        [[ $status == "success" || $status == "failed" ]] && break
+        sleep 30
+      done
+
+      if [[ $status != "success" ]]; then
+        echo "$web_url has status $status, failing"
+        exit 1
+      fi
+
 stages:
   - check
   - dryrun-check
   - dryrun
   - non-prod:deploy
+  - non-prod:QA
   - gprd-cny:deploy
   - gprd:deploy
 
@@ -184,6 +218,22 @@ gprd:upgrade:
       - master
   variables:
     DRY_RUN: "false"
+
+### QA jobs
+
+pre:qa:
+  extends:
+    - .trigger-qa-smoke
+  stage: non-prod:QA
+  variables:
+    project: gitlab-org/quality/preprod
+
+gstg:qa:
+  extends:
+    - .trigger-qa-smoke
+  stage: non-prod:QA
+  variables:
+    project: gitlab-org/quality/staging
 
 ###############################################################################
 ### Auto Deploy Jobs ###
