@@ -76,7 +76,7 @@ variables:
         resp=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_OPS_API_TOKEN" "$status_url")
         status=$(echo "$resp" | jq -r '.status')
         echo "Got pipeline status $status, retry $retry/10"
-        [[ $status == "success" || $status == "failed" ]] && break
+        [[ $status =~ "(success|failed|canceled)" ]] && break
         sleep 30
       done
 
