@@ -27,7 +27,7 @@ include:
     ref: 'v2.3.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v2.3.0'
+  CI_IMAGE_VERSION: '1eaef528'
   AUTO_DEPLOY: 'false'
 
 #############################################################
