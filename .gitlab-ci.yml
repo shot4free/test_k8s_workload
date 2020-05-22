@@ -55,6 +55,10 @@ variables:
 .trigger-qa-smoke:
   extends:
     - .except-com
+    # Skip QA smoke tests for auto-deploy because
+    # QA is run in the context of the deployer
+    # pipeline
+    - .only-auto-deploy-false
   image: alpine
   # This script can be replaced with the `trigger:` keyword
   # when the product supports retries for triggers
