@@ -137,11 +137,7 @@ helmfile_cmd_options=(
 )
 
 helm_diff() {
-  debug "-- Helm Diff --" "${_CYN}"
-
   helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}"
-
-  debug "-------" "${_CYN}"
 }
 
 case "$ACTION" in
@@ -153,7 +149,12 @@ case "$ACTION" in
     helmfile "${helmfile_common_options[@]}" repos
 
     if [[ ${dry_run:-} == "true" ]]; then
-      helm_diff
+      debug "-- Helm Diff --" "${_CYN}"
+      helm_diff | tee /tmp/helm-diff
+      # Send a diff notification, allowed to
+      # fail so we don't block the pipeline
+      /k8s-workloads/notify-mr -d /tmp/helm-diff -e "$environment" || echo "WARNING: notify-mr diff notification failed"
+      debug "-------" "${_CYN}"
     else
       tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
 
