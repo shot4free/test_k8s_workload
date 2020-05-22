@@ -61,7 +61,18 @@ variables:
   # https://gitlab.com/gitlab-org/gitlab/-/issues/32559
   # TODO: Remove allow_failure when these jobs are reliable
   allow_failure: true
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      - $CI_COMMIT_REF_NAME != 'master'
+    refs:
+      - tags
   script:
+    - |
+      if [[ -n "$SKIP_QA" ]]; then
+        echo "Skipping QA because SKIP_QA is set"
+        exit 0
+      fi
     - apk add curl jq
     # project=full/path/to/project
     - |
