@@ -52,13 +52,24 @@ variables:
     variables:
       - $AUTO_DEPLOY == "false"
 
+.only-auto-deploy-false-and-config-changes:
+  only:
+    variables:
+      - $AUTO_DEPLOY == "false"
+    changes:
+      - 'CHART_VERSION'
+      - 'bases/**/*'
+      - 'bin/**/*'
+      - 'releases/**/*'
+      - '*.yaml'
+
 .trigger-qa-smoke:
   extends:
     - .except-com
     # Skip QA smoke tests for auto-deploy because
     # QA is run in the context of the deployer
     # pipeline
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   image: alpine
   # This script can be replaced with the `trigger:` keyword
   # when the product supports retries for triggers
@@ -139,7 +150,7 @@ pre:dryrun:
   extends:
     - .deploy
     - .pre
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -148,7 +159,7 @@ pre:upgrade:
   extends:
     - .deploy
     - .pre
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl upgrade
   resource_group: pre
@@ -165,7 +176,7 @@ gstg:dryrun:
   extends:
     - .deploy
     - .gstg
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -174,7 +185,7 @@ gstg:upgrade:
   extends:
     - .deploy
     - .gstg
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl upgrade
   resource_group: gstg
@@ -191,7 +202,7 @@ gprd-cny:dryrun:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D -s cny upgrade
 
@@ -200,7 +211,7 @@ gprd-cny:upgrade:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -s cny upgrade
   resource_group: gprd-cny
@@ -217,7 +228,7 @@ gprd:dryrun:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -226,7 +237,7 @@ gprd:upgrade:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false
+    - .only-auto-deploy-false-and-config-changes
   when: manual
   script:
     - bin/k-ctl upgrade
