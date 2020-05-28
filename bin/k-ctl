@@ -155,7 +155,7 @@ case "$ACTION" in
       # fail so we don't block the pipeline
       # Skip the notifications for auto-deploy triggered pipelines since they are not
       # done in the context of an MR.
-      if [[ $AUTO_DEPLOY == "false" ]]; then
+      if [[ ${AUTO_DEPLOY:-false} == "false" && -f /k8s-workloads/notify-mr ]]; then
         /k8s-workloads/notify-mr -d /tmp/helm-diff -e "$environment" || echo "WARNING: notify-mr diff notification failed"
       fi
       debug "-------" "${_CYN}"
