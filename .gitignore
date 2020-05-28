@@ -1,3 +1,4 @@
 input/**/*.json
 input/**/*.crt
 tiller.log
+private/

@@ -27,3 +27,7 @@ environments:
     values:
       - google_project: "gitlab-production"
       - gitlab_endpoint: "https://gitlab.com"
+  minikube:
+    values:
+      - local_secrets: true
+        google_project: "TODO"
