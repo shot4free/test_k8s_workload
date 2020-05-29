@@ -43,7 +43,7 @@ gitlab:
         maxReplicas: 2
         nodeSelector:
           type: low-urgency-cpu-bound
-        queues: [null, 1]
+        queues: feature_category=null
         resources:
           requests:
             cpu: 50m
@@ -52,12 +52,19 @@ gitlab:
             cpu: 2
             memory: 8G
         extraVolumeMounts: |
-        - name: sidekiq-builds
-          mountPath: /srv/gitlab/builds
-          readOnly: true
-        - name: sidekiq-shared
-          mountPath: /srv/gitlab/shared
-          readOnly: true
+          - name: sidekiq-builds
+            mountPath: /srv/gitlab/builds
+            readOnly: true
+          - name: sidekiq-shared
+            mountPath: /srv/gitlab/shared
+            readOnly: true
+        extraVolumes: |
+          - name: sidekiq-builds
+            emptyDir:
+              sizeLimit: 1M
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 1M
 global:
   appConfig:
     incomingEmail:
