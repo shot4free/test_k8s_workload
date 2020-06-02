@@ -174,16 +174,11 @@ global:
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
-    terraformState:
-      enabled: false
-      bucket: gitlab-terraform-state
-      connection:
-        secret: gitlab-object-storage-v1
-        key: gitlab-object-storage.yml
+
     ## doc/charts/globals.md#pseudonymizer-settings
     pseudonymizer:
       configMap:
-      bucket:
+      bucket: ''
       connection: {}
         # secret:
         # key:
