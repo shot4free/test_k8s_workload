@@ -35,7 +35,20 @@ global:
     externalDiffs:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".external_diffs_object_store_enabled") }}
       bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".external_diffs_object_store_remote_directory") }}
-
+    terraformState:
+      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".terraform_state_object_store_enabled") }}
+      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".terraform_state_object_store_remote_directory") }}
+    {{- $pseudonymizer_upload_remote_directory := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".pseudonymizer_upload_remote_directory") }}
+    {{- /*
+      pseudonymizer_google_project may be removed when https://gitlab.com/gitlab-org/gitlab/-/issues/219952 is decided
+    */ -}}
+    {{- if ne "null" $pseudonymizer_upload_remote_directory }}
+    pseudonymizer:
+      connection:
+        secret: gitlab-meltano-storage-v1
+        key: gitlab-meltano-storage.yml
+      bucket: {{ $pseudonymizer_upload_remote_directory }}
+    {{- end }}
     omniauth:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_enabled") }}
       blockAutoCreatedUsers: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_block_auto_created_users") }}
