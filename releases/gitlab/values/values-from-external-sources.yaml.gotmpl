@@ -40,8 +40,8 @@ global:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_enabled") }}
       blockAutoCreatedUsers: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_block_auto_created_users") }}
     cron_jobs:
-      {{- $pipeline_schedule_worker_cron := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".pipeline_schedule_worker_cron") }}
-      {{- $schedule_migrate_external_diffs_worker_cron := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".schedule_migrate_external_diffs_worker_cron") }}
+      {{- $pipeline_schedule_worker_cron := $chef_base_role | exec "jq" (list "-jc" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".pipeline_schedule_worker_cron") }}
+      {{- $schedule_migrate_external_diffs_worker_cron := $chef_base_role | exec "jq" (list "-jc" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".schedule_migrate_external_diffs_worker_cron") }}
       {{- if ne "null" $pipeline_schedule_worker_cron }}
       pipeline_schedule_worker:
         cron: {{ $pipeline_schedule_worker_cron }}
