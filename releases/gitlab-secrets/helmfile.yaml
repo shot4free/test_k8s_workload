@@ -20,6 +20,8 @@ releases:
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default .Environment.Name }}
 {{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) }}
 {{- $dev_gitlab_org_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token\"") }}
+{{- $gitlab_ops_api_token := requiredEnv "GITLAB_OPS_API_TOKEN" }}
+{{- $chef_base_role := exec "curl" (list "-s" "--retry" "5" "-H" (print "PRIVATE-TOKEN:" $gitlab_ops_api_token) (print "https://ops.gitlab.net/api/v4/projects/139/repository/files/roles%2F" (.Environment.Values | getOrNil "gitlab_chef_source_name" | default .Environment.Name) "-base.json/raw?ref=master" )) }}
     - resources:
       - apiVersion: v1
         kind: Secret
@@ -41,6 +43,23 @@ releases:
               google_project: {{ .Environment.Values.google_project }}
               google_json_key_string: |
 {{ ($gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"google-creds\".json_base64")) | b64dec | trimSuffix "\n" | indent 16 }}
+      {{- $pseudonymizer_google_project := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".pseudonymizer_upload_connection.google_project") }}
+      {{- /*
+        pseudonymizer_google_project may be removed when https://gitlab.com/gitlab-org/gitlab/-/issues/219952 is decided
+      */ -}}
+      {{- if ne "null" $pseudonymizer_google_project }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-meltano-storage-v1
+          namespace: {{ $namespace }}
+        stringData:
+          gitlab-object-storage.yml: |
+              provider: Google
+              google_project: {{ $pseudonymizer_google_project }}
+              google_json_key_string: |
+{{ ($gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"meltano-google-creds\".json_base64")) | b64dec | trimSuffix "\n" | indent 16 }}
+      {{- end }}
       - apiVersion: v1
         kind: Secret
         metadata:
