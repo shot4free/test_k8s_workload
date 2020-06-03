@@ -647,6 +647,14 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 2
             memory: 8G
+        extraVolumeMounts: |
+          - name: sidekiq-shared
+            mountPath: /srv/gitlab/shared
+            readOnly: false
+        extraVolumes: |
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 50G
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
@@ -689,19 +697,10 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 2
             memory: 8G
-
     registry:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
-    extraVolumeMounts: |
-      - name: sidekiq-shared
-        mountPath: /srv/gitlab/shared
-        readOnly: false
-    extraVolumes: |
-      - name: sidekiq-shared
-        emptyDir:
-          sizeLimit: 50G
   # doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     enabled: false
