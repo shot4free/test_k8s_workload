@@ -671,7 +671,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
             memory: 8G
       - name: urgent-other
         concurrency: 5
-        minReplicas: 2
+        minReplicas: 5
         maxReplicas: 10
         nodeSelector:
           type: urgent-other
