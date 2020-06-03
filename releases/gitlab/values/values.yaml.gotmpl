@@ -669,6 +669,20 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 2
             memory: 8G
+      - name: urgent-other
+        concurrency: 5
+        minReplicas: 2
+        maxReplicas: 10
+        nodeSelector:
+          type: urgent-other
+        queues: resource_boundary!=cpu&urgency=high
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 8G
 
     registry:
       tokenIssuer: omnibus-gitlab-issuer
