@@ -53,6 +53,10 @@ global:
       schedule_migrate_external_diffs_worker:
         cron: '{{ $schedule_migrate_external_diffs_worker_cron }}'
       {{- end }}
+    sentry:
+      enabled: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".sentry_enabled") }}
+      dsn: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".sentry_dsn") }}
+      clientside_dsn: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".sentry_clientside_dsn") }}
   hosts:
     registry:
       name: {{ regexReplaceAll "https://" ($chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.registry_external_url")) "" }}
