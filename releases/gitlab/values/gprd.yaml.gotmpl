@@ -29,6 +29,14 @@ gitlab:
           limits:
             cpu: 2
             memory: 8G
+        extraVolumeMounts: |
+          - name: sidekiq-shared
+            mountPath: /srv/gitlab/shared
+            readOnly: false
+        extraVolumes: |
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 50G
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
