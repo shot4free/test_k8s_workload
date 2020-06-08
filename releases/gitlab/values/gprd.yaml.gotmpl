@@ -51,6 +51,22 @@ gitlab:
           limits:
             cpu: 2
             memory: 8G
+      # Production resources for this shard discussed in
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
+      - name: low-urgency-cpu-bound
+        concurrency: 5
+        minReplicas: 10
+        maxReplicas: 100
+        nodeSelector:
+          type: low-urgency-cpu-bound
+        queues: resource_boundary=cpu&urgency=default,low
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 8G
 
 global:
   appConfig:
