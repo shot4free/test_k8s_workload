@@ -681,11 +681,11 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
         queues: resource_boundary=cpu&urgency=default,low
         resources:
           requests:
-            cpu: 50m
-            memory: 650M
+            cpu: 80m
+            memory: 1G
           limits:
-            cpu: 2
-            memory: 8G
+            cpu: 1.5
+            memory: 6G
       - name: urgent-other
         concurrency: 5
         minReplicas: 5
@@ -695,11 +695,11 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
         queues: resource_boundary!=cpu&urgency=high
         resources:
           requests:
-            cpu: 50m
-            memory: 650M
+            cpu: 80m
+            memory: 1G
           limits:
-            cpu: 2
-            memory: 8G
+            cpu: 1.5
+            memory: 6G
 
     registry:
       tokenIssuer: omnibus-gitlab-issuer
