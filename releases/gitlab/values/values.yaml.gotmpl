@@ -631,6 +631,9 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           ports:
           - port: 9999
             protocol: TCP
+          # Praefect
+          - port: 2305
+            protocol: TCP
 
     pods:
       - name: memory-bound
