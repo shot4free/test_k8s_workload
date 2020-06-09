@@ -53,6 +53,7 @@ gitlab:
             memory: 8G
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/901
       - name: low-urgency-cpu-bound
         concurrency: 5
         minReplicas: 10
@@ -60,6 +61,22 @@ gitlab:
         nodeSelector:
           type: low-urgency-cpu-bound
         queues: resource_boundary=cpu&urgency=default,low
+        resources:
+          requests:
+            cpu: 80m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 6G
+      # Production resources for this shard discussed in
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
+      - name: urgent-other
+        concurrency: 5
+        minReplicas: 40
+        maxReplicas: 160
+        nodeSelector:
+          type: urgent-other
+        queues: resource_boundary!=cpu&urgency=high
         resources:
           requests:
             cpu: 80m
