@@ -70,7 +70,7 @@ gitlab:
             memory: 6G
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
-      - name: low-urgency-cpu-bound
+      - name: urgent-other
         concurrency: 5
         minReplicas: 40
         maxReplicas: 160
