@@ -139,4 +139,5 @@ releases:
           name: gitlab-mailroom-imap-v1
           namespace: {{ $namespace }}
         stringData:
-          password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_password") }}
+          incoming_email_password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_password") }}
+          service_desk_email_password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".service_desk_email_password") }}

@@ -20,6 +20,10 @@ global:
       address: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_address") }}
       user: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_email") }}
 
+    serviceDeskEmail:
+      address: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".service_desk_email_address") }}
+      user: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".service_desk_email_email") }}
+
     lfs:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".lfs_object_store_enabled") }}
       bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".lfs_object_store_remote_directory") }}
