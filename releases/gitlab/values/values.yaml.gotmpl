@@ -650,6 +650,10 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           - port: 2305
             protocol: TCP
 
+    hpa:
+      # Changed from default for urgent-other
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2254#note_358815700
+      targetAverageValue: 450m
     pods:
       - name: memory-bound
         concurrency: 1
