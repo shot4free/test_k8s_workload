@@ -72,7 +72,7 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
         concurrency: 5
-        minReplicas: 40
+        minReplicas: 20
         maxReplicas: 160
         nodeSelector:
           type: urgent-other
