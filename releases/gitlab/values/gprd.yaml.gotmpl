@@ -73,7 +73,7 @@ gitlab:
       - name: urgent-other
         concurrency: 5
         minReplicas: 180
-        maxReplicas: 300
+        maxReplicas: 180
         nodeSelector:
           type: urgent-other
         queues: resource_boundary!=cpu&urgency=high
