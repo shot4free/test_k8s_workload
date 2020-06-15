@@ -72,8 +72,8 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
         concurrency: 5
-        minReplicas: 180
-        maxReplicas: 180
+        minReplicas: 110
+        maxReplicas: 110
         nodeSelector:
           type: urgent-other
         queues: resource_boundary!=cpu&urgency=high
