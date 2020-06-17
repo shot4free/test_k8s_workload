@@ -133,6 +133,8 @@ releases:
               db_key_base: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_key_base") }}
               openid_connect_signing_key: |
 {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".openid_connect_signing_key") | trimSuffix "\n" | indent 16 }}
+              ci_jwt_signing_key: |
+{{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".ci_jwt_signing_key") | trimSuffix "\n" | indent 16 }}
       - apiVersion: v1
         kind: Secret
         metadata:
