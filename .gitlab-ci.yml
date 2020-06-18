@@ -9,25 +9,25 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/version-checks.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v2.3.0'
+    ref: 'v3.1.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v3.0.0'
+  CI_IMAGE_VERSION: 'v3.1.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -128,13 +128,13 @@ stages:
 # a link to the pipeline that runs on ops
 
 notify_com_mr:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/notify-mr:${CI_IMAGE_VERSION}"
   extends:
     - .except-com
     - .only-auto-deploy-false
   stage: check
   script:
-    - /k8s-workloads/notify-mr -s
+    - notify-mr -s
   # It is possible that this job will fail if a branch is created
   # without a corresponding MR, for this reason we allow it to
   # fail
