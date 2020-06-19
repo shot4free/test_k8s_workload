@@ -70,7 +70,7 @@ variables:
     # QA is run in the context of the deployer
     # pipeline
     - .only-auto-deploy-false-and-config-changes
-  image: alpine
+  image: alpine:3.12.0
   # This script can be replaced with the `trigger:` keyword
   # when the product supports retries for triggers
   # https://gitlab.com/gitlab-org/gitlab/-/issues/32559
