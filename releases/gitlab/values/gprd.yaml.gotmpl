@@ -21,7 +21,7 @@ gitlab:
         maxReplicas: 16
         nodeSelector:
           type: memory-bound
-        queues: resource_boundary=memory
+        queues: resource_boundary=memory&name!=design_management_new_version
         resources:
           requests:
             cpu: 50m
