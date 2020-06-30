@@ -719,6 +719,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 1.5
             memory: 6G
+        hpa:
+          targetAverageValue: 500m
 
     registry:
       tokenIssuer: omnibus-gitlab-issuer
