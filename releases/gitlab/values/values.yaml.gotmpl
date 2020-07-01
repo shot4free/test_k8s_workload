@@ -705,6 +705,20 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 1.5
             memory: 6G
+      - name: urgent-cpu-bound
+        concurrency: 5
+        minReplicas: 1
+        maxReplicas: 1
+        nodeSelector:
+          type: urgent-cpu-bound
+        queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200M
+          limits:
+            cpu: 1
+            memory: 1G
       - name: urgent-other
         concurrency: 5
         minReplicas: 5
