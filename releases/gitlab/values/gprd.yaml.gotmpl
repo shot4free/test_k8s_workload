@@ -37,6 +37,8 @@ gitlab:
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 50G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
@@ -51,6 +53,8 @@ gitlab:
           limits:
             cpu: 2
             memory: 8G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
       # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/901
@@ -68,6 +72,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
@@ -84,6 +90,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
 
 global:
   appConfig:

@@ -677,6 +677,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 50G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
@@ -705,6 +707,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       - name: urgent-cpu-bound
         concurrency: 5
         minReplicas: 1
@@ -719,6 +723,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 1
             memory: 2G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
       - name: urgent-other
         concurrency: 5
         minReplicas: 5
@@ -733,6 +739,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          DB_POOL_HEADROOM: 1
 
     registry:
       tokenIssuer: omnibus-gitlab-issuer
