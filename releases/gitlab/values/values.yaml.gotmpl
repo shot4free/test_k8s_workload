@@ -681,38 +681,6 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 50G
-      # Run background migrations in their own shard
-      - name: database-throttled
-        concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
-        minReplicas: 1
-        maxReplicas: 1
-        nodeSelector:
-          type: default
-        queues: feature_category=database&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 1.5
-            memory: 6G
-      # Run Gitaly Storage Migrations on their own shards
-      # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
-      # Allow up to a maximum of 24 concurrent gitaly-throttled jobs
-      - name: gitaly-throttled
-        concurrency: 8
-        minReplicas: 1
-        maxReplicas: 3
-        nodeSelector:
-          type: default
-        queues: feature_category=gitaly&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 1.5
-            memory: 6G
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
