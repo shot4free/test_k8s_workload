@@ -644,7 +644,11 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           - ipBlock:
               cidr: 10.0.0.0/8
           ports:
+          # Gitaly non-TLS
           - port: 9999
+            protocol: TCP
+          # Gitaly TLS
+          - port: 9998
             protocol: TCP
           # Praefect
           - port: 2305
