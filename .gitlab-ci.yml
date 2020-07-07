@@ -256,6 +256,14 @@ pre:qa:
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/preprod
+  only:
+    changes:
+      - '*.yaml'
+      - 'releases/gitlab-secrets/*'
+      - 'releases/gitlab/helmfile.yaml'
+      - 'releases/gitlab/values/jq/*'
+      - 'releases/gitlab/values/values*'
+      - 'releases/gitlab/values/pre*'
 
 gstg:qa:
   extends:
@@ -263,6 +271,14 @@ gstg:qa:
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/staging
+  only:
+    changes:
+      - '*.yaml'
+      - 'releases/gitlab-secrets/*'
+      - 'releases/gitlab/helmfile.yaml'
+      - 'releases/gitlab/values/jq/*'
+      - 'releases/gitlab/values/values*'
+      - 'releases/gitlab/values/gstg*'
 
 ###############################################################################
 ### Auto Deploy Jobs ###
