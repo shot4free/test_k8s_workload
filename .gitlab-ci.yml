@@ -258,6 +258,7 @@ pre:qa:
     project: gitlab-org/quality/preprod
   only:
     changes:
+      - 'CHART_VERSION'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
       - 'releases/gitlab/helmfile.yaml'
@@ -273,6 +274,7 @@ gstg:qa:
     project: gitlab-org/quality/staging
   only:
     changes:
+      - 'CHART_VERSION'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
       - 'releases/gitlab/helmfile.yaml'
