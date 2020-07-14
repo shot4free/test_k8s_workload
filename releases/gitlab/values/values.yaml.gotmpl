@@ -572,7 +572,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 {{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
 
 {{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json") }}
+{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
 {{- $sidekiq_current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
 {{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
