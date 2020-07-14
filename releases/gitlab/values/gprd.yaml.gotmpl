@@ -101,6 +101,22 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+      # Production resources for urgent-cpu-bound discussed in
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
+      - name: urgent-cpu-bound
+        concurrency: 5
+        minReplicas: 84
+        maxReplicas: 84
+        nodeSelector:
+          type: urgent-cpu-bound
+        queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
+        resources:
+          requests:
+            cpu: 588m
+            memory: 800M
+          limits:
+            cpu: 2
+            memory: 3G
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
