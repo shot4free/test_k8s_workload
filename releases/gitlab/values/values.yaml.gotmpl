@@ -479,6 +479,8 @@ registry:
         ports:
         - port: 53
           protocol: UDP
+        - port: 53
+          protocol: TCP
       - to:
         - ipBlock:
             cidr: 0.0.0.0/0
@@ -614,6 +616,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
           ports:
           - port: 53
             protocol: UDP
+          - port: 53
+            protocol: TCP
 
           # Allow internal traffic to Redis
         - to:
@@ -806,6 +810,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
             ports:
               - port: 53
                 protocol: UDP
+              - port: 53
+                protocol: TCP
 
           # Allow IMAP
           - to:
