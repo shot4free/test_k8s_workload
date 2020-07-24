@@ -13,6 +13,9 @@ dir="$(
 
 CHART="${CHART:-gitlab}"
 
+## TODO testing for cluster
+export CLUSTER="pre-gitlab-gke-1"
+
 export HELM_TILLER_LOGS=true
 export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 
