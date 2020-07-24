@@ -14,7 +14,7 @@ dir="$(
 CHART="${CHART:-gitlab}"
 
 ## TODO testing for cluster
-if [[ $ENV == "pre" ]]; then
+if [[ ${ENV:-} == "pre" ]]; then
   export CLUSTER="pre-gitlab-gke-1"
 fi
 
