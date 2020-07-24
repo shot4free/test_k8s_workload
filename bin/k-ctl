@@ -14,6 +14,8 @@ dir="$(
 CHART="${CHART:-gitlab}"
 
 ## TODO testing for cluster
+ENV="${CI_ENVIRONMENT_NAME:-${environment:-}}"
+echo "Checking $ENV"
 if [[ ${ENV:-} == "pre" ]]; then
   export CLUSTER="pre-gitlab-gke-1"
 fi
