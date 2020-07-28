@@ -62,6 +62,8 @@ global:
       dsn: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".sentry_dsn") }}
       clientside_dsn: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".sentry_clientside_dsn") }}
   hosts:
+    # TODO: Set external IP after all ips have been created
+    # externalIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=git-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
     registry:
       name: {{ regexReplaceAll "https://" ($chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.registry_external_url")) "" }}
 
@@ -119,3 +121,9 @@ global:
 registry:
   service:
     loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+
+gitlab:
+{{- $workhorse_dsn := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-gitlab-workhorse\".env.GITLAB_WORKHORSE_SENTRY_DSN") }}
+  webservice:
+    workhorse:
+      sentryDSN: {{ $workhorse_dsn }}

@@ -7,7 +7,13 @@ gitlab:
 
   sidekiq:
     enabled: false
-
+  webservice:
+    enabled: false
+    nodeSelector:
+      # This will be updated to a dedicated nodepool once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1068
+      # is complete
+      type: default
 registry:
   hpa:
     minReplicas: 2
@@ -16,3 +22,5 @@ registry:
     requests:
       cpu: 250m
       memory: 600M
+nginx-ingress:
+  enabled: false

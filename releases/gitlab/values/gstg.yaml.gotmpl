@@ -7,6 +7,12 @@ registry:
 gitlab:
   mailroom:
     enabled: true
+  webservice:
+    nodeSelector:
+      # This will be updated to a dedicated nodepool once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1068
+      # is complete
+      type: default
 
 global:
   appConfig:

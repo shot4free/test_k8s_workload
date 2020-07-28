@@ -1,4 +1,28 @@
 # Default values for gitlab/gitlab chart
+{{/*
+
+Here a query is made to determine the running version of the image being
+utilized by the GitLab application for a single deployment, this query arbitrarily
+picks gitlab-sidekiq-memory-bound-v1, which will be used for
+ * all sidekiq pods
+ * webservice
+
+It is possible to set a new version by setting $GITLAB_IMAGE_TAG
+in the environment.
+
+If GITLAB_IMAGE_TAG is not set, this will fall back to what is currently in the cluster.
+
+This is being done now for normal deploys until deployments switch to using a helm chart release.
+This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
+
+*/}}
+
+{{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
+
+{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
+{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
+{{- $current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
+{{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
 ## NOTICE
 # Due to the scope and complexity of this chart, all possible values are
@@ -25,7 +49,7 @@ global:
   # edition: ee
 
   ## doc/charts/globals.md#gitlab-version
-  # gitlabVersion: master
+  gitlabVersion: {{ default $current_tag $provided_image_tag }}
 
   ## doc/charts/globals.md#application-resource
   application:
@@ -257,11 +281,11 @@ global:
 
   ## doc/charts/globals.md#configure-gitlab-shell-settings
   shell:
-    authToken: {}
-      # secret:
-      # key:
-    hostKeys: {}
-      # secret:
+    authToken:
+      secret: gitlab-shell-credential-v1
+      key: secret
+    hostKeys:
+      secret: gitlab-hostkeys-credential-v1
 
   ## Rails application secrets
   ## Secret created according to doc/installation/secrets.md#gitlab-rails-secret
@@ -353,7 +377,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: false
+  enabled: true
   tcpExternalConfig: "true"
   controller:
     config:
@@ -369,6 +393,8 @@ nginx-ingress:
     service:
       externalTrafficPolicy: "Local"
       omitClusterIP: true
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
     resources:
       requests:
         cpu: 100m
@@ -545,9 +571,36 @@ gitlab:
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
-  # doc/charts/gitlab/unicorn
+  # doc/charts/gitlab/webservice
   webservice:
-    enabled: false
+    enabled: true
+    nodeSelector:
+      type: default
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
+      pullSecrets:
+      - name: dev-registry-access-v1
+    puma:
+      workerMaxMemory: 1342 # in MB units
+      threads:
+        min: 1
+        max: 4
+      disableWorkerKiller: false
+    workhorse:
+      image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
+      resources:
+        requests:
+          cpu: 100m
+          memory: 100M
+    resources:
+      limits:
+        cpu: 1.5
+        memory: 2G
+      requests:
+        cpu: 300m
+        memory: 1.5G
+    minReplicas: 2
+    maxReplicas: 10
   # doc/charts/gitlab/sidekiq
   sidekiq:
     cluster: true
@@ -556,29 +609,6 @@ gitlab:
       type: sidekiq
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
-
-{{/*
-
-Here a query is made to determine the running version of the image being
-utilized by sidekiq for the sidekiq project-exporter queue.
-It is possible to set a new version by setting $GITLAB_IMAGE_TAG
-in the environment.
-
-If GITLAB_IMAGE_TAG is not set, this will fall back to what is currently in the cluster.
-
-This is being done now for normal deploys until deployments switch to using a helm chart release.
-This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
-
-*/}}
-
-{{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
-
-{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
-{{- $sidekiq_current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
-{{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
-
-      tag: {{ default $sidekiq_current_tag $provided_image_tag }}
       pullSecrets:
       - name: dev-registry-access-v1
     enabled: true
