@@ -605,6 +605,8 @@ gitlab:
   sidekiq:
     cluster: true
     experimentalQueueSelector: true
+    memoryKiller:
+      maxRss: 0
     nodeSelector:
       type: sidekiq
     image:
