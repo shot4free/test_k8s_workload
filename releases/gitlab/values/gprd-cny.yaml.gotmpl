@@ -18,6 +18,8 @@ registry:
   hpa:
     minReplicas: 2
     maxReplicas: 150
+  nodeSelector:
+    type: registry
   resources:
     requests:
       cpu: 250m
