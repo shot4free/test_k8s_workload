@@ -114,6 +114,8 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
       - name: urgent-cpu-bound
         concurrency: 5
+        hpa:
+          targetAverageValue: 200m
         minReplicas: 40
         maxReplicas: 84
         nodeSelector:
