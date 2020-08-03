@@ -19,7 +19,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 
 {{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
 
-{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
+{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab" }}
 {{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
 {{- $current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
 {{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
@@ -44,6 +44,11 @@ global:
   ## GitLab operator is Alpha. Not for production use.
   operator:
     enabled: false
+
+  ## Supplemental Pod labels. Will not be used for selectors
+  pod:
+    labels:
+      stage: {{ .Environment.Values | getOrNil "stage" | default "main" }}
 
   ## doc/installation/deployment.md#deploy-the-community-edition
   # edition: ee
@@ -473,6 +478,9 @@ postgresql:
 registry:
   nodeSelector:
     type: default
+  podLabels:
+    type: registry
+    tier: sv
   image:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
@@ -576,6 +584,9 @@ gitlab:
     enabled: true
     nodeSelector:
       type: default
+    podLabels:
+      type: git
+      tier: sv
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
@@ -690,10 +701,15 @@ gitlab:
           - port: 2305
             protocol: TCP
 
+    podLabels:
+      tier: sv
+      type: sidekiq
+
     hpa:
       # Changed from default for urgent-other
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2254#note_358815700
       targetAverageValue: 450m
+
     pods:
       - name: memory-bound
         concurrency: 1
@@ -701,6 +717,8 @@ gitlab:
         maxReplicas: 16
         nodeSelector:
           type: memory-bound
+        podLabels:
+          shard: memory-bound
         queues: resource_boundary=memory
         resources:
           requests:
@@ -724,6 +742,8 @@ gitlab:
         maxReplicas: 1
         nodeSelector:
           type: default
+        podLabels:
+          shard: database-throttled
         queues: feature_category=database&urgency=throttled
         resources:
           requests:
@@ -741,6 +761,8 @@ gitlab:
         maxReplicas: 3
         nodeSelector:
           type: default
+        podLabels:
+          shard: gitaly-throttled
         queues: feature_category=gitaly&urgency=throttled
         resources:
           requests:
@@ -755,6 +777,8 @@ gitlab:
         maxReplicas: 2
         nodeSelector:
           type: default
+        podLabels:
+          shard: elasticsearch
         queues: feature_category=global_search&urgency=throttled
         resources:
           requests:
@@ -769,6 +793,8 @@ gitlab:
         maxReplicas: 10
         nodeSelector:
           type: low-urgency-cpu-bound
+        podLabels:
+          shard: low-urgency-cpu-bound
         queues: resource_boundary=cpu&urgency=default,low
         resources:
           requests:
@@ -783,6 +809,8 @@ gitlab:
         maxReplicas: 1
         nodeSelector:
           type: urgent-cpu-bound
+        podLabels:
+          shard: urgent-cpu-bound
         queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
         resources:
           requests:
@@ -797,6 +825,8 @@ gitlab:
         maxReplicas: 10
         nodeSelector:
           type: urgent-other
+        podLabels:
+          shard: urgent-other
         queues: resource_boundary!=cpu&urgency=high
         resources:
           requests:
@@ -822,6 +852,9 @@ gitlab:
   mailroom:
     nodeSelector:
       type: default
+    podLabels:
+      type: mailroom
+      tier: sv
     enabled: false
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
