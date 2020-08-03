@@ -129,8 +129,8 @@ gitlab:
       - name: urgent-cpu-bound
         concurrency: 5
         hpa:
-          targetAverageValue: 200m
-        minReplicas: 40
+          targetAverageValue: 300m
+        minReplicas: 30
         maxReplicas: 84
         nodeSelector:
           type: urgent-cpu-bound
