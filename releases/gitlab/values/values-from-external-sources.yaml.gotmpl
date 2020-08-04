@@ -67,8 +67,7 @@ global:
       name: {{ regexReplaceAll "https://" ($chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.registry_external_url")) "" }}
 
   psql:
-    database: {{ $chef_base_be_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_database") }}
-    host: {{ $chef_base_be_sidekiq_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
+    host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
     port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_port") }}
     username: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_username") }}
   smtp:
@@ -126,3 +125,7 @@ gitlab:
   webservice:
     workhorse:
       sentryDSN: {{ $workhorse_dsn }}
+  sidekiq:
+    psql:
+      database: {{ $chef_base_be_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_database") }}
+      host: {{ $chef_base_be_sidekiq_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
