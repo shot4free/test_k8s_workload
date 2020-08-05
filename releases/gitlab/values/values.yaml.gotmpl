@@ -612,6 +612,8 @@ gitlab:
         memory: 1.5G
     minReplicas: 2
     maxReplicas: 10
+    extraEnv:
+      BYPASS_SCHEMA_VERSION: "true"
   # doc/charts/gitlab/sidekiq
   sidekiq:
     cluster: true
@@ -631,12 +633,12 @@ gitlab:
     logging:
       format: "json"
     extraEnv:
+      BYPASS_SCHEMA_VERSION: "true"
       # This will enables logs for sidekiq args
       # and does not yet have explicit support in
       # the GitLab chart
       # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2100
       SIDEKIQ_LOG_ARGUMENTS: "1"
-      BYPASS_SCHEMA_VERSION: "true"
     networkpolicy:
       enabled: true
       egress:
