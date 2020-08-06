@@ -4,25 +4,14 @@ bases:
   - "../../bases/environments.yaml"
 
 ---
-{{- $chart_source := env "CHART_SOURCE" | default (.Environment.Values | getOrNil "gitlab_chart" | default "gitlab/gitlab") }}
-{{- $chart_version := env "CHART_VERSION" | default (.Environment.Values | getOrNil "gitlab_chart_version") | trim }}
 repositories:
-{{- if eq $chart_source "gitlab/gitlab" }}
-- name: gitlab
-  url: https://charts.gitlab.io/
-{{- else if eq $chart_source "gitlab-s3/gitlab" }}
-- name: gitlab-s3
-  url: https://gitlab-charts.s3.amazonaws.com/
-{{- else if eq $chart_source "gitlab-git/gitlab" }}
-- name: gitlab-git
-  url: http://127.0.0.1:8879/charts
-{{- end }}
+  - name: gitlab
+    url: git+ssh://git@dev.gitlab.org/gitlab/charts/gitlab.git@?ref={{env "CHART_VERSION" | default (.Environment.Values | getOrNil "gitlab_chart_version") }}
 
 releases:
   - name: {{.Environment.Values | getOrNil "gitlab_release_name" | default "gitlab"}}
     namespace: {{.Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-    chart: {{ $chart_source }}
-    version: {{ $chart_version }}
+    chart: gitlab/gitlab
     set:
       - name: "global.deployment.annotations.app\\.gitlab\\.com/app"
         value: {{env "CI_PROJECT_PATH_SLUG" | default "gitlab-com-gl-infra-k8s-workloads-gitlab-com"}}

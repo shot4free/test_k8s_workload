@@ -38,36 +38,9 @@ fi
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 CHART_VERSION=$(get_chart_version)
+export CHART_VERSION
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"
-
-get_gitlab_chart() {
-  if is_semver "$CHART_VERSION"; then
-    if install_gitlab_chart_via_helm; then
-      chart_install_method=helm
-    elif install_gitlab_chart_via_s3; then
-      chart_install_method=s3
-    else
-      debug "Unable to install chart using semver!" "${_RED}"
-      exit 1
-    fi
-  else
-    install_gitlab_chart_via_git
-    chart_install_method=git
-    # For non-semvers, attempt to install from git
-    # and override CHART_VERSION to version+ref
-    # Example: 3.1.0+0035def7
-    CHART_VERSION="$CHART_VERSION_SHA"
-  fi
-  CHART_SOURCE=$(get_chart_source "$chart_install_method")
-  debug "Setting CHART_SOURCE=$CHART_SOURCE" "${_YEL}"
-  debug "Setting CHART_VERSION=$CHART_VERSION" "${_YEL}"
-
-  # CHART_VERSION and CHART_SOURCE are needed
-  # by releases/gitlab
-  export CHART_VERSION
-  export CHART_SOURCE
-}
 
 is_semver() {
   if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
@@ -75,53 +48,6 @@ is_semver() {
   else
     return 1
   fi
-}
-
-get_chart_source() {
-  case $1 in
-    git)
-      echo 'gitlab-git/gitlab'
-      ;;
-    helm)
-      echo 'gitlab/gitlab'
-      ;;
-    s3)
-      echo 'gitlab-s3/gitlab'
-      ;;
-  esac
-}
-
-install_gitlab_chart_via_git() {
-  local chart_ref="$CHART_VERSION"
-  local extracted_charts_dir="${CHARTS_DIR}/${CHART}"
-
-  mkdir "$extracted_charts_dir"
-  git clone https://gitlab.com/gitlab-org/charts/gitlab.git "$extracted_charts_dir" >/dev/null
-
-  pushd "$extracted_charts_dir"
-  git checkout "${chart_ref}"
-
-  local version sha chart_version_sha
-  version=$(grep version Chart.yaml | awk '{print $2}')
-  sha=$(git rev-parse --short HEAD)
-  chart_version_sha="${version}+${sha}"
-
-  helm repo add cert-manager https://charts.jetstack.io/
-  helm repo add gitlab https://charts.gitlab.io/
-  helm dependencies build
-  helm package ./ --save --version "$chart_version_sha"
-  helm serve &
-  popd
-  CHART_VERSION_SHA="$chart_version_sha"
-  debug "Setting CHART_VERSION_SHA=$chart_version_sha"
-}
-
-install_gitlab_chart_via_helm() {
-  curl --fail -s -o /dev/null "https://charts.gitlab.io"
-}
-
-install_gitlab_chart_via_s3() {
-  curl --fail -s "https://gitlab-charts.s3.amazonaws.com/${CHART}-${CHART_VERSION}.tgz" | tar xzC "$CHARTS_DIR"
 }
 
 environment=${ENV}${STAGE_SUFFIX}
@@ -143,8 +69,6 @@ helm_diff() {
 case "$ACTION" in
   install | upgrade)
     overview
-
-    get_gitlab_chart
 
     helmfile "${helmfile_common_options[@]}" repos
 
@@ -187,7 +111,6 @@ case "$ACTION" in
 
   template)
     overview
-    get_gitlab_chart
 
     helmfile "${helmfile_common_options[@]}" template --output-dir "$MANIFESTS_DIR" --concurrency 1
     ;;
