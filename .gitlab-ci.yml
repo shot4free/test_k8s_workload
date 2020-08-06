@@ -9,25 +9,25 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/version-checks.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v3.2.0'
+    ref: 'v3.3.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v3.2.0'
+  CI_IMAGE_VERSION: 'v3.3.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -62,6 +62,7 @@ variables:
       - 'bin/**/*'
       - 'releases/**/*'
       - '*.yaml'
+      - .gitlab-ci.yml
 
 .trigger-qa-smoke:
   extends:
