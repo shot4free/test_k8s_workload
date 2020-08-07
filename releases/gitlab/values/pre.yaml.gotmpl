@@ -7,6 +7,12 @@ registry:
 gitlab:
   mailroom:
     enabled: true
+  sidekiq:
+    pods:
+      - name: all-in-1
+        concurrency: 25
+        minReplicas: 1
+        maxReplicas: 10
 
 global:
   appConfig:
