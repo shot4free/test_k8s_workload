@@ -122,7 +122,7 @@ registry:
 
 gitlab:
 {{- $workhorse_dsn := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-gitlab-workhorse\".env.GITLAB_WORKHORSE_SENTRY_DSN") }}
-{{- $rack_attack_enabled := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.enabled") }}
+{{- $rack_attack_enabled := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.enabled") }}
 {{- $rack_attack_ip_whitelist := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.ip_whitelist") }}
   webservice:
     rack_attack:
