@@ -41,6 +41,14 @@ releases:
               google_project: {{ .Environment.Values.google_project }}
               google_json_key_string: |
 {{ ($gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"google-creds\".json_base64")) | b64dec | trimSuffix "\n" | indent 16 }}
+
+{{- $google_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"google_oauth2\")") }}
+{{- $twitter_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"twitter\")") }}
+{{- $github_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"github\")") }}
+{{- $bitbucket_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"bitbucket\")") }}
+{{- $group_saml_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"group_saml\")") }}
+{{- $salesforce_provider := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[] | select(.name == \"salesforce\")") }}
+
       - apiVersion: v1
         kind: Secret
         metadata:
@@ -48,7 +56,53 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           provider:
-{{ $gkms_omnibus_secrets | exec "jq" (list "-jc" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_providers[0]") | quote | indent 14 }}
+            {{ $google_provider | quote | nindent 14 }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-twitter-oauth2-v1
+          namespace: {{ $namespace }}
+        stringData:
+          provider:
+            {{ $twitter_provider | quote | nindent 14 }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-github-oauth2-v1
+          namespace: {{ $namespace }}
+        stringData:
+          provider:
+            {{ $github_provider | quote | nindent 14 }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-bitbucket-oauth2-v1
+          namespace: {{ $namespace }}
+        stringData:
+          provider:
+            {{ $bitbucket_provider | quote | nindent 14 }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-group-saml-oauth2-v1
+          namespace: {{ $namespace }}
+        stringData:
+          provider:
+            {{ $group_saml_provider | quote | nindent 14 }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-salesforce-oauth2-v1
+          namespace: {{ $namespace }}
+        stringData:
+          provider:
+            {{ $salesforce_provider | quote | nindent 14 }}
+
       - apiVersion: v1
         kind: Secret
         metadata:
