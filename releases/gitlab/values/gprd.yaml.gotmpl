@@ -170,7 +170,11 @@ global:
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
-          key: provider
+        - secret: gitlab-twitter-oauth2-v1
+        - secret: gitlab-github-oauth2-v1
+        - secret: gitlab-bitbucket-oauth2-v1
+        - secret: gitlab-group-saml-oauth2-v1
+        - secret: gitlab-salesforce-oauth2-v1
   email:
     reply_to: noreply@gitlab.com
 
