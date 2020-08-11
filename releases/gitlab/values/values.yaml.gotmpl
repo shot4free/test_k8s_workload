@@ -598,6 +598,9 @@ gitlab:
         max: 4
       disableWorkerKiller: false
     workhorse:
+      # This needs to be set here until we address
+      # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2249
+      extraArgs: '-logFormat json'
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         requests:
