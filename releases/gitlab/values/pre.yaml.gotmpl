@@ -7,6 +7,9 @@ registry:
 gitlab:
   mailroom:
     enabled: true
+  webservice:
+    nodeSelector:
+      type: default
   sidekiq:
     pods:
       - name: all-in-1
