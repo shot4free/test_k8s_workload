@@ -617,6 +617,7 @@ gitlab:
     maxReplicas: 10
     extraEnv:
       BYPASS_SCHEMA_VERSION: "true"
+      STACKPROF_ENABLED: "true"
   # doc/charts/gitlab/sidekiq
   sidekiq:
     cluster: true
@@ -637,6 +638,7 @@ gitlab:
       format: "json"
     extraEnv:
       BYPASS_SCHEMA_VERSION: "true"
+      STACKPROF_ENABLED: "true"
       # This will enables logs for sidekiq args
       # and does not yet have explicit support in
       # the GitLab chart
