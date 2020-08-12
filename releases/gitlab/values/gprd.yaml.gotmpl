@@ -52,7 +52,7 @@ gitlab:
         extraVolumes: |
           - name: sidekiq-shared
             emptyDir:
-              sizeLimit: 60G
+              sizeLimit: 70G
       # Run background migrations in their own shard
       - name: database-throttled
         concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
@@ -120,7 +120,7 @@ gitlab:
         resources:
           requests:
             cpu: 80m
-            memory: 4G
+            memory: 5G
           limits:
             cpu: 1.5
             memory: 6G
