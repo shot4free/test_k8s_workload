@@ -591,6 +591,70 @@ gitlab:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
       - name: dev-registry-access-v1
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        # The following rules enable traffic to all external
+        # endpoints, except the metadata service and the local
+        # network (except DNS, gitaly, redis and postgres)
+        rules:
+          # Allow all traffic except internal network and metadata service
+        - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+              - 10.0.0.0/8
+              - 169.254.169.254/32
+          # Allow internal traffic for DNS
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 53
+            protocol: UDP
+          - port: 53
+            protocol: TCP
+
+          # Allow internal traffic to Redis
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+            # pre Memorystore instance
+          - port: 6379
+            protocol: TCP
+            # gstg, gprd Redis
+          - port: 26379
+            protocol: TCP
+
+          # Allow internal traffic to Postgresql
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+            # pre CloudSQL
+          - port: 5432
+            protocol: TCP
+            # gstg, gprd pgbouncer
+          - port: 6432
+            protocol: TCP
+
+          # Allow internal traffic to Gitaly
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          # Gitaly non-TLS
+          - port: 9999
+            protocol: TCP
+          # Gitaly TLS
+          - port: 9998
+            protocol: TCP
+          # Praefect
+          - port: 2305
+            protocol: TCP
+
     puma:
       workerMaxMemory: 1342 # in MB units
       threads:
