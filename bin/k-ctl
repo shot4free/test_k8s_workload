@@ -63,7 +63,7 @@ helmfile_cmd_options=(
 )
 
 helm_diff() {
-  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}"
+  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}" --args '--context 10'
 }
 
 case "$ACTION" in
