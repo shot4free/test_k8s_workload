@@ -38,11 +38,12 @@ global:
   psql:
     prepared_statements: false
     load_balancing:
-      hosts:
-        - 10.224.29.102
-        - 10.224.29.103
-        - 10.224.29.104
-        - 10.224.29.106
+      discover:
+        nameserver: consul-consul-dns.consul
+        record: db-replica.service.consul.
+        record_type: SRV
+        port: 53
+        use_tcp: true
 
   smtp:
     enabled: true
