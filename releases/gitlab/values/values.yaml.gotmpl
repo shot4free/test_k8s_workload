@@ -88,14 +88,6 @@ global:
 
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
-    load_balancing:
-      discover:
-        nameserver: consul-consul-dns.consul
-        record: db-replica.service.consul.
-        record_type: SRV
-        port: 53
-        interval: 60
-        disconnect_timeout: 120
     password:
       secret: gitlab-postgres-credential-v1
       key: secret
