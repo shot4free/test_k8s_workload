@@ -42,9 +42,7 @@ global:
         nameserver: consul-consul-dns.consul
         record: db-replica.service.consul.
         record_type: SRV
-        port: 53
-        interval: 60
-        disconnect_timeout: 120
+        use_tcp: true
 
   smtp:
     enabled: true
