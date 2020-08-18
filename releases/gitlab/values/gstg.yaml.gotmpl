@@ -37,6 +37,12 @@ global:
 
   psql:
     prepared_statements: false
+    load_balancing:
+      discover:
+        nameserver: consul-consul-dns.consul
+        record: db-replica.service.consul.
+        record_type: SRV
+        use_tcp: true
 
   smtp:
     enabled: true
