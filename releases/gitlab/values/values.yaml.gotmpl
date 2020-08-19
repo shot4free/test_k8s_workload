@@ -683,15 +683,15 @@ gitlab:
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         requests:
-          cpu: 100m
+          cpu: 300m
           memory: 100M
     resources:
       limits:
-        cpu: 1.5
+        cpu: 2
         memory: 3G
       requests:
-        cpu: 300m
-        memory: 1.5G
+        cpu: 2
+        memory: 2.5G
     minReplicas: 2
     maxReplicas: 10
     extraEnv:
