@@ -385,6 +385,12 @@ nginx-ingress:
   enabled: true
   tcpExternalConfig: "true"
   controller:
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 20
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
     config:
       hsts-include-subdomains: "false"
       server-name-hash-bucket-size: "256"
