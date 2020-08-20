@@ -591,8 +591,13 @@ gitlab:
     ingress:
       annotations:
         ## This is disabled for webservice for git-https traffic
-        ## See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2262
+        ## See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2262 and
+        ##     https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1146
+        ##
+        ## https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy‑connect‑timeout: 300
+        nginx.ingress.kubernetes.io/proxy‑read‑timeout: 3600
     nodeSelector:
       type: default
     podLabels:
