@@ -385,6 +385,8 @@ nginx-ingress:
   enabled: true
   tcpExternalConfig: "true"
   controller:
+    nodeSelector:
+      type: default
     autoscaling:
       enabled: true
       minReplicas: 1
