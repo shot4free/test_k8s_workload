@@ -582,6 +582,11 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: true
+    ingress:
+      annotations:
+        ## This is disabled for webservice for git-https traffic
+        ## See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2262
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     nodeSelector:
       type: default
     podLabels:
