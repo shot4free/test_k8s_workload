@@ -8,12 +8,12 @@ gitlab:
   sidekiq:
     enabled: false
   webservice:
-    enabled: false
+    enabled: true
     nodeSelector:
-      # This will be updated to a dedicated nodepool once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1068
-      # is complete
-      type: default
+      type: git-https
+    minReplicas: 10
+    maxReplicas: 100
+    workerProcesses: 2
 registry:
   hpa:
     minReplicas: 5
