@@ -17,7 +17,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 
 */}}
 
-{{- $sidekiq_deployment := "gitlab-sidekiq-catchall-v1" }}
+{{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
 
 {{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab" }}
 {{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
