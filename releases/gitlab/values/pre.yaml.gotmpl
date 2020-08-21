@@ -12,7 +12,11 @@ gitlab:
       type: default
   sidekiq:
     pods:
-      - name: catchall
+        # This is set to "memory-bound" until
+        # catchall is migrated to production.
+        # The reason for this is because we derive
+        # the image version from the memory-bound deployment
+      - name: memory-bound
         nodeSelector:
           type: default
         concurrency: 25
