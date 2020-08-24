@@ -590,6 +590,9 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: true
+    monitoring:
+      exporter:
+        enabled: true
     ingress:
       annotations:
         ## This is disabled for webservice for git-https traffic
