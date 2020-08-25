@@ -590,6 +590,7 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: true
+    trusted_proxies: ['10.0.0.0/8']
     monitoring:
       exporter:
         enabled: true
@@ -723,6 +724,7 @@ gitlab:
   # doc/charts/gitlab/sidekiq
   sidekiq:
     cluster: true
+    trusted_proxies: ['10.0.0.0/8']
     experimentalQueueSelector: true
     memoryKiller:
       maxRss: 0
