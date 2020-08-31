@@ -42,9 +42,6 @@ global:
     terraformState:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".terraform_state_object_store_enabled") }}
       bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".terraform_state_object_store_remote_directory") }}
-    dependencyProxy:
-      enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".dependency_proxy_object_store_enabled") }}
-      bucket: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".dependency_proxy_object_store_remote_directory") }}
 
     omniauth:
       enabled: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".omniauth_enabled") }}
