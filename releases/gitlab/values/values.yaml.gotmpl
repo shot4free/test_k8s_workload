@@ -3,25 +3,22 @@
 
 Here a query is made to determine the running version of the image being
 utilized by the GitLab application for a single deployment, this query arbitrarily
-picks gitlab-sidekiq-memory-bound-v1, which will be used for
- * all sidekiq pods
- * webservice
+defaults to gitlab-sidekiq-memory-bound-v1, which will be used for deployments
+in the GitLab Chart. Note that an override is set for canary in environments.yaml
+because sidekiq is not deployed there.
 
 It is possible to set a new version by setting $GITLAB_IMAGE_TAG
 in the environment.
-
-If GITLAB_IMAGE_TAG is not set, this will fall back to what is currently in the cluster.
 
 This is being done now for normal deploys until deployments switch to using a helm chart release.
 This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
 
 */}}
 
-{{- $sidekiq_deployment := "gitlab-sidekiq-memory-bound-v1" }}
-
+{{- $deployment_for_image_tag := .Environment.Values | getOrNil "deployment_for_image_tag" | default "gitlab-sidekiq-memory-bound-v1" }}
 {{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab" }}
-{{- $sidekiq_current_spec := exec "kubectl" (list "get" "deployment" $sidekiq_deployment "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
-{{- $current_tag := ($sidekiq_current_spec | exec "jq"  (list ".spec.template.spec.containers[] | select(.name == \"sidekiq\") | .image | split(\":\") | .[2]")) }}
+{{- $current_spec := exec "kubectl" (list "get" "deployment" $deployment_for_image_tag "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
+{{- $current_tag := ($current_spec | exec "jq"  (list "[.spec.template.spec.containers[].image] | [.[] | select(test(\"images\\/gitlab.*ee\"))][0] | split(\":\") | .[2]")) }}
 {{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
 ## NOTICE
