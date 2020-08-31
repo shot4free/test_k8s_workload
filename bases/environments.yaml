@@ -20,6 +20,8 @@ environments:
       - gitlab_release_name: "gitlab-cny"
       - gitlab_secrets_release_name: "gitlab-secrets-cny"
       - gitlab_secrets_namespace: "gitlab-cny"
+      - gitlab_namespace: "gitlab-cny"
+      - deployment_for_image_tag: "gitlab-cny-webservice"
       # Canary uses the same bucket as production
       - registry_bucket_name: "gitlab-gprd-registry"
       - gitlab_chef_source_name: "gprd"
