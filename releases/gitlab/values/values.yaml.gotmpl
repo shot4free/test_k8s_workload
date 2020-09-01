@@ -702,8 +702,7 @@ gitlab:
     workhorse:
       # This needs to be set here until we address
       # logformat: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2249
-      # prometheus: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2265
-      extraArgs: '-logFormat json -prometheusListenAddr 0.0.0.0:9229'
+      extraArgs: '-logFormat json'
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         requests:
