@@ -103,6 +103,17 @@ releases:
           provider:
             {{ $salesforce_provider | quote | nindent 14 }}
 
+{{- $registry_authorization_header := $gkms_omnibus_secrets | exec "jq" (list "-jc" "[.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".registry_notification_secret]") }}
+
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-registry-authorization-header-v1
+          namespace: {{ $namespace }}
+        stringData:
+          secret:
+            {{ $registry_authorization_header | quote | nindent 14 }}
+
       - apiVersion: v1
         kind: Secret
         metadata:
