@@ -196,13 +196,17 @@ global:
     externalDiffs:
       enabled: false
       proxy_download: true
-      bucket: gitlab-mr-diffs
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     terraformState:
       enabled: false
-      bucket: gitlab-terraform-state
+      connection:
+        secret: gitlab-object-storage-v1
+        key: gitlab-object-storage.yml
+    dependencyProxy:
+      enabled: false
+      proxy_download: false
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
