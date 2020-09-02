@@ -842,6 +842,15 @@ gitlab:
           - port: 2305
             protocol: TCP
 
+          # Allow internal traffic to Container Registry
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          # Container Registry
+          - port: 5000
+            protocol: TCP
+
     podLabels:
       tier: sv
       type: sidekiq
