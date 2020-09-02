@@ -607,6 +607,10 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: true
+    service:
+      additionalLabels:
+        railsPromJob: gitlab-rails
+        workhorsePromJob: gitlab-workhorse-git
     trusted_proxies: ['10.0.0.0/8']
     monitoring:
       exporter:
