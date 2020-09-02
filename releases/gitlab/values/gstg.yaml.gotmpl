@@ -43,29 +43,6 @@ global:
         port: 53
         use_tcp: true
 
-  registry:
-    authEndPoint: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}
-    certificate:
-      secret: registry-certificate-v1
-    notifications:
-      endpoints:
-        - name: gitlab
-          backoff: 1s
-          headers:
-            Authorization:
-              secret: gitlab-registry-authorization-header-v1
-              key: secret
-          ignore:
-            actions:
-              - pull
-          ignoredmediatypes:
-            - application/octet-stream
-          threshold: 5
-          timeout: 500ms
-          url: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}/api/v4/container_registry_event/events
-    httpSecret:
-      secret: registry-httpsecret-v1
-
   smtp:
     enabled: true
     password:

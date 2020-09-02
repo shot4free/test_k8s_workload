@@ -306,6 +306,22 @@ global:
       secret: registry-certificate-v1
     httpSecret:
       secret: registry-httpsecret-v1
+    notifications:
+      endpoints:
+        - name: gitlab
+          backoff: 1s
+          headers:
+            Authorization:
+              secret: gitlab-registry-authorization-header-v1
+              key: secret
+          ignore:
+            actions:
+              - pull
+          ignoredmediatypes:
+            - application/octet-stream
+          threshold: 5
+          timeout: 500ms
+          url: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}/api/v4/container_registry_event/events
 
   ## GitLab Runner
   ## Secret created according to doc/installation/secrets.md#gitlab-runner-secret
