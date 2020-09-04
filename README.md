@@ -72,6 +72,9 @@ viewing our [design document](https://about.gitlab.com/handbook/engineering/infr
 The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
 different environments.
 
+### Prerequisites
+Run `./bin/k-ctl -t` and install any missing requierments.
+
 ### minikube
 
 1. `minikube start`
