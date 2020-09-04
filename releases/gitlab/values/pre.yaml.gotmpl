@@ -8,6 +8,8 @@ gitlab:
   mailroom:
     enabled: true
   webservice:
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
     nodeSelector:
       type: default
   sidekiq:
@@ -36,6 +38,10 @@ global:
   hosts:
     gitlab:
       name: pre.gitlab.com
+
+  serviceAccount:
+    enabled: true
+    create: true
 
   smtp:
     enabled: true
