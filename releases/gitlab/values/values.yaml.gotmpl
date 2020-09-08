@@ -976,7 +976,7 @@ gitlab:
       - name: urgent-cpu-bound
         concurrency: 5
         minReplicas: 1
-        maxReplicas: 1
+        maxReplicas: 10
         nodeSelector:
           type: urgent-cpu-bound
         podLabels:
