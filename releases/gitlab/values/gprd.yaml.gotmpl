@@ -72,6 +72,8 @@ gitlab:
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 70G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
       # Run background migrations in their own shard
       - name: database-throttled
         concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
@@ -89,6 +91,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"database-throttled\"}"
       # Run Gitaly Storage Migrations on their own shards
       # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
       # Allow up to a maximum of 24 concurrent gitaly-throttled jobs
@@ -108,6 +112,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"gitaly-throttled\"}"
       - name: elasticsearch
         concurrency: 2
         minReplicas: 2
@@ -124,6 +130,8 @@ gitlab:
           limits:
             cpu: 2
             memory: 8G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"elasticsearch\"}"
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
       # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/901
@@ -143,6 +151,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
       # Production resources for urgent-cpu-bound discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
       - name: urgent-cpu-bound
@@ -163,6 +173,8 @@ gitlab:
           limits:
             cpu: 2
             memory: 3G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-cpu-bound\"}"
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
@@ -181,6 +193,8 @@ gitlab:
           limits:
             cpu: 1.5
             memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
 
 global:
   appConfig:
