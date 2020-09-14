@@ -17,12 +17,12 @@ gitlab:
   mailroom:
     enabled: true
   webservice:
-    enabled: false
+    enabled: true
     nodeSelector:
-      # This will be updated to a dedicated nodepool once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1068
-      # is complete
-      type: default
+      type: git-https
+    minReplicas: 10
+    maxReplicas: 100
+    workerProcesses: 2
   sidekiq:
     podLabels:
       tier: sv
@@ -215,4 +215,4 @@ global:
       key: secret
       secret: gitlab-smtp-credential-v1
 nginx-ingress:
-  enabled: false
+  enabled: true
