@@ -7,6 +7,13 @@ gitlab:
 
   sidekiq:
     enabled: false
+  webservice:
+    enabled: true
+    nodeSelector:
+      type: git-https
+    minReplicas: 10
+    maxReplicas: 100
+    workerProcesses: 2
 registry:
   hpa:
     minReplicas: 5
@@ -17,3 +24,5 @@ registry:
     requests:
       cpu: 250m
       memory: 3G
+nginx-ingress:
+  enabled: true
