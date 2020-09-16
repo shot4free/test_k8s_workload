@@ -285,6 +285,10 @@ global:
       #   key: provider
   ## End of global.appConfig
 
+  serviceAccount:
+    enabled: true
+    create: true
+
   ## doc/charts/globals.md#configure-gitlab-shell-settings
   shell:
     authToken:
@@ -607,6 +611,9 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: true
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
     serviceLabels:
       railsPromJob: gitlab-rails
       workhorsePromJob: gitlab-workhorse-git
@@ -741,6 +748,7 @@ gitlab:
     maxReplicas: 10
     extraEnv:
       BYPASS_SCHEMA_VERSION: "true"
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
   # doc/charts/gitlab/sidekiq
