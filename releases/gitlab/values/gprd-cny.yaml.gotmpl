@@ -14,8 +14,6 @@ gitlab:
     minReplicas: 10
     maxReplicas: 100
     workerProcesses: 2
-    extraEnv:
-      GITLAB_SENTRY_EXTRA_TAGS": "{\"type\": \"git\", \"stage\": \"cny\"}"
 registry:
   hpa:
     minReplicas: 5
