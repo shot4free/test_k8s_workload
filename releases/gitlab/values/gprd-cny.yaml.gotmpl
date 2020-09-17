@@ -1,4 +1,7 @@
 ---
+
+{{- $stage := .Environment.Values | getOrNil "stage" | default "main" }}
+
 {{ readFile "gprd.yaml.gotmpl" | fromYaml | toYaml }}
 
 gitlab:
