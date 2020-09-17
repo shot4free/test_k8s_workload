@@ -21,8 +21,6 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 {{- $current_tag := ($current_spec | exec "jq"  (list "[.spec.template.spec.containers[].image] | [.[] | select(test(\"images\\/gitlab.*ee\"))][0] | split(\":\") | .[2]")) }}
 {{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
-{{- $stage := .Environment.Values | getOrNil "stage" | default "main" }}
-
 ## NOTICE
 # Due to the scope and complexity of this chart, all possible values are
 # not documented in this file. Extensive documentation for these values
