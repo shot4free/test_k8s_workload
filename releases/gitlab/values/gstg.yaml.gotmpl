@@ -13,6 +13,8 @@ gitlab:
     minReplicas: 5
     maxReplicas: 300
     workerProcesses: 2
+    extraEnv:
+      ACTION_CABLE_IN_APP: true
 
 global:
   appConfig:
