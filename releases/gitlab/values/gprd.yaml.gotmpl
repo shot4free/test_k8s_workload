@@ -149,6 +149,11 @@ gitlab:
           targetAverageValue: 300m
         minReplicas: 30
         maxReplicas: 84
+        memoryKiller:
+          checkInterval: 3
+          graceTime: 900
+          maxRss: 3000000
+          shutdownWait: 30
         nodeSelector:
           type: urgent-cpu-bound
         podLabels:
@@ -160,13 +165,18 @@ gitlab:
             memory: 800M
           limits:
             cpu: 2
-            memory: 3G
+            memory: 3.1G
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
         concurrency: 5
         minReplicas: 110
         maxReplicas: 110
+        memoryKiller:
+          checkInterval: 3
+          graceTime: 900
+          maxRss: 2900000
+          shutdownWait: 30
         nodeSelector:
           type: urgent-other
         podLabels:
@@ -178,7 +188,7 @@ gitlab:
             memory: 1G
           limits:
             cpu: 1.5
-            memory: 6G
+            memory: 3G
 
 global:
   appConfig:
