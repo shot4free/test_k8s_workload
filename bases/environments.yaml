@@ -4,10 +4,21 @@ environments:
     values:
       - google_project: "gitlab-ops"
       - gitlab_endpoint: "https://ops.gitlab.net"
-  pre:
+  pre: &pre
     values:
       - google_project: "gitlab-pre"
       - gitlab_endpoint: "https://pre.gitlab.com"
+      - env_prefix: pre
+
+  pre-us-east1-b:
+    <<: *pre
+
+  pre-us-east1-c:
+    <<: *pre
+
+  pre-us-east1-d:
+    <<: *pre
+
   gstg:
     values:
       - google_project: "gitlab-staging-1"
