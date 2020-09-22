@@ -11,6 +11,7 @@ gitlab:
   webservice:
     enabled: true
     extraEnv:
+      ACTION_CABLE_IN_APP: true
       BYPASS_SCHEMA_VERSION: "true"
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
@@ -20,6 +21,7 @@ gitlab:
     minReplicas: 10
     maxReplicas: 100
     workerProcesses: 2
+
 registry:
   hpa:
     minReplicas: 5
