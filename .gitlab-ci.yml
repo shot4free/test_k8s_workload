@@ -162,6 +162,7 @@ pre:upgrade:
     - .pre
     - .only-auto-deploy-false-and-config-changes
   script:
+    - bin/grafana-annotate
     - bin/k-ctl upgrade
   resource_group: pre
   only:
@@ -188,6 +189,7 @@ gstg:upgrade:
     - .gstg
     - .only-auto-deploy-false-and-config-changes
   script:
+    - bin/grafana-annotate
     - bin/k-ctl upgrade
   resource_group: gstg
   only:
@@ -214,6 +216,7 @@ gprd-cny:upgrade:
     - .gprd
     - .only-auto-deploy-false-and-config-changes
   script:
+    - bin/grafana-annotate
     - bin/k-ctl -s cny upgrade
   resource_group: gprd-cny
   only:
@@ -241,6 +244,7 @@ gprd:upgrade:
     - .only-auto-deploy-false-and-config-changes
   when: manual
   script:
+    - bin/grafana-annotate
     - bin/k-ctl upgrade
   resource_group: gprd
   only:

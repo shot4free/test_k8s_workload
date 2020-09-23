@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# vim: ai:ts=2:sw=2:et
+
+set -euf -o pipefail
+
+main() {
+  if [[ -z "$GRAFANA_URL" || -z "$GRAFANA_API_KEY" ]]; then
+    echo 'Failed to annotate grafana, missing GRAFANA_URL and/or GRAFANA_TOKEN'
+    return
+  fi
+
+  local payload
+  payload=$(
+    jq -n \
+      --arg ci_project_name "$CI_PROJECT_NAME" \
+      --arg environment_type "$ENV" \
+      --arg user_login "$GITLAB_USER_LOGIN" \
+      --arg pipeline_iid "$CI_PIPELINE_IID" \
+      '{tags: ["k8s-workloads", $ci_project_name, $environment_type], text: "\($user_login) applied k8s-workloads/\($ci_project_name) pipeline #\($pipeline_iid) for \($environment_type)"}'
+  )
+
+  curl "${GRAFANA_URL}" \
+    -X POST \
+    --retry 3 \
+    -H "Authorization: Bearer ${GRAFANA_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "$payload"
+}
+
+main
