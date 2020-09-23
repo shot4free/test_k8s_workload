@@ -23,6 +23,7 @@ environments:
     values:
       - google_project: "gitlab-staging-1"
       - gitlab_endpoint: "https://staging.gitlab.com"
+      - env_prefix: gstg
   gprd-cny:
     values:
       - google_project: "gitlab-production"
@@ -37,7 +38,9 @@ environments:
       - registry_bucket_name: "gitlab-gprd-registry"
       - gitlab_chef_source_name: "gprd"
       - stage: "cny"
+      - env_prefix: gprd-cny
   gprd:
     values:
       - google_project: "gitlab-production"
       - gitlab_endpoint: "https://gitlab.com"
+      - env_prefix: gprd
