@@ -611,6 +611,10 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    shutdown:
+      blackoutSeconds: 120
+    deployment:
+      terminationGracePeriodSeconds: 180
     enabled: true
     serviceAccount:
       annotations:
