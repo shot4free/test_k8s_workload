@@ -1,25 +1,4 @@
 # Default values for gitlab/gitlab chart
-{{/*
-
-Here a query is made to determine the running version of the image being
-utilized by the GitLab application for a single deployment, this query arbitrarily
-defaults to gitlab-sidekiq-memory-bound-v1, which will be used for deployments
-in the GitLab Chart. Note that an override is set for canary in environments.yaml
-because sidekiq is not deployed there.
-
-It is possible to set a new version by setting $GITLAB_IMAGE_TAG
-in the environment.
-
-This is being done now for normal deploys until deployments switch to using a helm chart release.
-This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/697
-
-*/}}
-
-{{- $deployment_for_image_tag := .Environment.Values | getOrNil "deployment_for_image_tag" | default "gitlab-sidekiq-memory-bound-v1" }}
-{{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab" }}
-{{- $current_spec := exec "kubectl" (list "get" "deployment" $deployment_for_image_tag "--namespace" $namespace "-o" "json" "--ignore-not-found") }}
-{{- $current_tag := ($current_spec | exec "jq"  (list "[.spec.template.spec.containers[].image] | [.[] | select(test(\"images\\/gitlab.*ee\"))][0] | split(\":\") | .[2]")) }}
-{{- $provided_image_tag := env "GITLAB_IMAGE_TAG" }}
 
 ## NOTICE
 # Due to the scope and complexity of this chart, all possible values are
@@ -37,6 +16,8 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 
 ## The global properties are used to configure multiple charts at once.
 ## Extended documenation at doc/charts/globals.md
+---
+
 global:
   ## GitLab operator is Alpha. Not for production use.
   operator:
@@ -51,7 +32,8 @@ global:
   # edition: ee
 
   ## doc/charts/globals.md#gitlab-version
-  gitlabVersion: {{ default $current_tag $provided_image_tag }}
+  # `gitlabVersion` is set via init-values.yaml.gotmpl
+  # gitlabVersion:
 
   ## doc/charts/globals.md#application-resource
   application:
@@ -512,9 +494,11 @@ registry:
     type: registry
     tier: sv
   image:
+    # `tag` is set via init-values.yaml.gotmpl
+    # tag:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
-    - name: dev-registry-access-v1
+      - name: dev-registry-access-v1
   hpa:
     cpu:
       targetAverageUtilization: 80
