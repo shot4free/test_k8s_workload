@@ -25,6 +25,7 @@ releases:
       - name: "registry.annotations.app\\.gitlab\\.com/env"
         value: {{env "CI_ENVIRONMENT_SLUG" | default .Environment.Name}}
     values:
+      - values/init-values.yaml.gotmpl
       - values/values.yaml.gotmpl
       - values/{{.Environment.Name}}.yaml.gotmpl
       - values/values-from-external-sources.yaml.gotmpl
