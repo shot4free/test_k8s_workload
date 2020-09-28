@@ -1,7 +1,46 @@
 #!/usr/bin/env bash
 # vim: ai:ts=2:sw=2:et
 
+set -euf -o pipefail
+
+fail() {
+  usage
+  exit 1
+}
+
+usage() {
+  echo "$0 -e ENVIRONMENT [ -s STAGE ]" 1>&2
+}
+
+while getopts ":e:s:h" options; do
+  case "$options" in
+    e)
+      environment=$OPTARG
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    s)
+      stage=$OPTARG
+      ;;
+    :)
+      echo "Missing argument: -$OPTARG."
+      fail
+      ;;
+    ?)
+      echo "Invalid option: -$OPTARG."
+      fail
+      ;;
+    *)
+      fail
+      ;;
+  esac
+done
+
 main() {
+  stage=${stage:-main}
+
   if [[ -z "$GRAFANA_URL" || -z "$GRAFANA_API_KEY" ]]; then
     echo 'Failed to annotate grafana, missing GRAFANA_URL and/or GRAFANA_TOKEN'
     return
@@ -11,11 +50,14 @@ main() {
   payload=$(
     jq -n \
       --arg ci_project_name "$CI_PROJECT_NAME" \
-      --arg environment_type "$ENV" \
+      --arg environment "$environment" \
+      --arg stage "$stage" \
       --arg user_login "$GITLAB_USER_LOGIN" \
       --arg pipeline_iid "$CI_PIPELINE_IID" \
-      '{tags: ["k8s-workloads", $ci_project_name, $environment_type], text: "\($user_login) applied k8s-workloads/\($ci_project_name) pipeline #\($pipeline_iid) for \($environment_type)"}'
+      '{tags: ["k8s-workloads", $ci_project_name, $environment, $stage], text: "\($user_login) applied k8s-workloads/\($ci_project_name) pipeline #\($pipeline_iid) for \($environment) \($stage)"}'
   )
+
+  printf 'Adding Grafana annotation:\n%s\n' "$payload"
 
   curl "${GRAFANA_URL}" \
     -X POST \
