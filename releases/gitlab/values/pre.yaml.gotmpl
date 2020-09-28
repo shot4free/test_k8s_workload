@@ -17,6 +17,11 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 10
+  kas:
+    ingress:
+      enabled: true
+    image:
+      tag: "v0.0.5"
 
 global:
   appConfig:
@@ -37,3 +42,7 @@ global:
     password:
       key: secret
       secret: gitlab-smtp-credential-v1
+
+  kas:
+    enabled: true
+    secret: gitlab-kas-credential-v1
