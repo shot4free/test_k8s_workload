@@ -1,6 +1,16 @@
 ---
 
 gitlab:
+  gitlab-shell:
+    authToken:
+      secret: gitlab-shell-credential-v1
+      key: secret
+    enabled: true
+    hostKeys:
+      secret: gitlab-hostkeys-credential-v1
+    pullSecrets:
+      - name: dev-registry-access-v1
+
   mailroom:
     enabled: true
     nodeSelector:
