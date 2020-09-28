@@ -29,6 +29,8 @@ include:
 variables:
   CI_IMAGE_VERSION: 'v3.3.1'
   AUTO_DEPLOY: 'false'
+  COMPONENT: 'false'
+  ENVIRONMENT: 'false'
 
 #############################################################
 
@@ -47,15 +49,17 @@ variables:
     name: gprd
     url: https://gitlab.com
 
-.only-auto-deploy-false:
+.only-deploy-false:
   only:
     variables:
       - $AUTO_DEPLOY == "false"
+      - $COMPONENT == "false"
 
-.only-auto-deploy-false-and-config-changes:
+.only-deploy-false-and-config-changes:
   only:
     variables:
       - $AUTO_DEPLOY == "false"
+      - $COMPONENT == "false"
     changes:
       - 'CHART_VERSION'
       - 'bases/**/*'
@@ -70,7 +74,7 @@ variables:
     # Skip QA smoke tests for auto-deploy because
     # QA is run in the context of the deployer
     # pipeline
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   image: alpine:3.12.0
   # This script can be replaced with the `trigger:` keyword
   # when the product supports retries for triggers
@@ -132,7 +136,7 @@ notify_com_mr:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/notify-mr:${CI_IMAGE_VERSION}"
   extends:
     - .except-com
-    - .only-auto-deploy-false
+    - .only-deploy-false
   stage: check
   script:
     - notify-mr -s
@@ -151,7 +155,7 @@ pre:dryrun:
   extends:
     - .deploy
     - .pre
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -160,7 +164,7 @@ pre:upgrade:
   extends:
     - .deploy
     - .pre
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate
     - bin/k-ctl upgrade
@@ -178,7 +182,7 @@ gstg:dryrun:
   extends:
     - .deploy
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -187,7 +191,7 @@ gstg:upgrade:
   extends:
     - .deploy
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate
     - bin/k-ctl upgrade
@@ -205,7 +209,7 @@ gprd-cny:dryrun:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D -s cny upgrade
 
@@ -214,7 +218,7 @@ gprd-cny:upgrade:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate
     - bin/k-ctl -s cny upgrade
@@ -232,7 +236,7 @@ gprd:dryrun:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
 
@@ -241,7 +245,7 @@ gprd:upgrade:
   extends:
     - .deploy
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
+    - .only-deploy-false-and-config-changes
   when: manual
   script:
     - bin/grafana-annotate
@@ -288,17 +292,20 @@ gstg:qa:
       - 'releases/gitlab/values/gstg*'
 
 ###############################################################################
-### Auto Deploy Jobs ###
+### Deploy Jobs ###
 #
-# Jobs here are specific to auto-deploys.  These are triggered by deployer
+# Jobs here are specific to deploys.  These are triggered from other projects
 # using the specific variables:
-#   * ENVIRONMENT
-#   * DRY_RUN
-#   * AUTO_DEPLOY
+#   * ENVIRONMENT - string - optional - utilized by deployer for auto-deploys.  Defaults to "false" meaning all envs
+#   * DRY_RUN - boolean - set to "false" to run actual deployments
+#   * AUTO_DEPLOY - Deprecated - https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1222
+#   * COMPONENT - should contain the component desired to be deployed
+#     * `gitlab`
+#     * `gitlab-registry`
 
 ### PreProd
 
-pre:dryrun:auto-deploy:
+pre:dryrun:deploy:
   stage: dryrun
   extends:
     - .deploy
@@ -307,9 +314,9 @@ pre:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "pre" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
 
-pre:auto-deploy:
+pre:deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
@@ -319,11 +326,12 @@ pre:auto-deploy:
   resource_group: pre
   only:
     variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
+      - $ENVIRONMENT == "false" && $DRY_RUN == "false" && $COMPONENT != "false"
 
 ### Staging
 
-gstg:dryrun:auto-deploy:
+gstg:dryrun:deploy:
   stage: dryrun
   extends:
     - .deploy
@@ -332,9 +340,9 @@ gstg:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
 
-gstg:auto-deploy:
+gstg:deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
@@ -344,11 +352,12 @@ gstg:auto-deploy:
   resource_group: gstg
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
+      - $ENVIRONMENT == "false" && $DRY_RUN == "false" && $COMPONENT != "false"
 
 ### Canary
 
-gprd-cny:dryrun:auto-deploy:
+gprd-cny:dryrun:deploy:
   stage: dryrun
   extends:
     - .deploy
@@ -357,9 +366,9 @@ gprd-cny:dryrun:auto-deploy:
     - bin/k-ctl -D -s cny upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd-cny" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
 
-gprd-cny:auto-deploy:
+gprd-cny:deploy:
   stage: gprd-cny:deploy
   extends:
     - .deploy
@@ -369,11 +378,12 @@ gprd-cny:auto-deploy:
   resource_group: gprd-cny
   only:
     variables:
-      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
+      - $ENVIRONMENT == "false" && $DRY_RUN == "false" && $COMPONENT != "false"
 
 ### Producion
 
-gprd:dryrun:auto-deploy:
+gprd:dryrun:deploy:
   stage: dryrun
   extends:
     - .deploy
@@ -382,9 +392,9 @@ gprd:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && ($COMPONENT != "true" || $AUTO_DEPLOY != "true")
 
-gprd:auto-deploy:
+gprd:deploy:
   stage: gprd:deploy
   extends:
     - .deploy
@@ -394,4 +404,5 @@ gprd:auto-deploy:
   resource_group: gprd
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && ($COMPONENT != "false" || $AUTO_DEPLOY != "false")
+      - $ENVIRONMENT == "false" && $DRY_RUN == "false" && $COMPONENT != "false"
