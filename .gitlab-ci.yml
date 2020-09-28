@@ -166,7 +166,7 @@ pre:upgrade:
     - .pre
     - .only-deploy-false-and-config-changes
   script:
-    - bin/grafana-annotate
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: pre
   only:
@@ -193,7 +193,7 @@ gstg:upgrade:
     - .gstg
     - .only-deploy-false-and-config-changes
   script:
-    - bin/grafana-annotate
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: gstg
   only:
@@ -220,7 +220,7 @@ gprd-cny:upgrade:
     - .gprd
     - .only-deploy-false-and-config-changes
   script:
-    - bin/grafana-annotate
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME -s cny
     - bin/k-ctl -s cny upgrade
   resource_group: gprd-cny
   only:
@@ -248,7 +248,7 @@ gprd:upgrade:
     - .only-deploy-false-and-config-changes
   when: manual
   script:
-    - bin/grafana-annotate
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: gprd
   only:
