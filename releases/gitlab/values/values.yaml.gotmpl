@@ -65,6 +65,10 @@ global:
     # secret: RELEASE-gitlab-initial-root-password
     # key: password
 
+  ## doc/installation/secrets.md#gitlab-kas-secret
+  kas:
+    enabled: false
+
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
     connectTimeout: 5 # 5 seconds
@@ -118,6 +122,8 @@ global:
       snippets:
       builds:
     webhookTimeout: 5
+    gitlab_kas:
+      secret: gitlab-kas-credential-v1
 
     ## doc/charts/globals.md#cron-jobs-related-settings
     cron_jobs:
