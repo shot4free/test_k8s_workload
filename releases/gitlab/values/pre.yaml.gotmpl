@@ -8,8 +8,9 @@ gitlab:
     enabled: true
     hostKeys:
       secret: gitlab-hostkeys-credential-v1
-    pullSecrets:
-      - name: dev-registry-access-v1
+    image:
+      pullSecrets:
+        - name: dev-registry-access-v1
 
   mailroom:
     enabled: true
