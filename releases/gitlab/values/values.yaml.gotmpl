@@ -562,6 +562,14 @@ registry:
       enabled: true
       interval: '10s'
       threshold: 3
+  profiling:
+    stackdriver:
+      enabled: true
+  serviceAccount:
+    enabled: true
+    create: true
+    annotations:
+      iam.gke.io/gcp-service-account: gitlab-registry@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
