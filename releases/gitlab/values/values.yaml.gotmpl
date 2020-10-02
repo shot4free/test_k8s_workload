@@ -605,7 +605,7 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
-    enabled: {{ .Environment.Values.gitlab.gitlab-shell.enabled }}
+    enabled: {{ index .Environment.Values.gitlab "gitlab-shell" "enabled" }}
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
