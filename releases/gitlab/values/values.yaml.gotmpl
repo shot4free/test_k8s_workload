@@ -494,6 +494,7 @@ postgresql:
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
+  enabled: {{ .Environment.Values.registry.enabled }}
   nodeSelector:
     type: default
   podLabels:
@@ -509,7 +510,6 @@ registry:
     cpu:
       targetAverageUtilization: 80
   draintimeout: '60s'
-  enabled: true
   deployment:
     readinessProbe:
       path: /debug/health
@@ -604,16 +604,18 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
+  gitlab-shell:
+    enabled: {{ index .Environment.Values.gitlab "gitlab-shell" "enabled" }}
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     shutdown:
       blackoutSeconds: 240
     deployment:
       terminationGracePeriodSeconds: 260
-    enabled: true
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
@@ -758,6 +760,7 @@ gitlab:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
   # doc/charts/gitlab/sidekiq
   sidekiq:
+    enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
     cluster: true
     trusted_proxies: ['10.0.0.0/8']
     experimentalQueueSelector: true
@@ -769,7 +772,6 @@ gitlab:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
       pullSecrets:
       - name: dev-registry-access-v1
-    enabled: true
     metrics:
       enabled: true
       port: 8083
@@ -1039,9 +1041,6 @@ gitlab:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
-  # doc/charts/gitlab/gitlab-shell
-  gitlab-shell:
-    enabled: false
   task-runner:
     enabled: false
   gitlab-monitor:
@@ -1049,12 +1048,12 @@ gitlab:
   gitlab-exporter:
     enabled: false
   mailroom:
+    enabled: {{ .Environment.Values.gitlab.mailroom.enabled }}
     nodeSelector:
       type: default
     podLabels:
       type: mailroom
       tier: sv
-    enabled: false
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       # Pin the tag to avoid following the chart default

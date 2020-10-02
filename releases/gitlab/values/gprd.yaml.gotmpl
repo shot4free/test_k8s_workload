@@ -12,10 +12,7 @@ registry:
       memory: 3G
 
 gitlab:
-  mailroom:
-    enabled: true
   webservice:
-    enabled: true
     nodeSelector:
       type: git-https
     minReplicas: 10
