@@ -494,6 +494,7 @@ postgresql:
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
+  enabled: {{ .Environment.Values.registry.enabled }}
   nodeSelector:
     type: default
   podLabels:
@@ -603,11 +604,14 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
+  gitlab-shell:
+    enabled: {{ .Environment.Values.gitlab.gitlab-shell.enabled }}
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     shutdown:
       blackoutSeconds: 240
     deployment:
@@ -756,6 +760,7 @@ gitlab:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
   # doc/charts/gitlab/sidekiq
   sidekiq:
+    enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
     cluster: true
     trusted_proxies: ['10.0.0.0/8']
     experimentalQueueSelector: true
@@ -1043,6 +1048,7 @@ gitlab:
   gitlab-exporter:
     enabled: false
   mailroom:
+    enabled: {{ .Environment.Values.gitlab.mailroom.enabled }}
     nodeSelector:
       type: default
     podLabels:

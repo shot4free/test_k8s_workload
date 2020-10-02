@@ -6,6 +6,7 @@ environments:
     values:
       # These defaults are for services that are enabled
       # on all regional clusters, in all environments
+      # These are read by values.yaml.gotmpl
       - &regional_cluster_defaults
         registry:
           enabled: true
