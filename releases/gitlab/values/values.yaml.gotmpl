@@ -65,10 +65,6 @@ global:
     # secret: RELEASE-gitlab-initial-root-password
     # key: password
 
-  ## doc/installation/secrets.md#gitlab-kas-secret
-  kas:
-    enabled: false
-
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
     connectTimeout: 5 # 5 seconds
@@ -509,7 +505,6 @@ registry:
     cpu:
       targetAverageUtilization: 80
   draintimeout: '60s'
-  enabled: true
   deployment:
     readinessProbe:
       path: /debug/health
@@ -613,7 +608,6 @@ gitlab:
       blackoutSeconds: 240
     deployment:
       terminationGracePeriodSeconds: 260
-    enabled: true
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
@@ -769,7 +763,6 @@ gitlab:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
       pullSecrets:
       - name: dev-registry-access-v1
-    enabled: true
     metrics:
       enabled: true
       port: 8083
@@ -1039,9 +1032,6 @@ gitlab:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
-  # doc/charts/gitlab/gitlab-shell
-  gitlab-shell:
-    enabled: false
   task-runner:
     enabled: false
   gitlab-monitor:
@@ -1054,7 +1044,6 @@ gitlab:
     podLabels:
       type: mailroom
       tier: sv
-    enabled: false
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       # Pin the tag to avoid following the chart default

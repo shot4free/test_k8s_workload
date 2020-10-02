@@ -5,7 +5,6 @@ gitlab:
     authToken:
       secret: gitlab-shell-credential-v1
       key: secret
-    enabled: true
     hostKeys:
       secret: gitlab-hostkeys-credential-v1
     image:
@@ -13,7 +12,6 @@ gitlab:
         - name: dev-registry-access-v1
 
   mailroom:
-    enabled: true
     nodeSelector:
       type: default
   sidekiq:

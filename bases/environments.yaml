@@ -1,39 +1,72 @@
 ---
 environments:
+  # This is a dummy environment used for base values that can
+  # be merged into other environments.
+  __base:
+    values:
+      # These defaults are for services that are enabled
+      # on all regional clusters, in all environments
+      - &regional_cluster_defaults
+        registry:
+          enabled: true
+        gitlab:
+          webservice:
+            enabled: true
+          sidekiq:
+            enabled: true
+          gitlab-shell:
+            enabled: false
+          mailroom:
+            enabled: true
+
   ops:
     values:
-      - google_project: "gitlab-ops"
-      - gitlab_endpoint: "https://ops.gitlab.net"
+      - <<: *regional_cluster_defaults
+      -
+        google_project: "gitlab-ops"
+        gitlab_endpoint: "https://ops.gitlab.net"
   pre:
     values:
-      - gitlab_deployment_for_image_tag: "gitlab-webservice"
-      - google_project: "gitlab-pre"
-      - gitlab_endpoint: "https://pre.gitlab.com"
-      - registry_deployment_for_image_tag: "gitlab-registry"
+      - <<: *regional_cluster_defaults
+      -
+        gitlab_deployment_for_image_tag: "gitlab-webservice"
+        google_project: "gitlab-pre"
+        gitlab_endpoint: "https://pre.gitlab.com"
+        registry_deployment_for_image_tag: "gitlab-registry"
+      -
+        gitlab:
+          gitlab-shell:
+            enabled: true
   gstg:
     values:
-      - gitlab_deployment_for_image_tag: "gitlab-webservice"
-      - google_project: "gitlab-staging-1"
-      - gitlab_endpoint: "https://staging.gitlab.com"
-      - registry_deployment_for_image_tag: "gitlab-registry"
+      - <<: *regional_cluster_defaults
+      -
+        gitlab_deployment_for_image_tag: "gitlab-webservice"
+        google_project: "gitlab-staging-1"
+        gitlab_endpoint: "https://staging.gitlab.com"
+        registry_deployment_for_image_tag: "gitlab-registry"
   gprd-cny:
     values:
-      - gitlab_deployment_for_image_tag: "gitlab-cny-webservice"
-      - google_project: "gitlab-production"
-      - gitlab_endpoint: "https://gitlab.com"
-      - gitlab_secrets_gkms_source: "gprd"
-      - gitlab_release_name: "gitlab-cny"
-      - gitlab_secrets_release_name: "gitlab-secrets-cny"
-      - gitlab_secrets_namespace: "gitlab-cny"
-      - gitlab_namespace: "gitlab-cny"
+      - <<: *regional_cluster_defaults
+      -
+        gitlab_deployment_for_image_tag: "gitlab-cny-webservice"
+        google_project: "gitlab-production"
+        gitlab_endpoint: "https://gitlab.com"
+        gitlab_secrets_gkms_source: "gprd"
+        gitlab_release_name: "gitlab-cny"
+        gitlab_secrets_release_name: "gitlab-secrets-cny"
+        gitlab_secrets_namespace: "gitlab-cny"
+        gitlab_namespace: "gitlab-cny"
       # Canary uses the same bucket as production
-      - registry_bucket_name: "gitlab-gprd-registry"
-      - registry_deployment_for_image_tag: "gitlab-cny-registry"
-      - gitlab_chef_source_name: "gprd"
-      - stage: "cny"
+        registry_bucket_name: "gitlab-gprd-registry"
+        registry_deployment_for_image_tag: "gitlab-cny-registry"
+        gitlab_chef_source_name: "gprd"
+        stage: "cny"
   gprd:
     values:
-      - gitlab_deployment_for_image_tag: "gitlab-webservice"
-      - google_project: "gitlab-production"
-      - gitlab_endpoint: "https://gitlab.com"
-      - registry_deployment_for_image_tag: "gitlab-registry"
+      - <<: *regional_cluster_defaults
+      -
+        gitlab_deployment_for_image_tag: "gitlab-webservice"
+        google_project: "gitlab-production"
+        gitlab_endpoint: "https://gitlab.com"
+        registry_deployment_for_image_tag: "gitlab-registry"
