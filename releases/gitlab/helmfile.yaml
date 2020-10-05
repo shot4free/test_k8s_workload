@@ -18,7 +18,7 @@ releases:
       - name: "global.deployment.annotations.app\\.gitlab\\.com/env"
         value: {{env "CI_ENVIRONMENT_SLUG" | default .Environment.Name}}
       - name: "global.registry.bucket"
-        value: "gitlab-{{ .Environment.Name }}-registry"
+        value: 'gitlab-{{`{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}`}}-registry'
 
       - name: "registry.annotations.app\\.gitlab\\.com/app"
         value: {{env "CI_PROJECT_PATH_SLUG" | default "gitlab-com-gl-infra-k8s-workloads-gitlab-com"}}
@@ -27,5 +27,5 @@ releases:
     values:
       - values/init-values.yaml.gotmpl
       - values/values.yaml.gotmpl
-      - values/{{.Environment.Name}}.yaml.gotmpl
+      - 'values/{{`{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}`}}.yaml.gotmpl'
       - values/values-from-external-sources.yaml.gotmpl
