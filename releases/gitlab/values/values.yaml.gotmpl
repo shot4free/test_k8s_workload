@@ -606,6 +606,9 @@ gitlab-runner:
 gitlab:
   gitlab-shell:
     enabled: {{ index .Environment.Values.gitlab "gitlab-shell" "enabled" }}
+    global:
+      shell:
+        port: 2222
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
