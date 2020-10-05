@@ -75,10 +75,51 @@ variables:
   environment:
     name: pre-us-east1-d
 
+.gstg-base:
+  variables:
+    PROJECT: gitlab-staging-1
+  environment:
+    url: https://staging.gitlab.com
+
 .gstg:
+  extends:
+    - .gstg-base
+  variables:
+    CLUSTER: gstg-gitlab-gke
+    REGION: us-east1
   environment:
     name: gstg
-    url: https://staging.gitlab.com
+  resource_group: gstg
+
+.gstg-us-east1-b:
+  extends:
+    - .gstg-base
+  variables:
+    CLUSTER: gstg-us-east1-b
+    REGION: us-east1-b
+  environment:
+    name: gstg-us-east1-b
+  resource_group: gstg-us-east1-b
+
+.gstg-us-east1-c:
+  extends:
+    - .gstg-base
+  variables:
+    CLUSTER: gstg-us-east1-c
+    REGION: us-east1-c
+  environment:
+    name: gstg-us-east1-c
+  resource_group: gstg-us-east1-c
+
+.gstg-us-east1-d:
+  extends:
+    - .gstg-base
+  variables:
+    CLUSTER: gstg-us-east1-d
+    REGION: us-east1-d
+  environment:
+    name: gstg-us-east1-d
+  resource_group: gstg-us-east1-d
 
 .gprd:
   environment:
@@ -295,6 +336,33 @@ gstg:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+gstg-us-east1-b:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+gstg-us-east1-c:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+gstg-us-east1-d:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
 gstg:upgrade:
   stage: non-prod:deploy
   extends:
@@ -305,6 +373,51 @@ gstg:upgrade:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: gstg
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gstg-us-east1-b:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gstg-us-east1-c:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gstg-us-east1-d:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
   only:
     refs:
       - master
@@ -516,11 +629,80 @@ gstg:dryrun:auto-deploy:
     variables:
       - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
 
+gstg-us-east1-b:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-b
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+
+gstg-us-east1-c:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-c
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+
+gstg-us-east1-d:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg-us-east1-d
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+
 gstg:auto-deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
     - .gstg
+  script:
+    - bin/k-ctl upgrade
+  resource_group: gstg
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gstg-us-east1-b:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-b
+  script:
+    - bin/k-ctl upgrade
+  resource_group: gstg
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gstg-us-east1-c:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-c
+  script:
+    - bin/k-ctl upgrade
+  resource_group: gstg
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gstg-us-east1-d:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .gstg-us-east1-d
   script:
     - bin/k-ctl upgrade
   resource_group: gstg
