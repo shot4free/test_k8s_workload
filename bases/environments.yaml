@@ -19,6 +19,17 @@ environments:
             enabled: false
           mailroom:
             enabled: true
+      # These services are only installed in the
+      # regional cluster, so we disable them for
+      # all zonal clusters, regardless of the environment.
+      - &zonal_cluster_defaults
+        registry:
+          enabled: false
+        gitlab:
+          sidekiq:
+            enabled: false
+          mailroom:
+            enabled: false
 
   ops:
     values:
@@ -29,15 +40,48 @@ environments:
   pre:
     values:
       - <<: *regional_cluster_defaults
-      -
+      - &pre_values
+        env_prefix: pre
         gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-pre"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
-      -
         gitlab:
           gitlab-shell:
             enabled: true
+        cluster: pre-gitlab-gke
+        region: us-east1
+
+  # Zonal clusters for pre, these three environments
+  # inherit from the pre environemnt, which is the
+  # regional cluster
+  pre-us-east1-b:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *pre_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: pre-us-east1-b
+        region: us-east1-b
+
+  pre-us-east1-c:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *pre_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: pre-us-east1-c
+        region: us-east1-c
+
+  pre-us-east1-d:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *pre_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: pre-us-east1-d
+        region: us-east1-d
+
   gstg:
     values:
       - <<: *regional_cluster_defaults

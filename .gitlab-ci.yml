@@ -9,33 +9,71 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/version-checks.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v3.3.1'
+    ref: 'v3.4.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v3.3.1'
+  CI_IMAGE_VERSION: 'v3.4.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
 
-.pre:
+.pre-base:
+  variables:
+    PROJECT: gitlab-pre
+    REGION: us-east1
   environment:
     name: pre
     url: https://pre.gitlab.com
+
+.pre:
+  extends:
+    - .pre-base
+  variables:
+    CLUSTER: pre-gitlab-gke
+  environment:
+    name: pre
+
+.pre-us-east1-b:
+  extends:
+    - .pre-base
+  variables:
+    CLUSTER: pre-us-east1-b
+    REGION: us-east1-b
+  environment:
+    name: pre-us-east1-b
+
+.pre-us-east1-c:
+  extends:
+    - .pre-base
+  variables:
+    CLUSTER: pre-us-east1-c
+    REGION: us-east1-c
+  environment:
+    name: pre-us-east1-c
+
+.pre-us-east1-d:
+  extends:
+    - .pre-base
+  variables:
+    CLUSTER: pre-us-east1-d
+    REGION: us-east1-d
+  environment:
+    name: pre-us-east1-d
 
 .gstg:
   environment:
@@ -155,11 +193,86 @@ pre:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+pre-us-east1-b:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+pre-us-east1-c:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+pre-us-east1-d:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
 pre:upgrade:
   stage: non-prod:deploy
   extends:
     - .deploy
     - .pre
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+pre-us-east1-b:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+pre-us-east1-c:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+pre-us-east1-d:upgrade:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-d
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
@@ -309,11 +422,80 @@ pre:dryrun:auto-deploy:
     variables:
       - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
 
+pre-us-east1-b:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-b
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
+
+pre-us-east1-c:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-c
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
+
+pre-us-east1-d:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre-us-east1-d
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
+
 pre:auto-deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
     - .pre
+  script:
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+pre-us-east1-b:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-b
+  script:
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+pre-us-east1-c:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-c
+  script:
+    - bin/k-ctl upgrade
+  resource_group: pre
+  only:
+    variables:
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+pre-us-east1-d:auto-deploy:
+  stage: non-prod:deploy
+  extends:
+    - .deploy
+    - .pre-us-east1-d
   script:
     - bin/k-ctl upgrade
   resource_group: pre
