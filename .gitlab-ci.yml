@@ -669,7 +669,6 @@ gstg:auto-deploy:
     - .gstg
   script:
     - bin/k-ctl upgrade
-  resource_group: gstg
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -681,7 +680,6 @@ gstg-us-east1-b:auto-deploy:
     - .gstg-us-east1-b
   script:
     - bin/k-ctl upgrade
-  resource_group: gstg
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -693,7 +691,6 @@ gstg-us-east1-c:auto-deploy:
     - .gstg-us-east1-c
   script:
     - bin/k-ctl upgrade
-  resource_group: gstg
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -705,7 +702,6 @@ gstg-us-east1-d:auto-deploy:
     - .gstg-us-east1-d
   script:
     - bin/k-ctl upgrade
-  resource_group: gstg
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
