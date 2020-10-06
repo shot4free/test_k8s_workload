@@ -85,11 +85,45 @@ environments:
   gstg:
     values:
       - <<: *regional_cluster_defaults
-      -
+      - &gstg_values
+        env_prefix: gstg
         gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-staging-1"
         gitlab_endpoint: "https://staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
+        cluster: gstg-gitlab-gke
+        region: us-east1
+
+  # Zonal clusters for gstg, these three environments
+  # inherit from the gstg environemnt, which is the
+  # regional cluster
+  gstg-us-east1-b:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gstg_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gstg-us-east1-b
+        region: us-east1-b
+
+  gstg-us-east1-c:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gstg_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gstg-us-east1-c
+        region: us-east1-c
+
+  gstg-us-east1-d:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gstg_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gstg-us-east1-d
+        region: us-east1-d
+
   gprd-cny:
     values:
       - <<: *regional_cluster_defaults
