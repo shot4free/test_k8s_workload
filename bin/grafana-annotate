@@ -53,7 +53,7 @@ main() {
       --arg environment "$environment" \
       --arg stage "$stage" \
       --arg user_login "$GITLAB_USER_LOGIN" \
-      --arg pipeline_iid "$CI_PIPELINE_IID" \
+      --arg pipeline_iid "$CI_PIPELINE_ID" \
       '{tags: ["k8s-workloads", $ci_project_name, $environment, $stage], text: "\($user_login) applied k8s-workloads/\($ci_project_name) pipeline #\($pipeline_iid) for \($environment) \($stage)"}'
   )
 
