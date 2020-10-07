@@ -8,6 +8,7 @@ environments:
       # on all regional clusters, in all environments
       # These are read by values.yaml.gotmpl
       - &regional_cluster_defaults
+        gitlab_deployment_for_image_tag: "gitlab-sidekiq-memory-bound-v1"
         registry:
           enabled: true
         gitlab:
@@ -23,6 +24,7 @@ environments:
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
       - &zonal_cluster_defaults
+        gitlab_deployment_for_image_tag: "gitlab-webservice"
         registry:
           enabled: false
         gitlab:
@@ -42,7 +44,6 @@ environments:
       - <<: *regional_cluster_defaults
       - &pre_values
         env_prefix: pre
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-pre"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
@@ -87,7 +88,6 @@ environments:
       - <<: *regional_cluster_defaults
       - &gstg_values
         env_prefix: gstg
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-staging-1"
         gitlab_endpoint: "https://staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
@@ -145,7 +145,6 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       -
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
