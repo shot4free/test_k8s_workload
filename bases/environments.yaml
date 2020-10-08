@@ -45,9 +45,6 @@ environments:
         google_project: "gitlab-pre"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
-        gitlab:
-          gitlab-shell:
-            enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
 
@@ -61,6 +58,9 @@ environments:
       - <<: *zonal_cluster_defaults
       -
         cluster: pre-us-east1-b
+        gitlab:
+          gitlab-shell:
+            enabled: true
         region: us-east1-b
 
   pre-us-east1-c:
@@ -70,6 +70,9 @@ environments:
       - <<: *zonal_cluster_defaults
       -
         cluster: pre-us-east1-c
+        gitlab:
+          gitlab-shell:
+            enabled: true
         region: us-east1-c
 
   pre-us-east1-d:
@@ -79,6 +82,9 @@ environments:
       - <<: *zonal_cluster_defaults
       -
         cluster: pre-us-east1-d
+        gitlab:
+          gitlab-shell:
+            enabled: true
         region: us-east1-d
 
   gstg:
@@ -96,6 +102,7 @@ environments:
           webservice:
             enabled: false
 
+
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
   # regional cluster
@@ -109,6 +116,8 @@ environments:
         region: us-east1-b
         ## TODO: After we migrate all environments to zonal clusters, this can be removed
         gitlab:
+          gitlab-shell:
+            enabled: true
           webservice:
             enabled: true
 
@@ -122,6 +131,8 @@ environments:
         region: us-east1-c
         ## TODO: After we migrate all environments to zonal clusters, this can be removed
         gitlab:
+          gitlab-shell:
+            enabled: true
           webservice:
             enabled: true
 
@@ -135,6 +146,8 @@ environments:
         region: us-east1-d
         ## TODO: After we migrate all environments to zonal clusters, this can be removed
         gitlab:
+          gitlab-shell:
+            enabled: true
           webservice:
             enabled: true
 
