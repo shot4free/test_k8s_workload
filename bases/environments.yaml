@@ -42,7 +42,6 @@ environments:
       - <<: *regional_cluster_defaults
       - &pre_values
         env_prefix: pre
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-pre"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
@@ -87,7 +86,6 @@ environments:
       - <<: *regional_cluster_defaults
       - &gstg_values
         env_prefix: gstg
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-staging-1"
         gitlab_endpoint: "https://staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
@@ -128,7 +126,6 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       -
-        gitlab_deployment_for_image_tag: "gitlab-cny-webservice"
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_secrets_gkms_source: "gprd"
@@ -145,7 +142,6 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       -
-        gitlab_deployment_for_image_tag: "gitlab-webservice"
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
