@@ -286,7 +286,7 @@ pre-us-east1-b:upgrade:
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
-  resource_group: pre
+  resource_group: pre-us-east1-b
   only:
     refs:
       - master
@@ -302,7 +302,7 @@ pre-us-east1-c:upgrade:
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
-  resource_group: pre
+  resource_group: pre-us-east1-c
   only:
     refs:
       - master
@@ -318,7 +318,7 @@ pre-us-east1-d:upgrade:
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
-  resource_group: pre
+  resource_group: pre-us-east1-d
   only:
     refs:
       - master
@@ -575,7 +575,6 @@ pre:auto-deploy:
     - .pre
   script:
     - bin/k-ctl upgrade
-  resource_group: pre
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -587,7 +586,6 @@ pre-us-east1-b:auto-deploy:
     - .pre-us-east1-b
   script:
     - bin/k-ctl upgrade
-  resource_group: pre
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -599,7 +597,6 @@ pre-us-east1-c:auto-deploy:
     - .pre-us-east1-c
   script:
     - bin/k-ctl upgrade
-  resource_group: pre
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -611,7 +608,6 @@ pre-us-east1-d:auto-deploy:
     - .pre-us-east1-d
   script:
     - bin/k-ctl upgrade
-  resource_group: pre
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
