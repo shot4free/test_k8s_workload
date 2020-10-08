@@ -605,9 +605,6 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
-    authToken:
-      secret: gitlab-shell-credential-v1
-      key: secret
     config:
       maxStartups:
         full: 400
@@ -617,9 +614,8 @@ gitlab:
     global:
       shell:
         port: 2222
-    hostKeys:
-      secret: gitlab-hostkeys-credential-v1
     image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-shell
       pullSecrets:
         - name: dev-registry-access-v1
   # doc/charts/gitlab/migrations
