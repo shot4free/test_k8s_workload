@@ -618,6 +618,8 @@ gitlab:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-shell
       pullSecrets:
         - name: dev-registry-access-v1
+    logging:
+      format: "json"
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
