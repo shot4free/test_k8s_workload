@@ -20,11 +20,11 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 
 {{/* Initialize */}}
 {{- $namespace := .Environment.Values | getOrNil "gitlab_namespace" | default "gitlab" }}
+{{- $gitlabChartInfo := printf "%s%s" $namespace "-gitlab-chart-info" }}
 {{- $provided_image_tag := default (env "GITLAB_IMAGE_TAG") (env "COMPONENT_VERSION") }}
 
 {{/* Get current version of the GitLab Application */}}
-{{- $gitlab_deployment_name := .Environment.Values | getOrNil "gitlab_deployment_for_image_tag" }}
-{{- $gitlab_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_deployment_name "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
+{{- $gitlab_current_spec := exec "kubectl" (list "get" "configmap" $gitlabChartInfo "--namespace" $namespace "--output" "jsonpath={.data.gitlabVersion}" "--ignore-not-found") }}
 {{- $gitlab_current_tag := ($gitlab_current_spec | exec "cut"  (list "-d:" "-f3")) }}
 {{- $gitlab_version := $gitlab_current_tag }}
 
@@ -35,7 +35,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 {{- $registry_version := $registry_current_tag }}
 
 {{/* Get the Deployment we are attempting to modify */}}
-{{- $component := default $gitlab_deployment_name (env "COMPONENT") }}
+{{- $component := default "gitlab" (env "COMPONENT") }}
 
 {{/* Set the version of the Deployment that we'd like to change */}}
 {{- if eq $component "gitlab-registry" }}
