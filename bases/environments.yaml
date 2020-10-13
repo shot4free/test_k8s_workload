@@ -160,10 +160,62 @@ environments:
         registry_deployment_for_image_tag: "gitlab-cny-registry"
         gitlab_chef_source_name: "gprd"
         stage: "cny"
+
   gprd:
     values:
       - <<: *regional_cluster_defaults
-      -
+      - &gprd_values
+        env_prefix: gprd
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
+        cluster: gprd-gitlab-gke
+        region: us-east1
+
+  # Zonal clusters for gprd, these three environments
+  # inherit from the gprd environemnt, which is the
+  # regional cluster
+  gprd-us-east1-b:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gprd_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gprd-us-east1-b
+        region: us-east1-b
+        ## TODO: After we migrate all environments to zonal clusters, this can be removed
+        gitlab:
+          gitlab-shell:
+            enabled: true
+          webservice:
+            enabled: true
+
+  gprd-us-east1-c:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gprd_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gprd-us-east1-c
+        region: us-east1-c
+        ## TODO: After we migrate all environments to zonal clusters, this can be removed
+        gitlab:
+          gitlab-shell:
+            enabled: true
+          webservice:
+            enabled: true
+
+  gprd-us-east1-d:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gprd_values
+      - <<: *zonal_cluster_defaults
+      -
+        cluster: gprd-us-east1-d
+        region: us-east1-d
+        ## TODO: After we migrate all environments to zonal clusters, this can be removed
+        gitlab:
+          gitlab-shell:
+            enabled: true
+          webservice:
+            enabled: true
