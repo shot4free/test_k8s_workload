@@ -94,10 +94,51 @@ variables:
     name: gstg-us-east1-d
   resource_group: gstg-us-east1-d
 
+.gprd-base:
+  variables:
+    PROJECT: gitlab-production
+  environment:
+    url: https://gitlab.com
+
 .gprd:
+  extends:
+    - .gprd-base
+  variables:
+    CLUSTER: gprd-gitlab-gke
+    REGION: us-east1
   environment:
     name: gprd
-    url: https://gitlab.com
+  resource_group: gprd
+
+.gprd-us-east1-b:
+  extends:
+    - .gprd-base
+  variables:
+    CLUSTER: gprd-us-east1-b
+    REGION: us-east1-b
+  environment:
+    name: gprd-us-east1-b
+  resource_group: gprd-us-east1-b
+
+.gprd-us-east1-c:
+  extends:
+    - .gprd-base
+  variables:
+    CLUSTER: gprd-us-east1-c
+    REGION: us-east1-c
+  environment:
+    name: gprd-us-east1-c
+  resource_group: gprd-us-east1-c
+
+.gprd-us-east1-d:
+  extends:
+    - .gprd-base
+  variables:
+    CLUSTER: gprd-us-east1-d
+    REGION: us-east1-d
+  environment:
+    name: gprd-us-east1-d
+  resource_group: gprd-us-east1-d
 
 .only-auto-deploy-false:
   only:
@@ -332,6 +373,7 @@ gprd-cny:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D -s cny upgrade
+  resource_group: gprd-cny
 
 gprd-cny:upgrade:
   stage: gprd-cny:deploy
@@ -360,6 +402,33 @@ gprd:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+gprd-us-east1-b:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+gprd-us-east1-c:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
+gprd-us-east1-d:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D upgrade
+
 gprd:upgrade:
   stage: gprd:deploy
   extends:
@@ -370,7 +439,54 @@ gprd:upgrade:
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
-  resource_group: gprd
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gprd-us-east1-b:upgrade:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  when: manual
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gprd-us-east1-c:upgrade:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  when: manual
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+gprd-us-east1-d:upgrade:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  when: manual
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - bin/k-ctl upgrade
   only:
     refs:
       - master
@@ -546,6 +662,7 @@ gprd-cny:dryrun:auto-deploy:
   only:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true"
+  resource_group: gprd-cny
 
 gprd-cny:auto-deploy:
   stage: gprd-cny:deploy
@@ -572,6 +689,39 @@ gprd:dryrun:auto-deploy:
     variables:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
 
+gprd-us-east1-b:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-b
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+
+gprd-us-east1-c:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-c
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+
+gprd-us-east1-d:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-d
+  script:
+    - bin/k-ctl -D upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+
 gprd:auto-deploy:
   stage: gprd:deploy
   extends:
@@ -579,7 +729,39 @@ gprd:auto-deploy:
     - .gprd
   script:
     - bin/k-ctl upgrade
-  resource_group: gprd
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gprd-us-east1-b:auto-deploy:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-b
+  script:
+    - bin/k-ctl upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gprd-us-east1-c:auto-deploy:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-c
+  script:
+    - bin/k-ctl upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+gprd-us-east1-d:auto-deploy:
+  stage: gprd:deploy
+  extends:
+    - .deploy
+    - .gprd-us-east1-d
+  script:
+    - bin/k-ctl upgrade
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
