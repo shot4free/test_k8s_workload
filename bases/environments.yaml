@@ -130,6 +130,9 @@ environments:
         registry_deployment_for_image_tag: "gitlab-cny-registry"
         gitlab_chef_source_name: "gprd"
         stage: "cny"
+        gitlab:
+          gitlab-shell:
+            enabled: true
 
   gprd:
     values:
