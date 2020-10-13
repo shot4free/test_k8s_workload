@@ -51,36 +51,6 @@ environments:
         cluster: pre-gitlab-gke
         region: us-east1
 
-  # Zonal clusters for pre, these three environments
-  # inherit from the pre environemnt, which is the
-  # regional cluster
-  pre-us-east1-b:
-    values:
-      - <<: *regional_cluster_defaults
-      - <<: *pre_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: pre-us-east1-b
-        region: us-east1-b
-
-  pre-us-east1-c:
-    values:
-      - <<: *regional_cluster_defaults
-      - <<: *pre_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: pre-us-east1-c
-        region: us-east1-c
-
-  pre-us-east1-d:
-    values:
-      - <<: *regional_cluster_defaults
-      - <<: *pre_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: pre-us-east1-d
-        region: us-east1-d
-
   gstg:
     values:
       - <<: *regional_cluster_defaults

@@ -48,33 +48,6 @@ variables:
   environment:
     name: pre
 
-.pre-us-east1-b:
-  extends:
-    - .pre-base
-  variables:
-    CLUSTER: pre-us-east1-b
-    REGION: us-east1-b
-  environment:
-    name: pre-us-east1-b
-
-.pre-us-east1-c:
-  extends:
-    - .pre-base
-  variables:
-    CLUSTER: pre-us-east1-c
-    REGION: us-east1-c
-  environment:
-    name: pre-us-east1-c
-
-.pre-us-east1-d:
-  extends:
-    - .pre-base
-  variables:
-    CLUSTER: pre-us-east1-d
-    REGION: us-east1-d
-  environment:
-    name: pre-us-east1-d
-
 .gstg-base:
   variables:
     PROJECT: gitlab-staging-1
@@ -234,33 +207,6 @@ pre:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-pre-us-east1-b:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/k-ctl -D upgrade
-
-pre-us-east1-c:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/k-ctl -D upgrade
-
-pre-us-east1-d:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/k-ctl -D upgrade
-
 pre:upgrade:
   stage: non-prod:deploy
   extends:
@@ -271,54 +217,6 @@ pre:upgrade:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: pre
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
-
-pre-us-east1-b:upgrade:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-    - bin/k-ctl upgrade
-  resource_group: pre-us-east1-b
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
-
-pre-us-east1-c:upgrade:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-    - bin/k-ctl upgrade
-  resource_group: pre-us-east1-c
-  only:
-    refs:
-      - master
-  variables:
-    DRY_RUN: "false"
-
-pre-us-east1-d:upgrade:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
-  script:
-    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-    - bin/k-ctl upgrade
-  resource_group: pre-us-east1-d
   only:
     refs:
       - master
@@ -535,77 +433,11 @@ pre:dryrun:auto-deploy:
     variables:
       - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
 
-pre-us-east1-b:dryrun:auto-deploy:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-b
-  script:
-    - bin/k-ctl -D upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
-
-pre-us-east1-c:dryrun:auto-deploy:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-c
-  script:
-    - bin/k-ctl -D upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
-
-pre-us-east1-d:dryrun:auto-deploy:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre-us-east1-d
-  script:
-    - bin/k-ctl -D upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
-
 pre:auto-deploy:
   stage: non-prod:deploy
   extends:
     - .deploy
     - .pre
-  script:
-    - bin/k-ctl upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
-
-pre-us-east1-b:auto-deploy:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-b
-  script:
-    - bin/k-ctl upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
-
-pre-us-east1-c:auto-deploy:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-c
-  script:
-    - bin/k-ctl upgrade
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
-
-pre-us-east1-d:auto-deploy:
-  stage: non-prod:deploy
-  extends:
-    - .deploy
-    - .pre-us-east1-d
   script:
     - bin/k-ctl upgrade
   only:
