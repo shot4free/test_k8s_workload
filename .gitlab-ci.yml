@@ -475,6 +475,7 @@ gprd-cny:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D -s cny upgrade
+  resource_group: gprd-cny
 
 gprd-cny:upgrade:
   stage: gprd-cny:deploy
@@ -829,6 +830,7 @@ gprd-cny:dryrun:auto-deploy:
   only:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true"
+  resource_group: gprd-cny
 
 gprd-cny:auto-deploy:
   stage: gprd-cny:deploy
