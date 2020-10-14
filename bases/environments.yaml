@@ -30,9 +30,9 @@ environments:
             enabled: false
           mailroom:
             enabled: false
-          webservice:
-            enabled: true
           gitlab-shell:
+            enabled: true
+          webservice:
             enabled: true
 
   ops:
