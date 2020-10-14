@@ -115,9 +115,9 @@ environments:
         gitlab_chef_source_name: "gprd"
         stage: "cny"
         gitlab:
-          webservice:
-            enabled: true
           gitlab-shell:
+            enabled: true
+          webservice:
             enabled: true
 
   gprd:
