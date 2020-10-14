@@ -15,8 +15,8 @@ gitlab:
   webservice:
     nodeSelector:
       type: git-https
-    minReplicas: 50
-    maxReplicas: 150
+    minReplicas: 10
+    maxReplicas: 100
     workerProcesses: 2
   sidekiq:
     podLabels:
