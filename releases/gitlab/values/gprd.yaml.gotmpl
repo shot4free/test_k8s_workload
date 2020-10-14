@@ -27,7 +27,7 @@ gitlab:
       - name: catchall
         concurrency: 15
         minReplicas: 56
-        maxReplicas: 100
+        maxReplicas: 120
         nodeSelector:
           type: catchall
         podLabels:
@@ -37,10 +37,10 @@ gitlab:
         resources:
           requests:
             cpu: 800m
-            memory: 1G
+            memory: 2G
           limits:
             cpu: 1.5
-            memory: 2G
+            memory: 4G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
       - name: memory-bound
