@@ -50,9 +50,9 @@ environments:
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         gitlab:
-          webservice:
-            enabled: true
           gitlab-shell:
+            enabled: true
+          webservice:
             enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
