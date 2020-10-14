@@ -12,7 +12,7 @@ environments:
           enabled: true
         gitlab:
           webservice:
-            enabled: true
+            enabled: false
           sidekiq:
             enabled: true
           gitlab-shell:
@@ -30,6 +30,10 @@ environments:
             enabled: false
           mailroom:
             enabled: false
+          webservice:
+            enabled: true
+          gitlab-shell:
+            enabled: true
 
   ops:
     values:
@@ -46,6 +50,8 @@ environments:
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         gitlab:
+          webservice:
+            enabled: true
           gitlab-shell:
             enabled: true
         cluster: pre-gitlab-gke
@@ -61,10 +67,6 @@ environments:
         registry_deployment_for_image_tag: "gitlab-registry"
         cluster: gstg-gitlab-gke
         region: us-east1
-        ## TODO: After we migrate all environments to zonal clusters, this should move into the regional_cluster_defaults
-        gitlab:
-          webservice:
-            enabled: false
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
@@ -77,12 +79,6 @@ environments:
       -
         cluster: gstg-us-east1-b
         region: us-east1-b
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
 
   gstg-us-east1-c:
     values:
@@ -92,12 +88,6 @@ environments:
       -
         cluster: gstg-us-east1-c
         region: us-east1-c
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
 
   gstg-us-east1-d:
     values:
@@ -107,12 +97,6 @@ environments:
       -
         cluster: gstg-us-east1-d
         region: us-east1-d
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
 
   gprd-cny:
     values:
@@ -131,6 +115,8 @@ environments:
         gitlab_chef_source_name: "gprd"
         stage: "cny"
         gitlab:
+          webservice:
+            enabled: true
           gitlab-shell:
             enabled: true
 
@@ -156,12 +142,6 @@ environments:
       -
         cluster: gprd-us-east1-b
         region: us-east1-b
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
 
   gprd-us-east1-c:
     values:
@@ -171,12 +151,6 @@ environments:
       -
         cluster: gprd-us-east1-c
         region: us-east1-c
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
 
   gprd-us-east1-d:
     values:
@@ -186,9 +160,3 @@ environments:
       -
         cluster: gprd-us-east1-d
         region: us-east1-d
-        ## TODO: After we migrate all environments to zonal clusters, this can be removed
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
