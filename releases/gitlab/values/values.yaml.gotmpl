@@ -745,7 +745,9 @@ gitlab:
         max: 4
       disableWorkerKiller: false
     workhorse:
-      extraArgs: '-pprofListenAddr -apiLimit 5 -apiQueueDuration 60s -apiQueueLimit 200'
+      # This needs to be set here until we address
+      # logformat: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2249
+      extraArgs: '-logFormat json'
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         limits:
