@@ -620,6 +620,8 @@ gitlab:
         - name: dev-registry-access-v1
     logging:
       format: "json"
+    nodeSelector:
+      type: shell
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
