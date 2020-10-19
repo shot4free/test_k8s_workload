@@ -2,15 +2,28 @@
 
 Kubernetes Workload configurations for GitLab.com
 
-## Storage
-
 :warning: **WARNING** :warning:
 
 The following are _NOT_ allowed this repository:
 * Files that contain Kubernetes Objects of type `Secret`
 * Files that contain secrets in plain text
 
+## Services
+
+The following services are managed by this Chart:
+
+| Service | Upgrades |
+| --- | --- |
+| [Git HTTPs](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/git-https-websockets/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
+| [Sidekiq](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/sidekiq/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
+| [Registry](https://gitlab.com/gitlab-org/container-registry) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md)) | Done by manually setting a version in [init-values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/init-values.yaml.gotmpl#L75) ([release template](https://gitlab.com/gitlab-org/container-registry/-/blob/master/.gitlab/issue_templates/Release%20Plan.md)). |
+| [Mailroom](https://gitlab.com/gitlab-org/gitlab-mail_room) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md)) | Upgrades are done manually be setting a version in [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/values.yaml.gotmpl#L1076-1080) ([release template](https://gitlab.com/gitlab-org/gitlab-mail_room/-/blob/master/.gitlab/issue_templates/Release.md)). |
+
 ## GitLab Environments Configuration
+
+## Environments
+
+On merge, configuration changes will be deployed to the following environments:
 
 | Environment | URL |
 | ----------- | --- |
@@ -18,59 +31,37 @@ The following are _NOT_ allowed this repository:
 | `gstg`      | `https://staging.gitlab.com` |
 | `gprd`      | `https://gitlab.com`         |
 
+:warning: It is possible right for configuration changes to be applied to production before staging due to auto-deploy https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1293 :warning:
+
 ## GitLab CI/CD Variables Configuration
 
 Each variable is applied to the environment defined above
 
-| Variable      | Default                     | What it is  |
-| --------      | --------                    | ------------|
-| `CLUSTER`     | Set in `.setup.bash`        | Name of the cluster as configured in GKE |
-| `PROJECT`     | Set in `common/common.bash` | Name of the project
-| `SERVICE_KEY` | None                        | Key provided by the Service Account |
-| `SERVICE_KEY_RO`| None                      | Key provided by the Service Account |
-
-View our common repo README for details on the above:
-https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common#gitlab-cicd-variables-configuration
+| Variable        | Description
+| --------        | --------
+| `CLUSTER`       | Name of the GKE cluster, ex: `gstg-gitlab-gke` or `gstg-us-east1-b`
+| `REGION `       | Name of the region or zone of the cluster, ex: `us-east1` or `us-east1-b`
+| `PROJECT`       | Name of the project, ex: `gitlab-staging-1`
+| `SERVICE_KEY`   | Service Account key used for CI for write operations to the cluster
+| `SERVICE_KEY_RO`| Service Account key used for CI for read operations, used on branches
 
 ## GitLab Secrets
 
-In order to work with the existing omnibus installation of GitLab.com, we will
-need to bring in a few already configured items that exist in that environment.
-These items will ensure that when the Deployment is spun up inside of Kubernetes
-we interact appropriately with our existing infrastructure.
+In order to work with the existing omnibus installation of GitLab.com, we will need to bring in a few already configured items that exist in that environment.  These items will ensure that when the Deployment is spun up inside of Kubernetes we interact appropriately with our existing infrastructure.
 
-:warning: This guide assumes you are connected to the appropriate Kubernetes
-cluster :warning:
+:warning: This guide assumes you are connected to the appropriate Kubernetes cluster :warning:
 
-There is an upstream helm chart wrapped into a helm release called
-`gitlab-secrets` which we install in order to populate all the secrets
-needed to run the Gitlab helm chart. We use
-[helmfile](https://github.com/roboll/helmfile) to obtain the values for these
-secrets from our existing infrastructure that is used for chef, and populate the values for the helm
-chart in the appropriate locations. In order to install this chart, you need to
-have a working `gcloud` setup. These secrets will be deployed along with our
-gitlab helm chart at the same time using the `k-ctl` wrapper script
+There is an upstream helm chart wrapped into a helm release called `gitlab-secrets` which is installed in order to populate all the secrets needed to run the Gitlab helm chart. [Helmfile](https://github.com/roboll/helmfile) is used to obtain the values for these secrets from our existing infrastructure that is used for chef, and populate the values for the helm chart in the appropriate locations. In order to install this chart, you need to have a working `gcloud` setup. These secrets will be deployed along with our gitlab helm chart at the same time using the `k-ctl` wrapper script.
 
 ## Create/Apply Configurations
 
-At this moment, we use our own helm charts to generate the Kubernetes
-configuration for GitLab.com. This may change in the future as currently some
-features of GitLab are [unsupported in our current Helm
-charts](https://docs.gitlab.com/charts/#limitations).  Our infrastructure is
-also [broken into multiple
-fleets](https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/),
-something our Helm chart also does not yet accomplish.  We'll address those
-problems when we get to them.
-
 ## Decisions
 
-One can read about how we've come to decide how this repository is setup by
-viewing our [design document](https://about.gitlab.com/handbook/engineering/infrastructure/library/kubernetes/configuration/).
+Read about how we've come to decide how this repository is setup by viewing our [design document](https://about.gitlab.com/handbook/engineering/infrastructure/library/kubernetes/configuration/).
 
 ## Working locally
 
-The `./bin/k-ctl` script is used both locally and in CI to manage the chart for
-different environments.
+The `./bin/k-ctl` script is used both locally and in CI to manage the chart for different environments.
 
 ### Prerequisites
 
