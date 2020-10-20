@@ -19,6 +19,14 @@ The following services are managed by this Chart:
 | [Registry](https://gitlab.com/gitlab-org/container-registry) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md)) | Done by manually setting a version in [init-values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/init-values.yaml.gotmpl#L75) ([release template](https://gitlab.com/gitlab-org/container-registry/-/blob/master/.gitlab/issue_templates/Release%20Plan.md)). |
 | [Mailroom](https://gitlab.com/gitlab-org/gitlab-mail_room) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md)) | Upgrades are done manually be setting a version in [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/values.yaml.gotmpl#L1076-1080) ([release template](https://gitlab.com/gitlab-org/gitlab-mail_room/-/blob/master/.gitlab/issue_templates/Release.md)). |
 
+## Upgrades and Rollbacks
+
+When deployments to environments fail, helm will automatically attempt to rollback the application and mark the deployment job as failed.
+When this happens, the application will not be upgraded, but the master branch of the repo will contain the desired state that failed.
+
+This must be addressed immediately, if there's a failure to deploy, perform a revert of the commit immediately to ensure the master branch represents what is in production.
+Once the revert commit is in place, proceed to perform the investigation to continue towards the desired state.
+
 ## GitLab Environments Configuration
 
 ## Environments
