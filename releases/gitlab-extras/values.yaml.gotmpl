@@ -1,0 +1,22 @@
+---
+resources:
+  - apiVersion: networking.gke.io/v1
+    kind: ManagedCertificate
+    metadata:
+      name: {{ .Values.kas.managed_cert_name }}
+      namespace: gitlab
+    spec:
+      domains:
+        - {{ .Values.kas.domain }}
+
+  - apiVersion: cloud.google.com/v1
+    kind: BackendConfig
+    metadata:
+      name: kas-http-backendconfig
+      namespace: gitlab
+    spec:
+      healthCheck:
+        checkIntervalSec: 60
+        port: 8151
+        type: HTTP
+        requestPath: /liveness
