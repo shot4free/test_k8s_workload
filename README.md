@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 # gitlab-com
 
 Kubernetes Workload configurations for GitLab.com
@@ -165,4 +167,30 @@ Verify docker push/pull:
 Digest: sha256:1aa64ee3ef2c169c249cb64eae0a59adf9fd4df5de9712c140d2739d057c270d
 Status: Downloaded newer image for 192.168.99.103:30799/jskarbek/test0:1
 192.168.99.103:30799/jskarbek/test0:1
+```
+
+### Bootstrapping new clusters
+
+#### Creating a new environment
+
+Every cluster must have a unique environment for Helm, there should be a new environment defined in https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/bases/environments.yaml that inherits the right values depending on whether it is staging or production.
+
+After the environment is defined, CI jobs will need to be created in the [gitlab-ci.yml](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/.gitlab-ci.yml) for gitlab-helmfiles.
+
+See [Example MR for the production zonal clusters](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/448)
+
+#### Apply configuration locally to the cluster
+
+It's useful to apply configuration locally using `k-ctl` for the first time, to work out any issues that may arise.
+Before applying you will need to set the following environment variables:
+
+```
+CLUSTER=<cluster name>
+REGION=<region or zone name>
+```
+
+Then apply using `k-ctl`
+
+```
+./bin/k-ctl -e <env name> apply
 ```
