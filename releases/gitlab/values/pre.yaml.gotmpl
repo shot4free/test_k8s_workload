@@ -1,9 +1,6 @@
 ---
 
 gitlab:
-  webservice:
-    extraEnv:
-      LD_PRELOAD: "/usr/lib/libjemalloc.so"
   gitlab-shell:
     nodeSelector:
       type: default
@@ -22,8 +19,6 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 10
-    extraEnv:
-      LD_PRELOAD: "/usr/lib/libjemalloc.so"
   kas:
     ingress:
       enabled: true
