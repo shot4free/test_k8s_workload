@@ -29,6 +29,8 @@ gitlab:
     maxReplicas: 150
     workerProcesses: 2
   sidekiq:
+    extraEnv:
+      LD_PRELOAD: "/usr/lib/libjemalloc.so"
     podLabels:
       tier: sv
       type: sidekiq
