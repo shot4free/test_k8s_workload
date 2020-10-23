@@ -7,6 +7,11 @@ gitlab:
     minReplicas: 5
     maxReplicas: 300
     workerProcesses: 2
+    extraEnv:
+      LD_PRELOAD: "/usr/lib/libjemalloc.so"
+  sidekiq:
+    extaEnv:
+      LD_PRELOAD: "/usr/lib/libjemalloc.so"
 
 global:
   appConfig:
