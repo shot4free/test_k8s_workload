@@ -28,6 +28,8 @@ gitlab:
     minReplicas: 50
     maxReplicas: 150
     workerProcesses: 2
+    extraEnv:
+      LD_PRELOAD: "/usr/lib/libjemalloc.so"
   sidekiq:
     extraEnv:
       LD_PRELOAD: "/usr/lib/libjemalloc.so"
