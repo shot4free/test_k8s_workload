@@ -33,6 +33,7 @@ gitlab:
     workerProcesses: 2
     extraEnv:
       LD_PRELOAD: "/usr/lib/libjemalloc.so"
+      TEST_VAR: "https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1294"
   sidekiq:
     extraEnv:
       LD_PRELOAD: "/usr/lib/libjemalloc.so"
