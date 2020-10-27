@@ -762,20 +762,20 @@ gitlab:
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         limits:
-          cpu: 600m
+          cpu: 2
           memory: 150M
         requests:
-          cpu: 200m
+          cpu: 300m
           memory: 80M
       monitoring:
         exporter:
           enabled: true
     resources:
       limits:
-        cpu: 800m
+        cpu: 2
         memory: 3.0G
       requests:
-        cpu: 400m
+        cpu: 2
         memory: 2.1G
     minReplicas: 2
     maxReplicas: 10
