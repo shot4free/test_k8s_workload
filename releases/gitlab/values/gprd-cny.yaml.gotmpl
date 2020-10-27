@@ -15,6 +15,7 @@ gitlab:
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+      LD_PRELOAD: "/usr/lib/libjemalloc.so"
     nodeSelector:
       type: git-https
     minReplicas: 10
