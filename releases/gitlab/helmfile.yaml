@@ -27,5 +27,8 @@ releases:
     values:
       - values/init-values.yaml.gotmpl
       - values/values.yaml.gotmpl
+{{ if eq .Environment.Name "gprd-cny" }}
+      - values/gprd.yaml.gotmpl
+{{ end }}
       - 'values/{{`{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}`}}.yaml.gotmpl'
       - values/values-from-external-sources.yaml.gotmpl

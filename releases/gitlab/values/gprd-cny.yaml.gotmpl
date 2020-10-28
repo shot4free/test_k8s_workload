@@ -1,6 +1,7 @@
 ---
 
-{{ readFile "gprd.yaml.gotmpl" | fromYaml | toYaml }}
+# Please note that `gprd.yaml.gotmpl` is included first for the `gprd-cny` environment,
+# this file is for `cny` specific overrides
 
 gitlab:
   mailroom:
@@ -15,7 +16,6 @@ gitlab:
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
-      LD_PRELOAD: "/usr/lib/libjemalloc.so"
     nodeSelector:
       type: git-https
     minReplicas: 10
