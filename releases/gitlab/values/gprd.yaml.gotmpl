@@ -28,7 +28,7 @@ gitlab:
         nginx.ingress.kubernetes.io/service-upstream: "true"
     nodeSelector:
       type: git-https
-    minReplicas: 50
+    minReplicas: 40
     maxReplicas: 150
     workerProcesses: 2
     extraEnv:
@@ -252,5 +252,3 @@ global:
     password:
       key: secret
       secret: gitlab-smtp-credential-v1
-nginx-ingress:
-  enabled: true

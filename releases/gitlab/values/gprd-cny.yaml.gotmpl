@@ -10,27 +10,9 @@ gitlab:
   sidekiq:
     enabled: false
   webservice:
-    enabled: true
     extraEnv:
-      BYPASS_SCHEMA_VERSION: "true"
-      STACKPROF_ENABLED: "true"
-      UNSTRUCTURED_RAILS_LOG: "false"
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
-    nodeSelector:
-      type: git-https
-    minReplicas: 10
-    maxReplicas: 100
-    workerProcesses: 2
 
 registry:
   hpa:
     minReplicas: 5
-    maxReplicas: 150
-  nodeSelector:
-    type: registry
-  resources:
-    requests:
-      cpu: 250m
-      memory: 3G
-nginx-ingress:
-  enabled: true
