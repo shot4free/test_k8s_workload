@@ -12,7 +12,6 @@ dir="$(
   pwd
 )"
 
-AUTO_DEPLOY_CHANGES_FNAME="${dir}/../auto-deploy-changes.json"
 
 CHART="${CHART:-gitlab}"
 
@@ -54,6 +53,7 @@ is_semver() {
 }
 
 environment=${ENV}${STAGE_SUFFIX}
+auto_deploy_changes_fname="${dir}/../auto-deploy-image-check/${environment}.json"
 helmfile_common_options=(
   "--log-level" "${LOG_LEVEL:-info}"
   "--environment" "${environment}"
@@ -93,7 +93,7 @@ auto_deploy_check() {
     return
   fi
 
-  if json_cmp "$diff_file" "$AUTO_DEPLOY_CHANGES_FNAME"; then
+  if json_cmp "$diff_file" "$auto_deploy_changes_fname"; then
     debug "✅ The number of changes are correct for an auto-deploy image update" "$_BGRN"
     return
   fi
@@ -107,7 +107,7 @@ auto_deploy_check() {
   debug ""
   debug "Expected:" "$_CYN"
   debug "-------"
-  cat "$AUTO_DEPLOY_CHANGES_FNAME" >&2
+  cat "$auto_deploy_changes_fname" >&2
   debug ""
   debug "Full diff:" "$_CYN"
   debug "-------"

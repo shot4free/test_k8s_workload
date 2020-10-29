@@ -1,0 +1,31 @@
+[{
+  "api": "v1",
+  "kind": "ConfigMap",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-gitlab-chart-info",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-gitlab-shell",
+  "change": "MODIFY"
+},{
+  "api": "batch",
+  "kind": "Job",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-gitlab-upgrade-check",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-registry",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-webservice",
+  "change": "MODIFY"
+}]
