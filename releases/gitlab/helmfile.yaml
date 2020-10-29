@@ -10,6 +10,8 @@ repositories:
 
 releases:
   - name: {{.Environment.Values | getOrNil "gitlab_release_name" | default "gitlab"}}
+    labels:
+      autodeploy: true
     namespace: {{.Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
     chart: gitlab/gitlab
     set:

@@ -6,10 +6,13 @@
 # helm against this chart
 
 set -euf -o pipefail
+
 dir="$(
   cd "$(dirname "${0}")"
   pwd
 )"
+
+AUTO_DEPLOY_CHANGES_FNAME="${dir}/../auto-deploy-changes.json"
 
 CHART="${CHART:-gitlab}"
 
@@ -62,8 +65,56 @@ helmfile_cmd_options=(
   "--suppress-secrets"
 )
 
+if [[ ${AUTO_DEPLOY:-false} == "true" ]]; then
+  helmfile_common_options+=("-l" "autodeploy=true")
+fi
+
+json_cmp() {
+  result=$(jq --argfile a "$1" --argfile b "$2" -n '($a | (.. | arrays) |= sort) as $a | ($b | (.. | arrays) |= sort) as $b | $a == $b')
+
+  if [[ $result == "true" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 helm_diff() {
-  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}" --args '--context 10'
+  local diff_extra_args=$1
+  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}" --args "$diff_extra_args"
+}
+
+auto_deploy_check() {
+  # Checks to ensure that the changes exactly match
+  # what we expect for an image-only update
+  local diff_file=$1
+  if [[ -n "${IMAGE_CHECK_OVERRIDE:-}" ]]; then
+    debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set as a CI variable" "$_RED"
+    return
+  fi
+
+  if json_cmp "$diff_file" "$AUTO_DEPLOY_CHANGES_FNAME"; then
+    debug "✅ The number of changes are correct for an auto-deploy image update" "$_BGRN"
+    return
+  fi
+
+  if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
+    debug "✅ There are no changes detected" "$_BGRN"
+    return
+  fi
+
+  debug "❌ Unexpected number of changes for an image-only update" "$_BRED"
+  debug ""
+  debug "Expected:" "$_CYN"
+  debug "-------"
+  cat "$AUTO_DEPLOY_CHANGES_FNAME" >&2
+  debug ""
+  debug "Full diff:" "$_CYN"
+  debug "-------"
+  helm_diff "--context 10"
+  debug ""
+  debug "Check https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/pipelines to see if there are any outstanding configuration changes, to override this failure set IMAGE_CHECK_OVERRIDE as a CI variable" "$_CYN"
+  exit 1
 }
 
 case "$ACTION" in
@@ -74,15 +125,17 @@ case "$ACTION" in
 
     if [[ ${dry_run:-} == "true" ]]; then
       debug "-- Helm Diff --" "${_CYN}"
-      helm_diff | tee /tmp/helm-diff
       # Send a diff notification, allowed to
       # fail so we don't block the pipeline
       # Skip the notifications for auto-deploy triggered pipelines since they are not
       # done in the context of an MR.
       if [[ ${AUTO_DEPLOY:-false} == "false" && -f /k8s-workloads/notify-mr ]]; then
+        helm_diff "--context 10" | tee /tmp/helm-diff
         /k8s-workloads/notify-mr -d /tmp/helm-diff -e "$environment" || echo "WARNING: notify-mr diff notification failed"
+      else
+        helm_diff "--context 10 --output json" | tee /tmp/helm-diff
+        auto_deploy_check "/tmp/helm-diff"
       fi
-      debug "-------" "${_CYN}"
     else
       tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
 
