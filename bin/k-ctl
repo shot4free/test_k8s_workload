@@ -12,7 +12,6 @@ dir="$(
   pwd
 )"
 
-
 CHART="${CHART:-gitlab}"
 
 export HELM_TILLER_LOGS=true
