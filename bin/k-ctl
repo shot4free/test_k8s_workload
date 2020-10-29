@@ -42,6 +42,7 @@ CHART_VERSION=$(get_chart_version)
 export CHART_VERSION
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"
+HELM_DIFF_TMP_FNAME="/tmp/helm-diff"
 
 is_semver() {
   if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
@@ -98,18 +99,13 @@ auto_deploy_check() {
   # Checks to ensure that the changes exactly match
   # what we expect for an image-only update
   local diff_file=$1
-  if [[ -n "${IMAGE_CHECK_OVERRIDE:-}" ]]; then
-    debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set as a CI variable" "$_RED"
+  if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
+    debug "✅ There are no changes detected" "$_BGRN"
     return
   fi
 
   if json_cmp "$diff_file" "$auto_deploy_changes_fname"; then
     debug "✅ The number of changes are correct for an auto-deploy image update" "$_BGRN"
-    return
-  fi
-
-  if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
-    debug "✅ There are no changes detected" "$_BGRN"
     return
   fi
 
@@ -124,6 +120,12 @@ auto_deploy_check() {
   helm_diff "--context 10"
   debug ""
   debug "Check https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/pipelines to see if there are any outstanding configuration changes, to override this failure set IMAGE_CHECK_OVERRIDE as a CI variable" "$_CYN"
+
+  if [[ -n "${IMAGE_CHECK_OVERRIDE:-}" ]]; then
+    debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set as a CI variable" "$_RED"
+    return
+  fi
+
   exit 1
 }
 
@@ -140,11 +142,14 @@ case "$ACTION" in
       # Skip the notifications for auto-deploy triggered pipelines since they are not
       # done in the context of an MR.
       if [[ ${AUTO_DEPLOY:-false} == "false" && -f /k8s-workloads/notify-mr ]]; then
-        helm_diff "--context 10" | tee /tmp/helm-diff
-        /k8s-workloads/notify-mr -d /tmp/helm-diff -e "$environment" || echo "WARNING: notify-mr diff notification failed"
+        helm_diff "--context 10" | tee "$HELM_DIFF_TMP_FNAME"
+        /k8s-workloads/notify-mr -d "$HELM_DIFF_TMP_FNAME" -e "$environment" || echo "WARNING: notify-mr diff notification failed"
       else
-        helm_diff "--context 10 --output json" | tee /tmp/helm-diff
-        auto_deploy_check "/tmp/helm-diff"
+        helm_diff "--context 10 --output json" | tee "$HELM_DIFF_TMP_FNAME"
+        # helm diff has an extra line in for installing tiller that is sent to stdout
+        # that needs to be removed for the json output
+        sed -i -e '/Installing Tiller.*/d' "$HELM_DIFF_TMP_FNAME"
+        auto_deploy_check "$HELM_DIFF_TMP_FNAME"
       fi
     else
       tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
