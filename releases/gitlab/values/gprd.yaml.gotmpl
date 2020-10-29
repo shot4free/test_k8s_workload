@@ -28,7 +28,7 @@ gitlab:
         nginx.ingress.kubernetes.io/service-upstream: "true"
     nodeSelector:
       type: git-https
-    minReplicas: 35
+    minReplicas: 30
     maxReplicas: 150
     workerProcesses: 2
     extraEnv:

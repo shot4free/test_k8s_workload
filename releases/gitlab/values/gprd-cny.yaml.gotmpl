@@ -10,6 +10,7 @@ gitlab:
   sidekiq:
     enabled: false
   webservice:
+    minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
 
