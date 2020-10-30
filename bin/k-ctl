@@ -21,6 +21,7 @@ export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
 # that are common to all charts
 
 COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
+AUTO_DEPLOY="${AUTO_DEPLOY:-false}"
 
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
   source "$COMMON_SCRIPT_PATH"
@@ -65,7 +66,7 @@ helmfile_cmd_options=(
   "--suppress-secrets"
 )
 
-if [[ ${AUTO_DEPLOY:-false} == "true" ]]; then
+if [[ $AUTO_DEPLOY == "true" ]]; then
   helmfile_common_options+=("-l" "autodeploy=true")
 fi
 
@@ -130,9 +131,11 @@ case "$ACTION" in
       # fail so we don't block the pipeline
       # Skip the notifications for auto-deploy triggered pipelines since they are not
       # done in the context of an MR.
-      if [[ ${AUTO_DEPLOY:-false} == "false" && -f /k8s-workloads/notify-mr ]]; then
+      if [[ $AUTO_DEPLOY == "false" ]]; then
         helm_diff "--context 10" | tee "$HELM_DIFF_TMP_FNAME"
-        /k8s-workloads/notify-mr -d "$HELM_DIFF_TMP_FNAME" -e "$environment" || echo "WARNING: notify-mr diff notification failed"
+        if [[ -f /k8s-workloads/notify-mr ]]; then
+          /k8s-workloads/notify-mr -d "$HELM_DIFF_TMP_FNAME" -e "$environment" || echo "WARNING: notify-mr diff notification failed"
+        fi
       else
         helm_diff "--context 10 --output json" | tee "$HELM_DIFF_TMP_FNAME"
         # helm diff has an extra line in for installing tiller that is sent to stdout
