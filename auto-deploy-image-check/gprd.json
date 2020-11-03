@@ -1,0 +1,61 @@
+[{
+  "api": "v1",
+  "kind": "ConfigMap",
+  "namespace": "gitlab",
+  "name": "gitlab-gitlab-chart-info",
+  "change": "MODIFY"
+},{
+  "api": "batch",
+  "kind": "Job",
+  "namespace": "gitlab",
+  "name": "gitlab-gitlab-upgrade-check",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-catchall-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-database-throttled-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-elasticsearch-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-gitaly-throttled-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-low-urgency-cpu-bound-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-memory-bound-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-urgent-cpu-bound-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-urgent-other-v1",
+  "change": "MODIFY"
+}]
