@@ -400,7 +400,7 @@ nginx-ingress:
     autoscaling:
       enabled: true
       minReplicas: 1
-      maxReplicas: 20
+      maxReplicas: 50
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
     config:
@@ -420,8 +420,8 @@ nginx-ingress:
         cloud.google.com/load-balancer-type: Internal
     resources:
       requests:
-        cpu: 200m
-        memory: 300Mi
+        cpu: 300m
+        memory: 500Mi
     publishService:
       enabled: true
     replicaCount: 3
