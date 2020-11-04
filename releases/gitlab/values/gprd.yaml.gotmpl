@@ -36,10 +36,6 @@ gitlab:
   sidekiq:
     extraEnv:
       LD_PRELOAD: "/usr/lib/libjemalloc.so"
-    podLabels:
-      tier: sv
-      type: sidekiq
-
     pods:
       - name: catchall
         concurrency: 15
