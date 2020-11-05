@@ -111,7 +111,7 @@ auto_deploy_check() {
   debug ""
   debug "Check https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/pipelines to see if there are any outstanding configuration changes, to override this failure set IMAGE_CHECK_OVERRIDE as a CI variable" "$_CYN"
 
-  if [[ -n "${IMAGE_CHECK_OVERRIDE:-}" ]]; then
+  if [[ ${IMAGE_CHECK_OVERRIDE:-} == "true" ]]; then
     debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set as a CI variable" "$_RED"
     return
   fi

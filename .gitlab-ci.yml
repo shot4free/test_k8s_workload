@@ -178,8 +178,8 @@ variables:
       - tags
   script:
     - |
-      if [[ -n "$SKIP_QA" ]]; then
-        echo "Skipping QA because SKIP_QA is set"
+      if [[ $SKIP_QA == "true" ]]; then
+        echo "Skipping QA because SKIP_QA is set to true"
         exit 0
       fi
     - apk add curl jq
