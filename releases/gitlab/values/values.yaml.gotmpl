@@ -622,6 +622,9 @@ gitlab:
       format: "json"
     nodeSelector:
       type: shell
+    podLabels:
+      type: git
+      tier: sv
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
