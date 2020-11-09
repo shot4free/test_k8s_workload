@@ -78,6 +78,10 @@ Issue to track: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1222
 
 global:
   gitlabVersion: {{ $gitlab_version }}
+gitlab:
+  gitlab-shell:
+    image:
+      tag: {{ $gitlab_version }}
 registry:
   image:
     tag: {{ $registry_version }}
