@@ -31,6 +31,8 @@ gitlab:
     minReplicas: 30
     maxReplicas: 150
     workerProcesses: 2
+    extraEnv:
+      GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
   sidekiq:
     pods:
       - name: catchall
