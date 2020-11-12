@@ -10,6 +10,8 @@ gitlab:
     minReplicas: 5
     maxReplicas: 300
     workerProcesses: 2
+    extraEnv:
+      GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
 
 global:
   appConfig:
