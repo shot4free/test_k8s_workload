@@ -24,21 +24,10 @@ gitlab:
         minReplicas: 1
         maxReplicas: 10
   kas:
-    global:
-      ingress:
-        class: "gce"
     ingress:
       enabled: true
-      annotations:
-        kubernetes.io/ingress.allow-http: "false"
-        kubernetes.io/ingress.global-static-ip-name: kas-gke-pre
-        networking.gke.io/managed-certificates: kas-pre-gitlab-com
-      tls:
-        secretName: ""
-    service:
-      annotations:
-        cloud.google.com/neg: '{"ingress": true}'
-        cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
+    image:
+      tag: "v0.0.8"
 
 global:
   appConfig:
@@ -53,8 +42,6 @@ global:
   hosts:
     gitlab:
       name: pre.gitlab.com
-    kas:
-      name: kas.pre.gitlab.com
 
   smtp:
     enabled: true
