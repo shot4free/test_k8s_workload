@@ -69,6 +69,11 @@ global:
   kas:
     enabled: false
 
+  pages:
+    objectStore:
+      enabled: true
+      bucket: "gitlab-{{ .Values | getOrNil "env_prefix" }}-pages"
+
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
     connectTimeout: 5 # 5 seconds
@@ -793,7 +798,7 @@ gitlab:
     enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
     cluster: true
     trusted_proxies: ['10.0.0.0/8']
-    experimentalQueueSelector: true
+    queueSelector: true
     memoryKiller:
       maxRss: 0
     nodeSelector:
