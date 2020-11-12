@@ -82,7 +82,7 @@ json_cmp() {
 
 helm_diff() {
   local diff_extra_args=$1
-  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}" "$diff_extra_args"
+  helmfile "${helmfile_common_options[@]}" diff "${helmfile_cmd_options[@]}" --args "$diff_extra_args"
 }
 
 auto_deploy_check() {
