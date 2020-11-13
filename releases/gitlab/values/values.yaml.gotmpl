@@ -636,6 +636,8 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
+    hpa:
+      targetAverageValue: 800m
     shutdown:
       blackoutSeconds: 240
     deployment:
