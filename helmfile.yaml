@@ -5,6 +5,7 @@ bases:
 
 helmfiles:
   - path: releases/gitlab-secrets/helmfile.yaml
+  - path: releases/gitlab-extras/helmfile.yaml
   - path: releases/gitlab/helmfile.yaml
 
 missingFileHandler: Error

@@ -23,11 +23,6 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 10
-  kas:
-    ingress:
-      enabled: true
-    image:
-      tag: "v0.0.8"
 
 global:
   appConfig:
@@ -42,6 +37,8 @@ global:
   hosts:
     gitlab:
       name: pre.gitlab.com
+    kas:
+      name: kas.pre.gitlab.com
 
   smtp:
     enabled: true
