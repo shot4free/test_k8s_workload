@@ -56,6 +56,11 @@ environments:
             enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
+        gitlab_extras:
+          installed: true
+        kas:
+          managed_cert_name: kas-pre-gitlab-com
+          domain: kas.pre.gitlab.com
 
   gstg:
     values:
