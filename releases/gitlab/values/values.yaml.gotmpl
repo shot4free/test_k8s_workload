@@ -1144,7 +1144,7 @@ gitlab:
       annotations:
         kubernetes.io/ingress.allow-http: "false"
         kubernetes.io/ingress.global-static-ip-name: kas-gke-{{ .Environment.Values | getOrNil "env_prefix" }}
-        networking.gke.io/managed-certificates: {{ .Values.kas.managed_cert_name }}
+        networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
         secretName: ""
     service:

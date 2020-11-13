@@ -8,7 +8,7 @@ bases:
 repositories:
 # Kubernetes incubator repo of helm charts
 - name: "kubernetes-incubator"
-  url: "https://kubernetes-charts-incubator.storage.googleapis.com"
+  url: "https://charts.helm.sh/incubator"
 
 releases:
 - name:  {{ .Environment.Values | getOrNil "gitlab_secrets_release_name" | default "gitlab-secrets" }}
