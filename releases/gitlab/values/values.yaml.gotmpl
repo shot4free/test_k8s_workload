@@ -67,7 +67,7 @@ global:
 
   ## doc/installation/secrets.md#gitlab-kas-secret
   kas:
-    enabled: false
+    enabled: {{ .Values.gitlab.kas.enabled }}
 
   pages:
     objectStore:

@@ -19,6 +19,8 @@ environments:
             enabled: false
           mailroom:
             enabled: true
+          kas:
+            enabled: false
       # These services are only installed in the
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
@@ -34,6 +36,10 @@ environments:
             enabled: true
           webservice:
             enabled: true
+          kas:
+            enabled: false
+        gitlab_extras:
+          installed: false
 
   ops:
     values:
@@ -54,6 +60,8 @@ environments:
             enabled: true
           webservice:
             enabled: true
+          kas:
+            enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
         gitlab_extras:
@@ -72,6 +80,14 @@ environments:
         registry_deployment_for_image_tag: "gitlab-registry"
         cluster: gstg-gitlab-gke
         region: us-east1
+        gitlab_extras:
+          installed: true
+        gitlab:
+          kas:
+            enabled: true
+        kas:
+          managed_cert_name: kas-staging-gitlab-com
+          domain: kas.staging.gitlab.com
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
