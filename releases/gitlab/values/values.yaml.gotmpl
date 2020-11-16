@@ -671,6 +671,8 @@ gitlab:
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-connect-timeout: 300
         nginx.ingress.kubernetes.io/proxy-read-timeout: 3600
+        # This can be removed once https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1661 is merged
+        nginx.ingress.kubernetes.io/service-upstream: "true"
     nodeSelector:
       type: default
     podLabels:
