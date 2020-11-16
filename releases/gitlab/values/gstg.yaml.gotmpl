@@ -2,9 +2,6 @@
 
 gitlab:
   webservice:
-    ingress:
-      annotations:
-        nginx.ingress.kubernetes.io/service-upstream: "true"
     nodeSelector:
       type: git-https
     minReplicas: 5
