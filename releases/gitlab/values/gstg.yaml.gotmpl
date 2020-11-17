@@ -5,9 +5,25 @@ gitlab:
     nodeSelector:
       type: git-https
     minReplicas: 5
-    maxReplicas: 30
+    # for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1350
+    # keeping the max replicas the same as min for load testing
+    maxReplicas: 5
+    workerProcesses: 4
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
+    workhorse:
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          cpu: 600m
+          memory: 200M
+    resources:
+      limits:
+        memory: 6.0G
+      requests:
+        cpu: 4
+        memory: 5G
 global:
   appConfig:
     incomingEmail:
