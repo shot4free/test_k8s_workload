@@ -635,9 +635,10 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    workerProcesses: 4
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
-      targetAverageValue: 800m
+      targetAverageValue: 1600m
     shutdown:
       blackoutSeconds: 240
     deployment:
@@ -774,19 +775,19 @@ gitlab:
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       resources:
         limits:
-          memory: 1G
+          memory: 2G
         requests:
-          cpu: 300m
-          memory: 100M
+          cpu: 600m
+          memory: 200M
       monitoring:
         exporter:
           enabled: true
     resources:
       limits:
-        memory: 3.0G
+        memory: 6.0G
       requests:
-        cpu: 2
-        memory: 2.5G
+        cpu: 4
+        memory: 5G
     minReplicas: 2
     maxReplicas: 10
     extraEnv:
