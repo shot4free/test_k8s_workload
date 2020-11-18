@@ -27,7 +27,6 @@ gitlab:
       type: git-https
     minReplicas: 30
     maxReplicas: 150
-    workerProcesses: 2
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
   sidekiq:
