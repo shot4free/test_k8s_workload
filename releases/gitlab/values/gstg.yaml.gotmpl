@@ -22,6 +22,18 @@ gitlab:
       requests:
         cpu: 4
         memory: 5G
+  kas:
+    customConfig:
+      listen_agent:
+        address: ":8150"
+        websocket: true
+      gitlab:
+        address: https://int.gstg.gitlab.net:11443
+        authentication_secret_file: "/etc/kas/.gitlab_kas_secret"
+      observability:
+        listen:
+          address: ":8151"
+
 global:
   appConfig:
     incomingEmail:
