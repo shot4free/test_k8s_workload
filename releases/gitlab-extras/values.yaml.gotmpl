@@ -16,7 +16,7 @@ resources:
       namespace: gitlab
     spec:
       healthCheck:
-        checkIntervalSec: 60
         port: 8151
         type: HTTP
         requestPath: /liveness
+      timeoutSec: 1830
