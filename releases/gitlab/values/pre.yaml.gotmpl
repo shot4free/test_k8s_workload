@@ -1,6 +1,21 @@
 ---
 
 gitlab:
+  webservice:
+    workerProcesses: 2
+    workhorse:
+      resources:
+        limits:
+          memory: 1G
+        requests:
+          cpu: 300m
+          memory: 100M
+    resources:
+      limits:
+        memory: 3.0G
+      requests:
+        cpu: 2
+        memory: 2.5G
   gitlab-shell:
     nodeSelector:
       type: default
