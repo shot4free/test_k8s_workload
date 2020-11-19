@@ -15,13 +15,6 @@ gitlab:
   gitlab-shell:
     minReplicas: 8
     maxReplicas: 24
-    resources:
-      requests:
-        cpu: 150m
-        memory: 500Mi
-      limits:
-        cpu: 3
-        memory: 1Gi
   webservice:
     nodeSelector:
       type: git-https
