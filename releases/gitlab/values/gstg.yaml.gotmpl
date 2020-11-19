@@ -1,5 +1,12 @@
 ---
 
+registry:
+  nodeSelector:
+    # We can set the type to "registry" once
+    # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
+    # is complete
+    type: {{ .Environment.Values.registry.nodeSelector.type }}
+
 gitlab:
   webservice:
     nodeSelector:
