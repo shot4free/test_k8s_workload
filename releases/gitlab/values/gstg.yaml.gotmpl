@@ -8,6 +8,20 @@ gitlab:
     maxReplicas: 30
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
+      GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
+    workhorse:
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          cpu: 600m
+          memory: 200M
+    resources:
+      limits:
+        memory: 6.0G
+      requests:
+        cpu: 4
+        memory: 5G
 global:
   appConfig:
     incomingEmail:
