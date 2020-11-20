@@ -74,8 +74,26 @@ Issue to track: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1222
 
 {{- $registry_version = "v2.11.0-gitlab" }}
 
+{{/*
+
+GitLab-Shell contains it's own versioning schema.  This prevents us from
+using the same $gitlab_version variable for this component.  Instead
+we determine if this is an auto-deploy.  If yes, use that tag, if not
+default to the version specified by the version of our helm chart.
+
+*/}}
+
+{{- $gitlab_shell_version := "master" }}
+{{- if regexMatch "^\\d+-\\d+-[\\d\\w]+-[\\d\\w]+$" $gitlab_version }}
+{{-   $gitlab_shell_version = $gitlab_version }}
+{{- end }}
+
 ---
 
+gitlab:
+  gitlab-shell:
+    image:
+      tag: {{ $gitlab_shell_version }}
 global:
   gitlabVersion: {{ $gitlab_version }}
 registry:
