@@ -5,6 +5,12 @@
   "name": "gitlab-gitlab-chart-info",
   "change": "MODIFY"
 },{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-gitlab-shell",
+  "change": "MODIFY"
+},{
   "api": "batch",
   "kind": "Job",
   "namespace": "gitlab",
