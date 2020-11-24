@@ -79,11 +79,18 @@ Issue to track: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1222
 GitLab-Shell contains it's own versioning schema.  This prevents us from
 using the same $gitlab_version variable for this component.  Instead
 we determine if this is an auto-deploy.  If yes, use that tag, if not
-default to the version specified by the version of our helm chart.
+default to the version specified by the whatever is currently running.
 
 */}}
 
-{{- $gitlab_shell_version := "master" }}
+{{- $gitlab_shell_deployment := printf "%s%s" $namespace "-gitlab-shell" }}
+
+{{/* Get current version of the GitLab Shell */}}
+{{- $gitlab_shell_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_shell_deployment "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
+{{- $gitlab_shell_current_tag := ($gitlab_shell_current_spec | exec "cut"  (list "-d:" "-f3")) }}
+
+{{/* Set the appropriate version if it is found and if auto-deploy */}}
+{{- $gitlab_shell_version := default "master" $gitlab_shell_current_tag }}
 {{- if regexMatch "^\\d+-\\d+-[\\d\\w]+-[\\d\\w]+$" $gitlab_version }}
 {{-   $gitlab_shell_version = $gitlab_version }}
 {{- end }}
