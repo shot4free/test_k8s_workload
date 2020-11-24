@@ -83,10 +83,10 @@ default to the version specified by the whatever is currently running.
 
 */}}
 
-{{- $gitlab_shell_deployment := printf "%s%s" $namespace "-gitlab-shell" }}
+{{- $gitlab_shell_deployment_name := printf "%s%s" $namespace "-gitlab-shell" }}
 
 {{/* Get current version of the GitLab Shell */}}
-{{- $gitlab_shell_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_shell_deployment "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
+{{- $gitlab_shell_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_shell_deployment_name "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
 {{- $gitlab_shell_current_tag := ($gitlab_shell_current_spec | exec "cut"  (list "-d:" "-f3")) }}
 
 {{/* Set the appropriate version if it is found and if auto-deploy */}}
