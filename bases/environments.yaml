@@ -26,7 +26,7 @@ environments:
       # all zonal clusters, regardless of the environment.
       - &zonal_cluster_defaults
         registry:
-          enabled: false
+          enabled: true
         gitlab:
           sidekiq:
             enabled: false
@@ -88,6 +88,13 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
+      # This can be removed once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
+      # is complete
+      - registry:
+          nodeSelector:
+            type: default
+
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
@@ -100,6 +107,12 @@ environments:
       -
         cluster: gstg-us-east1-b
         region: us-east1-b
+      # This can be removed once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
+      # is complete
+      - registry:
+          nodeSelector:
+            type: registry
 
   gstg-us-east1-c:
     values:
@@ -109,6 +122,12 @@ environments:
       -
         cluster: gstg-us-east1-c
         region: us-east1-c
+      # This can be removed once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
+      # is complete
+      - registry:
+          nodeSelector:
+            type: registry
 
   gstg-us-east1-d:
     values:
@@ -118,6 +137,12 @@ environments:
       -
         cluster: gstg-us-east1-d
         region: us-east1-d
+      # This can be removed once
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
+      # is complete
+      - registry:
+          nodeSelector:
+            type: registry
 
   gprd-cny:
     values:

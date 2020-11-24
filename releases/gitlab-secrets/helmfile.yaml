@@ -133,7 +133,7 @@ releases:
         stringData:
           config: |
             gcs:
-              bucket: {{ .Environment.Values | getOrNil "registry_bucket_name" | default (printf "gitlab-%s-registry" .Environment.Name) }}
+              bucket: {{ .Environment.Values | getOrNil "registry_bucket_name" | default (printf "gitlab-%s-registry" $env_prefix) }}
               keyfile: /etc/docker/registry/storage/gcs.json
             maintenance:
               uploadpurging:
