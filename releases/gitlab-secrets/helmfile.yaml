@@ -232,4 +232,4 @@ releases:
           name: gitlab-kas-credential-v1
           namespace: {{ $namespace }}
         stringData:
-          kas_shared_secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".kas.kas_shared_secret") | quote }}
+          kas_shared_secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.gitlab_kas.api_secret_key") | quote }}
