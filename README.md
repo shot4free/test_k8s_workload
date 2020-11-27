@@ -88,6 +88,15 @@ The `./bin/k-ctl` script is used both locally and in CI to manage the chart for 
 
 Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-operations.md).
 
+If you're using `asdf`, install the relevant plugins and tools:
+
+```
+asdf plugin add helm
+asdf plugin add helmfile
+
+asdf install
+```
+
 ### minikube
 
 1. `minikube start`
