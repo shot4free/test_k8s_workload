@@ -8,8 +8,10 @@ environments:
       # on all regional clusters, in all environments
       # These are read by values.yaml.gotmpl
       - &regional_cluster_defaults
+        # Registry is disabled by default on the regional cluster
+        # and enabled selectively for preprod and canary
         registry:
-          enabled: true
+          enabled: false
         gitlab:
           webservice:
             enabled: false
@@ -55,6 +57,8 @@ environments:
         google_project: "gitlab-pre"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
+        registry:
+          enabled: true
         gitlab:
           gitlab-shell:
             enabled: true
@@ -88,12 +92,6 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
-      # This can be removed once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
-      # is complete
-      - registry:
-          nodeSelector:
-            type: default
 
 
   # Zonal clusters for gstg, these three environments
@@ -107,12 +105,6 @@ environments:
       -
         cluster: gstg-us-east1-b
         region: us-east1-b
-      # This can be removed once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
-      # is complete
-      - registry:
-          nodeSelector:
-            type: registry
 
   gstg-us-east1-c:
     values:
@@ -122,12 +114,6 @@ environments:
       -
         cluster: gstg-us-east1-c
         region: us-east1-c
-      # This can be removed once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
-      # is complete
-      - registry:
-          nodeSelector:
-            type: registry
 
   gstg-us-east1-d:
     values:
@@ -137,17 +123,13 @@ environments:
       -
         cluster: gstg-us-east1-d
         region: us-east1-d
-      # This can be removed once
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1321
-      # is complete
-      - registry:
-          nodeSelector:
-            type: registry
 
   gprd-cny:
     values:
       - <<: *regional_cluster_defaults
       -
+        registry:
+          enabled: true
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_secrets_gkms_source: "gprd"
