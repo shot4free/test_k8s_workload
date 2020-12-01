@@ -1098,6 +1098,7 @@ gitlab:
       api:
         protocol: "https"
         port: 443
+        host: {{ .Environment.Values.registry_api_host }}
     trusted_proxies:
       - 10.0.0.0/8
   task-runner:
