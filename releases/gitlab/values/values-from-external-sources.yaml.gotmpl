@@ -121,9 +121,12 @@ global:
         key: secret
   {{- end }}
 
+{{- $registry_api_host := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".registry_host") }}
 registry:
   service:
     loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+  api:
+    host: {{ $registry_api_host }}
 
 gitlab:
   gitlab-shell:

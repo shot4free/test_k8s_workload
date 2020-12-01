@@ -498,6 +498,9 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: {{ .Environment.Values.registry.enabled }}
+  api:
+    protocol: "https"
+    port: 443
   nodeSelector:
     type: default
   podLabels:
