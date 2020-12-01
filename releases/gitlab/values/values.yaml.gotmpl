@@ -498,9 +498,6 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: {{ .Environment.Values.registry.enabled }}
-  api:
-    protocol: "https"
-    port: 443
   nodeSelector:
     type: default
   podLabels:
@@ -1098,6 +1095,9 @@ gitlab:
 
     registry:
       tokenIssuer: omnibus-gitlab-issuer
+      api:
+        protocol: "https"
+        port: 443
     trusted_proxies:
       - 10.0.0.0/8
   task-runner:
