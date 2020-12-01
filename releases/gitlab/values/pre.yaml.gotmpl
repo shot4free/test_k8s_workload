@@ -34,13 +34,6 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 10
-    # This should be moved to values once the change is made on production
-    registry:
-      api:
-        protocol: "https"
-        port: 443
-        host: {{ .Environment.Values.registry_api_host }}
-
 global:
   appConfig:
     incomingEmail:

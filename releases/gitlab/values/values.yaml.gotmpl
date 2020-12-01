@@ -1094,6 +1094,10 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
 
     registry:
+      api:
+        protocol: "https"
+        port: 443
+        host: {{ .Environment.Values.registry_api_host }}
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
