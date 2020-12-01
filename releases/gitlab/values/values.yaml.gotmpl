@@ -643,6 +643,14 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    registry:
+      api:
+        # The public Registry endpoint is used for the internal
+        # API until https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/12029
+        # is resolved
+        protocol: "https"
+        port: 443
+        host: {{ .Environment.Values.registry_api_host }}
     workerProcesses: 4
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
@@ -1095,6 +1103,9 @@ gitlab:
 
     registry:
       api:
+        # The public Registry endpoint is used for the internal
+        # API until https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/12029
+        # is resolved
         protocol: "https"
         port: 443
         host: {{ .Environment.Values.registry_api_host }}
