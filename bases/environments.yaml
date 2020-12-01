@@ -155,6 +155,8 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       - &gprd_values
+        registry:
+          enabled: true
         env_prefix: gprd
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
