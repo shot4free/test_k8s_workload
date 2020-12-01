@@ -8,6 +8,13 @@ registry:
     type: {{ .Environment.Values.registry.nodeSelector.type }}
 
 gitlab:
+  sidekiq:
+    # This should be moved to values once the change is made on production
+    registry:
+      api:
+        protocol: "https"
+        port: 443
+        host: {{ .Environment.Values.registry_api_host }}
   webservice:
     nodeSelector:
       type: git-https
