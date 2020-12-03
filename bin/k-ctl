@@ -88,6 +88,11 @@ helm_diff() {
 auto_deploy_check() {
   # Checks to ensure that the changes exactly match
   # what we expect for an image-only update
+  if [[ ${POST_DEPLOYMENT_PATCH:-} == "true" ]]; then
+    debug "Image checks are skipped for post-deployment checks"
+    return
+  fi
+
   local diff_file=$1
   if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
     debug "✅ There are no changes detected" "$_BGRN"
