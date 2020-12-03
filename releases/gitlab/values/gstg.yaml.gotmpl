@@ -2,8 +2,8 @@
 nginx-ingress:
   controller:
     config:
-      keep-alive: "30"
-      upstream-keepalive-requests: "5000"
+      upstream-keepalive-timeout: "30"
+      upstream-keepalive-requests: "0"
     lifecycle:
       preStop:
         exec:
