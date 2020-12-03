@@ -88,6 +88,11 @@ helm_diff() {
 auto_deploy_check() {
   # Checks to ensure that the changes exactly match
   # what we expect for an image-only update
+  if [[ ${POST_DEPLOYMENT_PATCH:-} == "true" ]]; then
+    debug "Image checks are skipped for post-deployment checks"
+    return
+  fi
+
   local diff_file=$1
   if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
     debug "✅ There are no changes detected" "$_BGRN"
@@ -109,10 +114,10 @@ auto_deploy_check() {
   debug "-------"
   helm_diff ""
   debug ""
-  debug "Check https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/pipelines to see if there are any outstanding configuration changes, to override this failure set IMAGE_CHECK_OVERRIDE as a CI variable" "$_CYN"
+  debug "Check https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/pipelines to see if there are any outstanding configuration changes, to override this failure set IMAGE_CHECK_OVERRIDE=true as a CI variable" "$_CYN"
 
   if [[ ${IMAGE_CHECK_OVERRIDE:-} == "true" ]]; then
-    debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set as a CI variable" "$_RED"
+    debug "WARNING: Bypassing auto-deploy image check because IMAGE_CHECK_OVERRIDE is set to true as a CI variable" "$_RED"
     return
   fi
 
