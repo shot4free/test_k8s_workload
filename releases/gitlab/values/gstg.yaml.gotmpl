@@ -4,10 +4,6 @@ nginx-ingress:
     config:
       upstream-keepalive-timeout: "30"
       upstream-keepalive-requests: "0"
-    lifecycle:
-      preStop:
-        exec:
-          command: ["/bin/sh", "-c", "sleep 5; /usr/sbin/nginx -c /etc/nginx/nginx.conf -s quit; while pgrep -x nginx; do sleep 1; done"]
 
 registry:
   nodeSelector:
