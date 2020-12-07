@@ -36,6 +36,9 @@ variables:
   variables:
     PROJECT: gitlab-pre
     REGION: us-east1
+    # Temporarily overriding CHART_VERSION for preprod
+    # part of https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3155
+    CHART_VERSION: 79e142a0ceb54971659798efe6ccfac250a05af9
   environment:
     name: pre
     url: https://pre.gitlab.com
