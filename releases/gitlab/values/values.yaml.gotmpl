@@ -415,7 +415,7 @@ nginx-ingress:
       ssl-protocols: "TLSv1.1 TLSv1.2"
       server-tokens: "false"
       upstream-keepalive-timeout: "30"
-      upstream-keepalive-requests: "5000"
+      upstream-keepalive-requests: "0"
     lifecycle:
       preStop:
         exec:
