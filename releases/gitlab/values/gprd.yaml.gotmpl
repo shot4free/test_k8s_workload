@@ -1,4 +1,11 @@
 ---
+
+nginx-ingress:
+  controller:
+    resources:
+      requests:
+        cpu: 1
+
 registry:
   hpa:
     minReplicas: 30
