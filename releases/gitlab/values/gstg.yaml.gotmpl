@@ -10,7 +10,28 @@ registry:
       environment: {{ .Environment.Values | getOrNil "env_prefix" }}
 
 gitlab:
+  gitlab-shell:
+    workhorse:
+      # This is the internal API endpoint for GitLab Shell
+      # Currently we are using the same deployments that is
+      # used for https Git. Once we have a dedicated API deployment
+      # we may want to use that instead
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1401
+      # This should move to values.yaml.gotmp once
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3155 is complete
+      host: gitlab-webservice-git.gitlab.svc
   webservice:
+    deployments:
+      web:
+        ingress:
+          path: '/'
+        hpa:
+          minReplicas: 1
+      git:
+        ingress:
+          path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
+          annotations:
+            nginx.ingress.kubernetes.io/use-regex: "true"
     nodeSelector:
       type: git-https
     minReplicas: 5
