@@ -2,6 +2,15 @@
 
 gitlab:
   webservice:
+    deployments:
+      web:
+        ingress:
+          path: '/'
+      git:
+        ingress:
+          path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
+          annotations:
+            nginx.ingress.kubernetes.io/use-regex: "true"
     workerProcesses: 2
     workhorse:
       resources:
