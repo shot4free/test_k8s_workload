@@ -11,6 +11,17 @@ registry:
 
 gitlab:
   webservice:
+    deployments:
+      web:
+        ingress:
+          path: '/'
+        hpa:
+          minReplicas: 1
+      git:
+        ingress:
+          path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
+          annotations:
+            nginx.ingress.kubernetes.io/use-regex: "true"
     nodeSelector:
       type: git-https
     minReplicas: 5
