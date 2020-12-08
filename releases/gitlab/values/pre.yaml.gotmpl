@@ -6,6 +6,8 @@ gitlab:
       web:
         ingress:
           path: '/'
+        hpa:
+          minReplicas: 1
       git:
         ingress:
           path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
