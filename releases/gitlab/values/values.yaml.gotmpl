@@ -615,6 +615,13 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
+    workhorse:
+      # This is the internal API endpoint for GitLab Shell
+      # Currently we are using the same deployments that is
+      # used for https Git. Once we have a dedicated API deployment
+      # we may want to use that instead
+      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1401
+      host: gitlab-webservice-git.gitlab.svc
     resources:
       requests:
         cpu: 1
@@ -649,6 +656,20 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    deployments:
+      web:
+        ingress:
+          path: '/'
+        hpa:
+          # Webservice is the catchall deployment and will handle websocket traffic until
+          # the work in https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
+          # is complete
+          minReplicas: 1
+      git:
+        ingress:
+          path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
+          annotations:
+            nginx.ingress.kubernetes.io/use-regex: "true"
     workerProcesses: 4
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
