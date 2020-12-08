@@ -54,7 +54,6 @@ variables:
 .gstg-base:
   variables:
     PROJECT: gitlab-staging-1
-    CHART_VERSION: 79e142a0ceb54971659798efe6ccfac250a05af9
   environment:
     url: https://staging.gitlab.com
 
