@@ -20,6 +20,12 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab-cny",
-  "name": "gitlab-cny-webservice",
+  "name": "gitlab-cny-webservice-git",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab-cny",
+  "name": "gitlab-cny-webservice-web",
   "change": "MODIFY"
 }]
