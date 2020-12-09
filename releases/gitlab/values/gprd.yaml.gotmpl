@@ -22,13 +22,6 @@ gitlab:
     minReplicas: 8
     maxReplicas: 150
   webservice:
-    deployments:
-      web:
-        hpa:
-          # Webservice is the catchall deployment and will handle websocket traffic until
-          # the work in https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
-          # is complete
-          minReplicas: 5
     nodeSelector:
       type: git-https
     minReplicas: 30
