@@ -398,6 +398,7 @@ nginx-ingress:
   enabled: true
   tcpExternalConfig: "true"
   controller:
+    terminationGracePeriodSeconds: 120
     nodeSelector:
       type: default
     autoscaling:
