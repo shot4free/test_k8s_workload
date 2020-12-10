@@ -156,6 +156,7 @@ variables:
       - 'releases/**/*'
       - '*.yaml'
       - .gitlab-ci.yml
+      - CHEF_CONFIG_UPDATE
 
 .trigger-qa-smoke:
   extends:

@@ -1,0 +1,6 @@
+Utilize this file to document the change while providing an audit trail.
+Document the following items, Target Environment(s), Description, Link to Issue
+
+Example:
+
+* GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146

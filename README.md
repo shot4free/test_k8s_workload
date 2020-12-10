@@ -76,6 +76,27 @@ There is an upstream helm chart wrapped into a helm release called `gitlab-secre
 
 ## Create/Apply Configurations
 
+### Chef Managed Secrets/Configurations
+
+For any changes to configurations that are stored in Chef:
+
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab-secrets/helmfile.yaml
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/values-from-external-sources.yaml.gotmpl
+
+We must ensure that our Chef infrastructure and Kubernetes infrastructure match.
+To apply a change that is stored inside of chef perform the following tasks:
+
+1. Add a line to the file `CHEF_CONFIG_UPDATE` in the root of this directory (see file for example)
+1. Create a Merge Request with this file that links to the change contained in Chef for auditing purposes.
+    * When the pipelines execute, we should see the configuration change as desired.
+1. Proceed to have a member of Delivery merge/review the MR
+1. After the change has been applied, proceed to verification of the change as
+   necessary.
+
+The above steps are not our desired state.  We have issue
+https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1128 to make this
+procedure friendlier.
+
 ## Decisions
 
 Read about how we've come to decide how this repository is setup by viewing our [design document](https://about.gitlab.com/handbook/engineering/infrastructure/library/kubernetes/configuration/).
