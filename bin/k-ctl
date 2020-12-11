@@ -71,7 +71,7 @@ if [[ $AUTO_DEPLOY == "true" ]]; then
 fi
 
 # This is a temporary while we transition to helm3
-if [[ $USE_HELM3 == "true" ]]; then
+if [[ ${USE_HELM3:-false} == "true" ]]; then
   helmfile_common_options+=("--helm-binary" "helm3")
 fi
 
