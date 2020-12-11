@@ -565,6 +565,8 @@ registry:
     enabled: false
   log:
     formatter: json
+    accesslog:
+      formatter: json
   service:
     type: LoadBalancer
     annotations:
