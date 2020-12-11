@@ -33,9 +33,10 @@ gitlab:
         memory: 5G
   kas:
     customConfig:
-      listen_agent:
-        address: ":8150"
-        websocket: true
+      agent:
+        listen:
+          address: ":8150"
+          websocket: true
       gitlab:
         address: https://int.gstg.gitlab.net:11443
         authentication_secret_file: "/etc/kas/.gitlab_kas_secret"
