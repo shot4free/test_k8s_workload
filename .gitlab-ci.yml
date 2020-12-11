@@ -453,6 +453,14 @@ gprd-us-east1-b:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+gprd-us-east1-b:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-b
+    - .2to3_dryrun
+  resource_group: gprd-us-east1-b:2to3
+
 gprd-us-east1-c:dryrun:
   stage: dryrun
   extends:
@@ -462,6 +470,14 @@ gprd-us-east1-c:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+gprd-us-east1-c:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-c
+    - .2to3_dryrun
+  resource_group: gprd-us-east1-c:2to3
+
 gprd-us-east1-d:dryrun:
   stage: dryrun
   extends:
@@ -470,6 +486,14 @@ gprd-us-east1-d:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
+
+gprd-us-east1-d:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd-us-east1-d
+    - .2to3_dryrun
+  resource_group: gprd-us-east1-d:2to3
 
 gprd:upgrade:
   stage: gprd:deploy
