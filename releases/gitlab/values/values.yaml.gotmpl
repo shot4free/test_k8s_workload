@@ -564,6 +564,10 @@ registry:
   ingress:
     enabled: false
   log:
+    # The level can use the chart default once
+    # https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1703
+    # is merged
+    level: info
     formatter: json
     accesslog:
       formatter: json
