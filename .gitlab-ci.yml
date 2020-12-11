@@ -209,6 +209,23 @@ variables:
         exit 1
       fi
 
+.2to3_dryrun:
+  script:
+    - |
+        kubectx="gke_${PROJECT}_${REGION}_${CLUSTER}"
+        echo "Switching kubectx context for GKE to $kubectx"
+        if ! kubectx "$kubectx"; then
+          echo "Unable to switch to context \"$kubectx\", aborting" "${_BRED}"
+          exit 1
+        fi
+
+        for release in $(helm tiller run helm list | grep DEPLOYED | cut -f1); do
+          helm3 2to3 convert --tiller-out-cluster --dry-run "$release"
+        done
+  only:
+    refs:
+      - branches
+
 stages:
   - check
   - dryrun-check
@@ -249,6 +266,14 @@ pre:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
+pre:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .pre
+    - .2to3_dryrun
+  resource_group: pre:2to3
+
 pre:upgrade:
   stage: non-prod:deploy
   extends:
@@ -275,6 +300,14 @@ gstg:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
+
+gstg:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg
+    - .2to3_dryrun
+  resource_group: gstg:2to3
 
 gstg-us-east1-b:dryrun:
   stage: dryrun
@@ -402,6 +435,14 @@ gprd:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
+
+gprd:2to3:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gprd
+    - .2to3_dryrun
+  resource_group: gprd:2to3
 
 gprd-us-east1-b:dryrun:
   stage: dryrun
