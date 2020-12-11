@@ -70,6 +70,11 @@ if [[ $AUTO_DEPLOY == "true" ]]; then
   helmfile_common_options+=("-l" "autodeploy=true")
 fi
 
+# This is a temporary while we transition to helm3
+if [[ $USE_HELM3 == "true" ]]; then
+  helmfile_common_options+=("--helm-binary" "helm3")
+fi
+
 json_cmp() {
   result=$(jq --argfile a "$1" --argfile b "$2" -n '($a | (.. | arrays) |= sort) as $a | ($b | (.. | arrays) |= sort) as $b | $a == $b')
 
