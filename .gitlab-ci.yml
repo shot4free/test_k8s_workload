@@ -36,6 +36,7 @@ variables:
   variables:
     PROJECT: gitlab-pre
     REGION: us-east1
+    CHART_VERSION: 31e567acf7c503cf7410b53aac6fd1e76561255b
   environment:
     name: pre
     url: https://pre.gitlab.com
@@ -51,6 +52,7 @@ variables:
 .gstg-base:
   variables:
     PROJECT: gitlab-staging-1
+    CHART_VERSION: 31e567acf7c503cf7410b53aac6fd1e76561255b
   environment:
     url: https://staging.gitlab.com
 
