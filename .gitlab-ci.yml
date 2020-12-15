@@ -9,25 +9,25 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/version-checks.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/deploy.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/shellcheck.yml"
-    ref: 'v3.6.0'
+    ref: 'v3.7.1'
 
 variables:
-  CI_IMAGE_VERSION: 'v3.6.0'
+  CI_IMAGE_VERSION: 'v3.7.1'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -36,6 +36,7 @@ variables:
   variables:
     PROJECT: gitlab-pre
     REGION: us-east1
+    USE_HELM3: "true"
   environment:
     name: pre
     url: https://pre.gitlab.com
