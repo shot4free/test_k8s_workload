@@ -3,11 +3,6 @@
 registry:
   nodeSelector:
     type: registry
-  reporting:
-    sentry:
-      enabled: true
-      dsn: https://a40e1c5a81e0448094930f5680fe2e49@sentry.gitlab.net/122
-      environment: {{ .Environment.Values | getOrNil "env_prefix" }}
 
 gitlab:
   webservice:
