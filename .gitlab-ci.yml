@@ -36,6 +36,7 @@ variables:
     PROJECT: gitlab-pre
     REGION: us-east1
     USE_HELM3: "true"
+    CHART_VERSION: b2653c1fe3506cd282055f9dffe4ed6711b9915d
   environment:
     name: pre
     url: https://pre.gitlab.com
@@ -52,6 +53,7 @@ variables:
   variables:
     PROJECT: gitlab-staging-1
     USE_HELM3: "true"
+    CHART_VERSION: b2653c1fe3506cd282055f9dffe4ed6711b9915d
   environment:
     url: https://staging.gitlab.com
 
