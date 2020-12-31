@@ -2,6 +2,8 @@
 
 nginx-ingress:
   controller:
+    autoscaling:
+      minReplicas: 10
     resources:
       requests:
         cpu: 1
