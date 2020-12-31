@@ -3,6 +3,11 @@
 # Please note that `gprd.yaml.gotmpl` is included first for the `gprd-cny` environment,
 # this file is for `cny` specific overrides
 
+nginx-ingress:
+  controller:
+    autoscaling:
+      minReplicas: 3
+
 gitlab:
   mailroom:
     enabled: false
