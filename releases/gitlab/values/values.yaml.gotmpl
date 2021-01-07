@@ -693,6 +693,9 @@ gitlab:
       workhorsePromJob: gitlab-workhorse-git
     trusted_proxies: ['10.0.0.0/8']
     monitoring:
+      ipWhitelist:
+        - "10.0.0.0/8"
+        - "127.0.0.0/8"
       exporter:
         enabled: true
     ingress:
