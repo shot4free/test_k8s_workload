@@ -4,3 +4,7 @@ Document the following items, Target Environment(s), Description, Link to Issue
 Example:
 
 * GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146
+
+2020-01-07
+
+* GPRD - Create new gitaly storage shard nodes to replace nfs-file52 and nfs-file53: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/12285
