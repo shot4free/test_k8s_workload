@@ -52,6 +52,7 @@ variables:
 .gstg-base:
   variables:
     PROJECT: gitlab-staging-1
+    USE_HELM3: "true"
   environment:
     url: https://staging.gitlab.com
 
