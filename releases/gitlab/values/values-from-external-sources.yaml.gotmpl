@@ -133,16 +133,16 @@ registry:
   service:
     loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=registry-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
 
-{{- $loadBalancerIPShell := exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=ssh-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+{{- $gitlabShellEnabled := index .Environment.Values.gitlab "gitlab-shell" "enabled" }}
+{{- if $gitlabShellEnabled }}
 gitlab:
   gitlab-shell:
     service:
       type: LoadBalancer
-{{- if $loadBalancerIPShell }}
-      loadBalancerIP: {{ $loadBalancerIPShell }}
-{{- end }}
+      loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=ssh-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
       annotations:
         cloud.google.com/load-balancer-type: Internal
+{{- end }}
 
 {{- $workhorse_dsn := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-gitlab-workhorse\".env.GITLAB_WORKHORSE_SENTRY_DSN") }}
 {{- $rack_attack_enabled := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.enabled") }}
