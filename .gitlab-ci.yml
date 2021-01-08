@@ -268,14 +268,6 @@ pre:dryrun:
   script:
     - bin/k-ctl -D upgrade
 
-pre:2to3:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .pre
-    - .2to3_dryrun
-  resource_group: pre:2to3
-
 pre:upgrade:
   stage: non-prod:deploy
   extends:
@@ -302,14 +294,6 @@ gstg:dryrun:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/k-ctl -D upgrade
-
-gstg:2to3:dryrun:
-  stage: dryrun
-  extends:
-    - .deploy
-    - .gstg
-    - .2to3_dryrun
-  resource_group: gstg:2to3
 
 gstg-us-east1-b:dryrun:
   stage: dryrun
