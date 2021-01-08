@@ -137,6 +137,10 @@ global:
         cron: "0 23 * * *"
       schedule_migrate_external_diffs_worker:
         cron: "15 * * * *"
+      # An override is set here due to https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3288
+      # Proposed improvement in https://gitlab.com/gitlab-org/gitlab/-/issues/296874
+      schedule_merge_request_cleanup_refs_worker:
+        cron: '1 1 1 1 *'
 
     ## doc/charts/globals.md#gravatarlibravatar-settings
     gravatar:
