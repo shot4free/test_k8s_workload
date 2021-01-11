@@ -99,6 +99,7 @@ variables:
 .gprd-base:
   variables:
     PROJECT: gitlab-production
+    USE_HELM3: "true"
   environment:
     url: https://gitlab.com
 
