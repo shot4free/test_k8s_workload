@@ -11,9 +11,6 @@ include:
     file: "/ci/version-checks.yml"
     ref: 'v3.7.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/deploy.yml"
-    ref: 'v3.7.7'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
     ref: 'v3.7.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
@@ -31,6 +28,14 @@ variables:
   AUTO_DEPLOY: 'false'
 
 #############################################################
+
+.deploy:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  extends:
+    - .except-com
+    - .cluster-init-before-script
+  tags:
+    - k8s-workloads
 
 .pre-base:
   variables:
