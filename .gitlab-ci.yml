@@ -8,12 +8,6 @@
 
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/version-checks.yml"
-    ref: 'v3.7.7'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/deploy.yml"
-    ref: 'v3.7.7'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
     ref: 'v3.7.7'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
@@ -22,15 +16,20 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
     ref: 'v3.7.7'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/shellcheck.yml"
-    ref: 'v3.7.7'
 
 variables:
   CI_IMAGE_VERSION: 'v3.7.7'
   AUTO_DEPLOY: 'false'
 
 #############################################################
+
+.deploy:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  extends:
+    - .except-com
+    - .cluster-init-before-script
+  tags:
+    - k8s-workloads
 
 .pre-base:
   variables:
@@ -220,6 +219,52 @@ stages:
   - non-prod:QA
   - gprd-cny:deploy
   - gprd:deploy
+
+#### Check jobs
+
+shellcheck:
+  image:
+    name: nlknguyen/alpine-shellcheck
+    entrypoint: ["/bin/sh", "-c"]
+  stage: check
+  script:
+    - find bin/ -maxdepth 1 -type f | xargs -r shellcheck -e SC1090,SC1091
+  except:
+    variables:
+      - $AUTO_DEPLOY == "true"
+      - $CI_COMMIT_REF_NAME == 'master'
+
+shfmt:
+  image:
+    name: peterdavehello/shfmt:2.6.4
+    entrypoint: ["/bin/sh", "-c"]
+  stage: check
+  script:
+    - find bin/ -maxdepth 1 -type f | xargs -r shfmt -i 2 -ci -l -d
+  except:
+    variables:
+      - $AUTO_DEPLOY == "true"
+      - $CI_COMMIT_REF_NAME == 'master'
+
+tooling:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  stage: check
+  script:
+    - bin/k-ctl -t
+  except:
+    variables:
+      - $AUTO_DEPLOY == "true"
+      - $CI_COMMIT_REF_NAME == 'master'
+
+assert_consistent_tool_versions:
+  stage: check
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  script: "/k8s-workloads/assert-tool-versions.sh"
+  allow_failure: true
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+      - $CI_COMMIT_REF_NAME == 'master'
 
 #########################################
 # Attempts to find an MR on .com and add
