@@ -247,7 +247,7 @@ shfmt:
       - $CI_COMMIT_REF_NAME == 'master'
 
 tooling:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest:${CI_IMAGE_VERSION}"
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   stage: check
   script:
     - bin/k-ctl -t
