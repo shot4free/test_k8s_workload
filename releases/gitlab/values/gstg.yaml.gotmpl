@@ -14,6 +14,7 @@ gitlab:
     minReplicas: 5
     maxReplicas: 30
     extraEnv:
+      ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
     workhorse:
@@ -41,6 +42,9 @@ gitlab:
       observability:
         listen:
           address: ":8151"
+  sidekiq:
+    extraEnv:
+      ENABLE_ACTIVERECORD_EMPTY_PING: "true"
 
 global:
   appConfig:
