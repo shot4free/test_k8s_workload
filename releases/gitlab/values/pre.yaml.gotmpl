@@ -2,6 +2,18 @@
 
 gitlab:
   webservice:
+    deployments:
+      websockets:
+        service:
+          # this will move to values-from-external-sources.yaml.gotmpl
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=websockets-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
+        ingress:
+          path:
     workerProcesses: 2
     workhorse:
       resources:
