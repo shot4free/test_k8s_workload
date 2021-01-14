@@ -9,16 +9,16 @@
 include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-com.yml"
-    ref: 'v3.7.7'
+    ref: 'v4.0.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
-    ref: 'v3.7.7'
+    ref: 'v4.0.0'
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/cluster-init-before-script.yml"
-    ref: 'v3.7.7'
+    ref: 'v4.0.0'
 
 variables:
-  CI_IMAGE_VERSION: 'v3.7.7'
+  CI_IMAGE_VERSION: 'v4.0.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -35,7 +35,6 @@ variables:
   variables:
     PROJECT: gitlab-pre
     REGION: us-east1
-    USE_HELM3: "true"
     CHART_VERSION: b2653c1fe3506cd282055f9dffe4ed6711b9915d
   environment:
     name: pre
@@ -52,7 +51,6 @@ variables:
 .gstg-base:
   variables:
     PROJECT: gitlab-staging-1
-    USE_HELM3: "true"
     CHART_VERSION: b2653c1fe3506cd282055f9dffe4ed6711b9915d
   environment:
     url: https://staging.gitlab.com
@@ -100,7 +98,6 @@ variables:
 .gprd-base:
   variables:
     PROJECT: gitlab-production
-    USE_HELM3: "true"
   environment:
     url: https://gitlab.com
 
