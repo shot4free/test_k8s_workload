@@ -659,7 +659,22 @@ gitlab:
   # doc/charts/gitlab/webservice
   webservice:
     deployments:
+      websockets:
+        nodeSelector:
+          type: websockets
+        hpa:
+          minReplicas: 1
+        service:
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
+        ingress:
+          path:
       web:
+        nodeSelector:
+          type: git-https
         ingress:
           path: '/'
         hpa:
@@ -668,6 +683,8 @@ gitlab:
           # is complete
           minReplicas: 1
       git:
+        nodeSelector:
+          type: git-https
         ingress:
           path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
           annotations:
