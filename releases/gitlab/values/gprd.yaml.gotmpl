@@ -29,6 +29,8 @@ gitlab:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
+      DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      ENABLE_PUMA_NAKAYOSHI_FORK: "false"
   sidekiq:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
