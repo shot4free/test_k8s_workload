@@ -672,6 +672,11 @@ gitlab:
             cloud.google.com/load-balancer-type: Internal
         ingress:
           path:
+        pod:
+          labels:
+            deployment: websockets
+            type: websockets
+            tier: sv
       web:
         nodeSelector:
           type: git-https
@@ -682,6 +687,11 @@ gitlab:
           # the work in https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
           # is complete
           minReplicas: 1
+        pod:
+          labels:
+            deployment: web
+            type: web
+            tier: sv
       git:
         nodeSelector:
           type: git-https
@@ -689,6 +699,11 @@ gitlab:
           path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
           annotations:
             nginx.ingress.kubernetes.io/use-regex: "true"
+        pod:
+          labels:
+            deployment: git-https
+            type: git
+            tier: sv
     workerProcesses: 4
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
@@ -734,10 +749,6 @@ gitlab:
       proxyBodySize: 0
     nodeSelector:
       type: default
-    podLabels:
-      deployment: git-https
-      type: git
-      tier: sv
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
