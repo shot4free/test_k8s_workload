@@ -726,7 +726,7 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
     serviceLabels:
       railsPromJob: gitlab-rails
-      workhorsePromJob: gitlab-workhorse-git
+      workhorsePromJob: gitlab-workhorse
     trusted_proxies: ['10.0.0.0/8']
     monitoring:
       ipWhitelist:
