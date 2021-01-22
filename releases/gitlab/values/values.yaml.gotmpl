@@ -689,8 +689,12 @@ gitlab:
           minReplicas: 1
         pod:
           labels:
-            deployment: web
-            type: web
+            # Once we finish the websockets migration https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
+            # where websockets traffic will go to dedicated pods this should be updated to
+            # deployment: web
+            # type: web
+            deployment: git-https
+            type: git
             tier: sv
       git:
         nodeSelector:
