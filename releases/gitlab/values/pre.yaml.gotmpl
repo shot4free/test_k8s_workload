@@ -2,6 +2,8 @@
 
 gitlab:
   webservice:
+    extraEnv:
+      ACTION_CABLE_IN_APP: "true"
     deployments:
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
