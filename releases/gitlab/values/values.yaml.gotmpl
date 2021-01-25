@@ -870,6 +870,7 @@ gitlab:
     minReplicas: 2
     maxReplicas: 10
     extraEnv:
+      ACTION_CABLE_IN_APP: "true"
       BYPASS_SCHEMA_VERSION: "true"
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
