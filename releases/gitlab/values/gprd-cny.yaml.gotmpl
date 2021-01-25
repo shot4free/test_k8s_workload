@@ -15,6 +15,15 @@ gitlab:
   sidekiq:
     enabled: false
   webservice:
+    deployments:
+      websockets:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
+      git:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"

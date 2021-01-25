@@ -660,6 +660,9 @@ gitlab:
   webservice:
     deployments:
       websockets:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"main\"}"
         nodeSelector:
           type: websockets
         hpa:
@@ -697,6 +700,9 @@ gitlab:
             type: git
             tier: sv
       git:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
         nodeSelector:
           type: git-https
         ingress:
@@ -866,10 +872,8 @@ gitlab:
     maxReplicas: 10
     extraEnv:
       BYPASS_SCHEMA_VERSION: "true"
-      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
-      GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
