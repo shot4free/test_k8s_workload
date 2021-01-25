@@ -681,23 +681,22 @@ gitlab:
             type: websockets
             tier: sv
       web:
+        # Web currently functions as a catch-all for all requests that don't match
+        # the git-https traffic, once the work for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1505
+        # is complete, this deployment can be removed.
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
         nodeSelector:
           type: git-https
         ingress:
           path: '/'
         hpa:
-          # Webservice is the catchall deployment and will handle websocket traffic until
-          # the work in https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
-          # is complete
           minReplicas: 1
         pod:
           labels:
-            # Once we finish the websockets migration https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/355
-            # where websockets traffic will go to dedicated pods this should be updated to
-            # deployment: web
-            # type: web
-            deployment: git-https
-            type: git
+            deployment: web
+            type: web
             tier: sv
       git:
         extraEnv:
