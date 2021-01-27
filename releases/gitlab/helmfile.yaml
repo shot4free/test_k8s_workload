@@ -52,4 +52,4 @@ releases:
 {{ if eq (exec "../../bin/file-exists" (list (print "values/" .Environment.Name ".yaml.gotmpl"))) "true" }}
       - 'values/{{ .Environment.Name }}.yaml.gotmpl'
 {{ end }}
-      - values/values-from-external-sources.yaml.gotmpl
+      - values/values-from-external-sources.{{ .Environment.Name }}.yaml

@@ -105,12 +105,17 @@ When creating a secret, attempt to follow the documentation as close as possible
 For any changes to configurations that are stored in Chef:
 
 * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab-secrets/helmfile.yaml
-* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/values-from-external-sources.yaml.gotmpl
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/values-from-external-sources.jsonnet
 
-We must ensure that our Chef infrastructure and Kubernetes infrastructure match.
+We must ensure that our Chef infrastructure and Kubernetes infrastructure match. We use jsonnet to generate a json file for each environment
+that is consumed by helmfile. Jsonnet is fed chef roles from the `chef-repo` git repository, and the jsonnet file manipulates the contents
+and provides the correct output.
+
 To apply a change that is stored inside of chef perform the following tasks:
 
-1. Add a line to the file `CHEF_CONFIG_UPDATE` in the root of this directory (see file for example)
+1. Create a new local branch off master
+1. Run `make generate`
+1. Git add all the new generated files in `releases/gitlab/values/values-from-external-sources.*.json`
 1. Create a Merge Request with this file that links to the change contained in Chef for auditing purposes.
     * When the pipelines execute, we should see the configuration change as desired.
 1. Proceed to have a member of Delivery merge/review the MR
@@ -136,6 +141,15 @@ https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/381
 Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-operations.md).
 
 ## Bootstrapping new clusters
+If you're using `asdf`, install the relevant plugins and tools:
+
+```
+asdf plugin add helm
+asdf plugin add helmfile
+asdf plugin add go-jsonnet
+
+asdf install
+```
 
 ### Creating a new environment
 

@@ -1,0 +1,102 @@
+"gitlab":
+  "gitlab-shell":
+    "service":
+      "annotations":
+        "cloud.google.com/load-balancer-type": "Internal"
+      "loadBalancerIP": "10.232.20.28"
+      "type": "LoadBalancer"
+  "sidekiq":
+    "psql":
+      "host": "10.33.1.14"
+  "webservice":
+    "deployments":
+      "git":
+        "service":
+          "loadBalancerIP": "10.232.20.118"
+      "websockets":
+        "service":
+          "loadBalancerIP": "10.232.20.115"
+          "loadBalancerSourceRanges":
+          - "10.0.0.0/8"
+          "type": "LoadBalancer"
+    "extraEnv": {}
+    "rack_attack":
+      "git_basic_auth":
+        "bantime": 3600
+        "enabled": false
+        "findtime": 180
+        "ip_whitelist":
+        - "127.0.0.1"
+        "maxretry": 30
+    "workhorse": {}
+"global":
+  "appConfig":
+    "artifacts":
+      "bucket": "gitlab-pre-artifacts"
+      "enabled": true
+    "cron_jobs":
+      "pipeline_schedule_worker":
+        "cron": "*/5 * * * *"
+      "schedule_migrate_external_diffs_worker": {}
+    "dependencyProxy":
+      "bucket": "gitlab-pre-dependency-proxy"
+      "enabled": true
+    "externalDiffs":
+      "bucket": "gitlab-pre-external-diffs"
+      "enabled": false
+    "incomingEmail":
+      "address": "incoming-pre+%{key}@incoming.gitlab.com"
+      "user": "incoming-pre@incoming.gitlab.com"
+    "lfs":
+      "bucket": "gitlab-pre-lfs-objects"
+      "enabled": true
+    "omniauth":
+      "blockAutoCreatedUsers": false
+      "enabled": true
+    "packages":
+      "bucket": "gitlab-pre-package-repo"
+      "enabled": true
+    "sentry":
+      "dsn": "https://e9401448c5c04c39823793199b8f7c49@sentry.gitlab.net/22"
+      "enabled": true
+    "serviceDeskEmail": {}
+    "terraformState":
+      "bucket": "gitlab-pre-terraform-state"
+      "enabled": false
+    "uploads":
+      "bucket": "gitlab-pre-uploads"
+      "enabled": true
+  "email":
+    "from": "notify@mg.pre.gitlab.com"
+  "gitaly":
+    "external":
+    - "hostname": "gitaly-01-sv-pre.c.gitlab-pre.internal"
+      "name": "default"
+      "port": "9999"
+    - "hostname": "praefect-01-stor-pre.c.gitlab-pre.internal"
+      "name": "praefect"
+      "port": "2305"
+  "hosts":
+    "externalIP": "10.232.20.81"
+    "registry":
+      "name": "registry.pre.gitlab.com"
+  "pages":
+    "host": "pre.gitlab.io"
+  "psql":
+    "host": "10.33.1.14"
+    "port": "5432"
+    "username": "gitlab"
+  "redis":
+    "host": "10.232.7.3"
+    "password":
+      "enabled": false
+    "port": "6379"
+  "smtp":
+    "address": "smtp.mailgun.org"
+    "authentication": "plain"
+    "domain": "mg.pre.gitlab.com"
+    "starttls_auto": true
+    "user_name": "postmaster@mg.pre.gitlab.com"
+"registry":
+  "service":
+    "loadBalancerIP": "10.232.20.237"

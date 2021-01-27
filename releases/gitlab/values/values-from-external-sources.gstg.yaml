@@ -1,0 +1,216 @@
+"gitlab":
+  "gitlab-shell":
+    "service":
+      "annotations":
+        "cloud.google.com/load-balancer-type": "Internal"
+      "loadBalancerIP": ""
+      "type": "LoadBalancer"
+  "sidekiq":
+    "psql":
+      "database": "gitlabhq_production_sidekiq"
+      "host": "pgbouncer-sidekiq.int.gstg.gitlab.net"
+  "webservice":
+    "deployments":
+      "git":
+        "service":
+          "loadBalancerIP": ""
+      "websockets": {}
+    "extraEnv": {}
+    "rack_attack":
+      "git_basic_auth":
+        "bantime": 3600
+        "enabled": true
+        "findtime": 180
+        "ip_whitelist":
+        - "127.0.0.1"
+        "maxretry": 30
+    "workhorse":
+      "sentryDSN": "https://b62b72db8c264412ab406fdb6db248ff@sentry.gitlab.net/94"
+"global":
+  "appConfig":
+    "artifacts":
+      "bucket": "gitlab-gstg-artifacts"
+      "enabled": true
+    "cron_jobs":
+      "pipeline_schedule_worker":
+        "cron": "*/5 * * * *"
+      "schedule_migrate_external_diffs_worker":
+        "cron": "*/5 * * * *"
+    "dependencyProxy":
+      "bucket": "gitlab-gstg-dependency-proxy"
+      "enabled": true
+    "externalDiffs":
+      "bucket": "gitlab-gstg-external-diffs"
+      "enabled": true
+    "incomingEmail":
+      "address": "incoming-staging+%{key}@gitlab.com"
+      "user": "incoming-staging@gitlab.com"
+    "lfs":
+      "bucket": "gitlab-gstg-lfs-objects"
+      "enabled": true
+    "omniauth":
+      "blockAutoCreatedUsers": false
+      "enabled": true
+    "packages":
+      "bucket": "gitlab-gstg-package-repo"
+      "enabled": true
+    "sentry":
+      "clientside_dsn": "https://526a2f38a53d44e3a8e69bfa001d1e8b@sentry.gitlab.net/15"
+      "dsn": "https://0cfeea6daa0d4f2a90c1e86b4b82830a:ec54f3af800242fd8ff023305035c514@sentry.gitlab.net/10"
+      "enabled": true
+    "serviceDeskEmail":
+      "address": "contact-project-staging+%{key}@incoming.gitlab.com"
+      "enabled": true
+      "user": "contact-project-staging@incoming.gitlab.com"
+    "terraformState":
+      "bucket": "gitlab-gstg-terraform-state"
+      "enabled": true
+    "uploads":
+      "bucket": "gitlab-gstg-uploads"
+      "enabled": true
+  "email":
+    "from": "gitlab@mg.gitlab.com"
+  "gitaly":
+    "external":
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "default"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file01"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file02"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file03"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file04"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file05"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file06"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file07"
+      "port": "9999"
+    - "hostname": "file-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file08"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file09"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file10"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file11"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file12"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file13"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file14"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file15"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file16"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file17"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file18"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file19"
+      "port": "9999"
+    - "hostname": "file-02-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file20"
+      "port": "9999"
+    - "hostname": "file-zfs-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file21"
+      "port": "9999"
+    - "hostname": "i.gstg-gcp-tcp-lb-internal-praefect.il4.us-east1.lb.gitlab-staging-1.internal"
+      "name": "nfs-file22"
+      "port": "2305"
+    - "hostname": "file-hdd-01-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file23"
+      "port": "9999"
+    - "hostname": "file-06-stor-gstg.c.gitlab-staging-1.internal"
+      "name": "nfs-file24"
+      "port": "9999"
+  "hosts":
+    "externalIP": ""
+    "registry":
+      "name": "registry.staging.gitlab.com"
+  "pages":
+    "host": "staging.gitlab.io"
+  "psql":
+    "host": "pgbouncer.int.gstg.gitlab.net"
+    "port": 6432
+    "username": "gitlab"
+  "redis":
+    "cache":
+      "host": "gstg-redis-cache"
+      "password":
+        "enabled": "true"
+        "key": "secret"
+        "secret": "gitlab-redis-credential-v1"
+      "sentinels":
+      - "host": "redis-cache-sentinel-01-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-cache-sentinel-02-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-cache-sentinel-03-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+    "host": "gstg-redis"
+    "queues":
+      "host": "gstg-redis-sidekiq"
+      "password":
+        "enabled": "true"
+        "key": "secret"
+        "secret": "gitlab-redis-credential-v1"
+      "sentinels":
+      - "host": "redis-sidekiq-01-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-sidekiq-02-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-sidekiq-03-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+    "sentinels":
+    - "host": "redis-01-db-gstg.c.gitlab-staging-1.internal"
+      "port": 26379
+    - "host": "redis-02-db-gstg.c.gitlab-staging-1.internal"
+      "port": 26379
+    - "host": "redis-03-db-gstg.c.gitlab-staging-1.internal"
+      "port": 26379
+    "sharedState":
+      "host": "gstg-redis"
+      "password":
+        "enabled": "true"
+        "key": "secret"
+        "secret": "gitlab-redis-credential-v1"
+      "sentinels":
+      - "host": "redis-01-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-02-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+      - "host": "redis-03-db-gstg.c.gitlab-staging-1.internal"
+        "port": 26379
+  "smtp":
+    "address": "smtp.mailgun.org"
+    "authentication": "plain"
+    "domain": "mg.staging.gitlab.com"
+    "starttls_auto": true
+    "user_name": "postmaster@mg.staging.gitlab.com"
+"registry":
+  "service":
+    "loadBalancerIP": ""
