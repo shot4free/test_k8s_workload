@@ -660,6 +660,10 @@ gitlab:
   webservice:
     deployments:
       websockets:
+        # This needs to be set to zero if we are only
+        # running one pod in each zone
+        pdb:
+          maxUnavailable: 0
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"main\"}"
