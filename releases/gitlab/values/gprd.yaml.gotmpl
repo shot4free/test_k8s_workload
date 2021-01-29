@@ -25,30 +25,6 @@ gitlab:
     maxReplicas: 150
   webservice:
     deployments:
-      web:
-        # Web currently functions as a catch-all for all requests that don't match
-        # the git-https traffic, once the work for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1505
-        # is complete, this deployment can be removed.
-        extraEnv:
-          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
-        nodeSelector:
-          type: git-https
-        ingress:
-          path: '/'
-        hpa:
-          minReplicas: 1
-        pod:
-          labels:
-            deployment: web
-            type: web
-            tier: sv
-      git:
-        ingress:
-          path: '/.*\.git(/(info|git-(upload|receive)-pack))?'
-          annotations:
-            nginx.ingress.kubernetes.io/use-regex: "true"
-
       websockets:
         workhorse:
           # these limits are increased due to memory consumption observed when we
