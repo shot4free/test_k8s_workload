@@ -8,10 +8,21 @@ nginx-ingress:
 
 gitlab:
   webservice:
+    # blackoutSeconds, minReplicas, initialDelaySeconds, terminationGracePeriodSeconds
+    # set temporarily for
+    # testing https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1509
+    shutdown:
+      blackoutSeconds: 0
     deployments:
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       websockets:
+        hpa:
+          minReplicas: 1
+        deployment:
+          readinessProbe:
+            initialDelaySeconds: 0
+          terminationGracePeriodSeconds: 30
         nodeSelector:
           type: default
       git:
