@@ -10,7 +10,9 @@ nginx-ingress:
 
 registry:
   hpa:
-    minReplicas: 10
+    # min is set higher until we have more control over the HPA
+    # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
+    minReplicas: 30
     maxReplicas: 150
   nodeSelector:
     type: registry
