@@ -53,9 +53,6 @@ gitlab:
       requests:
         cpu: 2
         memory: 2.5G
-    extraEnv:
-      DISABLE_PUMA_NAKAYOSHI_FORK: "false"
-      ENABLE_PUMA_NAKAYOSHI_FORK: "true"
   gitlab-shell:
     workhorse:
       # This is the internal API endpoint for GitLab Shell
