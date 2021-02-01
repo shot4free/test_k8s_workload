@@ -24,6 +24,17 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+        service:
+          # These lines should move to values.yaml.gotmpl once we enable
+          # this on production
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
+          # This should move to values-from-external-sources.yaml.gotmpl once
+          # the change is made on production
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=git-https-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
