@@ -28,6 +28,8 @@ gitlab:
   webservice:
     deployments:
       websockets:
+        hpa:
+          minReplicas: 6
         workhorse:
           # these limits are increased due to memory consumption observed when we
           # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413

@@ -17,6 +17,8 @@ gitlab:
   webservice:
     deployments:
       websockets:
+        hpa:
+          minReplicas: 1
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
