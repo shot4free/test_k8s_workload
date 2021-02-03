@@ -35,17 +35,10 @@ gitlab:
         cpu: 4
         memory: 5G
   kas:
-    customConfig:
-      agent:
-        listen:
-          address: ":8150"
-          websocket: true
-      gitlab:
-        address: https://int.gstg.gitlab.net:11443
-        authentication_secret_file: "/etc/kas/.gitlab_kas_secret"
-      observability:
-        listen:
-          address: ":8151"
+    workhorse:
+      scheme: 'https'
+      host: 'int.gstg.gitlab.net'
+      port: 11443
   sidekiq:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
