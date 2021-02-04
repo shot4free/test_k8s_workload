@@ -235,3 +235,18 @@ Then apply using `k-ctl`
 ```
 ./bin/k-ctl -e <env name> apply
 ```
+
+## Setting Chart Version
+
+There are two locations where the desired chart version is to be configured.
+
+1. In a global variabled called `CHART_VERSION` in the `.gitlab-ci.yml` file
+1. In an environment specific variable located in `<environment>-base` section
+   of the `.gitlab-ci.yml`
+
+The latter option is meant to be performed when upgrading our chart for the
+purposes of testing prior to rolling that change into production.  As soon as
+testing is complete, remove this variable in favor of a commit to changing the
+value as indicated by the first option.  Do NOT change the variable using
+GitLab's UI for configuring variables.  Doing so removes a bit of visibility of
+how and when we perform chart upgrades.

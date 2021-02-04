@@ -7,6 +7,11 @@
 
 set -euf -o pipefail
 
+get_charts_version() {
+  version=${CHART_VERSION:-$(sed -n "s/^\\s\\sCHART_VERSION:\\s'\\(.*\\)'/\\1/p" .gitlab-ci.yml)}
+  echo "$version"
+}
+
 dir="$(
   cd "$(dirname "${0}")"
   pwd
@@ -39,7 +44,7 @@ fi
 
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
-CHART_VERSION=$(get_chart_version)
+CHART_VERSION=$(get_charts_version)
 export CHART_VERSION
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"

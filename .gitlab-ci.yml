@@ -13,15 +13,43 @@ include:
   - project: "gitlab-com/gl-infra/k8s-workloads/common"
     file: "/ci/except-ops.yml"
     ref: 'v4.1.0'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/cluster-init-before-script.yml"
-    ref: 'v4.1.0'
 
 variables:
   CI_IMAGE_VERSION: 'v4.1.0'
   AUTO_DEPLOY: 'false'
+  CHART_VERSION: 'b2653c1fe3506cd282055f9dffe4ed6711b9915d'
 
 #############################################################
+
+.cluster-init-before-script:
+  before_script:
+    - |
+      if [[ $LOG_LEVEL == "debug" ]]; then
+         echo "A high debug level may expose secrets, this job will now exit..."
+         exit 1
+      fi
+    - eval $(./bin/k-ctl config 2>/dev/null)
+    - |
+      if [[ $DRY_RUN == "false" ]]; then
+        echo 'Using SERVICE_KEY'
+        gcloud auth activate-service-account --key-file $SERVICE_KEY
+      else
+        echo 'Using SERVICE_KEY_RO'
+        gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+      fi
+    - gcloud config set project $PROJECT
+    - gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # Configure SSH authentication for the helm-git plugin
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - |
+      if [[ $USE_ARTIFACT == "true" ]] && [[ -f "./gitlab-0.0.0+$CHART_VERSION.tgz" ]]; then
+        export ARTIFACT_AVAILABLE=true
+        echo "Using chart from artifact"
+        tar xf gitlab-0.0.0+$CHART_VERSION.tgz
+      else
+        echo "Using chart from git repo"
+      fi
 
 .deploy:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
@@ -230,6 +258,7 @@ shellcheck:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
 
 shfmt:
   image:
@@ -242,6 +271,7 @@ shfmt:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
 
 tooling:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
@@ -252,6 +282,7 @@ tooling:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
 
 assert_consistent_tool_versions:
   stage: check
@@ -262,6 +293,26 @@ assert_consistent_tool_versions:
     variables:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
+
+build-chart:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  stage: check
+  script:
+    # Configure SSH authentication for the cloning our helm chart
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - CLONE_DIR=$(mktemp -d -p $(pwd))
+    - git clone --no-checkout "git@dev.gitlab.org:gitlab/charts/gitlab.git" "$CLONE_DIR"
+    - cd "$CLONE_DIR"
+    - git -c advice.detachedHead=false checkout "$CHART_VERSION"
+    - git rev-parse --verify HEAD
+    - helm package ./ --dependency-update --version "0.0.0+${CHART_VERSION}" --destination ../
+  allow_failure: true
+  artifacts:
+    name: $CHART_VERSION
+    paths:
+      - '*.tgz'
 
 #########################################
 # Attempts to find an MR on .com and add
@@ -279,6 +330,7 @@ notify_com_mr:
   # without a corresponding MR, for this reason we allow it to
   # fail
   allow_failure: true
+  dependencies: []
 
 ############################ CI JOBS ################################
 #####################################################################
