@@ -5,6 +5,6 @@ helmDefaults:
   tillerless: true
   cleanupOnFail: false
   wait: true
-  timeout: 1800
+  timeout: 3600
   # Do not recreate pods during upgrade when not required
   recreatePods: false
