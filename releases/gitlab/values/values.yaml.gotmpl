@@ -385,73 +385,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: true
-  tcpExternalConfig: "true"
-  controller:
-    terminationGracePeriodSeconds: 120
-    nodeSelector:
-      type: default
-    autoscaling:
-      enabled: true
-      minReplicas: 1
-      maxReplicas: 100
-      targetCPUUtilizationPercentage: 50
-      targetMemoryUtilizationPercentage: 50
-    config:
-      hsts-include-subdomains: "false"
-      server-name-hash-bucket-size: "256"
-      enable-vts-status: "true"
-      use-http2: "false"
-      ssl-ciphers: "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"
-      ssl-protocols: "TLSv1.1 TLSv1.2"
-      server-tokens: "false"
-      upstream-keepalive-timeout: "30"
-      upstream-keepalive-requests: "0"
-    lifecycle:
-      preStop:
-        exec:
-          command: ["/bin/sh", "-c", "sleep 5; /usr/sbin/nginx -c /etc/nginx/nginx.conf -s quit; while pgrep -x nginx; do sleep 1; done"]
-    extraArgs:
-      force-namespace-isolation: ""
-    service:
-      externalTrafficPolicy: "Local"
-      omitClusterIP: true
-      annotations:
-        cloud.google.com/load-balancer-type: Internal
-    resources:
-      requests:
-        cpu: 300m
-        memory: 500Mi
-    publishService:
-      enabled: true
-    replicaCount: 3
-    minAvailable: 2
-    scope:
-      enabled: true
-    stats:
-      enabled: true
-      service:
-        omitClusterIP: true
-    metrics:
-      enabled: true
-      service:
-        annotations:
-          prometheus.io/scrape: "true"
-          prometheus.io/port: "10254"
-        omitClusterIP: true
-  defaultBackend:
-    minAvailable: 1
-    replicaCount: 2
-    resources:
-      requests:
-        cpu: 5m
-        memory: 5Mi
-    service:
-      omitClusterIP: true
-  rbac:
-    create: true
-  serviceAccount:
-    create: true
+  enabled: false
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version

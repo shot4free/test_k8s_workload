@@ -1,13 +1,5 @@
 ---
 
-nginx-ingress:
-  controller:
-    autoscaling:
-      minReplicas: 10
-    resources:
-      requests:
-        cpu: 1
-
 registry:
   hpa:
     # min is set higher until we have more control over the HPA
