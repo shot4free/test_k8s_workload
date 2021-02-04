@@ -149,6 +149,9 @@ gitlab:
 {{- $rack_attack_ip_whitelist := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.ip_whitelist") }}
   webservice:
     deployments:
+      git:
+        service:
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=git-https-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
       websockets:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=websockets-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}

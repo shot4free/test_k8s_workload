@@ -686,6 +686,12 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
         nodeSelector:
           type: git-https
+        service:
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
         ingress:
           path: '/'
         pod:
