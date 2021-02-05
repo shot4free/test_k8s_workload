@@ -1,63 +1,17 @@
 ---
 
-#############################################################
-# Unfortunately the version tag needs to be repeated
-# in multiple places here because variables are not supported
-# in the include section
-# https://gitlab.com/gitlab-org/gitlab-ce/issues/65621
-
 include:
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/except-com.yml"
-    ref: 'v4.1.0'
-  - project: "gitlab-com/gl-infra/k8s-workloads/common"
-    file: "/ci/except-ops.yml"
-    ref: 'v4.1.0'
+  - '/ci/deploy.yml'
+  - '/ci/except-com.yml'
+  - '/ci/except-ops.yml'
+  - '/ci/cluster-init-before-script.yml'
 
 variables:
-  CI_IMAGE_VERSION: 'v4.1.0'
+  CI_IMAGE_VERSION: 'v5.0.0'
   AUTO_DEPLOY: 'false'
   CHART_VERSION: 'b2653c1fe3506cd282055f9dffe4ed6711b9915d'
 
 #############################################################
-
-.cluster-init-before-script:
-  before_script:
-    - |
-      if [[ $LOG_LEVEL == "debug" ]]; then
-         echo "A high debug level may expose secrets, this job will now exit..."
-         exit 1
-      fi
-    - eval $(./bin/k-ctl config 2>/dev/null)
-    - |
-      if [[ $DRY_RUN == "false" ]]; then
-        echo 'Using SERVICE_KEY'
-        gcloud auth activate-service-account --key-file $SERVICE_KEY
-      else
-        echo 'Using SERVICE_KEY_RO'
-        gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
-      fi
-    - gcloud config set project $PROJECT
-    - gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-    # Configure SSH authentication for the helm-git plugin
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
-    - |
-      if [[ $USE_ARTIFACT == "true" ]] && [[ -f "./gitlab-0.0.0+$CHART_VERSION.tgz" ]]; then
-        export ARTIFACT_AVAILABLE=true
-        echo "Using chart from artifact"
-        tar xf gitlab-0.0.0+$CHART_VERSION.tgz
-      else
-        echo "Using chart from git repo"
-      fi
-
-.deploy:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
-  extends:
-    - .except-com
-    - .cluster-init-before-script
-  tags:
-    - k8s-workloads
 
 .pre-base:
   variables:

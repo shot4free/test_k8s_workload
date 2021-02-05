@@ -1,0 +1,31 @@
+---
+
+.cluster-init-before-script:
+  before_script:
+    - |
+      if [[ $LOG_LEVEL == "debug" ]]; then
+         echo "A high debug level may expose secrets, this job will now exit..."
+         exit 1
+      fi
+    - eval $(./bin/k-ctl config 2>/dev/null)
+    - |
+      if [[ $DRY_RUN == "false" ]]; then
+        echo 'Using SERVICE_KEY'
+        gcloud auth activate-service-account --key-file $SERVICE_KEY
+      else
+        echo 'Using SERVICE_KEY_RO'
+        gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+      fi
+    - gcloud config set project $PROJECT
+    - gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # Configure SSH authentication for the helm-git plugin
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - |
+      if [[ $USE_ARTIFACT == "true" ]] && [[ -f "./gitlab-0.0.0+$CHART_VERSION.tgz" ]]; then
+        export ARTIFACT_AVAILABLE=true
+        echo "Using chart from artifact"
+        tar xf gitlab-0.0.0+$CHART_VERSION.tgz
+      else
+        echo "Using chart from git repo"
+      fi

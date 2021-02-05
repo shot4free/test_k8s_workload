@@ -1,0 +1,6 @@
+---
+
+.except-ops:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
