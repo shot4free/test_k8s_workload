@@ -8,6 +8,26 @@ gitlab:
     shutdown:
       blackoutSeconds: 0
     deployments:
+      api:
+        hpa:
+          minReplicas: 1
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
+        nodeSelector:
+          type: default
+        service:
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
+        maxUnavailable: 0
+        pod:
+          labels:
+            deployment: api
+            type: api
+            tier: sv
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       websockets:
