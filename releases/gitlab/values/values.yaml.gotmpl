@@ -1159,6 +1159,10 @@ gitlab:
         networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
         secretName: ""
+    podLabels:
+      type: kas
+      tier: sv
+      deployment: kas
     service:
       annotations:
         cloud.google.com/neg: '{"ingress": true}'
