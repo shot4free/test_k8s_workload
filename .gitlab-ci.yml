@@ -5,6 +5,8 @@ include:
   - '/ci/except-com.yml'
   - '/ci/except-ops.yml'
   - '/ci/cluster-init-before-script.yml'
+  - '/ci/shellcheck.yml'
+  - '/ci/version-checks.yml'
 
 variables:
   CI_IMAGE_VERSION: 'v5.0.0'
@@ -199,59 +201,11 @@ stages:
   - gprd-cny:deploy
   - gprd:deploy
 
-#### Check jobs
-
-shellcheck:
-  image:
-    name: nlknguyen/alpine-shellcheck
-    entrypoint: ["/bin/sh", "-c"]
-  stage: check
-  script:
-    - find bin/ -maxdepth 1 -type f | xargs -r shellcheck -e SC1090,SC1091
-  except:
-    variables:
-      - $AUTO_DEPLOY == "true"
-      - $CI_COMMIT_REF_NAME == 'master'
-  dependencies: []
-
-shfmt:
-  image:
-    name: peterdavehello/shfmt:2.6.4
-    entrypoint: ["/bin/sh", "-c"]
-  stage: check
-  script:
-    - find bin/ -maxdepth 1 -type f | xargs -r shfmt -i 2 -ci -l -d
-  except:
-    variables:
-      - $AUTO_DEPLOY == "true"
-      - $CI_COMMIT_REF_NAME == 'master'
-  dependencies: []
-
-tooling:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
-  stage: check
-  script:
-    - bin/k-ctl -t
-  except:
-    variables:
-      - $AUTO_DEPLOY == "true"
-      - $CI_COMMIT_REF_NAME == 'master'
-  dependencies: []
-
-assert_consistent_tool_versions:
-  stage: check
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
-  script: "/k8s-workloads/assert-tool-versions.sh"
-  allow_failure: true
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
-      - $CI_COMMIT_REF_NAME == 'master'
-  dependencies: []
-
 build-chart:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   stage: check
+  extends:
+    - .except-com
   script:
     # Configure SSH authentication for the cloning our helm chart
     - chmod 400 "$SSH_PRIVATE_KEY"
@@ -286,8 +240,17 @@ notify_com_mr:
   allow_failure: true
   dependencies: []
 
-############################ CI JOBS ################################
-#####################################################################
+###############################################################################
+### Configuration Jobs ###
+#
+# Jobs here are specific to changes to configurations.  These will construct a
+# pipeline that targets all environments running QA inbetween non-prod and
+# prod environments. The pipeline is triggered by changes to this repository.
+#
+#  Reference: `.only-auto-deploy-false-and-config-changes`
+#
+# Changes to infrastructure only occur when we create a pipeline on changes to
+# the `master` branch
 
 ### PreProd
 
@@ -580,13 +543,15 @@ gstg:qa:
       - 'releases/gitlab/values/gstg*'
 
 ###############################################################################
-### Auto Deploy Jobs ###
+### Deploy Jobs ###
 #
-# Jobs here are specific to auto-deploys.  These are triggered by deployer
-# using the specific variables:
-#   * ENVIRONMENT
-#   * DRY_RUN
-#   * AUTO_DEPLOY
+# Jobs here are specific to deployments.  We only support targeting one
+# environment at a time.  These are triggered by external tooling using these
+# specific variables:
+#
+#   * ENVIRONMENT - configures CI to create a pipeline targeting one environment
+#   * DRY_RUN - if true, does not make changes to infrastructure
+#   * AUTO_DEPLOY - set via external tooling, only runs deploy related jobs
 
 ### PreProd
 

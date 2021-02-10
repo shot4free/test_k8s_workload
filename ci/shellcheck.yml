@@ -1,3 +1,5 @@
+---
+
 shellcheck:
   image:
     name: nlknguyen/alpine-shellcheck
@@ -9,6 +11,7 @@ shellcheck:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
 
 shfmt:
   image:
@@ -21,9 +24,10 @@ shfmt:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
 
 tooling:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:latest"
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   stage: check
   script:
     - bin/k-ctl -t
@@ -31,3 +35,4 @@ tooling:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+  dependencies: []
