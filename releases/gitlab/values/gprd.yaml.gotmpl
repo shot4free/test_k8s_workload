@@ -37,6 +37,11 @@ gitlab:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       ENABLE_PUMA_NAKAYOSHI_FORK: "false"
+  kas:
+    workhorse:
+      scheme: 'https'
+      host: 'int.gprd.gitlab.net'
+      port: 443
   sidekiq:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
@@ -244,6 +249,8 @@ global:
   hosts:
     gitlab:
       name: gitlab.com
+    kas:
+      name: kas.gitlab.com
 
   psql:
     prepared_statements: false

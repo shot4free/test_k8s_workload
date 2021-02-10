@@ -22,7 +22,9 @@ environments:
           mailroom:
             enabled: true
           kas:
-            enabled: false
+            enabled: true
+        gitlab_extras:
+          installed: true
       # These services are only installed in the
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
@@ -65,12 +67,8 @@ environments:
             enabled: true
           webservice:
             enabled: true
-          kas:
-            enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
-        gitlab_extras:
-          installed: true
         kas:
           managed_cert_name: kas-pre-gitlab-com
           domain: kas.pre.gitlab.com
@@ -86,11 +84,6 @@ environments:
         registry_api_host: "registry.staging.gitlab.com"
         cluster: gstg-gitlab-gke
         region: us-east1
-        gitlab_extras:
-          installed: true
-        gitlab:
-          kas:
-            enabled: true
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
@@ -150,6 +143,10 @@ environments:
             enabled: true
           webservice:
             enabled: true
+          kas:
+            enabled: false
+        gitlab_extras:
+          installed: false
 
   gprd:
     values:
@@ -162,6 +159,9 @@ environments:
         registry_api_host: "registry.gitlab.com"
         cluster: gprd-gitlab-gke
         region: us-east1
+        kas:
+          managed_cert_name: kas-gitlab-com
+          domain: kas.gitlab.com
 
   # Zonal clusters for gprd, these three environments
   # inherit from the gprd environemnt, which is the

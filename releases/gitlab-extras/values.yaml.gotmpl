@@ -19,4 +19,8 @@ resources:
         port: 8151
         type: HTTP
         requestPath: /liveness
+        checkIntervalSec: 5
+        timeoutSec: 3
       timeoutSec: 1830
+      securityPolicy:
+        name: "kas-ingress-policy"
