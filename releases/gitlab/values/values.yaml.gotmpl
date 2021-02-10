@@ -431,10 +431,11 @@ registry:
   enabled: {{ .Environment.Values.registry.enabled }}
   nodeSelector:
     type: default
-  podLabels:
-    type: registry
-    tier: sv
-    deployment: registry
+  common:
+    labels:
+      type: registry
+      tier: sv
+      deployment: registry
   image:
     # `tag` is set via init-values.yaml.gotmpl
     # tag:
@@ -583,10 +584,11 @@ gitlab:
       format: "json"
     nodeSelector:
       type: shell
-    podLabels:
-      deployment: gitlab-shell
-      type: git
-      tier: sv
+    common:
+      labels:
+        deployment: gitlab-shell
+        type: git
+        tier: sv
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
@@ -905,9 +907,10 @@ gitlab:
           - port: 5000
             protocol: TCP
 
-    podLabels:
-      tier: sv
-      type: sidekiq
+    common:
+      labels:
+        tier: sv
+        type: sidekiq
 
     hpa:
       # Changed from default for urgent-other
@@ -1099,10 +1102,11 @@ gitlab:
     enabled: {{ .Environment.Values.gitlab.mailroom.enabled }}
     nodeSelector:
       type: default
-    podLabels:
-      deployment: mailroom
-      type: mailroom
-      tier: sv
+    common:
+      labels:
+        deployment: mailroom
+        type: mailroom
+        tier: sv
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       # Pin the tag to avoid following the chart default
@@ -1159,10 +1163,11 @@ gitlab:
         networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
         secretName: ""
-    podLabels:
-      type: kas
-      tier: sv
-      deployment: kas
+    common:
+      labels:
+        type: kas
+        tier: sv
+        deployment: kas
     service:
       annotations:
         cloud.google.com/neg: '{"ingress": true}'
