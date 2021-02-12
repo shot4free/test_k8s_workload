@@ -325,7 +325,9 @@ gstg:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration"
   resource_group: gstg
   only:
     refs:
@@ -341,7 +343,9 @@ gstg-us-east1-b:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration"
   only:
     refs:
       - master
@@ -356,7 +360,9 @@ gstg-us-east1-c:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration"
   only:
     refs:
       - master
@@ -371,7 +377,9 @@ gstg-us-east1-d:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration"
   only:
     refs:
       - master
@@ -398,7 +406,9 @@ gprd-cny:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME -s cny
+    - sendEvent "Starting k8s configuration for $CLUSTER" "grpd" "configuration" "cny"
     - bin/k-ctl -s cny upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
   resource_group: gprd-cny
   only:
     refs:
@@ -453,7 +463,9 @@ gprd:upgrade:
   when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   only:
     refs:
       - master
@@ -469,7 +481,9 @@ gprd-us-east1-b:upgrade:
   when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   only:
     refs:
       - master
@@ -485,7 +499,9 @@ gprd-us-east1-c:upgrade:
   when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   only:
     refs:
       - master
@@ -501,7 +517,9 @@ gprd-us-east1-d:upgrade:
   when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   only:
     refs:
       - master
@@ -629,7 +647,9 @@ gstg:auto-deploy:
     - .deploy
     - .gstg
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -640,7 +660,9 @@ gstg-us-east1-b:auto-deploy:
     - .deploy
     - .gstg-us-east1-b
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -651,7 +673,9 @@ gstg-us-east1-c:auto-deploy:
     - .deploy
     - .gstg-us-east1-c
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -662,7 +686,9 @@ gstg-us-east1-d:auto-deploy:
     - .deploy
     - .gstg-us-east1-d
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -687,7 +713,9 @@ gprd-cny:auto-deploy:
     - .deploy
     - .gprd
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment" "cny"
     - bin/k-ctl -s cny upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment" "cny"
   resource_group: gprd-cny
   only:
     variables:
@@ -745,7 +773,9 @@ gprd:auto-deploy:
     - .deploy
     - .gprd
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -756,7 +786,9 @@ gprd-us-east1-b:auto-deploy:
     - .deploy
     - .gprd-us-east1-b
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -767,7 +799,9 @@ gprd-us-east1-c:auto-deploy:
     - .deploy
     - .gprd-us-east1-c
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -778,7 +812,9 @@ gprd-us-east1-d:auto-deploy:
     - .deploy
     - .gprd-us-east1-d
   script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
