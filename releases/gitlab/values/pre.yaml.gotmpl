@@ -88,6 +88,9 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 10
+  kas:
+    nodeSelector:
+      type: default
 global:
   appConfig:
     incomingEmail:
