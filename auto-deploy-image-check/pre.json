@@ -5,6 +5,12 @@
   "name": "gitlab-gitlab-chart-info",
   "change": "MODIFY"
 },{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-gitlab-shell",
+  "change": "MODIFY"
+},{
   "api": "batch",
   "kind": "Job",
   "namespace": "gitlab",
@@ -20,12 +26,18 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
+  "name": "gitlab-webservice-api",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
   "name": "gitlab-webservice-git",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-webservice-web",
+  "name": "gitlab-webservice-websockets",
   "change": "MODIFY"
 }]
