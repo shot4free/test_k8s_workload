@@ -99,6 +99,7 @@ auto_deploy_check() {
   fi
 
   local diff_file=$1
+
   if [[ $(jq '. | length' "$diff_file") -eq 0 ]]; then
     debug "✅ There are no changes detected" "$_BGRN"
     return
@@ -148,9 +149,9 @@ case "$ACTION" in
         fi
       else
         helm_diff "--output=json" | tee "$HELM_DIFF_TMP_FNAME"
-        # helm diff has an extra line in for installing tiller that is sent to stdout
-        # that needs to be removed for the json output
-        sed -i -e '/Installing Tiller.*/d' "$HELM_DIFF_TMP_FNAME"
+        # helm diff has an extra line that starts with "Comparing release"
+        # that needs to be removed.
+        sed -i -e '/^Comparing release/d' "$HELM_DIFF_TMP_FNAME"
         auto_deploy_check "$HELM_DIFF_TMP_FNAME"
       fi
     else
