@@ -12,6 +12,30 @@ gitlab:
     minReplicas: 5
     maxReplicas: 30
     deployments:
+      api:
+        hpa:
+          minReplicas: 2
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
+        nodeSelector:
+          type: api
+        service:
+          # Note that we are creating a loadbalancer, but not yet using it,
+          # This will come to use in issue: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1557
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
+        ingress:
+          path: '/api'
+        pod:
+          labels:
+            deployment: api
+            type: api
+            tier: sv
       websockets:
         extraEnv:
           GODEBUG: madvdontneed=1

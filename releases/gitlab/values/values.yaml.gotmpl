@@ -385,7 +385,40 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: false
+  enabled: true
+  controller:
+    terminationGracePeriodSeconds: 120
+    nodeSelector:
+      type: default
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    config:
+      upstream-keepalive-timeout: "30"
+      upstream-keepalive-requests: "0"
+    lifecycle:
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "sleep 5; /usr/sbin/nginx -c /etc/nginx/nginx.conf -s quit; while pgrep -x nginx; do sleep 1; done"]
+    service:
+      omitClusterIP: true
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
+    resources:
+      requests:
+        cpu: 300m
+        memory: 500Mi
+    replicaCount: 3
+    minAvailable: 2
+    metrics:
+      service:
+        omitClusterIP: true
+  defaultBackend:
+    service:
+      omitClusterIP: true
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version

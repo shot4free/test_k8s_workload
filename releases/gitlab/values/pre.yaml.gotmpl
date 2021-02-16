@@ -19,12 +19,17 @@ gitlab:
         nodeSelector:
           type: default
         service:
+          # Note that we are creating a loadbalancer, but not yet using it,
+          # This will come to use in issue: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1557
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
           type: LoadBalancer
           loadBalancerSourceRanges:
             - 10.0.0.0/8
           annotations:
             cloud.google.com/load-balancer-type: Internal
         maxUnavailable: 0
+        ingress:
+          path: '/api'
         pod:
           labels:
             deployment: api
