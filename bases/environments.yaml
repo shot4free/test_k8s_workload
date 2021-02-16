@@ -146,6 +146,7 @@ environments:
           kas:
             enabled: false
         gitlab_extras:
+          namespace: "gitlab-cny"
           installed: false
 
   gprd:
