@@ -91,7 +91,7 @@ default to the version specified by the whatever is currently running.
 
 {{/* Set the appropriate version if it is found and if auto-deploy */}}
 {{- $gitlab_shell_version := default "master" $gitlab_shell_current_tag }}
-{{- if regexMatch "^\\d+-\\d+-[\\d\\w]+-[\\d\\w]+$" $gitlab_version }}
+{{- if or (regexMatch "^v\\d+\\.\\d+\\.\\d+(-rc\\d+)?$" $gitlab_version) (regexMatch "^\\d+-\\d+-[\\d\\w]+-[\\d\\w]+$" $gitlab_version) }}
 {{-   $gitlab_shell_version = $gitlab_version }}
 {{- end }}
 
