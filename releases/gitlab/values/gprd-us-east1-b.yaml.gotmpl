@@ -1,0 +1,10 @@
+---
+
+gitlab:
+  webservice:
+    deployments:
+      websockets:
+        extraEnv:
+          # This is set temporarily for
+          # https://gitlab.com/gitlab-org/gitlab-workhorse/-/issues/352#note_514499005
+          GODEBUG: madvdontneed=1
