@@ -125,6 +125,7 @@ environments:
       -
         registry:
           enabled: true
+        env_prefix: gprd
         google_project: "gitlab-production"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_secrets_gkms_source: "gprd"

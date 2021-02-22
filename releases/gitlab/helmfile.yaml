@@ -36,8 +36,10 @@ releases:
     values:
       - values/init-values.yaml.gotmpl
       - values/values.yaml.gotmpl
-{{ if eq .Environment.Name "gprd-cny" }}
-      - values/gprd.yaml.gotmpl
+{{ if .Values | getOrNil "env_prefix" | default false }}
+      - 'values/{{ .Environment.Values.env_prefix }}.yaml.gotmpl'
 {{ end }}
-      - 'values/{{`{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}`}}.yaml.gotmpl'
+{{ if eq (exec "../../bin/file-exists" (list (print "values/" .Environment.Name ".yaml.gotmpl"))) "true" }}
+      - 'values/{{ .Environment.Name }}.yaml.gotmpl'
+{{ end }}
       - values/values-from-external-sources.yaml.gotmpl
