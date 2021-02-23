@@ -672,6 +672,8 @@ gitlab:
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
       targetAverageValue: 1600m
+    registry:
+      tokenIssuer: omnibus-gitlab-issuer
     shutdown:
       blackoutSeconds: 240
     deployment:
