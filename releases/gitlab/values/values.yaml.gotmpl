@@ -70,10 +70,6 @@ global:
     enabled: {{ .Values.gitlab.kas.enabled }}
 
   pages:
-    accessControl: true
-    apiSecret:
-      secret: gitlab-pages-api-credential-v1
-    externalHttps: true
     objectStore:
       enabled: true
       bucket: "gitlab-{{ .Values | getOrNil "env_prefix" }}-pages"
