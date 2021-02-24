@@ -79,6 +79,9 @@ global:
     registry:
       name: {{ regexReplaceAll "https://" ($chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.registry_external_url")) "" }}
 
+  pages:
+    host: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.pages_external_url | ltrimstr(\"https://\")") }}
+
   psql:
     host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
     port: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_port") }}
