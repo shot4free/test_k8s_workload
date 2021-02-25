@@ -77,6 +77,9 @@ global:
     objectStore:
       enabled: true
       bucket: "gitlab-{{ .Values | getOrNil "env_prefix" }}-pages"
+      connection:
+        secret: gitlab-object-storage-v1
+        key: gitlab-object-storage.yml
 
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
