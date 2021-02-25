@@ -45,6 +45,7 @@ gitlab:
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
       DISABLE_PUMA_NAKAYOSHI_FORK: "false"
       ENABLE_PUMA_NAKAYOSHI_FORK: "true"
+      RUBY_GC_HEAP_INIT_SLOTS: "3000000"
     workhorse:
       resources:
         limits:
