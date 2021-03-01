@@ -1227,3 +1227,43 @@ gitlab:
         memory: 256M
     nodeSelector:
       type: kas
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+          # Disables all outgoing traffic except to specific ports on the internal network
+          # Allow internal traffic for DNS
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            - port: 53
+              protocol: UDP
+            - port: 53
+              protocol: TCP
+          # Allow talking to our internal API endpoints
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            # int.{gprd,pre}.gitlab.net
+            - port: 443
+              protocol: TCP
+            # int.{gstg}.gitlab.net
+            - port: 11443
+              protocol: TCP
+          # Allow internal traffic to Gitaly
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            # Gitaly non-TLS
+            - port: 9999
+              protocol: TCP
+            # Gitaly TLS
+            - port: 9998
+              protocol: TCP
+            # Praefect
+            - port: 2305
+              protocol: TCP
