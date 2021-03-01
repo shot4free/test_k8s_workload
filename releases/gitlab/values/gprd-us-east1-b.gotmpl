@@ -1,0 +1,11 @@
+---
+
+gitlab:
+  webservice:
+    deployments:
+      websockets:
+        extraEnv:
+          RUBY_GC_HEAP_INIT_SLOTS: "3000000"
+      git:
+        extraEnv:
+          RUBY_GC_HEAP_INIT_SLOTS: "3000000"
