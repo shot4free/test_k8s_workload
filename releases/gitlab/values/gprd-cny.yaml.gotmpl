@@ -31,6 +31,7 @@ gitlab:
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+      DISABLE_PUMA_NAKAYOSHI_FORK: "true"
 
 registry:
   hpa:
