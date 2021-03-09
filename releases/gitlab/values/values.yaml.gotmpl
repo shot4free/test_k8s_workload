@@ -1267,3 +1267,14 @@ gitlab:
             # Praefect
             - port: 2305
               protocol: TCP
+          # Allow internal traffic to Redis
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+              # pre Memorystore instance
+            - port: 6379
+              protocol: TCP
+              # gstg, gprd Redis
+            - port: 26379
+              protocol: TCP
