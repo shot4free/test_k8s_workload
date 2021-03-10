@@ -238,15 +238,14 @@ Then apply using `k-ctl`
 
 ## Setting Chart Version
 
-There are two locations where the desired chart version is to be configured.
+This is in a global variable called `CHART_VERSION` in the `.gitlab-ci.yml` file
 
-1. In a global variabled called `CHART_VERSION` in the `.gitlab-ci.yml` file
-1. In an environment specific variable located in `<environment>-base` section
-   of the `.gitlab-ci.yml`
-
-The latter option is meant to be performed when upgrading our chart for the
-purposes of testing prior to rolling that change into production.  As soon as
-testing is complete, remove this variable in favor of a commit to changing the
-value as indicated by the first option.  Do NOT change the variable using
-GitLab's UI for configuring variables.  Doing so removes a bit of visibility of
-how and when we perform chart upgrades.
+We build our own chart versus using the official version.  This allows us to
+incrementially update the chart as we make improvements we require.  The built
+chart is then stored as an artifact and will be attempted to be reused for
+future pipelines.  Should the `CHART_VERSION` be updated, the next chart build
+that occurs on our default branch will contain the updated artifact.  Should
+`CHART_VERSION` be overridden for an environment, we will be unable to use the
+cached version of the chart.  This has a consequence of unexpected changes to
+various versions that are stored inside of Kubernetes objects , but should be
+considered a safe operation.

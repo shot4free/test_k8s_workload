@@ -210,12 +210,7 @@ build-chart:
     # Configure SSH authentication for the cloning our helm chart
     - chmod 400 "$SSH_PRIVATE_KEY"
     - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
-    - CLONE_DIR=$(mktemp -d -p $(pwd))
-    - git clone --no-checkout "git@dev.gitlab.org:gitlab/charts/gitlab.git" "$CLONE_DIR"
-    - cd "$CLONE_DIR"
-    - git -c advice.detachedHead=false checkout "$CHART_VERSION"
-    - git rev-parse --verify HEAD
-    - helm package ./ --dependency-update --version "0.0.0+${CHART_VERSION}" --destination ../
+    - ./bin/get_chart.sh
   allow_failure: true
   artifacts:
     name: $CHART_VERSION
