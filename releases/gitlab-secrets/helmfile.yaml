@@ -158,6 +158,13 @@ releases:
       - apiVersion: v1
         kind: Secret
         metadata:
+          name: registry-postgresql-password-v1
+          namespace: {{ $namespace }}
+        stringData:
+          secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.registry.postgres_password") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
           name: registry-httpsecret-v1
           namespace: {{ $namespace }}
         stringData:
