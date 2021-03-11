@@ -89,14 +89,19 @@ default to the version specified by the whatever is currently running.
 {{- $gitlab_shell_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_shell_deployment_name "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
 {{- $gitlab_shell_current_tag := ($gitlab_shell_current_spec | exec "cut"  (list "-d:" "-f3")) }}
 
-{{/* 
-Set the appropriate version if it is found and if auto-deploy
-WARNING: This break preprod RC deploys
-To be fixed: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1565
+{{/*
+Set GitLab-Shell Version:
+  * If auto-deploy utilize the version provided by $gitlab_version
+  * If an RC, use special version `"gitlab-%s", $gitlab_version`
+  * Otherwise fall back to what is currently running, $gitlab_shell_current_tag
+  * Otherwise `master` if no GitLab-Shell is running
+The RC specific logic should be removed during https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1553
 */}}
 {{- $gitlab_shell_version := default "master" $gitlab_shell_current_tag }}
 {{- if regexMatch "^\\d+-\\d+-[\\d\\w]+-[\\d\\w]+$" $gitlab_version }}
 {{-   $gitlab_shell_version = $gitlab_version }}
+{{- else if regexMatch "^v\\d+\\.\\d+\\.\\d+-rc\\d+$" $gitlab_version }}
+{{-   $gitlab_shell_version = printf "gitlab-%s" $gitlab_version }}
 {{- end }}
 
 ---
