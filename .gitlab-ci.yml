@@ -199,7 +199,10 @@ stages:
   - non-prod:deploy
   - non-prod:QA
   - gprd-cny:deploy
-  - gprd:deploy
+  - gprd-regional:deploy
+  - gprd-zone-b:deploy
+  - gprd-zone-c:deploy
+  - gprd-zone-d:deploy
 
 build-chart:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
@@ -450,7 +453,7 @@ gprd-us-east1-d:dryrun:
     - bin/k-ctl -D upgrade
 
 gprd:upgrade:
-  stage: gprd:deploy
+  stage: gprd-regional:deploy
   extends:
     - .deploy
     - .gprd
@@ -468,12 +471,11 @@ gprd:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-b:upgrade:
-  stage: gprd:deploy
+  stage: gprd-zone-b:deploy
   extends:
     - .deploy
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
-  when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
@@ -486,12 +488,11 @@ gprd-us-east1-b:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-c:upgrade:
-  stage: gprd:deploy
+  stage: gprd-zone-c:deploy
   extends:
     - .deploy
     - .gprd-us-east1-c
     - .only-auto-deploy-false-and-config-changes
-  when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
@@ -504,12 +505,11 @@ gprd-us-east1-c:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-d:upgrade:
-  stage: gprd:deploy
+  stage: gprd-zone-d:deploy
   extends:
     - .deploy
     - .gprd-us-east1-d
     - .only-auto-deploy-false-and-config-changes
-  when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
@@ -763,7 +763,7 @@ gprd-us-east1-d:dryrun:auto-deploy:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
 
 gprd:auto-deploy:
-  stage: gprd:deploy
+  stage: gprd-regional:deploy
   extends:
     - .deploy
     - .gprd
@@ -776,7 +776,7 @@ gprd:auto-deploy:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-b:auto-deploy:
-  stage: gprd:deploy
+  stage: gprd-zone-b:deploy
   extends:
     - .deploy
     - .gprd-us-east1-b
@@ -789,7 +789,7 @@ gprd-us-east1-b:auto-deploy:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-c:auto-deploy:
-  stage: gprd:deploy
+  stage: gprd-zone-c:deploy
   extends:
     - .deploy
     - .gprd-us-east1-c
@@ -802,7 +802,7 @@ gprd-us-east1-c:auto-deploy:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-d:auto-deploy:
-  stage: gprd:deploy
+  stage: gprd-zone-d:deploy
   extends:
     - .deploy
     - .gprd-us-east1-d
