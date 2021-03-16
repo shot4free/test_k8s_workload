@@ -764,6 +764,14 @@ gitlab:
           - port: 53
             protocol: TCP
 
+          # Allow internal traffic to Container Registry
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 5000
+            protocol: TCP
+
           # Allow internal traffic to Redis
         - to:
           - ipBlock:
