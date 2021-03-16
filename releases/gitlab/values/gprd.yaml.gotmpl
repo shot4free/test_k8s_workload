@@ -55,10 +55,6 @@ gitlab:
         sentry:
           dsn: https://af4940ad841b46d78708595fc654af78@sentry.gitlab.net/124
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
-    networkpolicy:
-      enabled: false
-    redis:
-      enabled: false
   sidekiq:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
