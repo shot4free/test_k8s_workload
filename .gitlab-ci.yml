@@ -476,13 +476,13 @@ gprd-us-east1-b:upgrade:
     - .deploy
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
-  needs:
-    - "gprd:upgrade"
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
+  needs:
+    - "gprd:upgrade"
   only:
     refs:
       - master
@@ -501,7 +501,7 @@ gprd-us-east1-c:upgrade:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
-    - "gprd:upgrade"
+    - "gprd-us-east1-b:upgrade"
   only:
     refs:
       - master
@@ -520,7 +520,7 @@ gprd-us-east1-d:upgrade:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
-    - "gprd:upgrade"
+    - "gprd-us-east1-c:upgrade"
   only:
     refs:
       - master
@@ -790,6 +790,8 @@ gprd-us-east1-b:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
+  needs:
+    - "gprd:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -803,6 +805,8 @@ gprd-us-east1-c:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
+  needs:
+    - "gprd-us-east1-b:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -816,6 +820,8 @@ gprd-us-east1-d:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
+  needs:
+    - "gprd-us-east1-c:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
