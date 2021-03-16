@@ -476,6 +476,8 @@ gprd-us-east1-b:upgrade:
     - .deploy
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
+  needs:
+    - "gprd:upgrade"
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
@@ -498,6 +500,8 @@ gprd-us-east1-c:upgrade:
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
+  needs:
+    - "gprd:upgrade"
   only:
     refs:
       - master
@@ -515,6 +519,8 @@ gprd-us-east1-d:upgrade:
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
+  needs:
+    - "gprd:upgrade"
   only:
     refs:
       - master
