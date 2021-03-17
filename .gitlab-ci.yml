@@ -482,6 +482,7 @@ gprd-us-east1-b:upgrade:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
+    - "build-chart"
     - "gprd:upgrade"
   only:
     refs:
@@ -501,6 +502,7 @@ gprd-us-east1-c:upgrade:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
+    - "build-chart"
     - "gprd-us-east1-b:upgrade"
   only:
     refs:
@@ -520,6 +522,7 @@ gprd-us-east1-d:upgrade:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
+    - "build-chart"
     - "gprd-us-east1-c:upgrade"
   only:
     refs:
@@ -791,6 +794,7 @@ gprd-us-east1-b:auto-deploy:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
+    - "build-chart"
     - "gprd:auto-deploy"
   only:
     variables:
@@ -806,6 +810,7 @@ gprd-us-east1-c:auto-deploy:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
+    - "build-chart"
     - "gprd-us-east1-b:auto-deploy"
   only:
     variables:
@@ -821,6 +826,7 @@ gprd-us-east1-d:auto-deploy:
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
+    - "build-chart"
     - "gprd-us-east1-c:auto-deploy"
   only:
     variables:
