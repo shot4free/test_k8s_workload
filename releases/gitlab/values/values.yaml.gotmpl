@@ -592,8 +592,6 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
-    extraEnv:
-      USE_GITLAB_LOGGER: 1
     workhorse:
       # This is the internal API endpoint for GitLab Shell
       # Currently we are using the same deployments that is
@@ -850,7 +848,6 @@ gitlab:
       BYPASS_SCHEMA_VERSION: "true"
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
-      USE_GITLAB_LOGGER: 1
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
@@ -878,7 +875,6 @@ gitlab:
       # the GitLab chart
       # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2100
       SIDEKIQ_LOG_ARGUMENTS: "1"
-      USE_GITLAB_LOGGER: 1
     networkpolicy:
       enabled: true
       egress:
