@@ -13,6 +13,9 @@ gitlab:
     maxReplicas: 30
     deployments:
       api:
+        common:
+          labels:
+            type: api
         hpa:
           minReplicas: 2
         extraEnv:
@@ -37,7 +40,6 @@ gitlab:
           labels:
             deployment: api
             type: api
-            tier: sv
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"

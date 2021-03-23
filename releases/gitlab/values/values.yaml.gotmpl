@@ -636,8 +636,14 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    common:
+      labels:
+        tier: sv
     deployments:
       websockets:
+        common:
+          labels:
+            type: websockets
         hpa:
           minReplicas: 1
         extraEnv:
@@ -658,9 +664,10 @@ gitlab:
         pod:
           labels:
             deployment: websockets
-            type: websockets
-            tier: sv
       git:
+        common:
+          labels:
+            type: git
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
@@ -677,8 +684,6 @@ gitlab:
         pod:
           labels:
             deployment: git-https
-            type: git
-            tier: sv
     workerProcesses: 4
     enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
     hpa:
