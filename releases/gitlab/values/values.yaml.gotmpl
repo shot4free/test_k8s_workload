@@ -592,6 +592,8 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
+    extraEnv:
+      USE_GITLAB_LOGGER: 1
     workhorse:
       # This is the internal API endpoint for GitLab Shell
       # Currently we are using the same deployments that is
