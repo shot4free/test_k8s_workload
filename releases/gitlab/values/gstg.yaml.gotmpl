@@ -43,6 +43,7 @@ gitlab:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      USE_GITLAB_LOGGER: 1
     workhorse:
       resources:
         limits:
@@ -69,6 +70,7 @@ gitlab:
   sidekiq:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
+      USE_GITLAB_LOGGER: 1
 
 global:
   appConfig:
@@ -84,9 +86,6 @@ global:
         - secret: gitlab-salesforce-oauth2-v1
   email:
     reply_to: noreply@gitlab.com
-
-  extraEnv:
-    USE_GITLAB_LOGGER: 1
 
   hosts:
     gitlab:
