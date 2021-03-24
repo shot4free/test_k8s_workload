@@ -9,6 +9,9 @@ gitlab:
       blackoutSeconds: 0
     deployments:
       api:
+        common:
+          labels:
+            type: api
         hpa:
           minReplicas: 1
         extraEnv:
@@ -34,7 +37,6 @@ gitlab:
           labels:
             deployment: api
             type: api
-            tier: sv
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       websockets:
