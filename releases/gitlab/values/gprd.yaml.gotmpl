@@ -60,6 +60,9 @@ gitlab:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
     pods:
       - name: catchall
+        common:
+          labels:
+            shard: catchall
         concurrency: 15
         minReplicas: 56
         maxReplicas: 140
@@ -80,6 +83,9 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
       - name: memory-bound
+        common:
+          labels:
+            shard: memory-bound
         concurrency: 1
         minReplicas: 4
         maxReplicas: 16
@@ -108,6 +114,9 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
       # Run background migrations in their own shard
       - name: database-throttled
+        common:
+          labels:
+            shard: database-throttled
         concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
         minReplicas: 1
         maxReplicas: 1
@@ -130,6 +139,9 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
       # Allow up to a maximum of 24 concurrent gitaly-throttled jobs
       - name: gitaly-throttled
+        common:
+          labels:
+            shard: gitaly-throttled
         concurrency: 8
         minReplicas: 1
         maxReplicas: 3
@@ -149,6 +161,9 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"gitaly-throttled\"}"
       - name: elasticsearch
+        common:
+          labels:
+            shard: elasticsearch
         concurrency: 2
         minReplicas: 2
         maxReplicas: 8
@@ -171,6 +186,9 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
       # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/901
       - name: low-urgency-cpu-bound
+        common:
+          labels:
+            shard: low-urgency-cpu-bound
         concurrency: 5
         minReplicas: 10
         maxReplicas: 100
@@ -192,6 +210,9 @@ gitlab:
       # Production resources for urgent-cpu-bound discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
       - name: urgent-cpu-bound
+        common:
+          labels:
+            shard: urgent-cpu-bound
         concurrency: 5
         hpa:
           targetAverageValue: 300m
@@ -220,6 +241,9 @@ gitlab:
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
       - name: urgent-other
+        common:
+          labels:
+            shard: urgent-other
         concurrency: 5
         minReplicas: 130
         maxReplicas: 130

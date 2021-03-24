@@ -94,6 +94,9 @@ gitlab:
         # The reason for this is because we derive
         # the image version from the memory-bound deployment
       - name: memory-bound
+        common:
+          labels:
+            shard: memory-bound
         nodeSelector:
           type: default
         concurrency: 25
