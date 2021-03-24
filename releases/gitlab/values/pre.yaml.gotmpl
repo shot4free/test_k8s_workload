@@ -30,6 +30,8 @@ gitlab:
             cloud.google.com/load-balancer-type: Internal
         shutdown:
           blackoutSeconds: 10
+        deployment:
+          terminationGracePeriodSeconds: 15
         maxUnavailable: 0
         ingress:
           path: '/api'
