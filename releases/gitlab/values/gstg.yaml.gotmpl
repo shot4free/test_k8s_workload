@@ -16,6 +16,8 @@ gitlab:
         common:
           labels:
             type: api
+        deployment:
+          terminationGracePeriodSeconds: 15
         hpa:
           minReplicas: 2
         extraEnv:
