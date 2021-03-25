@@ -57,6 +57,7 @@ environments:
       - &pre_values
         env_prefix: pre
         google_project: "gitlab-pre"
+        gitlab_domain: "pre.gitlab.com"
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.pre.gitlab.com"
@@ -79,6 +80,7 @@ environments:
       - &gstg_values
         env_prefix: gstg
         google_project: "gitlab-staging-1"
+        gitlab_domain: "staging.gitlab.com"
         gitlab_endpoint: "https://staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.staging.gitlab.com"
@@ -156,6 +158,7 @@ environments:
       - &gprd_values
         env_prefix: gprd
         google_project: "gitlab-production"
+        gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.gitlab.com"
