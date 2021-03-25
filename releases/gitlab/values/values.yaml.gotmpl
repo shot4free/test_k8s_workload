@@ -501,7 +501,7 @@ registry:
       enabled: true
       # The following rules enable traffic to all external
       # endpoints, except the metadata service and the local
-      # network (except DNS requests)
+      # network (except DNS and DB requests)
       rules:
       - to:
         - ipBlock:
@@ -510,6 +510,12 @@ registry:
         - port: 53
           protocol: UDP
         - port: 53
+          protocol: TCP
+        # cloudsql in pre
+        - port: 5432
+          protocol: TCP
+        # pgbouncer in gstg and gprd
+        - port: 6432
           protocol: TCP
       - to:
         - ipBlock:
