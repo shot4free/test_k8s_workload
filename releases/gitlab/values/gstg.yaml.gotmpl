@@ -74,6 +74,7 @@ gitlab:
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
+      ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
 
