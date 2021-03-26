@@ -73,6 +73,7 @@ gitlab:
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
   sidekiq:
     extraEnv:
+      SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
 
