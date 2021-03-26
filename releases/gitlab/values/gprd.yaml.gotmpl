@@ -293,7 +293,7 @@ global:
     prepared_statements: false
     load_balancing:
       discover:
-        nameserver: consul-consul-dns.consul
+        nameserver: consul-consul-dns.consul.svc.cluster.local.
         record: db-replica.service.consul.
         record_type: SRV
         port: 53
