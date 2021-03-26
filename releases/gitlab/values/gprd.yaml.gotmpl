@@ -57,8 +57,18 @@ gitlab:
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
   sidekiq:
     extraEnv:
+      ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
+  psql:
+    prepared_statements: false
+    load_balancing:
+      discover:
+        nameserver: consul-consul-dns.consul.svc.cluster.local.
+        record: db-replica.service.consul.
+        record_type: SRV
+        port: 53
+        use_tcp: true
     pods:
       - name: catchall
         common:
