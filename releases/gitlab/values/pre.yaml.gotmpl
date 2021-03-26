@@ -1,5 +1,22 @@
 ---
 
+# Needed for now, because a check in the registry chart is insisting on it.
+# https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2615
+postgresql:
+  image:
+    tag: 12
+
+registry:
+  database:
+    enabled: true
+    host: 10.33.1.2
+    user: registry
+    name: registry_production
+    password:
+      secret: gitlab-postgresql-password-v1
+  migration:
+    disablemirrorfs: true
+
 gitlab:
   webservice:
     # blackoutSeconds, minReplicas, initialDelaySeconds, terminationGracePeriodSeconds

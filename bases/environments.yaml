@@ -61,6 +61,7 @@ environments:
         gitlab_endpoint: "https://pre.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.pre.gitlab.com"
+        registry_bucket_name: "gitlab-pre-container-registry"
         registry:
           enabled: true
         gitlab:
