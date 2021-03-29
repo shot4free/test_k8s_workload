@@ -86,8 +86,6 @@ gitlab:
     nodeSelector:
       type: default
   sidekiq:
-    extraEnv:
-      USE_GITLAB_LOGGER: 1
     pods:
         # This is set to "memory-bound" until
         # catchall is migrated to production.
