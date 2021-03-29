@@ -861,6 +861,7 @@ gitlab:
       BYPASS_SCHEMA_VERSION: "true"
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
+      USE_GITLAB_LOGGER: 1
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
