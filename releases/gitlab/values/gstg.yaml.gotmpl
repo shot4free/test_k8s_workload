@@ -77,6 +77,15 @@ gitlab:
       ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
+    psql:
+      prepared_statements: false
+      load_balancing:
+        discover:
+          nameserver: consul-consul-dns.consul.svc.cluster.local.
+          record: db-replica.service.consul.
+          record_type: SRV
+          port: 53
+          use_tcp: true
 
 global:
   appConfig:
