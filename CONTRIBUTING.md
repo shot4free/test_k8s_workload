@@ -15,127 +15,34 @@ repository is licensed under Creative Commons:
 
 _This notice should stay as the first item in the CONTRIBUTING.md file._
 
-## Contributing Documentation has been moved
+## Contributing guidelines
 
-As of July 2018, all the documentation for contributing to the GitLab project has been moved to a new location.
-[View the new documentation](doc/development/contributing/index.md) to find the latest information.
+The instructions below assume that you have access to [the repository at its canonical location](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com). The canonical repository does not run production workloads, as the changes are mirrored to a separate instance that connects to production workloads.
 
-## Contribute to GitLab
+The most common case for contributing to this project is to change configuration values to one of [the services](README.md#services), and the guide below makes this assumption. These services are deployed using the [official GitLab Chart](https://gitlab.com/gitlab-org/charts/gitlab). Ensure that the GitLab Chart supports the configuration prior to opening a MR.
 
-This [documentation](doc/development/contributing/index.md#contribute-to-gitlab) has been moved.
+### Merge requests contributors workflow
 
-## Security vulnerability disclosure
+The workflow to make a merge request is as follows:
 
-This [documentation](doc/development/contributing/index.md#security-vulnerability-disclosure) has been moved.
+1. Clone the project and create a feature branch.
+1. Make the necessary changes for [the right environment](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com#gitlab-environments-configuration)
+  * Common configuration for all environments goes into [values.yaml.gotmpl](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/values.yaml.gotmpl)
+  * Environment specific configuration goes into one of the files in [values directory](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/tree/master/releases/gitlab/values). For example, production environment marked as `gprd` has a configuration file named [gprd.yaml.gotmpl](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/gprd.yaml.gotmpl).
+1. Commit and submit the MR with the changes.
+1. MR description has to contain links to relevant resources, **and** explain why the specific change is being made.
+1. Apply the `Contribution` label, as well as any other applicable labels (Stage group labels, Service labels and similar).
+1. Check the [Reviewer and Maintainer section](https://about.gitlab.com/handbook/engineering/projects/#k8s-workloads-gitlab-com) and assign to a reviewer and maintainer.
+1. If the request is a part of corrective action for an active incident, assign the MR to the `SRE on-call`. Current on-call can be found in the [production channel](https://gitlab.slack.com/archives/C101F3796), in the `sre-oncall` user group.
 
-## Code of Conduct
+### Merge request reviewers workflow
 
-This [documentation](https://about.gitlab.com/contributing/code-of-conduct/) has been moved.
+As a reviewer, you need to ensure a certain level of quality for the MR that is assigned for a review.
+Keep the following flow in mind:
 
-## Closing policy for issues and merge requests
-
-This [documentation](doc/development/contributing/index.md#closing-policy-for-issues-and-merge-requests) has been moved.
-
-## Helping others
-
-This [documentation](doc/development/contributing/index.md#helping-others) has been moved.
-
-## I want to contribute!
-
-This [documentation](doc/development/contributing/index.md#i-want-to-contribute) has been moved.
-
-## Contribution Flow
-
-This [documentation](doc/development/contributing/index.md) has been moved.
-
-## Workflow labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Type labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Subject labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Team labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Release Scoping labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Priority labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Severity labels
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-#### Severity impact guidance
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Label for community contributors
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-## Implement design & UI elements
-
-This [documentation](doc/development/contributing/design.md) has been moved.
-
-## Issue tracker
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Issue triaging
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Feature proposals
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Issue tracker guidelines
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Issue weight
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Regression issues
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Technical and UX debt
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-### Stewardship
-
-This [documentation](doc/development/contributing/issue_workflow.md) has been moved.
-
-## Merge requests
-
-This [documentation](doc/development/contributing/merge_request_workflow.md) has been moved.
-
-### Merge request guidelines
-
-This [documentation](doc/development/contributing/merge_request_workflow.md) has been moved.
-
-### Contribution acceptance criteria
-
-This [documentation](doc/development/contributing/merge_request_workflow.md) has been moved.
-
-## Definition of done
-
-This [documentation](doc/development/contributing/merge_request_workflow.md) has been moved.
-
-## Style guides
-
-This [documentation](doc/development/contributing/style_guides.md) has been moved.
+1. In order to make matters simpler, assume that the contributor has a limited perspective into how services run, so double check the intention of the MR.
+1. Ensure that the MR description has context on why the change is made, and links to the applicable resources such as issues, epics and other related MRs. Correct descriptions make it simpler to understand context by others not participating in the work, long after the MR is merged.
+1. Ensure that the MR has labels. Labels make it simpler to track multiple changes over time.
+1. Review the CI pipeline comments from `ops-gitlab-net` user, as they contain the full pipeline run from the operational instance. The pipelines in the MR widget only run syntax checks.
+1. Before merging the MR, ensure that the `Reviewer Check-list` section in the MR description is addressed.
+1. Once the changes are reviewed, merge the MR and ensure that the changes are successfully applied to all applicable environments. Not doing so carries a risk of a failed rollout which does block regular operations such as deployments.
