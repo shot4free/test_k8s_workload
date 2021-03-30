@@ -404,6 +404,7 @@ nginx-ingress:
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
     config:
+      proxy-real-ip-cidr: 10.0.0.0/8
       upstream-keepalive-timeout: "30"
       upstream-keepalive-requests: "0"
     lifecycle:
