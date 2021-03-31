@@ -406,6 +406,8 @@ nginx-ingress:
     config:
       upstream-keepalive-timeout: "30"
       upstream-keepalive-requests: "0"
+      compute-full-forwarded-for: "true"
+      use-forwarded-headers: "true"
     lifecycle:
       preStop:
         exec:
