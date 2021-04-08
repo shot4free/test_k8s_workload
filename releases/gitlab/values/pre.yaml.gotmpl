@@ -68,6 +68,8 @@ gitlab:
         nodeSelector:
           type: default
       git:
+        hpa:
+          minReplicas: 1
         nodeSelector:
           type: default
     workerProcesses: 2
@@ -76,17 +78,19 @@ gitlab:
         limits:
           memory: 1G
         requests:
-          cpu: 300m
-          memory: 100M
+          cpu: 100m
+          memory: 50M
     resources:
       limits:
         memory: 3.0G
       requests:
-        cpu: 2
-        memory: 2.5G
+        cpu: 1
+        memory: 1.25G
     extraEnv:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
   gitlab-shell:
+    hpa:
+      minReplicas: 1
     workhorse:
       # This is the internal API endpoint for GitLab Shell
       # Currently we are using the same deployments that is
@@ -117,6 +121,8 @@ gitlab:
         minReplicas: 1
         maxReplicas: 10
   kas:
+    hpa:
+      minReplicas: 1
     nodeSelector:
       type: default
 global:
