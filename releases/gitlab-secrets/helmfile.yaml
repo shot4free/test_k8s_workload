@@ -266,7 +266,7 @@ releases:
         kind: Secret
         metadata:
           name: gitlab-runner-registration-credential-v1
-          namespace: {{ $namespace }}
+          namespace: {{ .Values | getOrNil "gitlab_runner.namespace" | default "gitlab-runner" }}
         stringData:
           runner-registration-token: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".gitlab_k8s[\"gitlab-runner-registration-credential\"]") | quote }}
           runner-token: ""
