@@ -11,7 +11,7 @@ repositories:
 releases:
 - name:  gitlab-runner
   chart: "gitlab-runner/gitlab-runner"
-  namespace: gitlab-runner
+  namespace: {{ .Values | getOrNil "gitlab_runner.namespace" | default "gitlab-runner" }}
   version: "0.27.0"
   installed: {{ .Values | getOrNil "gitlab_runner.enabled" | default "false" }}
   values:
