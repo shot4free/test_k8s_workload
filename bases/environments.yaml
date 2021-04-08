@@ -74,6 +74,8 @@ environments:
         kas:
           managed_cert_name: kas-pre-gitlab-com
           domain: kas.pre.gitlab.com
+        gitlab_runner:
+          enabled: true
 
   gstg:
     values:

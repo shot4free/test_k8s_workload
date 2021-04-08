@@ -1,0 +1,13 @@
+---
+gitlabUrl: {{ .Values.gitlab_endpoint }}
+rbac:
+  create: true
+runners:
+  secret: gitlab-runner-registration-credential-v1
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "gitlab-runner"
+        image = "debian:buster-slim"
+        privileged = true
+        allow_privilege_escalation = false
