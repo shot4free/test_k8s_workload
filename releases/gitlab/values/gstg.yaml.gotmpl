@@ -76,6 +76,9 @@ gitlab:
       ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
+      EXTERNAL_VALIDATION_SERVICE_URL: "https://pipeline-validation-service-y65bxj2iga-uc.a.run.app/validate"
+      EXTERNAL_VALIDATION_SERVICE_TIMEOUT: 1
+      EXTERNAL_VALIDATION_SERVICE_TOKEN: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".pipeline_validation_service.token") | quote }}
     psql:
       load_balancing:
         discover:
