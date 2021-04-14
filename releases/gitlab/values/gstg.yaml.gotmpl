@@ -99,6 +99,15 @@ global:
   email:
     reply_to: noreply@gitlab.com
 
+  geo:
+    enabled: true
+    nodeName: {{ .Environment.Values | getOrNil "gitlab_domain" | default "" }}
+    role: primary
+    registry:
+      syncEnabled: true
+      syncSecret:
+        secret: gitlab-registry-notification-v1
+
   hosts:
     gitlab:
       name: staging.gitlab.com
