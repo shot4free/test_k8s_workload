@@ -19,6 +19,20 @@
 ---
 
 global:
+
+  # Geo isn't actually enabled, we are abusing the geo feature to populate
+  # the `production.registry.notification_secret` in the gitlab.yml of our
+  # rails configurations
+  # Issue to address this: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2653
+  geo:
+    enabled: true
+    nodeName: {{ .Environment.Values | getOrNil "gitlab_domain" | default "" }}
+    role: primary
+    registry:
+      syncEnabled: true
+      syncSecret:
+        secret: gitlab-registry-notification-v1
+
   ## GitLab operator is Alpha. Not for production use.
   operator:
     enabled: false
