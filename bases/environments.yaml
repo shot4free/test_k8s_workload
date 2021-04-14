@@ -133,6 +133,7 @@ environments:
           enabled: true
         env_prefix: gprd
         google_project: "gitlab-production"
+        gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_secrets_gkms_source: "gprd"
         gitlab_release_name: "gitlab-cny"
