@@ -11,6 +11,16 @@ repositories:
     url: git+ssh://git@dev.gitlab.org/gitlab/charts/gitlab.git@?ref={{env "CHART_VERSION"}}
 {{end}}
 
+hooks:
+  - events: ["prepare"]
+    showlogs: true
+    command: "../../bin/gitlab-access.sh"
+    args: ["disable"]
+  - events: ["cleanup"]
+    showlogs: true
+    command: "../../bin/gitlab-access.sh"
+    args: ["enable"]
+
 releases:
   - name: {{.Environment.Values | getOrNil "gitlab_release_name" | default "gitlab"}}
     labels:

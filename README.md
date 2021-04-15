@@ -66,6 +66,25 @@ Each variable is applied to the environment defined above
 | `SERVICE_KEY`   | Service Account key used for CI for write operations to the cluster
 | `SERVICE_KEY_RO`| Service Account key used for CI for read operations, used on branches
 
+### Access to Gitlab production website blocked in CI
+
+Please note that the tooling in this repository specificly sometimes blocks access to the following URLs when running CI Jobs, only during the execution of helm/helmfile
+
+* gitlab.com
+* registy.gitlab.com
+* charts.gitlab.io
+
+The rationale behind this is to avoid a situation where our deployment tooling to deploy Gitlab.com on Kubernetes is dependant on Gitlab.com being available. During
+an outage where we might might need to use this repository to deploy an upgrade/fix to Gitlab.com, we don't want this to fail because some part of Gitlab.com is unavailable.
+
+The CI job will disable access to these urls if the following conditions are met
+
+* We have the CI environment variable 'GITLAB_ACCESS_DISABLE' set. This is typically set as a Global CI variable in the projects configuration, and allows us to globally enable/disable this functionality at will.
+
+* The environment variable 'ARTIFACT_AVAILABLE' is set. This means the Gitlab chart and dependencies have been cached locally using the Gitlab CI cache. While the Gitlab chart is pulled from dev.gitlab.org, due
+to the way helm chart dependencies work, attempting to fetch the chart dependencies makes helm call gitlab.com, so whenever we do a CI job with a chart bump, that job will fetch the new chart and dependencies to
+cache it locally for all new CI jobs.
+
 ## GitLab Secrets
 
 In order to work with the existing omnibus installation of GitLab.com, we will need to bring in a few already configured items that exist in that environment.  These items will ensure that when the Deployment is spun up inside of Kubernetes we interact appropriately with our existing infrastructure.
