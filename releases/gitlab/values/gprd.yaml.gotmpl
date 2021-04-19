@@ -57,7 +57,6 @@ gitlab:
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
   sidekiq:
     extraEnv:
-      ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
   psql:
