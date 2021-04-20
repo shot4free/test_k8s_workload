@@ -191,6 +191,7 @@ gitlab:
             cpu: 2
             memory: 8G
         extraEnv:
+          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"elasticsearch\"}"
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
