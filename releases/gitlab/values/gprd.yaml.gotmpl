@@ -144,6 +144,7 @@ gitlab:
             cpu: 1.5
             memory: 6G
         extraEnv:
+          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"database-throttled\"}"
       # Run Gitaly Storage Migrations on their own shards
       # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
@@ -216,6 +217,7 @@ gitlab:
             cpu: 1.5
             memory: 6G
         extraEnv:
+          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
       # Production resources for urgent-cpu-bound discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
