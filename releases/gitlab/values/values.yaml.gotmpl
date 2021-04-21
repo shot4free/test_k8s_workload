@@ -408,10 +408,6 @@ nginx-ingress:
       upstream-keepalive-requests: "0"
       compute-full-forwarded-for: "true"
       use-forwarded-headers: "true"
-    configAnnotations:
-      nginx.ingress.kubernetes.io/proxy-buffering: "on"
-      nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
-      nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "0"
     lifecycle:
       preStop:
         exec:
