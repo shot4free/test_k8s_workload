@@ -24,3 +24,26 @@ resources:
       timeoutSec: 1830
       securityPolicy:
         name: "kas-ingress-policy"
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: consul-consul-dns-headless
+      namespace: consul
+    spec:
+      clusterIP: None
+      ports:
+      - name: dns-tcp
+        port: 53
+        protocol: TCP
+        targetPort: dns-tcp
+      - name: dns-udp
+        port: 53
+        protocol: UDP
+        targetPort: dns-udp
+      selector:
+        app: consul
+        hasDNS: "true"
+        release: consul
+      sessionAffinity: None
+      type: ClusterIP
