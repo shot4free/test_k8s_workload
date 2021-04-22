@@ -97,6 +97,7 @@ gitlab:
         memory: 1.25G
     extraEnv:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      GITLAB_TEMPFILE_IMMEDIATE_UNLINK: '1'
   gitlab-shell:
     hpa:
       minReplicas: 1
