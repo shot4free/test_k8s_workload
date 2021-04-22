@@ -43,7 +43,7 @@ environments:
           kas:
             enabled: false
         gitlab_extras:
-          installed: false
+          installed: true
 
   ops:
     values:

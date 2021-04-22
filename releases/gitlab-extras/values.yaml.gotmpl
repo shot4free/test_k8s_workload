@@ -1,5 +1,6 @@
 ---
 resources:
+{{- if .Values | getOrNil "gitlab.kas.enabled" | default false }}
   - apiVersion: networking.gke.io/v1
     kind: ManagedCertificate
     metadata:
@@ -24,6 +25,7 @@ resources:
       timeoutSec: 1830
       securityPolicy:
         name: "kas-ingress-policy"
+{{- end }}
 
   - apiVersion: v1
     kind: Service
