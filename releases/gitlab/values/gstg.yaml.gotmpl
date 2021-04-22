@@ -83,7 +83,7 @@ gitlab:
           nameserver: consul-consul-dns-headless.consul.svc.cluster.local.
           record: db-replica.service.consul.
           record_type: SRV
-          port: 53
+          port: 8600
           use_tcp: true
 
 global:
@@ -123,7 +123,7 @@ global:
         nameserver: consul-consul-dns-headless.consul.svc.cluster.local.
         record: db-replica.service.consul.
         record_type: SRV
-        port: 53
+        port: 8600
         use_tcp: true
 
   smtp:
