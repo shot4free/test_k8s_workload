@@ -40,6 +40,12 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "0"
+            nginx.ingress.kubernetes.io/server-snippet: |
+              location ~ (/api/v\d/jobs/\d+/artifacts$|\.git/git-receive-pack$|\.git/gitlab-lfs/objects|\.git/info/lfs/objects/batch$) {
+                proxy_cache off;
+                proxy_pass http://upstream_balancer;
+                proxy_request_buffering off;
+              }
           path: '/api'
         pod:
           labels:
