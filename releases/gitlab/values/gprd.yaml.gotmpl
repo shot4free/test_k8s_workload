@@ -122,6 +122,7 @@ gitlab:
             emptyDir:
               sizeLimit: 70G
         extraEnv:
+          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
       # Run background migrations in their own shard
       - name: database-throttled
