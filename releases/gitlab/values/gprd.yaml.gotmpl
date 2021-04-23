@@ -76,7 +76,7 @@ gitlab:
             shard: catchall
         concurrency: 15
         minReplicas: 56
-        maxReplicas: 140
+        maxReplicas: 175
         nodeSelector:
           type: catchall
         podLabels:
@@ -228,7 +228,7 @@ gitlab:
         hpa:
           targetAverageValue: 300m
         minReplicas: 30
-        maxReplicas: 84
+        maxReplicas: 105
         memoryKiller:
           checkInterval: 3
           graceTime: 900
