@@ -41,6 +41,78 @@ gitlab:
           terminationGracePeriodSeconds: 15
         maxUnavailable: 0
         ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-buffering: "on"
+            nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+            nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "0"
+            nginx.ingress.kubernetes.io/server-snippet: |
+              location ~ (/api/v\d/jobs/\d+/artifacts$|\.git/git-receive-pack$|\.git/gitlab-lfs/objects|\.git/info/lfs/objects/batch$) {
+                set $namespace      "gitlab-cny";
+                set $ingress_name   "gitlab-cny-webservice-api";
+                set $service_name   "gitlab-cny-webservice-api";
+                set $service_port   "8181";
+                set $location_path  "/api";
+                rewrite_by_lua_block {
+                  lua_ingress.rewrite({
+                    force_ssl_redirect = false,
+                    ssl_redirect = true,
+                    force_no_ssl_redirect = false,
+                    use_port_in_redirects = false,
+                  })
+                  balancer.rewrite()
+                  plugins.run()
+                }
+                header_filter_by_lua_block {
+                  lua_ingress.header()
+                  plugins.run()
+                }
+                body_filter_by_lua_block {
+                }
+                log_by_lua_block {
+                  balancer.log()
+                  monitor.call()
+                  plugins.run()
+                }
+                port_in_redirect off;
+                set $balancer_ewma_score -1;
+                set $proxy_upstream_name "gitlab-cny-gitlab-cny-webservice-api-8181";
+                set $proxy_host          $proxy_upstream_name;
+                set $pass_access_scheme  $scheme;
+                set $pass_server_port    $server_port;
+                set $best_http_host      $http_host;
+                set $pass_port           $pass_server_port;
+                set $proxy_alternative_upstream_name "";
+                client_max_body_size                    0;
+                proxy_set_header Host                   $best_http_host;
+                proxy_set_header                        Upgrade           $http_upgrade;
+                proxy_set_header                        Connection        $connection_upgrade;
+                proxy_set_header X-Request-ID           $req_id;
+                proxy_set_header X-Real-IP              $remote_addr;
+                proxy_set_header X-Forwarded-For        $full_x_forwarded_for;
+                proxy_set_header X-Forwarded-Host       $best_http_host;
+                proxy_set_header X-Forwarded-Port       $pass_port;
+                proxy_set_header X-Forwarded-Proto      $pass_access_scheme;
+                proxy_set_header X-Scheme               $pass_access_scheme;
+                proxy_set_header X-Original-Forwarded-For $http_x_forwarded_for;
+                proxy_set_header Proxy                  "";
+                proxy_connect_timeout                   300s;
+                proxy_send_timeout                      60s;
+                proxy_read_timeout                      3600s;
+                proxy_buffering                         on;
+                proxy_buffer_size                       4k;
+                proxy_buffers                           8 4k;
+                proxy_max_temp_file_size                0;
+                proxy_request_buffering                 off;
+                proxy_http_version                      1.1;
+                proxy_cookie_domain                     off;
+                proxy_cookie_path                       off;
+                proxy_next_upstream                     error timeout;
+                proxy_next_upstream_timeout             0;
+                proxy_next_upstream_tries               3;
+                proxy_cache                             off;
+                proxy_pass                              http://upstream_balancer;
+                proxy_redirect                          off;
+              }
           path: '/api'
         pod:
           labels:
