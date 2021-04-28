@@ -63,10 +63,10 @@ gitlab:
       prepared_statements: false
       load_balancing:
         discover:
-          nameserver: consul-consul-dns.consul.svc.cluster.local.
+          nameserver: consul-consul-dns-headless.consul.svc.cluster.local.
           record: db-replica.service.consul.
           record_type: SRV
-          port: 53
+          port: 8600
           use_tcp: true
     pods:
       - name: catchall
@@ -311,10 +311,10 @@ global:
     prepared_statements: false
     load_balancing:
       discover:
-        nameserver: consul-consul-dns.consul.svc.cluster.local.
+        nameserver: consul-consul-dns-headless.consul.svc.cluster.local.
         record: db-replica.service.consul.
         record_type: SRV
-        port: 53
+        port: 8600
         use_tcp: true
 
   smtp:
