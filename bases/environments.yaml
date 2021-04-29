@@ -24,7 +24,7 @@ environments:
           kas:
             enabled: true
         gitlab_extras:
-          installed: true
+          consul_headless: true
       # These services are only installed in the
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
@@ -43,7 +43,8 @@ environments:
           kas:
             enabled: false
         gitlab_extras:
-          installed: true
+          api_no_proxy: true
+          consul_headless: true
 
   ops:
     values:
@@ -77,6 +78,8 @@ environments:
         gitlab_runner:
           enabled: true
           namespace: gitlab-runner
+        gitlab_extras:
+          api_no_proxy: true
 
   gstg:
     values:
@@ -133,6 +136,7 @@ environments:
           enabled: true
         env_prefix: gprd
         google_project: "gitlab-production"
+        gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_secrets_gkms_source: "gprd"
         gitlab_release_name: "gitlab-cny"
@@ -153,8 +157,9 @@ environments:
           kas:
             enabled: false
         gitlab_extras:
+          api_no_proxy: true
+          consul_headless: false
           namespace: "gitlab-cny"
-          installed: false
 
   gprd:
     values:
