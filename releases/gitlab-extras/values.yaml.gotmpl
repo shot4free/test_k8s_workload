@@ -1,11 +1,14 @@
 ---
+
+{{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
+
 resources:
 {{- if .Values | getOrNil "gitlab.kas.enabled" | default false }}
   - apiVersion: networking.gke.io/v1
     kind: ManagedCertificate
     metadata:
       name: {{ .Values.kas.managed_cert_name }}
-      namespace: gitlab
+      namespace: {{ $namespace }}
     spec:
       domains:
         - {{ .Values.kas.domain }}
@@ -14,7 +17,7 @@ resources:
     kind: BackendConfig
     metadata:
       name: kas-http-backendconfig
-      namespace: gitlab
+      namespace: {{ $namespace }}
     spec:
       healthCheck:
         port: 8151
@@ -27,6 +30,7 @@ resources:
         name: "kas-ingress-policy"
 {{- end }}
 
+{{- if .Values | getOrNil "gitlab_extras.consul_headless" | default false }}
   - apiVersion: v1
     kind: Service
     metadata:
@@ -49,3 +53,59 @@ resources:
         release: consul
       sessionAffinity: None
       type: ClusterIP
+{{- end }}
+
+{{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
+  - apiVersion: networking.k8s.io/v1beta1
+    kind: Ingress
+    metadata:
+      annotations:
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        kubernetes.io/ingress.class: gitlab-nginx
+        kubernetes.io/ingress.provider: nginx
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+        nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "0"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+      labels:
+        app: webservice
+        gitlab.com/webservice-name: api
+        gitlab.com/webservice-ingress: proxy-off
+        tier: sv
+        type: api
+      name: gitlab-webservice-api-proxy-off
+      namespace: {{ $namespace }}
+    spec:
+      rules:
+      - host: {{ .Values | getOrNil "gitlab_domain" }}
+        http:
+          paths:
+          - backend:
+              serviceName: {{ $namespace }}-webservice-api
+              servicePort: 8181
+            path: /api/v[0..9]/jobs/[0-9]+/artifacts$
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: {{ $namespace }}-webservice-api
+              servicePort: 8181
+            path: /.*\.git/git-receive-pack$
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: {{ $namespace }}-webservice-api
+              servicePort: 8181
+            path: /.*\.git/gitlab-lfs/objects
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: {{ $namespace }}-webservice-api
+              servicePort: 8181
+            path: /.*\.git/info/lfs/objects/batch$
+            pathType: ImplementationSpecific
+      tls:
+      - hosts:
+        - {{ .Values | getOrNil "gitlab_domain" | default "" }}
+        secretName: gitlab-wildcard-tls
+{{- end }}

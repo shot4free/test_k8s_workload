@@ -14,6 +14,5 @@ releases:
   chart: "kubernetes-incubator/raw"
   namespace: {{ $namespace }}
   version: "0.2.3"
-  installed: {{ .Values | getOrNil "gitlab_extras.installed" | default "false" }}
   values:
     - values.yaml.gotmpl
