@@ -30,21 +30,22 @@ resources:
         name: "kas-ingress-policy"
 {{- end }}
 
-{{- if .Values | getOrNil "gitlab_extras.consul_headless" | default false }}
+{{- if .Values | getOrNil "gitlab_extras.consul_nodeport" | default false }}
   - apiVersion: v1
     kind: Service
     metadata:
-      name: consul-consul-dns-headless
+      name: consul-consul-dns-nodeport
       namespace: consul
     spec:
-      clusterIP: None
       ports:
       - name: dns-tcp
-        port: 53
+        nodePort: 30000
+        port: 8600
         protocol: TCP
         targetPort: dns-tcp
       - name: dns-udp
-        port: 53
+        nodePort: 30000
+        port: 8600
         protocol: UDP
         targetPort: dns-udp
       selector:
@@ -52,7 +53,7 @@ resources:
         hasDNS: "true"
         release: consul
       sessionAffinity: None
-      type: ClusterIP
+      type: NodePort
 {{- end }}
 
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
