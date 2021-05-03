@@ -65,6 +65,8 @@ gitlab:
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
 
 registry:
   hpa:
