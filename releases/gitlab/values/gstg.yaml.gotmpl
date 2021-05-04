@@ -97,29 +97,13 @@ gitlab:
       ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
-    extraInitContainers: |
-      - name: write-instance-name
-        args:
-          - -c
-          - echo "$INSTANCE_NAME" > /etc/gitlab/instance_name
-        command:
-          - sh
-        env:
-          - name: INSTANCE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-        image: 'busybox:latest'
-        volumeMounts:
-          - mountPath: /etc/gitlab
-            name: webservice-secrets
     psql:
       load_balancing:
         discover:
-          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+          nameserver: consul-consul-dns-headless.consul.svc.cluster.local.
           record: db-replica.service.consul.
           record_type: SRV
-          port: 30001
+          port: 8600
           use_tcp: true
 
 global:
