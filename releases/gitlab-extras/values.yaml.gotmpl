@@ -43,6 +43,11 @@ resources:
         port: 8600
         protocol: TCP
         targetPort: dns-tcp
+      - name: dns-udp
+        nodePort: 30000
+        port: 8600
+        protocol: UDP
+        targetPort: dns-udp
       selector:
         app: consul
         hasDNS: "true"
