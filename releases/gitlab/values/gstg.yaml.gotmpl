@@ -50,6 +50,22 @@ gitlab:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+    extraInitContainers: |
+      - name: write-instance-name
+        args:
+          - -c
+          - echo "$INSTANCE_NAME" > /etc/gitlab/instance_name
+        command:
+          - sh
+        env:
+          - name: INSTANCE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        image: 'busybox:latest'
+        volumeMounts:
+          - mountPath: /etc/gitlab
+            name: webservice-secrets
     workhorse:
       resources:
         limits:
@@ -124,10 +140,10 @@ global:
     prepared_statements: false
     load_balancing:
       discover:
-        nameserver: consul-consul-dns.consul.svc.cluster.local.
+        nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
         record: db-replica.service.consul.
         record_type: SRV
-        port: 53
+        port: 30000
         use_tcp: true
 
   smtp:
