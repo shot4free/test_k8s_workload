@@ -143,7 +143,7 @@ global:
         nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
         record: db-replica.service.consul.
         record_type: SRV
-        port: 30000
+        port: 30001
         use_tcp: true
 
   smtp:
