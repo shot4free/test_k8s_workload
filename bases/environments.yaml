@@ -80,7 +80,6 @@ environments:
           namespace: gitlab-runner
         gitlab_extras:
           api_no_proxy: true
-          consul_nodeport: false
 
   gstg:
     values:
