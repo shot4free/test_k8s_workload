@@ -45,6 +45,22 @@ gitlab:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+    extraInitContainers: |
+      - name: write-instance-name
+        args:
+          - -c
+          - echo "$INSTANCE_NAME" > /etc/gitlab/instance_name
+        command:
+          - sh
+        env:
+          - name: INSTANCE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        image: 'busybox:latest'
+        volumeMounts:
+          - mountPath: /etc/gitlab
+            name: webservice-secrets
   kas:
     workhorse:
       scheme: 'https'
@@ -59,14 +75,30 @@ gitlab:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
+    extraInitContainers: |
+      - name: write-instance-name
+        args:
+          - -c
+          - echo "$INSTANCE_NAME" > /etc/gitlab/instance_name
+        command:
+          - sh
+        env:
+          - name: INSTANCE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        image: 'busybox:latest'
+        volumeMounts:
+          - mountPath: /etc/gitlab
+            name: sidekiq-secrets
     psql:
       prepared_statements: false
       load_balancing:
         discover:
-          nameserver: consul-consul-dns.consul.svc.cluster.local.
+          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
           record: db-replica.service.consul.
           record_type: SRV
-          port: 53
+          port: 30001
           use_tcp: true
     pods:
       - name: catchall
@@ -311,10 +343,10 @@ global:
     prepared_statements: false
     load_balancing:
       discover:
-        nameserver: consul-consul-dns.consul.svc.cluster.local.
+        nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
         record: db-replica.service.consul.
         record_type: SRV
-        port: 53
+        port: 30001
         use_tcp: true
 
   smtp:
