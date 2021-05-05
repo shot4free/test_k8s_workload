@@ -20,6 +20,10 @@ registry:
       maxlifetime: 5m
   migration:
     disablemirrorfs: true
+  gc:
+    disabled: false
+    maxbackoff: 1h
+    reviewafter: 30m
 
 gitlab:
   webservice:
