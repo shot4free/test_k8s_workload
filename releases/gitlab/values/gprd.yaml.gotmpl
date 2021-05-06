@@ -98,7 +98,7 @@ gitlab:
           nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
           record: db-replica.service.consul.
           record_type: SRV
-          port: 30001
+          port: 8600
           use_tcp: true
     pods:
       - name: catchall
@@ -346,7 +346,7 @@ global:
         nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
         record: db-replica.service.consul.
         record_type: SRV
-        port: 30001
+        port: 8600
         use_tcp: true
 
   smtp:
