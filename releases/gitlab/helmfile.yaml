@@ -4,7 +4,7 @@ bases:
   - "../../bases/environments.yaml"
 
 ---
-{{if and (eq (env "USE_ARTIFACT") "true") (eq (env "ARTIFACT_AVAILABLE") "true")}}
+{{if (eq (env "ARTIFACT_AVAILABLE") "true")}}
 {{else}}
 repositories:
   - name: gitlab
@@ -26,7 +26,7 @@ releases:
     labels:
       autodeploy: true
     namespace: {{.Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-{{if and (eq (env "USE_ARTIFACT") "true") (eq (env "ARTIFACT_AVAILABLE") "true")}}
+{{if (eq (env "ARTIFACT_AVAILABLE") "true")}}
     chart: '{{(env "PWD")}}/gitlab'
 {{else}}
     chart: 'gitlab/gitlab'
