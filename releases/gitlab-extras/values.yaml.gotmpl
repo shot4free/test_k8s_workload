@@ -30,27 +30,6 @@ resources:
         name: "kas-ingress-policy"
 {{- end }}
 
-{{- if .Values | getOrNil "gitlab_extras.consul_nodeport" | default false }}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: consul-consul-nodeport
-      namespace: consul
-    spec:
-      ports:
-      - name: dns-tcp
-        nodePort: 30001
-        port: 8600
-        protocol: TCP
-        targetPort: dns-tcp
-      selector:
-        app: consul
-        hasDNS: "true"
-        release: consul
-      sessionAffinity: None
-      type: NodePort
-{{- end }}
-
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
   - apiVersion: networking.k8s.io/v1beta1
     kind: Ingress
