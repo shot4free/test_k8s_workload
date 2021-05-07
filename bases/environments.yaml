@@ -136,6 +136,7 @@ environments:
         google_project: "gitlab-production"
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
+        gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
         gitlab_secrets_gkms_source: "gprd"
         gitlab_release_name: "gitlab-cny"
         gitlab_secrets_release_name: "gitlab-secrets-cny"
@@ -166,6 +167,7 @@ environments:
         google_project: "gitlab-production"
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
+        gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.gitlab.com"
         cluster: gprd-gitlab-gke
