@@ -46,6 +46,9 @@ resources:
         nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/service-upstream: "true"
+{{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
+        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
+{{- end }}
       labels:
         app: webservice
         gitlab.com/webservice-name: api
