@@ -27,6 +27,9 @@ registry:
 
 gitlab:
   webservice:
+    hpa:
+      minReplicas: 1
+      maxReplicas: 5
     # blackoutSeconds, minReplicas, initialDelaySeconds, terminationGracePeriodSeconds
     # set temporarily for
     # testing https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1509
@@ -37,8 +40,6 @@ gitlab:
         common:
           labels:
             type: api
-        hpa:
-          minReplicas: 1
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
@@ -71,8 +72,6 @@ gitlab:
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       websockets:
-        hpa:
-          minReplicas: 1
         deployment:
           readinessProbe:
             initialDelaySeconds: 0
@@ -80,8 +79,6 @@ gitlab:
         nodeSelector:
           type: default
       git:
-        hpa:
-          minReplicas: 1
         nodeSelector:
           type: default
     workerProcesses: 2
@@ -103,8 +100,8 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
   gitlab-shell:
-    hpa:
-      minReplicas: 1
+    minReplicas: 1
+    maxReplicas: 5
     workhorse:
       # This is the internal API endpoint for GitLab Shell
       # Currently we are using the same deployments that is
@@ -133,12 +130,13 @@ gitlab:
           type: default
         concurrency: 25
         minReplicas: 1
-        maxReplicas: 10
+        maxReplicas: 5
   kas:
     image:
       tag: v13.11.1
     hpa:
       minReplicas: 1
+      maxReplicas: 5
     nodeSelector:
       type: default
 global:
