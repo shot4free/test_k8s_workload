@@ -1,7 +1,7 @@
 ---
 
 nginx-ingress:
-  enabled: false
+  enabled: true
   controller:
     autoscaling:
       minReplicas: 10
@@ -28,6 +28,16 @@ gitlab:
     maxReplicas: 150
   webservice:
     deployments:
+      api:
+        hpa:
+          minReplicas: 48
+        workhorse:
+          resources:
+            limits:
+              memory: 2G
+            requests:
+              cpu: 600m
+              memory: 300M
       websockets:
         hpa:
           minReplicas: 2
@@ -47,22 +57,6 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
-    extraInitContainers: |
-      - name: write-instance-name
-        args:
-          - -c
-          - echo "$INSTANCE_NAME" > /etc/gitlab/instance_name
-        command:
-          - sh
-        env:
-          - name: INSTANCE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-        image: 'busybox:latest'
-        volumeMounts:
-          - mountPath: /etc/gitlab
-            name: webservice-secrets
   kas:
     workhorse:
       scheme: 'https'
