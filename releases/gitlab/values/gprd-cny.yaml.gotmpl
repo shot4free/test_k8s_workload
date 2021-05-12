@@ -26,44 +26,15 @@ gitlab:
   webservice:
     deployments:
       api:
-        common:
-          labels:
-            type: api
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
-        nodeSelector:
-          type: api
-        service:
-          # Note that we are creating a loadbalancer, but not yet using it,
-          # This will come to use in issue: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1557
-          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
-          type: LoadBalancer
-          loadBalancerSourceRanges:
-            - 10.0.0.0/8
-          annotations:
-            cloud.google.com/load-balancer-type: Internal
-        shutdown:
-          blackoutSeconds: 10
-        deployment:
-          terminationGracePeriodSeconds: 15
-        maxUnavailable: 0
-        ingress:
-          annotations:
-            nginx.ingress.kubernetes.io/proxy-buffering: "on"
-            nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
-            nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/'
-        pod:
-          labels:
-            deployment: api
-            type: api
+        hpa:
+          minReplicas: 5
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
-        ingress:
-          path:
       websockets:
         hpa:
           minReplicas: 1
