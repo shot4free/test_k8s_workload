@@ -40,11 +40,14 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/api'
+          path: '/'
         pod:
           labels:
             deployment: api
             type: api
+      git:
+        ingress:
+          path:
     extraEnv:
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"

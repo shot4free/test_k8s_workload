@@ -45,11 +45,17 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/api'
+          path: '/'
         pod:
           labels:
             deployment: api
             type: api
+      git:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+        ingress:
+          path:
       websockets:
         hpa:
           minReplicas: 1
@@ -57,10 +63,6 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
           GODEBUG: madvdontneed=1
-      git:
-        extraEnv:
-          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
