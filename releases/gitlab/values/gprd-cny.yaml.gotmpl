@@ -8,6 +8,14 @@ nginx-ingress:
   controller:
     autoscaling:
       minReplicas: 3
+    labels: &nginx_labels
+      shard: default
+      stage: cny
+    podLabels:
+      <<: *nginx_labels
+    service:
+      labels:
+        <<: *nginx_labels
 
 gitlab:
   mailroom:
