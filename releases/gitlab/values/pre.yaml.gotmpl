@@ -64,11 +64,16 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/api'
+          path: '/'
         pod:
           labels:
             deployment: api
             type: api
+      git:
+        ingress:
+          path:
+        nodeSelector:
+          type: default
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       websockets:
@@ -76,9 +81,6 @@ gitlab:
           readinessProbe:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
-        nodeSelector:
-          type: default
-      git:
         nodeSelector:
           type: default
     workerProcesses: 2
