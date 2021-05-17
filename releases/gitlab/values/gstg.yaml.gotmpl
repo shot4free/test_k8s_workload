@@ -88,6 +88,20 @@ global:
         - secret: gitlab-bitbucket-oauth2-v1
         - secret: gitlab-group-saml-oauth2-v1
         - secret: gitlab-salesforce-oauth2-v1
+    sidekiq:
+      routingRules:
+        - ["name=project_import_schedule", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
+        - ["resource_boundary=cpu&urgency=high&tags!=requires_disk_io", null] # urgent-cpu-bound
+        - ["resource_boundary=memory", null] # memory-bound
+        - ["feature_category=global_search&urgency=throttled", null] # elasticsearch
+        - ["resource_boundary!=cpu&urgency=high", null] # urgent-other
+        - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
+        - ["feature_category=database&urgency=throttled", null] # database-throttled
+        - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
+        - ["tags=exclude_from_kubernetes", null] # catchall on VMs
+        - ["tags=exclude_from_gitlab_com", null] # special case for testing (only runs actively on staging; includes geo jobs)
+        - ["*", null] # catchall on k8s
+
   email:
     reply_to: noreply@gitlab.com
 
