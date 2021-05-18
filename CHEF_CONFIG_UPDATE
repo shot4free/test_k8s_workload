@@ -12,3 +12,7 @@ Example:
 2021-01-07
 
 * GPRD - Create new gitaly storage shard nodes to replace nfs-file52 and nfs-file53: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/12285
+
+2021-05-19
+
+* GPRD - add new nfs server in staging
