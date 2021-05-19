@@ -1077,6 +1077,8 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
         extraVolumes: |
+          # This is needed because of https://gitlab.com/gitlab-org/gitlab/-/issues/330317
+          # where temp files are written to `/srv/gitlab/shared`
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 10G
