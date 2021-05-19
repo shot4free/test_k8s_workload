@@ -5,6 +5,7 @@
 {{- $chef_base_role := exec $get_role_from_chef (list (print $chef_source_name "-base")) }}
 {{- $chef_base_be_role := exec $get_role_from_chef (list (print $chef_source_name "-base-be")) }}
 {{- $chef_base_be_sidekiq_role := exec $get_role_from_chef (list (print $chef_source_name "-base-be-sidekiq")) }}
+{{- $chef_base_fe_role := exec $get_role_from_chef (list (print $chef_source_name "-base-fe")) }}
 
 {{- /* As the pre environment has no redis specific roles, we only fetch for other environments */ -}}
 {{- $chef_base_db_redis_server_sidekiq_role := "{}" }}
@@ -158,6 +159,9 @@ gitlab:
       websockets:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=websockets-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+    extraEnv:
+      GITLAB_THROTTLE_USER_ALLOW_LIST: {{ $chef_base_fe_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".user_ratelimit_bypasses | keys? | join(\",\")") | quote }}
+      GITLAB_UPLOAD_API_ALLOWLIST: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_UPLOAD_API_ALLOWLIST | select(.!=null)") | quote }}
     rack_attack:
       git_basic_auth:
         enabled: {{ $rack_attack_enabled }}
