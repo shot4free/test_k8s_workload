@@ -1076,6 +1076,10 @@ gitlab:
             memory: 2G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
+        extraVolumes: |
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 10G
       - name: memory-bound
         common:
           labels:
