@@ -24,6 +24,11 @@ gitlab:
   sidekiq:
     enabled: false
   webservice:
+    common:
+      labels:
+        shard: default
+        stage: cny
+        tier: sv
     deployments:
       api:
         extraEnv:
