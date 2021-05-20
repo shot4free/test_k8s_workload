@@ -15,7 +15,7 @@
 # - external Object Storage providers
 
 ## The global properties are used to configure multiple charts at once.
-## Extended documenation at doc/charts/globals.md
+## Extended documentation at doc/charts/globals.md
 ---
 
 global:
@@ -673,6 +673,7 @@ gitlab:
         shutdown:
           blackoutSeconds: 10
         ingress:
+          enabled: true
           annotations:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
@@ -788,6 +789,7 @@ gitlab:
       exporter:
         enabled: true
     ingress:
+      enabled: true
       annotations:
         ## This is disabled for webservice for git-https traffic
         ## See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2262 and
