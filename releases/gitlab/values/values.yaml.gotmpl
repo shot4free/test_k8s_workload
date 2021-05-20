@@ -697,8 +697,6 @@ gitlab:
           # is resolved
           extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s'
       websockets:
-        workhorse:
-          keywatcher: false
         common:
           labels:
             type: websockets
@@ -723,8 +721,6 @@ gitlab:
           labels:
             deployment: websockets
       git:
-        workhorse:
-          keywatcher: false
         common:
           labels:
             type: git
