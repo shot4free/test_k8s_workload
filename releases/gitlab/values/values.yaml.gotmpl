@@ -18,15 +18,17 @@
 ## Extended documentation at doc/charts/globals.md
 ---
 
+{{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
+
 global:
+  common:
+    labels:
+      stage: {{ if eq $namespace "gitlab-cny" }}"cny"{{ else }}"main"{{ end }}
+      shard: default
+      tier: sv
   ## GitLab operator is Alpha. Not for production use.
   operator:
     enabled: false
-
-  ## Supplemental Pod labels. Will not be used for selectors
-  pod:
-    labels:
-      stage: {{ .Environment.Values | getOrNil "stage" | default "main" }}
 
   ## doc/installation/deployment.md#deploy-the-community-edition
   # edition: ee
@@ -487,7 +489,6 @@ registry:
   common:
     labels:
       type: registry
-      tier: sv
       deployment: registry
   image:
     # `tag` is set via init-values.yaml.gotmpl
@@ -649,17 +650,11 @@ gitlab:
       labels:
         deployment: gitlab-shell
         type: git
-        tier: sv
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
-    common:
-      labels:
-        shard: default
-        stage: main
-        tier: sv
     deployments:
       api:
         common:
@@ -1056,7 +1051,6 @@ gitlab:
 
     common:
       labels:
-        tier: sv
         type: sidekiq
 
     hpa:
@@ -1283,7 +1277,6 @@ gitlab:
       labels:
         deployment: mailroom
         type: mailroom
-        tier: sv
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
       # Pin the tag to avoid following the chart default
@@ -1343,7 +1336,6 @@ gitlab:
     common:
       labels:
         type: kas
-        tier: sv
         deployment: kas
     service:
       annotations:
