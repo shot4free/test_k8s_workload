@@ -1321,6 +1321,10 @@ gitlab:
               - port: 26379
                 protocol: TCP
   kas:
+    image:
+      pullSecrets:
+        - name: dev-registry-access-v1
+      repository: dev.gitlab.org:5005/gitlab/gitlab-agent/kas
     global:
       ingress:
         class: "gce"
