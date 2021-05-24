@@ -53,6 +53,8 @@ resources:
         app: webservice
         gitlab.com/webservice-name: api
         gitlab.com/webservice-ingress: proxy-off
+        shard: default
+        stage: {{ if eq $namespace "gitlab-cny" }}"cny"{{ else }}"main"{{ end }}
         tier: sv
         type: api
       name: gitlab-webservice-api-proxy-off
