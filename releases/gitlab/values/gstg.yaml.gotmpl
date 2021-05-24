@@ -15,8 +15,9 @@ gitlab:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 5000000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: 100000
       GITLAB_CDN_HOST: https://gl-staging.freetls.fastly.net
     workhorse:
       resources:
@@ -49,8 +50,9 @@ gitlab:
       ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       ENABLE_ACTIVERECORD_EMPTY_PING: "true"
       USE_GITLAB_LOGGER: 1
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 5000000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: 100000
     extraInitContainers: |
       - name: write-instance-name
         args:
