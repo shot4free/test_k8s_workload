@@ -38,6 +38,12 @@ gitlab:
             requests:
               cpu: 600m
               memory: 300M
+        resources:
+          limits:
+            memory: 8.0G
+          requests:
+            cpu: 4
+            memory: 7G
       websockets:
         hpa:
           minReplicas: 2
