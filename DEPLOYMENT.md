@@ -60,6 +60,17 @@ our production main stage are manually gated at the moment.  This provides
 sufficient time for anyone to fully vet their change in lower environments and
 the canary stage if necessary.
 
+### Auto-Deploy with Configuration Changes
+
+[Auto-Deploy](https://gitlab.com/gitlab-org/release/docs/-/blob/master/general/deploy/auto-deploy.md) runs a pipeline in this project that will update application images for the [GitLab Helm Chart](https://docs.gitlab.com/charts/#gitlab-cloud-native-helm-chart).  This pipeline runs on ops and is limited to a single environment.  There are two stages, Diff and Deploy that perform the following:
+
+1. Validate that no change other than an application upgrade is occurring
+1. If all is well, proceed with deploying, synchronously to all clusters
+
+Auto-deploy will use the master branch at all times for these jobs.  Should a change have been merged into master not be fully rolled out, *this will block auto-deploys*.  It is advised if a change will take a long time to rollout, to ask permission from the `@release-managers` to ensure that Auto-Deploys will not be blocked.  Otherwise a revert of the change will be required.
+
+We plan to make this better in the future.  Tracking issue: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1326
+
 ## Auto Deploy
 
 This project receives a pipeline trigger for auto-deploy, that runs special auto-deploy CI jobs for GitLab image updates to the cluster.
