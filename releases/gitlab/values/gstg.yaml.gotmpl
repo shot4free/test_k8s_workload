@@ -110,9 +110,10 @@ global:
     nodeName: {{ .Environment.Values | getOrNil "gitlab_domain" | default "" }}
     role: primary
     registry:
-      syncEnabled: true
       syncSecret:
         secret: gitlab-registry-notification-v1
+    replication:
+      enabled: true
 
   hosts:
     gitlab:
