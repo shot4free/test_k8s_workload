@@ -35,7 +35,11 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         hpa:
-          minReplicas: 5
+          minReplicas: 3
+          # Part of https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592
+          # this will move into `gprd.yaml.gotmpl` once we confirm it is safe
+          # to run on all clusters.
+          targetAverageValue: 3200m
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
