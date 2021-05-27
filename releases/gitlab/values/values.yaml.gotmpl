@@ -936,7 +936,6 @@ gitlab:
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
-    cluster: true
     trusted_proxies: ['10.0.0.0/8']
     queueSelector: true
     memoryKiller:
