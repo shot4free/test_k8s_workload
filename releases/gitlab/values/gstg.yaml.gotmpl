@@ -32,6 +32,10 @@ gitlab:
         cpu: 4
         memory: 5G
   kas:
+    image:
+      pullSecrets:
+        - name: dev-registry-access-kas-v1
+      repository: dev.gitlab.org:5005/gitlab/gitlab-agent/kas
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
