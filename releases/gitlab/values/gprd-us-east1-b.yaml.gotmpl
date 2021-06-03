@@ -1,0 +1,12 @@
+---
+
+gitlab:
+  webservice:
+    deployments:
+      api:
+        hpa:
+          # Part of https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592
+          # this will move into `gprd.yaml.gotmpl` once we confirm it is safe
+          # to run on all clusters.
+          minReplicas: 30
+          targetAverageValue: 2800m
