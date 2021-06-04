@@ -35,7 +35,9 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         hpa:
-          minReplicas: 10
+          # keeping minReplicas high enough to not suffer from node scaling
+          # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
+          minReplicas: 16
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
