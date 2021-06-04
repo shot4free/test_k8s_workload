@@ -199,10 +199,8 @@ stages:
   - non-prod:deploy
   - non-prod:QA
   - gprd-cny:deploy
-  - gprd-regional:deploy
-  - gprd-zone-b:deploy
-  - gprd-zone-c:deploy
-  - gprd-zone-d:deploy
+  - gprd:deploy:alpha
+  - gprd:deploy:beta
 
 build-chart:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
@@ -453,12 +451,11 @@ gprd-us-east1-d:dryrun:
     - bin/k-ctl -D upgrade
 
 gprd:upgrade:
-  stage: gprd-regional:deploy
+  stage: gprd:deploy:alpha
   extends:
     - .deploy
     - .gprd
     - .only-auto-deploy-false-and-config-changes
-  when: manual
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
@@ -471,7 +468,7 @@ gprd:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-b:upgrade:
-  stage: gprd-zone-b:deploy
+  stage: gprd:deploy:alpha
   extends:
     - .deploy
     - .gprd-us-east1-b
@@ -483,7 +480,6 @@ gprd-us-east1-b:upgrade:
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
     - "build-chart"
-    - "gprd:upgrade"
   only:
     refs:
       - master
@@ -491,7 +487,7 @@ gprd-us-east1-b:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-c:upgrade:
-  stage: gprd-zone-c:deploy
+  stage: gprd:deploy:beta
   extends:
     - .deploy
     - .gprd-us-east1-c
@@ -503,7 +499,6 @@ gprd-us-east1-c:upgrade:
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
     - "build-chart"
-    - "gprd-us-east1-b:upgrade"
   only:
     refs:
       - master
@@ -511,7 +506,7 @@ gprd-us-east1-c:upgrade:
     DRY_RUN: "false"
 
 gprd-us-east1-d:upgrade:
-  stage: gprd-zone-d:deploy
+  stage: gprd:deploy:beta
   extends:
     - .deploy
     - .gprd-us-east1-d
@@ -523,7 +518,6 @@ gprd-us-east1-d:upgrade:
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
   needs:
     - "build-chart"
-    - "gprd-us-east1-c:upgrade"
   only:
     refs:
       - master
@@ -772,7 +766,7 @@ gprd-us-east1-d:dryrun:auto-deploy:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
 
 gprd:auto-deploy:
-  stage: gprd-regional:deploy
+  stage: gprd:deploy:alpha
   extends:
     - .deploy
     - .gprd
@@ -785,7 +779,7 @@ gprd:auto-deploy:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-b:auto-deploy:
-  stage: gprd-zone-b:deploy
+  stage: gprd:deploy:alpha
   extends:
     - .deploy
     - .gprd-us-east1-b
@@ -795,13 +789,12 @@ gprd-us-east1-b:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
     - "build-chart"
-    - "gprd:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-c:auto-deploy:
-  stage: gprd-zone-c:deploy
+  stage: gprd:deploy:beta
   extends:
     - .deploy
     - .gprd-us-east1-c
@@ -811,13 +804,12 @@ gprd-us-east1-c:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
     - "build-chart"
-    - "gprd-us-east1-b:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
 gprd-us-east1-d:auto-deploy:
-  stage: gprd-zone-d:deploy
+  stage: gprd:deploy:beta
   extends:
     - .deploy
     - .gprd-us-east1-d
@@ -827,7 +819,6 @@ gprd-us-east1-d:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   needs:
     - "build-chart"
-    - "gprd-us-east1-c:auto-deploy"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
