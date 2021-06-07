@@ -478,8 +478,6 @@ gprd-us-east1-b:upgrade:
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
-  needs:
-    - "build-chart"
   only:
     refs:
       - master
@@ -497,8 +495,6 @@ gprd-us-east1-c:upgrade:
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
-  needs:
-    - "build-chart"
   only:
     refs:
       - master
@@ -516,8 +512,6 @@ gprd-us-east1-d:upgrade:
     - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration"
-  needs:
-    - "build-chart"
   only:
     refs:
       - master
@@ -787,8 +781,6 @@ gprd-us-east1-b:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
-  needs:
-    - "build-chart"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -802,8 +794,6 @@ gprd-us-east1-c:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
-  needs:
-    - "build-chart"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
@@ -817,8 +807,6 @@ gprd-us-east1-d:auto-deploy:
     - sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment"
     - bin/k-ctl upgrade
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
-  needs:
-    - "build-chart"
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
