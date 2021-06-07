@@ -681,9 +681,6 @@ gitlab:
             deployment: api
             type: api
         service:
-          # Note that we are creating a loadbalancer, but not yet using it,
-          # This will come to use in issue: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1557
-          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
           type: LoadBalancer
           loadBalancerSourceRanges:
             - 10.0.0.0/8

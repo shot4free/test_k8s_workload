@@ -42,8 +42,6 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
         nodeSelector:
           type: default
-        service:
-          loadBalancerIP: {}
       # Preprod does not have node-pools so the default node selectors
       # are overridden to default
       git:
