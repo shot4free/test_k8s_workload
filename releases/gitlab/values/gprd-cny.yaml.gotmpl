@@ -41,11 +41,11 @@ gitlab:
         # Part of https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592
         resources:
           requests:
-            cpu: 3300m
+            cpu: 3200m
         workhorse:
           resources:
             requests:
-              cpu: 400m
+              cpu: 300m
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
