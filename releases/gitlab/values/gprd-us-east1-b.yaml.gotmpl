@@ -3,10 +3,4 @@ gitlab:
   webservice:
     deployments:
       api:
-        resources:
-          requests:
-            cpu: 3200m
-        workhorse:
-          resources:
-            requests:
-              cpu: 300m
+        workerProcesses: 5

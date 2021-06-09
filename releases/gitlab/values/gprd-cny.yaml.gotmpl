@@ -38,10 +38,9 @@ gitlab:
           # keeping minReplicas high enough to not suffer from node scaling
           # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
           minReplicas: 16
-        # Part of https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592
         resources:
           requests:
-            cpu: 3200m
+            cpu: 3000m
         workhorse:
           resources:
             requests:
