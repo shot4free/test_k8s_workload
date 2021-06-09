@@ -22,8 +22,9 @@ registry:
     disablemirrorfs: true
   gc:
     disabled: false
-    maxbackoff: 1h
-    reviewafter: 30m
+    maxbackoff: 30m
+    reviewafter: 5m
+    noidlebackoff: true
 
 gitlab:
   webservice:
