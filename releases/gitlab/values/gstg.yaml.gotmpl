@@ -8,6 +8,9 @@ registry:
 
 gitlab:
   webservice:
+    deployments:
+      api:
+        workerProcesses: 6
     minReplicas: 2
     maxReplicas: 30
     extraEnv:
