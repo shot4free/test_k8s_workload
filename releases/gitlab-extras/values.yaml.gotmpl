@@ -69,21 +69,6 @@ resources:
               servicePort: 8181
             path: /api/v[0..9]/jobs/[0-9]+/artifacts$
             pathType: ImplementationSpecific
-          - backend:
-              serviceName: {{ $namespace }}-webservice-api
-              servicePort: 8181
-            path: /.*\.git/git-receive-pack$
-            pathType: ImplementationSpecific
-          - backend:
-              serviceName: {{ $namespace }}-webservice-api
-              servicePort: 8181
-            path: /.*\.git/gitlab-lfs/objects
-            pathType: ImplementationSpecific
-          - backend:
-              serviceName: {{ $namespace }}-webservice-api
-              servicePort: 8181
-            path: /.*\.git/info/lfs/objects/batch$
-            pathType: ImplementationSpecific
       tls:
       - hosts:
         - {{ .Values | getOrNil "gitlab_domain" | default "" }}
