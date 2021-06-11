@@ -661,7 +661,7 @@ gitlab:
           labels:
             type: api
         deployment:
-          terminationGracePeriodSeconds: 60
+          terminationGracePeriodSeconds: 65
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
