@@ -628,6 +628,8 @@ gitlab:
       limits:
         memory: 1G
     config:
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/13548
+      clientAliveInterval: 30
       maxStartups:
         full: 400
         rate: 60
