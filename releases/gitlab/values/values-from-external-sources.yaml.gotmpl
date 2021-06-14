@@ -10,6 +10,7 @@
 {{- /* As the pre environment has no redis specific roles, we only fetch for other environments */ -}}
 {{- $chef_base_db_redis_server_sidekiq_role := "{}" }}
 {{- $chef_base_db_redis_server_cache_role := "{}" }}
+{{- $chef_base_db_redis_server_tracechunks_role := "{}" }}
 {{- if ne "pre" .Environment.Name }}
 {{- $chef_base_db_redis_server_tracechunks_role = exec $get_role_from_chef (list (print $chef_source_name "-base-db-redis-server-tracechunks")) }}
 {{- $chef_base_db_redis_server_sidekiq_role = exec $get_role_from_chef (list (print $chef_source_name "-base-db-redis-server-sidekiq")) }}
