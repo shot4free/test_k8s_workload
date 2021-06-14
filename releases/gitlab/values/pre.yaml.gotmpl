@@ -111,6 +111,8 @@ gitlab:
       maxReplicas: 5
     nodeSelector:
       type: default
+    service:
+      type: LoadBalancer
 global:
   appConfig:
     incomingEmail:

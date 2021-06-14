@@ -1338,6 +1338,9 @@ gitlab:
         type: kas
         deployment: kas
     service:
+      loadBalancerSourceRanges:
+        - 10.0.0.0/8
+      loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=kas-internal-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
       annotations:
         cloud.google.com/neg: '{"ingress": true}'
         cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
