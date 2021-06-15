@@ -8,11 +8,8 @@ registry:
   # For https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1811
   # Can go into values.yaml.gotmpl once we are satisfied with the values.
   resources:
-    limits:
-      memory: 3200M
     requests:
       cpu: 300m
-      memory: 3200M
   hpa:
     cpu:
       targetAverageUtilization: 70
