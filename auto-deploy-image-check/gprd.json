@@ -38,6 +38,12 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
+  "name": "gitlab-sidekiq-imports-v1",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
   "name": "gitlab-sidekiq-low-urgency-cpu-bound-v1",
   "change": "MODIFY"
 },{
