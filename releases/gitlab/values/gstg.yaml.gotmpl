@@ -5,6 +5,15 @@ registry:
     tag: v3.4.1-gitlab
   nodeSelector:
     type: registry
+  # For https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1811
+  # Can go into values.yaml.gotmpl once we are satisfied with the values.
+  resources:
+    requests:
+      cpu: 300m
+      memory: 3200M
+  hpa:
+    cpu:
+      targetAverageUtilization: 70
 
 gitlab:
   webservice:
