@@ -1086,6 +1086,28 @@ gitlab:
           - name: sidekiq-shared
             emptyDir:
               sizeLimit: 10G
+      - name: imports
+        common:
+          labels:
+            shard: imports
+        concurrency: 1
+        minReplicas: 2
+        maxReplicas: 2
+        nodeSelector:
+          type: catchall
+        podLabels:
+          deployment: sidekiq-imports
+          shard: imports
+        queues: name=repository_import
+        resources:
+          requests:
+            cpu: 800m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 2G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"imports\"}"
       - name: memory-bound
         common:
           labels:
