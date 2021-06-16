@@ -4,3 +4,12 @@ gitlab:
     deployments:
       api:
         workerProcesses: 6
+        hpa:
+          minReplicas: 25
+          targetAverageValue: 4000m
+        resources:
+          limits:
+            memory: 11G
+          requests:
+            cpu: 4800m
+            memory: 7G
