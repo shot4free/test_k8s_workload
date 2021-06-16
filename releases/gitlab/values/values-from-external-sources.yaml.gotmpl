@@ -137,7 +137,7 @@ global:
         secret: gitlab-redis-credential-v1
         key: secret
     {{- if ne "null" $redis_tracechunks_sentinels }}
-    trace_chunks:
+    traceChunks:
       host: {{ $redis_tracechunks_cluster_name }}
       sentinels: {{ $redis_tracechunks_sentinels }}
       password:
