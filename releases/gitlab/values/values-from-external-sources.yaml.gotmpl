@@ -10,7 +10,9 @@
 {{- /* As the pre environment has no redis specific roles, we only fetch for other environments */ -}}
 {{- $chef_base_db_redis_server_sidekiq_role := "{}" }}
 {{- $chef_base_db_redis_server_cache_role := "{}" }}
+{{- $chef_base_db_redis_server_tracechunks_role := "{}" }}
 {{- if ne "pre" .Environment.Name }}
+{{- $chef_base_db_redis_server_tracechunks_role = exec $get_role_from_chef (list (print $chef_source_name "-base-db-redis-server-tracechunks")) }}
 {{- $chef_base_db_redis_server_sidekiq_role = exec $get_role_from_chef (list (print $chef_source_name "-base-db-redis-server-sidekiq")) }}
 {{- $chef_base_db_redis_server_cache_role = exec $get_role_from_chef (list (print $chef_source_name "-base-db-redis-sentinel-cache")) }}
 {{- end }}
@@ -96,9 +98,11 @@ global:
     user_name: {{ $gkms_omnibus_secrets | exec "jq" (list ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".smtp_user_name") }}
 
   redis:
+  {{- $redis_tracechunks_cluster_name := $chef_base_db_redis_server_tracechunks_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- $redis_queues_cluster_name := $chef_base_db_redis_server_sidekiq_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- $redis_cache_cluster_name := $chef_base_db_redis_server_cache_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- $redis_cluster_name := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
+  {{- $redis_tracechunks_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_tracechunks") }}
   {{- $redis_queues_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_queues_sentinels") }}
   {{- $redis_cache_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_cache_sentinels") }}
   {{- $redis_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_sentinels") }}
@@ -132,6 +136,15 @@ global:
         enabled: true
         secret: gitlab-redis-credential-v1
         key: secret
+    {{- if ne "null" $redis_tracechunks_sentinels }}
+    trace_chunks:
+      host: {{ $redis_tracechunks_cluster_name }}
+      sentinels: {{ $redis_tracechunks_sentinels }}
+      password:
+        enabled: true
+        secret: gitlab-redis-credential-v1
+        key: secret
+    {{- end }}
   {{- end }}
 
 registry:
