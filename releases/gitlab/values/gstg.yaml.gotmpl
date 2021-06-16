@@ -45,8 +45,6 @@ gitlab:
         sentry:
           dsn: https://af4940ad841b46d78708595fc654af78@sentry.gitlab.net/124
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
-    service:
-      type: LoadBalancer
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5

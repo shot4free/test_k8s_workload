@@ -153,6 +153,9 @@ registry:
 
 {{- $loadBalancerIPShell := exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=ssh-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
 gitlab:
+  kas:
+    service:
+      loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=kas-internal-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
   gitlab-shell:
     service:
       type: LoadBalancer
