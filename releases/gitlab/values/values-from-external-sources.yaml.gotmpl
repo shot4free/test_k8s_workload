@@ -102,7 +102,7 @@ global:
   {{- $redis_queues_cluster_name := $chef_base_db_redis_server_sidekiq_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- $redis_cache_cluster_name := $chef_base_db_redis_server_cache_role | exec "jq" (list "-j" ".override_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
   {{- $redis_cluster_name := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.redis.master_name") }}
-  {{- $redis_tracechunks_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_tracechunks") }}
+  {{- $redis_tracechunks_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_trace_chunks_sentinels") }}
   {{- $redis_queues_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_queues_sentinels") }}
   {{- $redis_cache_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_cache_sentinels") }}
   {{- $redis_sentinels := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".redis_sentinels") }}
