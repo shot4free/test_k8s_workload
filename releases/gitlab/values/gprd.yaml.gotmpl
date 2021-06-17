@@ -31,8 +31,8 @@ gitlab:
     deployments:
       api:
         hpa:
-          minReplicas: 30
-          targetAverageValue: 2600m
+          minReplicas: 25
+          targetAverageValue: 3600m
         workhorse:
           resources:
             limits:
@@ -42,9 +42,9 @@ gitlab:
               memory: 300M
         resources:
           limits:
-            memory: 8.0G
+            memory: 12G
           requests:
-            cpu: 4
+            cpu: 4500m
             memory: 7G
       websockets:
         hpa:

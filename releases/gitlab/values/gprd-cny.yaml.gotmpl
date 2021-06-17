@@ -38,14 +38,6 @@ gitlab:
           # keeping minReplicas high enough to not suffer from node scaling
           # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
           minReplicas: 16
-        resources:
-          requests:
-            cpu: 3000m
-        workerProcesses: 6
-        workhorse:
-          resources:
-            requests:
-              cpu: 300m
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
