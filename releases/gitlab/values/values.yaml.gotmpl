@@ -667,6 +667,7 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: api-1
         shutdown:
@@ -956,6 +957,7 @@ gitlab:
       # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2100
       SIDEKIQ_LOG_ARGUMENTS: "1"
       USE_GITLAB_LOGGER: 1
+      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
     networkpolicy:
       enabled: true
       egress:
