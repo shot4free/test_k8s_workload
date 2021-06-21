@@ -8,6 +8,10 @@ registry:
 
 gitlab:
   webservice:
+    deployments:
+      api:
+        nodeSelector:
+          cloud.google.com/gke-nodepool: api-2
     minReplicas: 2
     maxReplicas: 30
     extraEnv:
