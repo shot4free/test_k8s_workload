@@ -42,9 +42,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
         nodeSelector:
-          type: default
-      # Preprod does not have node-pools so the default node selectors
-      # are overridden to default
+          cloud.google.com/gke-nodepool: default-1
       git:
         nodeSelector:
           type: default
