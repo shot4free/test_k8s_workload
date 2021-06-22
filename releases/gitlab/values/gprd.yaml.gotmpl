@@ -17,7 +17,7 @@ registry:
     minReplicas: 30
     maxReplicas: 150
   nodeSelector:
-    cloud.google.com/gke-nodepool: registry-0
+    cloud.google.com/gke-nodepool: registry-1
   resources:
     requests:
       cpu: 250m
@@ -28,7 +28,7 @@ gitlab:
     minReplicas: 8
     maxReplicas: 150
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-1
+      cloud.google.com/gke-nodepool: shell-2
   webservice:
     deployments:
       api:
@@ -50,12 +50,12 @@ gitlab:
             memory: 7G
       git:
         nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-1
+          cloud.google.com/gke-nodepool: git-https-2
       websockets:
         hpa:
           minReplicas: 2
         nodeSelector:
-          cloud.google.com/gke-nodepool: websockets-0
+          cloud.google.com/gke-nodepool: websockets-1
         workhorse:
           # these limits are increased due to memory consumption observed when we
           # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413
