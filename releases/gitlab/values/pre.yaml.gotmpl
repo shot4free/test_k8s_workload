@@ -47,14 +47,14 @@ gitlab:
           cloud.google.com/gke-nodepool: default-1
       git:
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-1
       websockets:
         deployment:
           readinessProbe:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-1
     workerProcesses: 2
     workhorse:
       resources:

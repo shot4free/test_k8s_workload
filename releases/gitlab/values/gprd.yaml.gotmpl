@@ -48,9 +48,14 @@ gitlab:
           requests:
             cpu: 4500m
             memory: 7G
+      git:
+        nodeSelector:
+          cloud.google.com/gke-nodepool: git-https-1
       websockets:
         hpa:
           minReplicas: 2
+        nodeSelector:
+          cloud.google.com/gke-nodepool: websockets-0
         workhorse:
           # these limits are increased due to memory consumption observed when we
           # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413
