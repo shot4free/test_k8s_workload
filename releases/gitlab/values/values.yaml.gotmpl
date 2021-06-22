@@ -708,7 +708,7 @@ gitlab:
           # See https://gitlab.com/gitlab-org/gitlab-workhorse/-/issues/352
           GODEBUG: madvdontneed=1
         nodeSelector:
-          type: websockets
+          cloud.google.com/gke-nodepool: websockets-1
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
@@ -730,7 +730,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
         nodeSelector:
-          type: git-https
+          cloud.google.com/gke-nodepool: git-https-2
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
