@@ -18,6 +18,9 @@ nginx-ingress:
         <<: *nginx_labels
 
 gitlab:
+  gitlab-shell:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-2
   mailroom:
     enabled: false
 

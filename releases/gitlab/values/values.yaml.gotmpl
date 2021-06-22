@@ -648,7 +648,7 @@ gitlab:
     logging:
       format: "json"
     nodeSelector:
-      type: shell
+      cloud.google.com/gke-nodepool: shell-2
     common:
       labels:
         deployment: gitlab-shell
