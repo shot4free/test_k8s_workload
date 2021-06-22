@@ -20,6 +20,8 @@ registry:
       maxlifetime: 5m
   migration:
     disablemirrorfs: true
+  nodeSelector:
+    cloud.google.com/gke-nodepool: default-1
   gc:
     disabled: false
     maxbackoff: 30m

@@ -17,7 +17,7 @@ registry:
     minReplicas: 30
     maxReplicas: 150
   nodeSelector:
-    type: registry
+    cloud.google.com/gke-nodepool: registry-0
   resources:
     requests:
       cpu: 250m
