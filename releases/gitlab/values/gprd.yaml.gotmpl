@@ -123,7 +123,7 @@ gitlab:
         minReplicas: 56
         maxReplicas: 175
         nodeSelector:
-          type: catchall
+          cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
           shard: catchall
           deployment: sidekiq-catchall
@@ -153,7 +153,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 10
         nodeSelector:
-          type: catchall
+          cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
           deployment: sidekiq-imports
           shard: imports
@@ -175,7 +175,7 @@ gitlab:
         minReplicas: 4
         maxReplicas: 16
         nodeSelector:
-          type: memory-bound
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
         podLabels:
           shard: memory-bound
           deployment: sidekiq-memory-bound
@@ -207,7 +207,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 1
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: database-throttled
           deployment: sidekiq-database-throttled
@@ -233,7 +233,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 3
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: gitaly-throttled
           deployment: sidekiq-gitaly-throttled
@@ -256,7 +256,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 8
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: elasticsearch
           deployment: sidekiq-elasticsearch
@@ -282,7 +282,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 100
         nodeSelector:
-          type: low-urgency-cpu-bound
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
         podLabels:
           shard: low-urgency-cpu-bound
           deployment: sidekiq-low-urgency-cpu-bound
@@ -314,7 +314,7 @@ gitlab:
           maxRss: 3000000
           shutdownWait: 30
         nodeSelector:
-          type: urgent-cpu-bound
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
         podLabels:
           shard: urgent-cpu-bound
           deployment: sidekiq-urgent-cpu-bound
@@ -344,7 +344,7 @@ gitlab:
           maxRss: 2900000
           shutdownWait: 30
         nodeSelector:
-          type: urgent-other
+          cloud.google.com/gke-nodepool: sidekiq-urgent-other-3
         podLabels:
           shard: urgent-other
           deployment: sidekiq-urgent-other
