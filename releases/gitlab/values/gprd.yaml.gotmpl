@@ -27,6 +27,8 @@ gitlab:
   gitlab-shell:
     minReplicas: 8
     maxReplicas: 150
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-1
   webservice:
     deployments:
       api:

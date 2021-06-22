@@ -85,7 +85,7 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3155 is complete
       host: gitlab-webservice-git.gitlab.svc
     nodeSelector:
-      type: default
+      cloud.google.com/gke-nodepool: default-1
   mailroom:
     nodeSelector:
       type: default
