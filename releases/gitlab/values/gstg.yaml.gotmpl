@@ -36,6 +36,8 @@ gitlab:
         cpu: 4
         memory: 5G
   kas:
+    ingress:
+      path: '/*'
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
