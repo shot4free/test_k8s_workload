@@ -1,10 +1,10 @@
 ---
 helmDefaults:
-  atomic: true
+  atomic: false
   tillerNamespace: kube-system
   tillerless: true
   cleanupOnFail: false
-  wait: true
+  wait: false
   timeout: 3600
   # Do not recreate pods during upgrade when not required
   recreatePods: false
