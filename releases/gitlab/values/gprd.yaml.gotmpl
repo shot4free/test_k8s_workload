@@ -67,7 +67,6 @@ gitlab:
     minReplicas: 30
     maxReplicas: 150
     extraEnv:
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
@@ -86,7 +85,6 @@ gitlab:
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
     extraInitContainers: |
