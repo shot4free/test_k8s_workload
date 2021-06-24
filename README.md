@@ -162,3 +162,12 @@ that occurs on our default branch will contain the updated artifact.  Should
 cached version of the chart.  This has a consequence of unexpected changes to
 various versions that are stored inside of Kubernetes objects , but should be
 considered a safe operation.
+
+## Node Selectors
+
+Due to an unknown issue with GKE's cluster-autoscaler, we are currently using
+the names of node pools to manage where our workloads reside.  Keep in mind that
+node pool names are not consistent between any environment!  If new node pools
+are created, the use of the label will need to be modified in this repo prior to
+removing the old node pool.  Details of how we landed here can be found in
+Incident: https://gitlab.com/gitlab-com/gl-infra/production/-/issues/4940

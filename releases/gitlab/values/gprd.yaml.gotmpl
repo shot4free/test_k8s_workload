@@ -5,6 +5,8 @@ nginx-ingress:
   controller:
     autoscaling:
       minReplicas: 10
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     resources:
       requests:
         cpu: 1
@@ -29,6 +31,9 @@ gitlab:
     maxReplicas: 150
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
+  mailroom:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
   webservice:
     deployments:
       api:
@@ -73,6 +78,8 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
       GITLAB_CDN_HOST: https://assets.gitlab-static.net
   kas:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     workhorse:
       scheme: 'https'
       host: 'int.gprd.gitlab.net'
