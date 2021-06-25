@@ -75,6 +75,7 @@ resources:
         secretName: gitlab-wildcard-tls
 {{- end }}
 
+{{- if .Values | getOrNil "gitlab_extras.ingress_readiness" | default false }}
   - apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
@@ -117,3 +118,4 @@ resources:
       - hosts:
         - {{ .Values | getOrNil "gitlab_domain" | default "" }}
         secretName: gitlab-wildcard-tls
+{{- end }}
