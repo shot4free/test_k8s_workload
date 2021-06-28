@@ -78,7 +78,6 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
   gitlab-shell:
     minReplicas: 1
     maxReplicas: 5
@@ -97,8 +96,6 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
   sidekiq:
-    extraEnv:
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
     pods:
         # This is set to "memory-bound" until
         # catchall is migrated to production.
