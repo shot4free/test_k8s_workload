@@ -91,8 +91,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-catchall
           shard: catchall
-        negateQueues: |
-          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled|name=repository_import
+        queueSelector: false
+        queues: "default,mailers,project_import_schedule"
         resources:
           requests:
             cpu: 800m
