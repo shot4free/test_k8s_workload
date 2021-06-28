@@ -91,7 +91,6 @@ resources:
         shard: default
         stage: {{ default ( .Values | getOrNil "stage" ) "main" }}
         tier: sv
-        type: api
       name: gitlab-readiness
       namespace: {{ $namespace }}
     spec:
