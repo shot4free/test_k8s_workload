@@ -19,7 +19,7 @@ releases:
   values:
 {{- $env_prefix := .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default $env_prefix }}
-{{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=-")) }}
+{{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=- | zcat -f")) }}
 {{- $dev_gitlab_org_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token\"") }}
 {{- $dev_gitlab_org_kas_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token-kas\"") }}
     - resources:
