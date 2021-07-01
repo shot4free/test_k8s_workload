@@ -417,6 +417,7 @@ nginx-ingress:
     labels: &nginx_labels
       shard: default
       stage: main
+      type: nginx
     lifecycle:
       preStop:
         exec:
