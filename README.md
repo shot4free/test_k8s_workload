@@ -121,7 +121,7 @@ https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/381
 
 ### Prerequisites
 
-Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-operations.md).
+Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-operations.md).
 
 ## Bootstrapping new clusters
 
