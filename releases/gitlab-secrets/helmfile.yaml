@@ -281,3 +281,17 @@ releases:
           runner-registration-token: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".gitlab_k8s[\"gitlab-runner-registration-credential\"]") | quote }}
           runner-token: ""
 {{ end }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-gitaly-tls-certificate-v1
+          namespace: {{ $namespace }}
+        stringData:
+          gitaly.crt: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.trusted_certs[\"gitaly.crt\"]") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-praefect-tls-certificate-v1
+          namespace: {{ $namespace }}
+        stringData:
+          praefect.crt: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.trusted_certs[\"praefect.crt\"]") | quote }}

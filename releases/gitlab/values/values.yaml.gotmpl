@@ -375,7 +375,9 @@ global:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/alpine-certificates
       tag: 20171114-r3
-    customCAs: []
+    customCAs:
+      - secret: gitlab-gitaly-tls-certificate-v1
+      - secret: gitlab-praefect-tls-certificate-v1
     # - secret: custom-CA
     # - secret: more-custom-CAs
 ## End of global
