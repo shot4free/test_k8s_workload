@@ -42,6 +42,7 @@ environments:
             enabled: false
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
 
   ops:
     values:
@@ -77,6 +78,7 @@ environments:
           namespace: gitlab-runner
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
 
   gstg:
     values:
@@ -157,6 +159,7 @@ environments:
             enabled: false
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
           namespace: "gitlab-cny"
 
   gprd:

@@ -1,26 +1,32 @@
 ---
 
+nginx-ingress:
+  controller:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
+
 registry:
   image:
     tag: v3.5.0-gitlab
-  nodeSelector:
-    type: registry
 
 gitlab:
+  mailroom:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
   webservice:
     deployments:
       api:
-        workerProcesses: 6
+        nodeSelector:
+          cloud.google.com/gke-nodepool: api-2
     minReplicas: 2
     maxReplicas: 30
     extraEnv:
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
+      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
       USE_NEW_LOAD_BALANCER_QUERY: "true"
     workhorse:
       resources:
@@ -36,6 +42,8 @@ gitlab:
         cpu: 4
         memory: 5G
   kas:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
@@ -49,11 +57,10 @@ gitlab:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
       USE_GITLAB_LOGGER: 1
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
+      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
     extraInitContainers: |
       - name: write-instance-name
         args:
@@ -70,6 +77,224 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
+    pods:
+      - name: catchall
+        common:
+          labels:
+            shard: catchall
+        concurrency: 15
+        minReplicas: 1
+        maxReplicas: 100
+        nodeSelector:
+          cloud.google.com/gke-nodepool: catchall-0
+        podLabels:
+          deployment: sidekiq-catchall
+          shard: catchall
+        queueSelector: false
+        queues: "default,mailers,project_import_schedule"
+        resources:
+          requests:
+            cpu: 800m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 2G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
+        extraVolumes: |
+          # This is needed because of https://gitlab.com/gitlab-org/gitlab/-/issues/330317
+          # where temp files are written to `/srv/gitlab/shared`
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 10G
+      - name: imports
+        common:
+          labels:
+            shard: imports
+        concurrency: 1
+        minReplicas: 2
+        maxReplicas: 2
+        nodeSelector:
+          cloud.google.com/gke-nodepool: catchall-0
+        podLabels:
+          deployment: sidekiq-imports
+          shard: imports
+        queues: name=repository_import
+        resources:
+          requests:
+            cpu: 800m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 2G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"imports\"}"
+      - name: memory-bound
+        common:
+          labels:
+            shard: memory-bound
+        concurrency: 1
+        minReplicas: 1
+        maxReplicas: 16
+        nodeSelector:
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-1
+        podLabels:
+          deployment: sidekiq-memory-bound
+          shard: memory-bound
+        queues: resource_boundary=memory
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 8G
+        extraVolumeMounts: |
+          - name: sidekiq-shared
+            mountPath: /srv/gitlab/shared
+            readOnly: false
+        extraVolumes: |
+          - name: sidekiq-shared
+            emptyDir:
+              sizeLimit: 50G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
+      # Run background migrations in their own shard
+      - name: database-throttled
+        common:
+          labels:
+            shard: database-throttled
+        concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
+        minReplicas: 1
+        maxReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: default-2
+        podLabels:
+          deployment: sidekiq-database-throttled
+          shard: database-throttled
+        queues: feature_category=database&urgency=throttled
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 1.5
+            memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"database-throttled\"}"
+      # Run Gitaly Storage Migrations on their own shards
+      # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
+      # Allow up to a maximum of 24 concurrent gitaly-throttled jobs
+      - name: gitaly-throttled
+        common:
+          labels:
+            shard: gitaly-throttled
+        concurrency: 8
+        minReplicas: 1
+        maxReplicas: 3
+        nodeSelector:
+          cloud.google.com/gke-nodepool: default-2
+        podLabels:
+          deployment: sidekiq-gitaly-throttled
+          shard: gitaly-throttled
+        queues: feature_category=gitaly&urgency=throttled
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 1.5
+            memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"gitaly-throttled\"}"
+      - name: elasticsearch
+        common:
+          labels:
+            shard: elasticsearch
+        concurrency: 2
+        minReplicas: 2
+        maxReplicas: 2
+        nodeSelector:
+          cloud.google.com/gke-nodepool: default-2
+        podLabels:
+          deployment: sidekiq-elasticsearch
+          shard: elasticsearch
+        queues: feature_category=global_search&urgency=throttled
+        resources:
+          requests:
+            cpu: 50m
+            memory: 650M
+          limits:
+            cpu: 2
+            memory: 8G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"elasticsearch\"}"
+      - name: low-urgency-cpu-bound
+        common:
+          labels:
+            shard: low-urgency-cpu-bound
+        concurrency: 5
+        minReplicas: 2
+        maxReplicas: 10
+        nodeSelector:
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-1
+        podLabels:
+          deployment: sidekiq-low-urgency-cpu-bound
+          shard: low-urgency-cpu-bound
+        queues: resource_boundary=cpu&urgency=default,low
+        resources:
+          requests:
+            cpu: 80m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
+      - name: urgent-cpu-bound
+        common:
+          labels:
+            shard: urgent-cpu-bound
+        concurrency: 5
+        minReplicas: 1
+        maxReplicas: 10
+        nodeSelector:
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-1
+        podLabels:
+          deployment: sidekiq-urgent-cpu-bound
+          shard: urgent-cpu-bound
+        queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200M
+          limits:
+            cpu: 1
+            memory: 2G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-cpu-bound\"}"
+      - name: urgent-other
+        common:
+          labels:
+            shard: urgent-other
+        concurrency: 5
+        minReplicas: 5
+        maxReplicas: 10
+        nodeSelector:
+          cloud.google.com/gke-nodepool: sidekiq-urgent-other-1
+        podLabels:
+          deployment: sidekiq-urgent-other
+          shard: urgent-other
+        queues: resource_boundary!=cpu&urgency=high
+        resources:
+          requests:
+            cpu: 80m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 6G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
     psql:
       load_balancing:
         discover:
@@ -101,9 +326,7 @@ global:
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
-        - ["tags=exclude_from_kubernetes", null] # catchall on VMs
-        - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
-        - ["*", null] # catchall on k8s
+        - ["*", "default"] # catchall on k8s
 
   email:
     reply_to: noreply@gitlab.com

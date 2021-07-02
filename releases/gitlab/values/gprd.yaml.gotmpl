@@ -5,6 +5,8 @@ nginx-ingress:
   controller:
     autoscaling:
       minReplicas: 10
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     resources:
       requests:
         cpu: 1
@@ -17,7 +19,7 @@ registry:
     minReplicas: 30
     maxReplicas: 150
   nodeSelector:
-    type: registry
+    cloud.google.com/gke-nodepool: registry-1
   resources:
     requests:
       cpu: 250m
@@ -27,12 +29,17 @@ gitlab:
   gitlab-shell:
     minReplicas: 8
     maxReplicas: 150
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-2
+  mailroom:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
   webservice:
     deployments:
       api:
         hpa:
-          minReplicas: 30
-          targetAverageValue: 2600m
+          minReplicas: 25
+          targetAverageValue: 3600m
         workhorse:
           resources:
             limits:
@@ -42,13 +49,18 @@ gitlab:
               memory: 300M
         resources:
           limits:
-            memory: 8.0G
+            memory: 12G
           requests:
-            cpu: 4
+            cpu: 4500m
             memory: 7G
+      git:
+        nodeSelector:
+          cloud.google.com/gke-nodepool: git-https-2
       websockets:
         hpa:
           minReplicas: 2
+        nodeSelector:
+          cloud.google.com/gke-nodepool: websockets-1
         workhorse:
           # these limits are increased due to memory consumption observed when we
           # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413
@@ -60,12 +72,13 @@ gitlab:
     minReplicas: 30
     maxReplicas: 150
     extraEnv:
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
   kas:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     workhorse:
       scheme: 'https'
       host: 'int.gprd.gitlab.net'
@@ -78,7 +91,6 @@ gitlab:
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
-      ENABLE_ACTIVERECORD_TYPEMAP_CACHE: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
     extraInitContainers: |
@@ -115,7 +127,7 @@ gitlab:
         minReplicas: 56
         maxReplicas: 175
         nodeSelector:
-          type: catchall
+          cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
           shard: catchall
           deployment: sidekiq-catchall
@@ -142,10 +154,10 @@ gitlab:
           labels:
             shard: imports
         concurrency: 1
-        minReplicas: 8
-        maxReplicas: 8
+        minReplicas: 10
+        maxReplicas: 10
         nodeSelector:
-          type: catchall
+          cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
           deployment: sidekiq-imports
           shard: imports
@@ -167,7 +179,7 @@ gitlab:
         minReplicas: 4
         maxReplicas: 16
         nodeSelector:
-          type: memory-bound
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
         podLabels:
           shard: memory-bound
           deployment: sidekiq-memory-bound
@@ -199,7 +211,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 1
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: database-throttled
           deployment: sidekiq-database-throttled
@@ -225,7 +237,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 3
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: gitaly-throttled
           deployment: sidekiq-gitaly-throttled
@@ -248,7 +260,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 8
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-2
         podLabels:
           shard: elasticsearch
           deployment: sidekiq-elasticsearch
@@ -274,7 +286,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 100
         nodeSelector:
-          type: low-urgency-cpu-bound
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
         podLabels:
           shard: low-urgency-cpu-bound
           deployment: sidekiq-low-urgency-cpu-bound
@@ -306,7 +318,7 @@ gitlab:
           maxRss: 3000000
           shutdownWait: 30
         nodeSelector:
-          type: urgent-cpu-bound
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
         podLabels:
           shard: urgent-cpu-bound
           deployment: sidekiq-urgent-cpu-bound
@@ -336,7 +348,7 @@ gitlab:
           maxRss: 2900000
           shutdownWait: 30
         nodeSelector:
-          type: urgent-other
+          cloud.google.com/gke-nodepool: sidekiq-urgent-other-3
         podLabels:
           shard: urgent-other
           deployment: sidekiq-urgent-other

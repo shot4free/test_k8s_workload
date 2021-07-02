@@ -1,5 +1,10 @@
 ---
 
+nginx-ingress:
+  controller:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-1
+
 # Needed for now, because a check in the registry chart is insisting on it.
 # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2615
 postgresql:
@@ -20,6 +25,8 @@ registry:
       maxlifetime: 5m
   migration:
     disablemirrorfs: true
+  nodeSelector:
+    cloud.google.com/gke-nodepool: default-1
   gc:
     disabled: false
     maxbackoff: 30m
@@ -42,19 +49,17 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
         nodeSelector:
-          type: default
-      # Preprod does not have node-pools so the default node selectors
-      # are overridden to default
+          cloud.google.com/gke-nodepool: default-1
       git:
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-1
       websockets:
         deployment:
           readinessProbe:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-1
     workerProcesses: 2
     workhorse:
       resources:
@@ -73,7 +78,6 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
   gitlab-shell:
     minReplicas: 1
     maxReplicas: 5
@@ -87,13 +91,11 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3155 is complete
       host: gitlab-webservice-git.gitlab.svc
     nodeSelector:
-      type: default
+      cloud.google.com/gke-nodepool: default-1
   mailroom:
     nodeSelector:
-      type: default
+      cloud.google.com/gke-nodepool: default-1
   sidekiq:
-    extraEnv:
-      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
     pods:
         # This is set to "memory-bound" until
         # catchall is migrated to production.
@@ -104,7 +106,7 @@ gitlab:
           labels:
             shard: memory-bound
         nodeSelector:
-          type: default
+          cloud.google.com/gke-nodepool: default-1
         concurrency: 25
         minReplicas: 1
         maxReplicas: 5
@@ -113,7 +115,7 @@ gitlab:
       minReplicas: 1
       maxReplicas: 5
     nodeSelector:
-      type: default
+      cloud.google.com/gke-nodepool: default-1
 global:
   appConfig:
     incomingEmail:
