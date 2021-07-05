@@ -1210,3 +1210,10 @@ gitlab:
               # gstg, gprd Redis
             - port: 26379
               protocol: TCP
+          # Allow internal traffic to sentry.gitlab.net
+          - to:
+            - ipBlock:
+                cidr: 35.196.242.168/32
+            ports:
+            - port: 443
+              protocol: TCP
