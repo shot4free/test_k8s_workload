@@ -48,11 +48,38 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
+        ingress:
+          path: '/api'
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+      web:
+        common:
+          labels:
+            type: web
+        deployment:
+          terminationGracePeriodSeconds: 65
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: default-1
+        shutdown:
+          blackoutSeconds: 10
+        ingress:
+          enabled: true
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-buffering: "on"
+            nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+            nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
+          path: '/'
+        pod:
+          labels:
+            deployment: web
+            type: web
       websockets:
         deployment:
           readinessProbe:
@@ -118,6 +145,20 @@ gitlab:
       cloud.google.com/gke-nodepool: default-1
 global:
   appConfig:
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+      directives:
+        connect_src: "'self' https://pre.gitlab.com https://pre.gitlab-static.net wss://pre.gitlab.com https://sentry.gitlab.net https://customers.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
+        default_src: "'self' https://pre.gitlab-static.net"
+        frame_ancestors: "'self'"
+        frame_src: "'self' https://pre.gitlab-static.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io"
+        img_src: "* data: blob:"
+        object_src: "'none'"
+        report_uri: "https://sentry.gitlab.net/api/22/security/?sentry_key=e9401448c5c04c39823793199b8f7c49"
+        script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://pre.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
+        style_src: "'self' 'unsafe-inline' https://pre.gitlab-static.net"
+        worker_src: "https://pre.gitlab-static.net https://pre.gitlab.com blob: data:"
     incomingEmail:
       enabled: true
     omniauth:
