@@ -58,6 +58,9 @@ global:
     annotations: {}
     enabled: false
     pathType: ImplementationSpecific
+    ## This is added kas which using GCE ingress. GCE Ingress must has wildcard paths ending in '/*'. Unfortunately this sets this
+    ## Globally for all ingress objects, but due to the fact that it's overriden back on each ingress to '/', only kas picks this up.
+    path: "/*"
     tls:
       enabled: true
 
