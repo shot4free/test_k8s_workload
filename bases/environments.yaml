@@ -73,6 +73,7 @@ environments:
         kas:
           managed_cert_name: kas-pre-gitlab-com
           domain: kas.pre.gitlab.com
+          frontendconfigEnable: true
         gitlab_runner:
           enabled: true
           namespace: gitlab-runner
@@ -96,6 +97,7 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
+          frontendconfigEnable: true
 
 
   # Zonal clusters for gstg, these three environments

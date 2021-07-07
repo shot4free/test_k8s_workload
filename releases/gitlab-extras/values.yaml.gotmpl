@@ -28,6 +28,15 @@ resources:
       timeoutSec: 1830
       securityPolicy:
         name: "kas-ingress-policy"
+
+  - apiVersion: networking.gke.io/v1beta1
+    kind: FrontendConfig
+    metadata:
+      name: kas-http-frontendconfig
+      namespace: {{ $namespace }}
+    spec:
+      redirectToHttps:
+        enabled: true
 {{- end }}
 
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
