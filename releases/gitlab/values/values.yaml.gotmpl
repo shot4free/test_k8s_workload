@@ -1222,3 +1222,10 @@ gitlab:
             ports:
             - port: 443
               protocol: TCP
+          - to:
+            - podSelector:
+                matchLabels:
+                  app: kas
+            ports:
+            - port: 8155
+              protocol: TCP
