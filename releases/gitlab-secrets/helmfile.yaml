@@ -267,6 +267,13 @@ releases:
       - apiVersion: v1
         kind: Secret
         metadata:
+          name: gitlab-kas-private-api-credential-v1
+          namespace: {{ $namespace }}
+        stringData:
+          kas_private_api_secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".gitlab_k8s[\"kas_private_api_secret\"]") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
           name: gitlab-pages-api-credential-v1
           namespace: {{ $namespace }}
         stringData:

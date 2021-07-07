@@ -1153,6 +1153,8 @@ gitlab:
         cloud.google.com/load-balancer-type: Internal
         cloud.google.com/neg: '{"ingress": true}'
         cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
+    privateApi:
+      secret: gitlab-kas-private-api-credential-v1
     redis:
       enabled: true
     resources:
