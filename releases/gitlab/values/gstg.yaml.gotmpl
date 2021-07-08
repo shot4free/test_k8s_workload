@@ -306,8 +306,6 @@ gitlab:
 
 global:
   appConfig:
-    incomingEmail:
-      enabled: true
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -328,9 +326,6 @@ global:
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
-
-  email:
-    reply_to: noreply@gitlab.com
 
   geo:
     enabled: true
@@ -357,9 +352,3 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
-
-  smtp:
-    enabled: true
-    password:
-      key: secret
-      secret: gitlab-smtp-credential-v1
