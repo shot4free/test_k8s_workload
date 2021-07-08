@@ -16,3 +16,7 @@ Example:
 2021-05-19
 
 * GPRD - add new nfs server in staging
+
+2021-07-07
+
+* GPRD - Add connection to new redis tracechunks servers
