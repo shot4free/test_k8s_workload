@@ -5,12 +5,6 @@ nginx-ingress:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
 
-# Needed for now, because a check in the registry chart is insisting on it.
-# https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2615
-postgresql:
-  image:
-    tag: 12
-
 registry:
   database:
     enabled: true
@@ -108,15 +102,6 @@ gitlab:
   gitlab-shell:
     minReplicas: 1
     maxReplicas: 5
-    workhorse:
-      # This is the internal API endpoint for GitLab Shell
-      # Currently we are using the same deployments that is
-      # used for https Git. Once we have a dedicated API deployment
-      # we may want to use that instead
-      # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1401
-      # This should move to values.yaml.gotmp once
-      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3155 is complete
-      host: gitlab-webservice-git.gitlab.svc
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
   mailroom:
@@ -159,22 +144,12 @@ global:
         script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://pre.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
         style_src: "'self' 'unsafe-inline' https://pre.gitlab-static.net"
         worker_src: "https://pre.gitlab-static.net https://pre.gitlab.com blob: data:"
-    incomingEmail:
-      enabled: true
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
-  email:
-    reply_to: noreply@gitlab.com
 
   hosts:
     gitlab:
       name: pre.gitlab.com
     kas:
       name: kas.pre.gitlab.com
-
-  smtp:
-    enabled: true
-    password:
-      key: secret
-      secret: gitlab-smtp-credential-v1

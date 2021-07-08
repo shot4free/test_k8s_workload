@@ -366,8 +366,6 @@ gitlab:
 
 global:
   appConfig:
-    incomingEmail:
-      enabled: true
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -392,9 +390,6 @@ global:
         - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
         - ["*", null] # catchall on k8s
 
-  email:
-    reply_to: noreply@gitlab.com
-
   hosts:
     gitlab:
       name: gitlab.com
@@ -410,9 +405,3 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
-
-  smtp:
-    enabled: true
-    password:
-      key: secret
-      secret: gitlab-smtp-credential-v1
