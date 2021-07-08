@@ -87,6 +87,17 @@ In order to work with the existing omnibus installation of GitLab.com, we will n
 
 There is an upstream helm chart wrapped into a helm release called `gitlab-secrets` which is installed in order to populate all the secrets needed to run the GitLab helm chart. [Helmfile](https://github.com/roboll/helmfile) is used to obtain the values for these secrets from our existing infrastructure that is used for chef, and populate the values for the helm chart in the appropriate locations. In order to install this chart, you need to have a working `gcloud` setup. These secrets will be deployed along with our gitlab helm chart at the same time using the `k-ctl` wrapper script.
 
+When creating a secret, attempt to follow the documentation as close as possible and utilize the default values where possible.  Except when naming the secret.  When naming the secret, attempt to provide some form of version control that way if we need to rotate a secret we can do so and still have a fall back in the case where a new secret prevents the start-up of a Pod.  Example, if we utilize the name `some-secret` in our own documentation, utilize `some-secret-v1`, where `-v1` will be utilize for future usage in secret rotations.
+
+### Secret Rotation
+
+1. Duplicate the secret that already exists
+1. Change the name of the secret by incrementing it's version control portion of the name
+    * Example `some-secret-v1` is then named `some-secret-v2`
+1. Find the location in our `gitlab` release and modify the secret object to be used by changing the name appropriately
+1. Create a Merge Request
+1. Proceed to follow our [CONTRIBUTING.md](CONTRIBUTING.md) document to complete the roll-out of said secret
+
 ## Create/Apply Configurations
 
 ### Chef Managed Secrets/Configurations
