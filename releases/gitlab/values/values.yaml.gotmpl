@@ -257,6 +257,7 @@ nginx-ingress:
       compute-full-forwarded-for: "true"
       use-forwarded-headers: "true"
     labels: &nginx_labels
+      deployment: gitlab-nginx
       shard: default
       stage: main
       type: nginx
