@@ -144,8 +144,8 @@ gitlab:
         queues: resource_boundary=memory
         resources:
           requests:
-            cpu: 50m
-            memory: 650M
+            cpu: 500m
+            memory: 3G
           limits:
             cpu: 2
             memory: 8G
@@ -244,8 +244,8 @@ gitlab:
         queues: resource_boundary=cpu&urgency=default,low
         resources:
           requests:
-            cpu: 80m
-            memory: 1G
+            cpu: 1
+            memory: 5G
           limits:
             cpu: 1.5
             memory: 6G
@@ -266,8 +266,8 @@ gitlab:
         queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
         resources:
           requests:
-            cpu: 100m
-            memory: 200M
+            cpu: 650m
+            memory: 2500M
           limits:
             cpu: 1
             memory: 2G
@@ -288,11 +288,11 @@ gitlab:
         queues: resource_boundary!=cpu&urgency=high
         resources:
           requests:
-            cpu: 80m
-            memory: 1G
+            cpu: 500m
+            memory: 2G
           limits:
             cpu: 1.5
-            memory: 6G
+            memory: 3G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
     psql:
