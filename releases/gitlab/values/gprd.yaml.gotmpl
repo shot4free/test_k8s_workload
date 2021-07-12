@@ -186,8 +186,8 @@ gitlab:
         queues: resource_boundary=memory
         resources:
           requests:
-            cpu: 500m
-            memory: 3G
+            cpu: 50m
+            memory: 650M
           limits:
             cpu: 2
             memory: 8G
@@ -293,7 +293,7 @@ gitlab:
         queues: resource_boundary=cpu&urgency=default,low
         resources:
           requests:
-            cpu: 1
+            cpu: 80m
             memory: 5G
           limits:
             cpu: 1.5
@@ -325,8 +325,8 @@ gitlab:
         queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
         resources:
           requests:
-            cpu: 650m
-            memory: 2500M
+            cpu: 588m
+            memory: 800M
           limits:
             cpu: 2
             memory: 3.1G
@@ -355,8 +355,8 @@ gitlab:
         queues: resource_boundary!=cpu&urgency=high
         resources:
           requests:
-            cpu: 500m
-            memory: 2G
+            cpu: 300m
+            memory: 1.5G
           limits:
             cpu: 1.5
             memory: 3G
