@@ -1,21 +1,3 @@
-# Default values for gitlab/gitlab chart
-
-## NOTICE
-# Due to the scope and complexity of this chart, all possible values are
-# not documented in this file. Extensive documentation for these values
-# and more can be found at https://gitlab.com/charts/gitlab/
-
-## Advanced Configuration
-# Documentation for advanced configuration can be found under doc/advanced
-# - external PostgreSQL
-# - external Gitaly
-# - external Redis
-# - external NGINX
-# - PersistentVolume configuration
-# - external Object Storage providers
-
-## The global properties are used to configure multiple charts at once.
-## Extended documentation at doc/charts/globals.md
 ---
 
 {{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
@@ -26,48 +8,22 @@ global:
       stage: {{ if eq $namespace "gitlab-cny" }}"cny"{{ else }}"main"{{ end }}
       shard: default
       tier: sv
-  ## GitLab operator is Alpha. Not for production use.
-  operator:
-    enabled: false
 
-  ## doc/installation/deployment.md#deploy-the-community-edition
-  # edition: ee
-
-  ## doc/charts/globals.md#gitlab-version
-  # `gitlabVersion` is set via init-values.yaml.gotmpl
-  # gitlabVersion:
-
-  ## doc/charts/globals.md#application-resource
-  application:
-    create: false
-    links: []
-    allowClusterRoles: true
   ## doc/charts/globals.md#configure-host-settings
   hosts:
-    domain: {{ .Environment.Values | getOrNil "gitlab_domain" | default "" }}
-    https: true
-    ssh: ~
-    gitlab:
-      https: true
-    registry:
-      https: true
+    domain: {{ .Values | getOrNil "gitlab_domain" | default "" }}
 
   ## doc/charts/globals.md#configure-ingress-settings
   ingress:
     configureCertmanager: false
-    annotations: {}
     enabled: false
+    pathType: ImplementationSpecific
+    ## This is added kas which using GCE ingress. GCE Ingress must has wildcard paths ending in '/*'. Unfortunately this sets this
+    ## Globally for all ingress objects, but due to the fact that it's overriden back on each ingress to '/', only kas picks this up.
+    path: "/*"
     tls:
       enabled: true
 
-  ## Initial root password for this GitLab installation
-  ## Secret created according to doc/installation/secrets.md#initial-root-password
-  ## If allowing shared-secrets generation, this is OPTIONAL.
-  initialRootPassword: {}
-    # secret: RELEASE-gitlab-initial-root-password
-    # key: password
-
-  ## doc/installation/secrets.md#gitlab-kas-secret
   kas:
     enabled: {{ .Values.gitlab.kas.enabled }}
 
@@ -90,10 +46,6 @@ global:
     password:
       secret: gitlab-postgres-credential-v1
       key: secret
-    # host: postgresql.hostedsomewhere.else
-    # port: 123
-    # username: gitlab
-    # database: gitlabhq_production
 
   ## doc/charts/globals.md#configure-redis-settings
   redis:
@@ -101,8 +53,6 @@ global:
       enabled: true
       secret: gitlab-redis-credential-v1
       key: secret
-    # host: redis.hostedsomewhere.else
-    # port: 6379
 
   ## doc/charts/globals.md#configure-gitaly-settings
   gitaly:
@@ -117,8 +67,6 @@ global:
   ## doc/charts/globals.md#configure-minio-settings
   minio:
     enabled: false
-    credentials: {}
-      # secret:
 
   ## doc/charts/globals.md#configure-appconfig-settings
   ## Rails based portions of this chart share many settings
@@ -127,6 +75,7 @@ global:
     webhookTimeout: 10
     gitlab_kas:
       enabled: true
+      internalUrl: grpc://kas.int.{{ .Values | getOrNil "env_prefix" }}.gitlab.net:8153
       secret: gitlab-kas-credential-v1
 
     ## doc/charts/globals.md#cron-jobs-related-settings
@@ -152,45 +101,29 @@ global:
       schedule_merge_request_cleanup_refs_worker:
         cron: '1 1 1 1 *'
 
-    ## doc/charts/globals.md#gravatarlibravatar-settings
-    gravatar:
-      plainUrl:
-      sslUrl:
-
-    ## doc/charts/globals.md#hooking-analytics-services-to-the-gitlab-instance
-    extra:
-      googleAnalyticsId:
-      piwikUrl:
-      piwikSiteId:
-
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
       enabled: false
-      proxy_download: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     artifacts:
-      enabled: false
       proxy_download: false
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     uploads:
       enabled: false
-      proxy_download: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     packages:
       enabled: false
-      proxy_download: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     externalDiffs:
       enabled: false
-      proxy_download: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
@@ -208,81 +141,33 @@ global:
 
     ## doc/charts/globals.md#pseudonymizer-settings
     pseudonymizer:
-      configMap:
       bucket: ''
-      connection: {}
-        # secret:
-        # key:
-    backups:
-      bucket: ''
-      tmpBucket: tmp
 
     ## doc/charts/globals.md#incoming-email-settings
     ## doc/installation/deployment.md#incoming-email
     incomingEmail:
-      enabled: false
-      address: ""
-      host: "imap.gmail.com"
-      port: 993
-      ssl: true
-      startTls: false
-      user: ""
+      enabled: true
       password:
         secret: gitlab-mailroom-imap-v1
         key: incoming_email_password
       expungeDeleted: true
-      mailbox: inbox
-      idleTimeout: 60
 
     serviceDeskEmail:
-      enabled: false
-      address: ""
-      host: "imap.gmail.com"
-      port: 993
-      ssl: true
-      startTls: false
-      user: ""
       password:
         secret: gitlab-mailroom-imap-v1
         key: service_desk_email_password
       expungeDeleted: true
-      mailbox: inbox
-      idleTimeout: 60
-
-    ## doc/charts/globals.md#ldap
-    ldap:
-      servers: {}
-      ## 'main' is the GitLab 'provider ID' of this LDAP server
-      # main:
-      #   label: 'LDAP'
-      #   host: '_your_ldap_server'
-      #   port: 636
-      #   uid: 'sAMAccountName'
-      #   bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
-      #   password:
-      #     secret: _the_secret_containing_your_ldap_password
-      #     key: _the_key_which_holds_your_ldap_password
-      #   encryption: 'plain'
 
     ## doc/charts/globals.md#omniauth
     omniauth:
-      enabled: false
-      autoSignInWithProvider:
-      syncProfileFromProvider: []
-      syncProfileAttributes: ['email']
       allowSingleSignOn: true
-      blockAutoCreatedUsers: true
-      autoLinkLdapUser: false
-      autoLinkSamlUser: false
-      externalProviders: []
-      providers: []
-      # - secret: gitlab-google-oauth2
-      #   key: provider
   ## End of global.appConfig
+
+  email:
+    reply_to: noreply@gitlab.com
 
   serviceAccount:
     enabled: true
-    create: true
 
   ## doc/charts/globals.md#configure-gitlab-shell-settings
   shell:
@@ -300,7 +185,7 @@ global:
 
   ## doc/charts/globals.md#configure-registry-settings
   registry:
-    authEndPoint: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}
+    authEndPoint: {{ env "GITLAB_ENDPOINT" | default (.Values | getOrNil "gitlab_endpoint") }}
     certificate:
       secret: registry-certificate-v1
     httpSecret:
@@ -322,45 +207,19 @@ global:
             - application/octet-stream
           threshold: 5
           timeout: 500ms
-          url: {{ env "GITLAB_ENDPOINT" | default (.Environment.Values | getOrNil "gitlab_endpoint") }}/api/v4/container_registry_event/events
-
-  ## GitLab Runner
-  ## Secret created according to doc/installation/secrets.md#gitlab-runner-secret
-  ## If allowing shared-secrets generation, this is OPTIONAL.
-  runner:
-    registrationToken: {}
-      # secret:
+          url: {{ env "GITLAB_ENDPOINT" | default (.Values | getOrNil "gitlab_endpoint") }}/api/v4/container_registry_event/events
 
   ## doc/installation/deployment.md#outgoing-email
   ## Outgoing email server settings
   smtp:
-    enabled: false
-    address: smtp.mailgun.org
+    enabled: true
     port: 2525
     user_name: ""
     ## doc/installation/secrets.md#smtp-password
     password:
-      secret: ""
-      key: password
-    # domain:
-    authentication: "plain"
-    starttls_auto: false
-    openssl_verify_mode: "peer"
+      secret: gitlab-smtp-credential-v1
+      key: secret
     pool: true
-
-  ## doc/installation/deployment.md#outgoing-email
-  ## Email persona used in email sent by GitLab
-  email:
-    from: ''
-    display_name: GitLab
-    reply_to: ''
-    subject_suffix: ''
-
-  ## Global Service Annotations
-  service:
-    annotations: {}
-
-  antiAffinity: soft
 
   ## doc/installation/secrets.md#gitlab-workhorse-secret
   workhorse:
@@ -372,37 +231,20 @@ global:
   certificates:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/alpine-certificates
-      tag: 20171114-r3
-    customCAs: []
-    # - secret: custom-CA
-    # - secret: more-custom-CAs
+    customCAs:
+      - secret: gitlab-gitaly-tls-certificate-v1
+      - secret: gitlab-praefect-tls-certificate-v1
 ## End of global
 
-## Settings to for the Let's Encrypt ACME Issuer
-# certmanager-issuer:
-  ## The email address to register certificates requested from Let's Encrypt.
-  ## Required if using Let's Encrypt.
-
-## Installation & configuration of stable/cert-manager
-## See requirements.yaml for current version
 certmanager:
-  # Install cert-manager chart. Set to false if you already have cert-manager
-  # installed or if you are not using cert-manager.
   install: false
-  # Other cert-manager configurations from upstream
-  # See https://github.com/kubernetes/charts/tree/master/stable/cert-manager#configuration
-  rbac:
-    create: true
 
 ## doc/charts/nginx/index.md
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: true
   controller:
     terminationGracePeriodSeconds: 120
-    nodeSelector:
-      type: default
     autoscaling:
       enabled: true
       minReplicas: 1
@@ -415,8 +257,10 @@ nginx-ingress:
       compute-full-forwarded-for: "true"
       use-forwarded-headers: "true"
     labels: &nginx_labels
+      deployment: gitlab-nginx
       shard: default
       stage: main
+      type: nginx
     lifecycle:
       preStop:
         exec:
@@ -426,7 +270,6 @@ nginx-ingress:
     service:
       labels:
         <<: *nginx_labels
-      omitClusterIP: true
       annotations:
         cloud.google.com/load-balancer-type: Internal
     resources:
@@ -435,29 +278,11 @@ nginx-ingress:
         memory: 500Mi
     replicaCount: 3
     minAvailable: 2
-    metrics:
-      service:
-        omitClusterIP: true
-  defaultBackend:
-    service:
-      omitClusterIP: true
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
 prometheus:
   install: false
-  rbac:
-    create: true
-  alertmanager:
-    enabled: false
-  alertmanagerFiles:
-    alertmanager.yml: {}
-  kubeStateMetrics:
-    enabled: false
-  nodeExporter:
-    enabled: false
-  pushgateway:
-    enabled: false
 
 ## Configuration of Redis
 ## doc/architecture/decisions.md#redis
@@ -469,23 +294,14 @@ redis:
 ## See requirements.yaml for current version
 postgresql:
   install: false
-  postgresUser: gitlab
-  postgresDatabase: gitlabhq_production
-  imageTag: 9.6.8
-  usePasswordFile: true
-  existingSecret: 'secret'
-  metrics:
-    enabled: true
-    ## Optionally define additional custom metrics
-    ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
 
 ## Installation & configuration charts/registry
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
 registry:
-  enabled: {{ .Environment.Values.registry.enabled }}
+  enabled: {{ .Values.registry.enabled }}
   nodeSelector:
-    type: default
+    cloud.google.com/gke-nodepool: registry-1
   common:
     labels:
       type: registry
@@ -502,13 +318,8 @@ registry:
   draintimeout: '60s'
   deployment:
     readinessProbe:
-      path: /debug/health
-      port: 5001
       # TODO: Consider removal after https://gitlab.com/gitlab-org/container-registry/issues/37
       initialDelaySeconds: 40
-    livenessProbe:
-      path: /debug/health
-      port: 5001
   networkpolicy:
     enabled: true
     egress:
@@ -541,18 +352,9 @@ registry:
     limits:
       memory: 3G
   debug:
-    addr:
-      port: 5001
     prometheus:
       enabled: true
-      path: '/metrics'
-  ingress:
-    enabled: false
   log:
-    # The level can use the chart default once
-    # https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1703
-    # is merged
-    level: info
     formatter: json
     accesslog:
       formatter: json
@@ -568,45 +370,29 @@ registry:
   health:
     storagedriver:
       enabled: true
-      interval: '10s'
-      threshold: 3
   profiling:
     stackdriver:
       enabled: true
   serviceAccount:
-    enabled: true
     create: true
     annotations:
-      iam.gke.io/gcp-service-account: gitlab-registry@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
+      iam.gke.io/gcp-service-account: gitlab-registry@{{ .Values.google_project }}.iam.gserviceaccount.com
   reporting:
     sentry:
       enabled: true
       dsn: https://a40e1c5a81e0448094930f5680fe2e49@sentry.gitlab.net/122
-      environment: {{ .Environment.Values | getOrNil "env_prefix" }}
+      environment: {{ .Values | getOrNil "env_prefix" }}
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
 ## doc/charts/shared-secrets
 shared-secrets:
   enabled: false
-  rbac:
-    create: true
 
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
 gitlab-runner:
   install: false
-  rbac:
-    create: true
-  runners:
-    locked: false
-    cache:
-      cacheType: s3
-      s3BucketName: runner-cache
-      cacheShared: true
-      s3BucketLocation: us-east-1
-      s3CachePath: gitlab-runner
-      s3CacheInsecure: false
 
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
@@ -634,7 +420,7 @@ gitlab:
         full: 400
         rate: 60
         start: 200
-    enabled: {{ index .Environment.Values.gitlab "gitlab-shell" "enabled" }}
+    enabled: {{ index .Values.gitlab "gitlab-shell" "enabled" }}
     global:
       shell:
         port: 2222
@@ -647,7 +433,7 @@ gitlab:
     logging:
       format: "json"
     nodeSelector:
-      type: shell
+      cloud.google.com/gke-nodepool: shell-2
     common:
       labels:
         deployment: gitlab-shell
@@ -667,8 +453,9 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
-          type: api
+          cloud.google.com/gke-nodepool: api-1
         shutdown:
           blackoutSeconds: 10
         ingress:
@@ -677,7 +464,7 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/'
+          path: {{ ternary "/api" "/" ((.Values | getOrNil "web.enabled") | default false) }}
         pod:
           labels:
             deployment: api
@@ -692,7 +479,40 @@ gitlab:
           # This will need to be set here until https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2365
           # is resolved
           extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s'
+        workerProcesses: 6
+{{- if (.Values | getOrNil "web.enabled") | default false }}
+      web:
+        common:
+          labels:
+            type: web
+        deployment:
+          terminationGracePeriodSeconds: 65
+        extraEnv:
+          ENABLE_RBTRACE: 1
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
+          GITLAB_LICENSE_MODE: test
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: web-1
+        shutdown:
+          blackoutSeconds: 10
+        ingress:
+          enabled: true
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-buffering: "on"
+            nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+            nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
+          path: '/'
+        pod:
+          labels:
+            deployment: web
+            type: web
+        workerProcesses: 4
+{{- end }}
       websockets:
+        deployment:
+          terminationGracePeriodSeconds: 260
         workhorse:
           keywatcher: false
         common:
@@ -705,8 +525,11 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"main\"}"
           # See https://gitlab.com/gitlab-org/gitlab-workhorse/-/issues/352
           GODEBUG: madvdontneed=1
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
-          type: websockets
+          cloud.google.com/gke-nodepool: websockets-1
+        shutdown:
+          blackoutSeconds: 240
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
@@ -719,6 +542,8 @@ gitlab:
           labels:
             deployment: websockets
       git:
+        deployment:
+          terminationGracePeriodSeconds: 260
         workhorse:
           keywatcher: false
         common:
@@ -727,8 +552,11 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
+          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
-          type: git-https
+          cloud.google.com/gke-nodepool: git-https-2
+        shutdown:
+          blackoutSeconds: 240
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
@@ -757,13 +585,11 @@ gitlab:
           - mountPath: /etc/gitlab
             name: webservice-secrets
     workerProcesses: 4
-    enabled: {{ .Environment.Values.gitlab.webservice.enabled }}
+    enabled: {{ .Values.gitlab.webservice.enabled }}
     hpa:
       targetAverageValue: 1600m
     registry:
       tokenIssuer: omnibus-gitlab-issuer
-    shutdown:
-      blackoutSeconds: 240
     deployment:
       strategy:
         rollingUpdate:
@@ -774,10 +600,9 @@ gitlab:
         # see https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1294
         # for details
         initialDelaySeconds: 60
-      terminationGracePeriodSeconds: 260
     serviceAccount:
       annotations:
-        iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Environment.Values.google_project }}.iam.gserviceaccount.com
+        iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
     serviceLabels:
       railsPromJob: gitlab-rails
       workhorsePromJob: gitlab-workhorse
@@ -799,14 +624,10 @@ gitlab:
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-connect-timeout: 300
         nginx.ingress.kubernetes.io/proxy-read-timeout: 3600
-        # This can be removed once https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1661 is merged
-        nginx.ingress.kubernetes.io/service-upstream: "true"
 {{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
         nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
 {{- end }}
       proxyBodySize: 0
-    nodeSelector:
-      type: default
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
@@ -903,12 +724,14 @@ gitlab:
       threads:
         min: 1
         max: 4
-      disableWorkerKiller: false
     workhorse:
       # This will need to be set here until https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2365
       # is resolved
       extraArgs: '-apiLimit 5 -apiQueueDuration 60s -apiQueueLimit 200'
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
+      imageScaler:
+        maxProcs: 8
+        maxFileSizeBytes: 250000
       resources:
         limits:
           memory: 2G
@@ -934,19 +757,16 @@ gitlab:
       USE_GITLAB_LOGGER: 1
   # doc/charts/gitlab/sidekiq
   sidekiq:
-    enabled: {{ .Environment.Values.gitlab.sidekiq.enabled }}
+    enabled: {{ .Values.gitlab.sidekiq.enabled }}
     trusted_proxies: ['10.0.0.0/8']
     queueSelector: true
     memoryKiller:
       maxRss: 0
-    nodeSelector:
-      type: sidekiq
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
       pullSecrets:
       - name: dev-registry-access-v1
     metrics:
-      enabled: true
       port: 8083
     logging:
       format: "json"
@@ -959,6 +779,7 @@ gitlab:
       # https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2100
       SIDEKIQ_LOG_ARGUMENTS: "1"
       USE_GITLAB_LOGGER: 1
+      ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
     networkpolicy:
       enabled: true
       egress:
@@ -1056,243 +877,20 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2254#note_358815700
       targetAverageValue: 450m
 
-    pods:
-      - name: catchall
-        common:
-          labels:
-            shard: catchall
-        concurrency: 15
-        minReplicas: 1
-        maxReplicas: 100
-        nodeSelector:
-          type: catchall
-        podLabels:
-          deployment: sidekiq-catchall
-          shard: catchall
-        negateQueues: |
-          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled
-        resources:
-          requests:
-            cpu: 800m
-            memory: 1G
-          limits:
-            cpu: 1.5
-            memory: 2G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
-        extraVolumes: |
-          # This is needed because of https://gitlab.com/gitlab-org/gitlab/-/issues/330317
-          # where temp files are written to `/srv/gitlab/shared`
-          - name: sidekiq-shared
-            emptyDir:
-              sizeLimit: 10G
-      - name: imports
-        common:
-          labels:
-            shard: imports
-        concurrency: 1
-        minReplicas: 2
-        maxReplicas: 2
-        nodeSelector:
-          type: catchall
-        podLabels:
-          deployment: sidekiq-imports
-          shard: imports
-        queues: name=repository_import
-        resources:
-          requests:
-            cpu: 800m
-            memory: 1G
-          limits:
-            cpu: 1.5
-            memory: 2G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"imports\"}"
-      - name: memory-bound
-        common:
-          labels:
-            shard: memory-bound
-        concurrency: 1
-        minReplicas: 1
-        maxReplicas: 16
-        nodeSelector:
-          type: memory-bound
-        podLabels:
-          deployment: sidekiq-memory-bound
-          shard: memory-bound
-        queues: resource_boundary=memory
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 2
-            memory: 8G
-        extraVolumeMounts: |
-          - name: sidekiq-shared
-            mountPath: /srv/gitlab/shared
-            readOnly: false
-        extraVolumes: |
-          - name: sidekiq-shared
-            emptyDir:
-              sizeLimit: 50G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
-      # Run background migrations in their own shard
-      - name: database-throttled
-        common:
-          labels:
-            shard: database-throttled
-        concurrency: 5 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/276/diffs#note_367270352
-        minReplicas: 1
-        maxReplicas: 1
-        nodeSelector:
-          type: default
-        podLabels:
-          deployment: sidekiq-database-throttled
-          shard: database-throttled
-        queues: feature_category=database&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 1.5
-            memory: 6G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"database-throttled\"}"
-      # Run Gitaly Storage Migrations on their own shards
-      # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
-      # Allow up to a maximum of 24 concurrent gitaly-throttled jobs
-      - name: gitaly-throttled
-        common:
-          labels:
-            shard: gitaly-throttled
-        concurrency: 8
-        minReplicas: 1
-        maxReplicas: 3
-        nodeSelector:
-          type: default
-        podLabels:
-          deployment: sidekiq-gitaly-throttled
-          shard: gitaly-throttled
-        queues: feature_category=gitaly&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 1.5
-            memory: 6G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"gitaly-throttled\"}"
-      - name: elasticsearch
-        common:
-          labels:
-            shard: elasticsearch
-        concurrency: 2
-        minReplicas: 2
-        maxReplicas: 2
-        nodeSelector:
-          type: default
-        podLabels:
-          deployment: sidekiq-elasticsearch
-          shard: elasticsearch
-        queues: feature_category=global_search&urgency=throttled
-        resources:
-          requests:
-            cpu: 50m
-            memory: 650M
-          limits:
-            cpu: 2
-            memory: 8G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"elasticsearch\"}"
-      - name: low-urgency-cpu-bound
-        common:
-          labels:
-            shard: low-urgency-cpu-bound
-        concurrency: 5
-        minReplicas: 2
-        maxReplicas: 10
-        nodeSelector:
-          type: low-urgency-cpu-bound
-        podLabels:
-          deployment: sidekiq-low-urgency-cpu-bound
-          shard: low-urgency-cpu-bound
-        queues: resource_boundary=cpu&urgency=default,low
-        resources:
-          requests:
-            cpu: 80m
-            memory: 1G
-          limits:
-            cpu: 1.5
-            memory: 6G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
-      - name: urgent-cpu-bound
-        common:
-          labels:
-            shard: urgent-cpu-bound
-        concurrency: 5
-        minReplicas: 1
-        maxReplicas: 10
-        nodeSelector:
-          type: urgent-cpu-bound
-        podLabels:
-          deployment: sidekiq-urgent-cpu-bound
-          shard: urgent-cpu-bound
-        queues: resource_boundary=cpu&urgency=high&tags!=requires_disk_io
-        resources:
-          requests:
-            cpu: 100m
-            memory: 200M
-          limits:
-            cpu: 1
-            memory: 2G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-cpu-bound\"}"
-      - name: urgent-other
-        common:
-          labels:
-            shard: urgent-other
-        concurrency: 5
-        minReplicas: 5
-        maxReplicas: 10
-        nodeSelector:
-          type: urgent-other
-        podLabels:
-          deployment: sidekiq-urgent-other
-          shard: urgent-other
-        queues: resource_boundary!=cpu&urgency=high
-        resources:
-          requests:
-            cpu: 80m
-            memory: 1G
-          limits:
-            cpu: 1.5
-            memory: 6G
-        extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
-
     registry:
       api:
         protocol: "https"
         port: 443
-        host: {{ .Environment.Values.registry_api_host }}
+        host: {{ .Values.registry_api_host }}
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
   task-runner:
     enabled: false
-  gitlab-monitor:
-    enabled: false
   gitlab-exporter:
     enabled: false
   mailroom:
-    enabled: {{ .Environment.Values.gitlab.mailroom.enabled }}
-    nodeSelector:
-      type: default
+    enabled: {{ .Values.gitlab.mailroom.enabled }}
     common:
       labels:
         deployment: mailroom
@@ -1352,8 +950,10 @@ gitlab:
     ingress:
       enabled: true
       annotations:
+{{- if eq (.Values | getOrNil "kas.frontendconfigEnable" | default false) false }}
         kubernetes.io/ingress.allow-http: "false"
-        kubernetes.io/ingress.global-static-ip-name: kas-gke-{{ .Environment.Values | getOrNil "env_prefix" }}
+{{- end }}
+        kubernetes.io/ingress.global-static-ip-name: kas-gke-{{ .Values | getOrNil "env_prefix" }}
         networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
         secretName: ""
@@ -1362,11 +962,18 @@ gitlab:
         type: kas
         deployment: kas
     service:
+      type: LoadBalancer
+      loadBalancerSourceRanges:
+        - 10.0.0.0/8
       annotations:
+{{- if .Values | getOrNil "kas.frontendconfigEnable" | default false }}
+        networking.gke.io/v1beta1.FrontendConfig: "kas-http-frontendconfig"
+{{- end }}
+        cloud.google.com/load-balancer-type: Internal
         cloud.google.com/neg: '{"ingress": true}'
         cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
-    redis:
-      enabled: true
+    privateApi:
+      secret: gitlab-kas-private-api-credential-v1
     resources:
       requests:
         cpu: 100m
@@ -1374,8 +981,6 @@ gitlab:
       limits:
         cpu: 500m
         memory: 256M
-    nodeSelector:
-      type: default
     networkpolicy:
       enabled: true
       egress:
@@ -1426,4 +1031,18 @@ gitlab:
               protocol: TCP
               # gstg, gprd Redis
             - port: 26379
+              protocol: TCP
+          # Allow internal traffic to sentry.gitlab.net
+          - to:
+            - ipBlock:
+                cidr: 35.196.242.168/32
+            ports:
+            - port: 443
+              protocol: TCP
+          - to:
+            - podSelector:
+                matchLabels:
+                  app: kas
+            ports:
+            - port: 8155
               protocol: TCP

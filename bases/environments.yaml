@@ -42,6 +42,7 @@ environments:
             enabled: false
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
 
   ops:
     values:
@@ -72,11 +73,15 @@ environments:
         kas:
           managed_cert_name: kas-pre-gitlab-com
           domain: kas.pre.gitlab.com
+          frontendconfigEnable: true
         gitlab_runner:
           enabled: true
           namespace: gitlab-runner
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
+        web:
+          enabled: true
 
   gstg:
     values:
@@ -94,7 +99,9 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
-
+          frontendconfigEnable: true
+        web:
+          enabled: true
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
@@ -157,6 +164,7 @@ environments:
             enabled: false
         gitlab_extras:
           api_no_proxy: true
+          ingress_readiness: true
           namespace: "gitlab-cny"
 
   gprd:

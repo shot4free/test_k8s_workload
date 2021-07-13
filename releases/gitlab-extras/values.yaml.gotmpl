@@ -28,6 +28,15 @@ resources:
       timeoutSec: 1830
       securityPolicy:
         name: "kas-ingress-policy"
+
+  - apiVersion: networking.gke.io/v1beta1
+    kind: FrontendConfig
+    metadata:
+      name: kas-http-frontendconfig
+      namespace: {{ $namespace }}
+    spec:
+      redirectToHttps:
+        enabled: true
 {{- end }}
 
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
@@ -68,6 +77,50 @@ resources:
               serviceName: {{ $namespace }}-webservice-api
               servicePort: 8181
             path: /api/v[0..9]/jobs/[0-9]+/artifacts$
+            pathType: ImplementationSpecific
+      tls:
+      - hosts:
+        - {{ .Values | getOrNil "gitlab_domain" | default "" }}
+        secretName: gitlab-wildcard-tls
+{{- end }}
+
+{{- if .Values | getOrNil "gitlab_extras.ingress_readiness" | default false }}
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      annotations:
+        kubernetes.io/ingress.class: gitlab-nginx
+        kubernetes.io/ingress.provider: nginx
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$2"
+{{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
+        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
+{{- end }}
+      labels:
+        app: webservice
+        shard: default
+        stage: {{ default ( .Values | getOrNil "stage" ) "main" }}
+        tier: sv
+      name: gitlab-readiness
+      namespace: {{ $namespace }}
+    spec:
+      rules:
+      - host: {{ .Values | getOrNil "gitlab_domain" }}
+        http:
+          paths:
+          - backend:
+              service:
+                name: {{ $namespace }}-webservice-api
+                port:
+                  number: 8181
+            path: /-/k8s/api(/|$)(.*)
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: {{ $namespace }}-webservice-web
+                port:
+                  number: 8181
+            path: /-/k8s/web(/|$)(.*)
             pathType: ImplementationSpecific
       tls:
       - hosts:

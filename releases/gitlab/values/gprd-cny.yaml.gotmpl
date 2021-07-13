@@ -18,6 +18,9 @@ nginx-ingress:
         <<: *nginx_labels
 
 gitlab:
+  gitlab-shell:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-2
   mailroom:
     enabled: false
 
@@ -38,21 +41,17 @@ gitlab:
           # keeping minReplicas high enough to not suffer from node scaling
           # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
           minReplicas: 16
-        resources:
-          requests:
-            cpu: 3000m
-        workerProcesses: 6
-        workhorse:
-          resources:
-            requests:
-              cpu: 300m
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: git-https-2
       websockets:
         hpa:
           minReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: websockets-1
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
@@ -74,3 +73,5 @@ registry:
     minReplicas: 5
     cpu:
       targetAverageUtilization: 70
+  nodeSelector:
+    cloud.google.com/gke-nodepool: registry-1

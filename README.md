@@ -21,6 +21,7 @@ The following services are managed by this Chart:
 | Service | Upgrades |
 | --- | --- |
 | [API](https://gitlab.com/gitlab-org/gitlab)([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/tree/master/api-k8s-migration) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
+| [Web](https://gitlab.com/gitlab-org/gitlab)(readiness TBD, in pre env only) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
 | [Git](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/git-https-websockets/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
 | [Mailroom](https://gitlab.com/gitlab-org/gitlab-mail_room) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md)) | Upgrades are done manually be setting a version in [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/values.yaml.gotmpl#L1076-1080) ([release template](https://gitlab.com/gitlab-org/gitlab-mail_room/-/blob/master/.gitlab/issue_templates/Release.md)). |
 | [Registry](https://gitlab.com/gitlab-org/container-registry) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md)) | Done by manually setting a version in [init-values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/init-values.yaml.gotmpl#L75) ([release template](https://gitlab.com/gitlab-org/container-registry/-/blob/master/.gitlab/issue_templates/Release%20Plan.md)). |
@@ -86,6 +87,17 @@ In order to work with the existing omnibus installation of GitLab.com, we will n
 
 There is an upstream helm chart wrapped into a helm release called `gitlab-secrets` which is installed in order to populate all the secrets needed to run the GitLab helm chart. [Helmfile](https://github.com/roboll/helmfile) is used to obtain the values for these secrets from our existing infrastructure that is used for chef, and populate the values for the helm chart in the appropriate locations. In order to install this chart, you need to have a working `gcloud` setup. These secrets will be deployed along with our gitlab helm chart at the same time using the `k-ctl` wrapper script.
 
+When creating a secret, attempt to follow the documentation as close as possible and utilize the default values where possible.  Except when naming the secret.  When naming the secret, attempt to provide some form of version control that way if we need to rotate a secret we can do so and still have a fall back in the case where a new secret prevents the start-up of a Pod.  Example, if we utilize the name `some-secret` in our own documentation, utilize `some-secret-v1`, where `-v1` will be utilize for future usage in secret rotations.
+
+### Secret Rotation
+
+1. Duplicate the secret that already exists
+1. Change the name of the secret by incrementing it's version control portion of the name
+    * Example `some-secret-v1` is then named `some-secret-v2`
+1. Find the location in our `gitlab` release and modify the secret object to be used by changing the name appropriately
+1. Create a Merge Request
+1. Proceed to follow our [CONTRIBUTING.md](CONTRIBUTING.md) document to complete the roll-out of said secret
+
 ## Create/Apply Configurations
 
 ### Chef Managed Secrets/Configurations
@@ -121,7 +133,7 @@ https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/381
 
 ### Prerequisites
 
-Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/k8s-operations.md).
+Complete the [Workstation setup](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-oncall-setup.md#workstation-setup-for-k-ctl) steps described in the [k8s-operations runbook](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/k8s-operations.md).
 
 ## Bootstrapping new clusters
 
@@ -162,3 +174,12 @@ that occurs on our default branch will contain the updated artifact.  Should
 cached version of the chart.  This has a consequence of unexpected changes to
 various versions that are stored inside of Kubernetes objects , but should be
 considered a safe operation.
+
+## Node Selectors
+
+Due to an unknown issue with GKE's cluster-autoscaler, we are currently using
+the names of node pools to manage where our workloads reside.  Keep in mind that
+node pool names are not consistent between any environment!  If new node pools
+are created, the use of the label will need to be modified in this repo prior to
+removing the old node pool.  Details of how we landed here can be found in
+Incident: https://gitlab.com/gitlab-com/gl-infra/production/-/issues/4940
