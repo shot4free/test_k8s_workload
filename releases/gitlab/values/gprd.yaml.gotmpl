@@ -16,13 +16,10 @@ registry:
   hpa:
     # min is set higher until we have more control over the HPA
     # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
-    minReplicas: 30
-    maxReplicas: 150
-  nodeSelector:
-    cloud.google.com/gke-nodepool: registry-1
+    minReplicas: 20
+    maxReplicas: 90
   resources:
     requests:
-      cpu: 250m
       memory: 3G
 
 gitlab:
