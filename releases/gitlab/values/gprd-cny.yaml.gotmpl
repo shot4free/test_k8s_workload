@@ -64,8 +64,15 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
 
 registry:
+  # For https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1811
+  # Can go into values.yaml.gotmpl once we are satisfied with the values.
+  resources:
+    requests:
+      cpu: 300m
   hpa:
     minReplicas: 5
+    cpu:
+      targetAverageUtilization: 70
   nodeSelector:
     cloud.google.com/gke-nodepool: registry-1
 
