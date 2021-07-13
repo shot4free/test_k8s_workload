@@ -49,31 +49,11 @@ gitlab:
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+        shutdown:
+          blackoutSeconds: 0
       web:
-        common:
-          labels:
-            type: web
-        deployment:
-          terminationGracePeriodSeconds: 65
-        extraEnv:
-          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
-          ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
-        shutdown:
-          blackoutSeconds: 10
-        ingress:
-          enabled: true
-          annotations:
-            nginx.ingress.kubernetes.io/proxy-buffering: "on"
-            nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
-            nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: '/'
-        pod:
-          labels:
-            deployment: web
-            type: web
       websockets:
         deployment:
           readinessProbe:
@@ -81,6 +61,8 @@ gitlab:
           terminationGracePeriodSeconds: 30
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+        shutdown:
+          blackoutSeconds: 0
     workerProcesses: 2
     workhorse:
       resources:

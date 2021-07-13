@@ -165,7 +165,7 @@ gitlab:
       annotations:
         cloud.google.com/load-balancer-type: Internal
 
-{{- $workhorse_dsn := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-gitlab-workhorse\".env.GITLAB_WORKHORSE_SENTRY_DSN") }}
+{{- $workhorse_dsn := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-workhorse\".env.GITLAB_WORKHORSE_SENTRY_DSN") }}
 {{- $rack_attack_enabled := $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.enabled") }}
 {{- $rack_attack_ip_whitelist := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.ip_whitelist") }}
   webservice:
@@ -179,6 +179,9 @@ gitlab:
     extraEnv:
       GITLAB_THROTTLE_USER_ALLOW_LIST: {{ $chef_base_fe_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".user_ratelimit_bypasses | keys? | join(\",\")") | quote }}
       GITLAB_UPLOAD_API_ALLOWLIST: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_UPLOAD_API_ALLOWLIST | select(.!=null)") | quote }}
+      GITLAB_GRAFANA_API_KEY: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_GRAFANA_API_KEY | select(.!=null)") | quote }}
+      SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_EMAIL | select(.!=null)") | quote }}
+      SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_TOKEN | select(.!=null)") | quote }}
     rack_attack:
       git_basic_auth:
         enabled: {{ $rack_attack_enabled }}
