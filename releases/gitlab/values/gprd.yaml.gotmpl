@@ -132,7 +132,7 @@ gitlab:
           shard: catchall
           deployment: sidekiq-catchall
         negateQueues: |
-          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled|tags=exclude_from_kubernetes,exclude_from_gitlab_com|name=repository_import
+          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled|tags=exclude_from_kubernetes,exclude_from_gitlab_com|name=repository_import|name=pipeline_background:ci_build_trace_chunk_flush
         resources:
           requests:
             cpu: 800m
