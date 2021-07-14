@@ -314,7 +314,7 @@ registry:
       - name: dev-registry-access-v1
   hpa:
     cpu:
-      targetAverageUtilization: 80
+      targetAverageUtilization: 70
   draintimeout: '60s'
   deployment:
     readinessProbe:
@@ -351,6 +351,8 @@ registry:
   resources:
     limits:
       memory: 3G
+    requests:
+      cpu: 300m
   debug:
     prometheus:
       enabled: true
