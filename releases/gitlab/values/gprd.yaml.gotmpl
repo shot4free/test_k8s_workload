@@ -303,6 +303,30 @@ gitlab:
         extraEnv:
           ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
+      # This is a shard that segregates seemingly problematic queues
+      - name: quarantine
+        common:
+          labels:
+            shard: quarantine
+        concurrency: 15
+        minReplicas: 10
+        maxReplicas: 50
+        nodeSelector:
+          cloud.google.com/gke-nodepool: sidekiq-catchall-2
+        podLabels:
+          shard: quarantine
+          deployment: sidekiq-quarantine
+        queues: name=authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency
+        resources:
+          requests:
+            cpu: 800m
+            memory: 1.7G
+          limits:
+            cpu: 1.5
+            memory: 2.5G
+        extraEnv:
+          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"quarantine\"}"
       # Production resources for urgent-cpu-bound discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10639
       - name: urgent-cpu-bound
