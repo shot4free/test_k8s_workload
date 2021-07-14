@@ -257,6 +257,29 @@ gitlab:
             memory: 6G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
+      # This is a shard that segregates seemingly problematic queues from the rest of our infrastructure
+      - name: quarentine
+        common:
+          labels:
+            shard: quarentine
+        concurrency: 15
+        minReplicas: 1
+        maxReplicas: 50
+        nodeSelector:
+          cloud.google.com/gke-nodepool: catchall-0
+        podLabels:
+          deployment: sidekiq-quarentine
+          shard: sin-bin
+        queues: name=authorized_project_update:authorized_project_update_user_refresh_from_replica
+        resources:
+          requests:
+            cpu: 800m
+            memory: 1G
+          limits:
+            cpu: 1.5
+            memory: 2G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"sin-bin\"}"
       - name: urgent-cpu-bound
         common:
           labels:
@@ -331,6 +354,7 @@ global:
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
+        - ["name=authorized_project_update:authorized_project_update_user_refresh_from_replica", null] # move this to the sin-bin shard
         - ["*", "default"] # catchall on k8s
 
   geo:
