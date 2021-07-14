@@ -1,0 +1,10 @@
+---
+gitlab:
+  # For https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1811.
+  # Should go to all of gprd after testing it here.
+  gitlab-shell:
+    resources:
+      requests:
+        cpu: 2000m
+    hpa:
+      targetAverageValue: 1200m
