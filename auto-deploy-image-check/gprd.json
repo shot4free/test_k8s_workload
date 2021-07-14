@@ -64,4 +64,11 @@
   "namespace": "gitlab",
   "name": "gitlab-sidekiq-urgent-other-v1",
   "change": "MODIFY"
+},
+{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-sidekiq-quarantine-v1",
+  "change": "MODIFY"
 }]
