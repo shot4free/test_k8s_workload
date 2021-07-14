@@ -258,19 +258,19 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
       # This is a shard that segregates seemingly problematic queues from the rest of our infrastructure
-      - name: quarentine
+      - name: quarantine
         common:
           labels:
-            shard: quarentine
+            shard: quarantine
         concurrency: 15
         minReplicas: 1
         maxReplicas: 50
         nodeSelector:
           cloud.google.com/gke-nodepool: catchall-0
         podLabels:
-          deployment: sidekiq-quarentine
-          shard: sin-bin
-        queues: name=authorized_project_update:authorized_project_update_user_refresh_from_replica
+          deployment: sidekiq-quarantine
+          shard: quarantine
+        queues: name=authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency
         resources:
           requests:
             cpu: 800m
@@ -279,7 +279,7 @@ gitlab:
             cpu: 1.5
             memory: 2G
         extraEnv:
-          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"sin-bin\"}"
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"quarantine\"}"
       - name: urgent-cpu-bound
         common:
           labels:
@@ -354,7 +354,7 @@ global:
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
-        - ["name=authorized_project_update:authorized_project_update_user_refresh_from_replica", null] # move this to the sin-bin shard
+        - ["name=authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency", null] # move this to the sin-bin shard
         - ["*", "default"] # catchall on k8s
 
   geo:
