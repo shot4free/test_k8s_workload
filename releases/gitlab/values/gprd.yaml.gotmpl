@@ -24,6 +24,11 @@ registry:
 
 gitlab:
   gitlab-shell:
+    resources:
+      requests:
+        cpu: 2000m
+    hpa:
+      targetAverageValue: 1200m
     minReplicas: 8
     maxReplicas: 150
     nodeSelector:
