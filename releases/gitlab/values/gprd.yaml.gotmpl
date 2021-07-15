@@ -403,8 +403,9 @@ global:
 
     sidekiq:
       routingRules:
-        - ["name=project_import_schedule", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
-        - ["name=email_receiver,service_desk_email_receiver", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
+        - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
+        - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
+        - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", null] # move this to the quarantine shard
         - ["resource_boundary=cpu&urgency=high&tags!=requires_disk_io", null] # urgent-cpu-bound
         - ["resource_boundary=memory", null] # memory-bound
         - ["feature_category=global_search&urgency=throttled", null] # elasticsearch
