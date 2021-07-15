@@ -358,8 +358,9 @@ global:
         - secret: gitlab-salesforce-oauth2-v1
     sidekiq:
       routingRules:
-        - ["name=project_import_schedule", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
-        - ["name=email_receiver,service_desk_email_receiver", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
+        - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
+        - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
+        - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", null] # move this to the quarantine shard
         - ["resource_boundary=cpu&urgency=high&tags!=requires_disk_io", null] # urgent-cpu-bound
         - ["resource_boundary=memory", null] # memory-bound
         - ["feature_category=global_search&urgency=throttled", null] # elasticsearch
@@ -367,7 +368,6 @@ global:
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
-        - ["name=authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency", null] # move this to the sin-bin shard
         - ["*", "default"] # catchall on k8s
 
   geo:
