@@ -952,9 +952,6 @@ gitlab:
     ingress:
       enabled: true
       annotations:
-{{- if eq (.Values | getOrNil "kas.frontendconfigEnable" | default false) false }}
-        kubernetes.io/ingress.allow-http: "false"
-{{- end }}
         kubernetes.io/ingress.global-static-ip-name: kas-gke-{{ .Values | getOrNil "env_prefix" }}
         networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
@@ -968,9 +965,7 @@ gitlab:
       loadBalancerSourceRanges:
         - 10.0.0.0/8
       annotations:
-{{- if .Values | getOrNil "kas.frontendconfigEnable" | default false }}
         networking.gke.io/v1beta1.FrontendConfig: "kas-http-frontendconfig"
-{{- end }}
         cloud.google.com/load-balancer-type: Internal
         cloud.google.com/neg: '{"ingress": true}'
         cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
