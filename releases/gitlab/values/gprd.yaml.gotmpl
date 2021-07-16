@@ -416,6 +416,10 @@ global:
         - ["tags=exclude_from_kubernetes", null] # catchall on VMs
         - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
         - ["feature_category=not_owned", "default"] # Iterating to full 'default' routing for catchall
+        - ["feature_category=auto_devops,chatops,code_analytics,compliance_management,container_registry,database", "default"] # Phase 2 default routing for catchall 
+        - ["feature_category=design_management,devops_reports,epics,geo_replication,global_search,kubernetes_management", "default"] # Phase 2 default routing for catchall 
+        - ["feature_category=license,license_compliance,metrics,package_registry,product_analytics,release_evidence", "default"] # Phase 2 default routing for catchall 
+        - ["feature_category=security_orchestration,service_desk,templates,users,utilization,vulnerability_management", "default"] # Phase 2 default routing for catchall 
         - ["*", null] # catchall on k8s
 
   hosts:
