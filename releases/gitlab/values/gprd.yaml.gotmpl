@@ -415,6 +415,7 @@ global:
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
         - ["tags=exclude_from_kubernetes", null] # catchall on VMs
         - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
+        - ["feature_category=not_owned", "default"] # Iterating to full 'default' routing for catchall
         - ["*", null] # catchall on k8s
 
   hosts:
