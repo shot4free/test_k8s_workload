@@ -2,6 +2,26 @@
 
 nginx-ingress:
   controller:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - ingress-nginx
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - ingress-nginx
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - controller
+              topologyKey: kubernetes.io/hostname
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
 
@@ -82,7 +102,7 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
   gitlab-shell:
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
