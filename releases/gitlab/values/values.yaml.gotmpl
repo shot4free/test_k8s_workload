@@ -247,7 +247,7 @@ nginx-ingress:
     terminationGracePeriodSeconds: 120
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 100
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -521,7 +521,7 @@ gitlab:
           labels:
             type: websockets
         hpa:
-          minReplicas: 1
+          minReplicas: 2
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"main\"}"
