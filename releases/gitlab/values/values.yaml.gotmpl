@@ -492,7 +492,6 @@ gitlab:
         extraEnv:
           ENABLE_RBTRACE: 1
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
-          GITLAB_LICENSE_MODE: test
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
