@@ -152,8 +152,6 @@ variables:
   # This script can be replaced with the `trigger:` keyword
   # when the product supports retries for triggers
   # https://gitlab.com/gitlab-org/gitlab/-/issues/32559
-  # TODO: Remove allow_failure when these jobs are reliable
-  allow_failure: true
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
@@ -524,6 +522,9 @@ pre:qa:
   extends:
     - .trigger-qa-smoke
   stage: non-prod:QA
+  # Allowing failure for preprod QA since it is not something
+  # we want to block on for prod deployments.
+  allow_failure: true
   variables:
     project: gitlab-org/quality/preprod
   only:
