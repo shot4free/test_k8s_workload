@@ -424,6 +424,7 @@ global:
         - ["feature_category=security_orchestration,service_desk,templates,users,utilization,vulnerability_management", "default"] # Phase 2 default routing for catchall 
         - ["feature_category=code_review,incident_management,importers,pages", "default"] # Phase 3 default routing for catchall
         - ["feature_category=code_testing,continuous_delivery,subgroups,authentication_and_authorization,gitaly,issue_tracking,requirements_management", "default"] # Phase 4 default routing for catchall
+        - ["feature_category=continuous_integration", "default"] # Phase 5 default routing for catchall
         - ["*", null] # catchall on k8s
 
   hosts:
