@@ -399,7 +399,6 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
-
   gitlab-shell:
     extraEnv:
       USE_GITLAB_LOGGER: 1
@@ -586,19 +585,6 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: webservice-secrets
-
-    # This is needed because of
-    # https://gitlab.com/gitlab-org/gitlab/-/issues/11548
-    # where temp files are written to `/tmp/gitlab/<SOME_PATH>`
-    extraVolumes: |
-      - name: tempdir
-        emptyDir:
-          sizeLimit: 10G
-    extraVolumeMounts: |
-      - name: tempdir
-        mountPath: /tmp/gitlab/
-        readOnly: false
-
     workerProcesses: 4
     enabled: {{ .Values.gitlab.webservice.enabled }}
     hpa:
