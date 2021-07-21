@@ -125,6 +125,8 @@ gitlab:
         common:
           labels:
             shard: catchall
+        hpa:
+          targetAverageValue: 600m
         concurrency: 15
         minReplicas: 56
         maxReplicas: 175
