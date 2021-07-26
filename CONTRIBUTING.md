@@ -32,7 +32,7 @@ The workflow to make a merge request is as follows:
   * Environment specific configuration goes into one of the files in [values directory](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/tree/master/releases/gitlab/values). For example, production environment marked as `gprd` has a configuration file named [gprd.yaml.gotmpl](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/gprd.yaml.gotmpl).
 1. Commit and submit the MR with the changes.
 1. MR description has to contain links to relevant resources, **and** explain why the specific change is being made.
-1. For web fleet changes - [Create a Criticality 4 change request issue](https://about.gitlab.com/handbook/engineering/infrastructure/change-management/#change-request-workflows) and link to the MR description. The change request is used for auditing purposes, one change request can cover all environments being changed.
+1. For production web fleet changes - [Create a Criticality 4 change request issue](https://about.gitlab.com/handbook/engineering/infrastructure/change-management/#change-request-workflows) and link to the MR description. The change request is used for auditing purposes, if you are applying changes to Staging followed by Production, it is recommended you open a single change request for both environments.
 1. Add link(s) to any related Chef changes. 
 1. Apply the `Contribution` label, as well as any other applicable labels (Stage group labels, Service labels and similar).
 1. Check the [Reviewer and Maintainer section](https://about.gitlab.com/handbook/engineering/projects/#k8s-workloads-gitlab-com) and assign to a reviewer and maintainer.
