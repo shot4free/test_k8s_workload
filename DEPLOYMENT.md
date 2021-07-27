@@ -55,10 +55,8 @@ document for help getting started.
 
 After an MR is merged, and after repository mirroring has occurred, ops will
 create a new pipeline that targets all environments.  QA jobs run for select
-changes that target our Preprod and Staging environments.  The jobs which target
-our production main stage are manually gated at the moment.  This provides
-sufficient time for anyone to fully vet their change in lower environments and
-the canary stage if necessary.
+changes that target our Preprod and Staging environments.  See the [resolving QA failures](https://gitlab.com/gitlab-org/release/docs/-/blob/master/runbooks/resolving-qa-failures.md) runbook for help with failing tests. The jobs which target
+our production main stage are automatically promoted following successful QA smoke tests. Separate MRs should be used to target changes on the different environments to avoid accidental promotion. 
 
 ### Auto-Deploy with Configuration Changes
 
