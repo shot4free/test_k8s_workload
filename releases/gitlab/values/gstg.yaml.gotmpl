@@ -2,6 +2,8 @@
 
 nginx-ingress:
   controller:
+    config:
+      upstream-keepalive-requests: "10000"
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
 
