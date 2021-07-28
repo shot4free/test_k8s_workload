@@ -375,6 +375,9 @@ global:
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
 
+  email:
+    reply_to: noreply@staging.gitlab.com
+
   geo:
     enabled: true
     nodeName: {{ .Environment.Values | getOrNil "gitlab_domain" | default "" }}
