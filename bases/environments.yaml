@@ -164,6 +164,8 @@ environments:
           api_no_proxy: true
           ingress_readiness: true
           namespace: "gitlab-cny"
+        web:
+          enabled: true
 
   gprd:
     values:

@@ -32,6 +32,12 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab-cny",
+  "name": "gitlab-cny-webservice-web",
+  "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab-cny",
   "name": "gitlab-cny-webservice-websockets",
   "change": "MODIFY"
 }]
