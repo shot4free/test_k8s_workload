@@ -79,8 +79,6 @@ environments:
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
-        web:
-          enabled: true
 
   gstg:
     values:
@@ -98,8 +96,6 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
-        web:
-          enabled: true
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
