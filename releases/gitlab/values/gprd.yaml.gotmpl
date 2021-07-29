@@ -58,6 +58,11 @@ gitlab:
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
+      web:
+        hpa:
+          minReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: web-0
       websockets:
         hpa:
           minReplicas: 2

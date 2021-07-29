@@ -466,7 +466,7 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: {{ ternary "/api" "/" ((.Values | getOrNil "web.enabled") | default false) }}
+          path: "/api"
         pod:
           labels:
             deployment: api
@@ -482,7 +482,6 @@ gitlab:
           # is resolved
           extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s'
         workerProcesses: 6
-{{- if (.Values | getOrNil "web.enabled") | default false }}
       web:
         common:
           labels:
@@ -510,7 +509,6 @@ gitlab:
             deployment: web
             type: web
         workerProcesses: 4
-{{- end }}
       websockets:
         deployment:
           terminationGracePeriodSeconds: 260
