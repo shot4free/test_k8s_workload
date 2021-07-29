@@ -243,6 +243,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
+  enabled: {{ (.Values | getOrNil "nginx-ingress.enabled") | default "false" }}
   controller:
     extraInitContainers:
       - name: delay-start

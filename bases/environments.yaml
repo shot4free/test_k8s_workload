@@ -23,6 +23,8 @@ environments:
             enabled: true
           kas:
             enabled: true
+        nginx-ingress:
+          enabled: false
       # These services are only installed in the
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
@@ -43,6 +45,8 @@ environments:
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
+        nginx-ingress:
+          enabled: true
 
   ops:
     values:
@@ -79,6 +83,8 @@ environments:
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
+        nginx-ingress:
+          enabled: true
 
   gstg:
     values:
@@ -162,6 +168,8 @@ environments:
           namespace: "gitlab-cny"
         web:
           enabled: true
+        nginx-ingress:
+          enabled: true
 
   gprd:
     values:
@@ -179,6 +187,8 @@ environments:
         kas:
           managed_cert_name: kas-gitlab-com
           domain: kas.gitlab.com
+        nginx-ingress:
+          enabled: true
 
   # Zonal clusters for gprd, these three environments
   # inherit from the gprd environemnt, which is the
