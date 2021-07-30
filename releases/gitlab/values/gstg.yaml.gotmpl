@@ -2,6 +2,14 @@
 
 nginx-ingress:
   controller:
+    extraInitContainers:
+      - name: delay-start
+        args:
+          - -c
+          - echo "Checking connectivity to API..."; curl --verbose --connect-timeout 10 --max-time 15 http://gitlab-webservice-api.gitlab.svc.cluster.local:8181/-/readiness; echo 'Delaying start of nginx-controller container for 30 seconds'; sleep 30
+        command:
+          - sh
+        image: 'k8s.gcr.io/ingress-nginx/controller:v0.41.2'
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
 
