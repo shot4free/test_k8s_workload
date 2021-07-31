@@ -489,7 +489,7 @@ gitlab:
         workhorse:
           # This will need to be set here until https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2365
           # is resolved
-          extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s'
+          extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s -propagateCorrelationID'
         workerProcesses: 6
       web:
         common:
@@ -757,6 +757,8 @@ gitlab:
       monitoring:
         exporter:
           enabled: true
+      trustedCIDRsForPropagation: ["10.0.0.0/8", "127.0.0.1/32"]
+      trustedCIDRsForXForwardedFor: ["10.0.0.0/8", "127.0.0.1/32"]
     resources:
       limits:
         memory: 6.0G
