@@ -24,6 +24,8 @@ nginx-ingress:
               topologyKey: kubernetes.io/hostname
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
+    sysctls:
+      "net.ipv4.ip_local_port_range": "11000 65500"
 
 registry:
   database:
