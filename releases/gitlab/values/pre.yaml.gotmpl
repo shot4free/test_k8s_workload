@@ -38,7 +38,9 @@ registry:
       maxidle: 5
       maxlifetime: 5m
   migration:
-    disablemirrorfs: true
+    enabled: true
+    disablemirrorfs: false
+    rootdirectory: gitlab
   nodeSelector:
     cloud.google.com/gke-nodepool: default-1
   gc:
