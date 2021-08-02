@@ -173,6 +173,9 @@ gitlab:
       git:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=git-https-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+      web:
+        service:
+          loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=web-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
       websockets:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=websockets-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
