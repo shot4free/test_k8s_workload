@@ -4,8 +4,6 @@ nginx-ingress:
   controller:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
-    sysctls:
-      "net.ipv4.ip_local_port_range": "11000 65500"
 
 registry:
   image:
