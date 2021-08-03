@@ -244,14 +244,6 @@ certmanager:
 ## Installation & configuration of charts/nginx
 nginx-ingress:
   controller:
-    extraInitContainers:
-      - name: delay-start
-        args:
-          - -c
-          - echo "Checking connectivity to API..."; curl --verbose --connect-timeout 10 --max-time 15 http://{{ $namespace }}-webservice-api.{{ $namespace }}.svc.cluster.local:8181/-/readiness; echo 'Delaying start of nginx-controller container for 30 seconds'; sleep 30
-        command:
-          - sh
-        image: 'k8s.gcr.io/ingress-nginx/controller:v0.41.2'
     terminationGracePeriodSeconds: 120
     autoscaling:
       enabled: true
@@ -286,6 +278,8 @@ nginx-ingress:
         memory: 500Mi
     replicaCount: 3
     minAvailable: 2
+    sysctls:
+      "net.ipv4.ip_local_port_range": "11000 65500"
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
