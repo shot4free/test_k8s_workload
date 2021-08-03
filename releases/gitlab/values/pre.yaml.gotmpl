@@ -49,7 +49,10 @@ registry:
     reviewafter: 5m
     noidlebackoff: true
   storage:
-    secret: registry-storage-v2
+    secret: registry-storage-v3
+  maintenance:
+    uploadpurging:
+      enabled: false
   image:
     tag: v3.6.2-gitlab
 
