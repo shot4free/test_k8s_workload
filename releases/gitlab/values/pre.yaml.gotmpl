@@ -80,6 +80,8 @@ gitlab:
       web:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+        sharedTmpDir:
+          sizeLimit: 10G
       websockets:
         deployment:
           readinessProbe:
