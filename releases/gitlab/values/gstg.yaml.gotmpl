@@ -27,8 +27,6 @@ gitlab:
           GITLAB_TRACING: "opentracing://jaeger?udp_endpoint=localhost%3A6831&sampler=probabilistic&sampler_param=0.01&service_name=web"
           GITLAB_TRACING_URL: 'https://jaeger.gstg.gitlab.net/search?service={{ "{{" }} service {{ "}}" }}&tags=%7B{{ "\"" }}correlation_id{{ "\"" }}%3A{{ "\""}}{{ "{{" }} correlation_id {{ "}}" }}{{ "\"" }}%7D'
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
-        sharedTmpDir:
-          sizeLimit: 10G
     minReplicas: 2
     maxReplicas: 30
     extraEnv:

@@ -498,6 +498,8 @@ gitlab:
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: web-1
+        sharedTmpDir:
+          sizeLimit: 10G
         shutdown:
           blackoutSeconds: 10
         ingress:
