@@ -187,8 +187,6 @@ environments:
         kas:
           managed_cert_name: kas-gitlab-com
           domain: kas.gitlab.com
-        nginx-ingress:
-          enabled: true
 
   # Zonal clusters for gprd, these three environments
   # inherit from the gprd environemnt, which is the
