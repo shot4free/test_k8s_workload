@@ -50,8 +50,9 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
         hpa:
-          minReplicas: 1
-          maxReplicas: 10
+          minReplicas: 16
+          maxReplicas: 50
+          targetAverageValue: 3600m
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
       websockets:
