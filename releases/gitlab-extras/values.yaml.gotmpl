@@ -45,7 +45,7 @@ resources:
     metadata:
       annotations:
         nginx.ingress.kubernetes.io/use-regex: "true"
-        kubernetes.io/ingress.class: gitlab-nginx
+        kubernetes.io/ingress.class: {{ (.Values | getOrNil "gitlab_release_name") | default "gitlab" }}-nginx
         kubernetes.io/ingress.provider: nginx
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
         nginx.ingress.kubernetes.io/proxy-buffering: "off"
@@ -66,7 +66,7 @@ resources:
         stage: {{ if eq $namespace "gitlab-cny" }}"cny"{{ else }}"main"{{ end }}
         tier: sv
         type: api
-      name: gitlab-webservice-api-proxy-off
+      name: {{ (.Values | getOrNil "gitlab_release_name") | default "gitlab" }}-webservice-api-proxy-off
       namespace: {{ $namespace }}
     spec:
       rules:
@@ -89,7 +89,7 @@ resources:
     kind: Ingress
     metadata:
       annotations:
-        kubernetes.io/ingress.class: gitlab-nginx
+        kubernetes.io/ingress.class: {{ (.Values | getOrNil "gitlab_release_name") | default "gitlab" }}-nginx
         kubernetes.io/ingress.provider: nginx
         nginx.ingress.kubernetes.io/service-upstream: "true"
         nginx.ingress.kubernetes.io/rewrite-target: "/$2"
@@ -101,7 +101,7 @@ resources:
         shard: default
         stage: {{ default ( .Values | getOrNil "stage" ) "main" }}
         tier: sv
-      name: gitlab-readiness
+      name: {{ (.Values | getOrNil "gitlab_release_name") | default "gitlab" }}-readiness
       namespace: {{ $namespace }}
     spec:
       rules:

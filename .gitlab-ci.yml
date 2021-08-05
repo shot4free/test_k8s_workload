@@ -9,9 +9,9 @@ include:
   - '/ci/version-checks.yml'
 
 variables:
-  CI_IMAGE_VERSION: 'v5.3.0'
+  CI_IMAGE_VERSION: 'v5.4.0'
   AUTO_DEPLOY: 'false'
-  CHART_VERSION: 'b35a922a5cb26d9ae819dcb863c03bebd7e7fe7d'
+  CHART_VERSION: '7677bd7fff3d96b902f9f947b7facaa21f4fda80'
 
 #############################################################
 

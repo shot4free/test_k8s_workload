@@ -41,6 +41,12 @@ global:
 
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
+    # For https://gitlab.com/gitlab-com/gl-infra/production/-/issues/4089
+    keepalives: 1
+    keepalivesIdle: 5
+    keepalivesInterval: 3
+    keepalivesCount: 3
+    tcpUserTimeout: 13000
     connectTimeout: 5 # 5 seconds
     applicationName: ""
     password:
@@ -243,6 +249,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
+  enabled: {{ (.Values | getOrNil "nginx-ingress.enabled") | default "false" }}
   controller:
     terminationGracePeriodSeconds: 120
     autoscaling:
@@ -278,6 +285,8 @@ nginx-ingress:
         memory: 500Mi
     replicaCount: 3
     minAvailable: 2
+    sysctls:
+      "net.ipv4.ip_local_port_range": "11000 65500"
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
@@ -466,7 +475,7 @@ gitlab:
             nginx.ingress.kubernetes.io/proxy-buffering: "on"
             nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "on"
-          path: {{ ternary "/api" "/" ((.Values | getOrNil "web.enabled") | default false) }}
+          path: "/api"
         pod:
           labels:
             deployment: api
@@ -482,7 +491,6 @@ gitlab:
           # is resolved
           extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s'
         workerProcesses: 6
-{{- if (.Values | getOrNil "web.enabled") | default false }}
       web:
         common:
           labels:
@@ -496,6 +504,8 @@ gitlab:
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: web-1
+        sharedTmpDir:
+          sizeLimit: 10G
         shutdown:
           blackoutSeconds: 10
         ingress:
@@ -509,8 +519,13 @@ gitlab:
           labels:
             deployment: web
             type: web
+        service:
+          type: LoadBalancer
+          loadBalancerSourceRanges:
+            - 10.0.0.0/8
+          annotations:
+            cloud.google.com/load-balancer-type: Internal
         workerProcesses: 4
-{{- end }}
       websockets:
         deployment:
           terminationGracePeriodSeconds: 260

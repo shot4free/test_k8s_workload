@@ -7,7 +7,7 @@ nginx-ingress:
 
 registry:
   image:
-    tag: v3.5.2-gitlab
+    tag: v3.6.2-gitlab
   storage:
     secret: registry-storage-v2
 
@@ -37,6 +37,7 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
       GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
       USE_NEW_LOAD_BALANCER_QUERY: "true"
+      GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
     workhorse:
       resources:
         limits:
@@ -65,7 +66,6 @@ gitlab:
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
-      ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
       USE_GITLAB_LOGGER: 1
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"

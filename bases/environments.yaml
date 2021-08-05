@@ -23,6 +23,8 @@ environments:
             enabled: true
           kas:
             enabled: true
+        nginx-ingress:
+          enabled: false
       # These services are only installed in the
       # regional cluster, so we disable them for
       # all zonal clusters, regardless of the environment.
@@ -43,6 +45,8 @@ environments:
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
+        nginx-ingress:
+          enabled: true
 
   ops:
     values:
@@ -79,7 +83,7 @@ environments:
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
-        web:
+        nginx-ingress:
           enabled: true
 
   gstg:
@@ -98,8 +102,6 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
-        web:
-          enabled: true
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
@@ -164,6 +166,10 @@ environments:
           api_no_proxy: true
           ingress_readiness: true
           namespace: "gitlab-cny"
+        web:
+          enabled: true
+        nginx-ingress:
+          enabled: true
 
   gprd:
     values:

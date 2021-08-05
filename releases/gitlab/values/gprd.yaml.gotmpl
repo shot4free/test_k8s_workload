@@ -1,7 +1,6 @@
 ---
 
 nginx-ingress:
-  enabled: true
   controller:
     autoscaling:
       minReplicas: 10
@@ -21,6 +20,8 @@ registry:
   resources:
     requests:
       memory: 3G
+  storage:
+    secret: registry-storage-v2
 
 gitlab:
   gitlab-shell:
@@ -58,6 +59,11 @@ gitlab:
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
+      web:
+        hpa:
+          minReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: web-0
       websockets:
         hpa:
           minReplicas: 2
@@ -78,6 +84,7 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_PERFORMANCE_BAR_STATS_URL: "https://log.gprd.gitlab.net/app/dashboards#/view/823ed530-655a-11eb-a318-db81ec4462fa?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-24h%2Cto%3Anow))"
   kas:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -136,7 +143,7 @@ gitlab:
           shard: catchall
           deployment: sidekiq-catchall
         negateQueues: |
-          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled|tags=exclude_from_kubernetes,exclude_from_gitlab_com|name=repository_import|name=authorized_project_update:authorized_project_update_user_refresh_from_replica|name=authorized_project_update:authorized_project_update_user_refresh_with_low_urgency|feature_category=not_owned,auto_devops,chatops,code_analytics,compliance_management,container_registry,database,design_management,devops_reports,epics,geo_replication,global_search,kubernetes_management,license,license_compliance,metrics,package_registry,product_analytics,release_evidence,security_orchestration,templates,users,utilization,vulnerability_management,code_review,incident_management,importers,pages,code_testing,continuous_delivery,subgroups,authentication_and_authorization,gitaly,issue_tracking,requirements_management,continuous_integration
+          resource_boundary=cpu&urgency=high&tags!=requires_disk_io|resource_boundary=memory|feature_category=global_search&urgency=throttled|resource_boundary!=cpu&urgency=high|resource_boundary=cpu&urgency=default,low|feature_category=database&urgency=throttled|feature_category=gitaly&urgency=throttled|tags=exclude_from_kubernetes,exclude_from_gitlab_com|name=repository_import|name=authorized_project_update:authorized_project_update_user_refresh_from_replica|name=authorized_project_update:authorized_project_update_user_refresh_with_low_urgency|name!=mailers,project_import_schedule&feature_category=not_owned,auto_devops,chatops,code_analytics,compliance_management,container_registry,database,design_management,devops_reports,epics,geo_replication,global_search,kubernetes_management,license,license_compliance,metrics,package_registry,product_analytics,release_evidence,security_orchestration,templates,users,utilization,vulnerability_management,code_review,incident_management,importers,pages,code_testing,continuous_delivery,subgroups,authentication_and_authorization,gitaly,issue_tracking,requirements_management,continuous_integration
         resources:
           requests:
             cpu: 800m
@@ -394,6 +401,18 @@ gitlab:
 
 global:
   appConfig:
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+      directives:
+        connect_src: "'self' https://gitlab.com https://assets.gitlab-static.net wss://gitlab.com https://sentry.gitlab.net https://customers.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
+        frame_ancestors: "'self'"
+        frame_src: "'self' https://assets.gitlab-static.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.gitlab.com"
+        img_src: "* data: blob:"
+        object_src: "'none'"
+        script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://assets.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
+        style_src: "'self' 'unsafe-inline' https://assets.gitlab-static.net"
+        worker_src: "https://assets.gitlab-static.net https://gitlab.com blob: data:"
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -423,6 +442,7 @@ global:
         - ["feature_category=license,license_compliance,metrics,package_registry,product_analytics,release_evidence", "default"] # Phase 2 default routing for catchall 
         - ["feature_category=security_orchestration,service_desk,templates,users,utilization,vulnerability_management", "default"] # Phase 2 default routing for catchall 
         - ["feature_category=code_review,incident_management,importers,pages", "default"] # Phase 3 default routing for catchall
+        - ["feature_category=code_testing,continuous_delivery,subgroups,authentication_and_authorization,gitaly,issue_tracking,requirements_management", "default"] # Phase 4 default routing for catchall
         - ["*", null] # catchall on k8s
 
   hosts:
