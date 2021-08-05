@@ -9,7 +9,10 @@ registry:
   image:
     tag: v3.7.0-gitlab
   storage:
-    secret: registry-storage-v2
+    secret: registry-storage-v3
+  maintenance:
+    uploadpurging:
+      enabled: false
 
 gitlab:
   mailroom:
