@@ -514,11 +514,11 @@ gitlab:
             deployment: web
             type: web
         service:
-          type: {{ if (contains "gprd" .Environment.Name) -}}ClusterIP{{- else -}}LoadBalancer{{- end }}
+          type: LoadBalancer
           loadBalancerSourceRanges:
             - 10.0.0.0/8
           annotations:
-            {{ if ((contains "gprd" .Environment.Name) | not) -}}cloud.google.com/load-balancer-type: Internal{{- end}}
+            cloud.google.com/load-balancer-type: Internal
         workerProcesses: 4
       websockets:
         deployment:
