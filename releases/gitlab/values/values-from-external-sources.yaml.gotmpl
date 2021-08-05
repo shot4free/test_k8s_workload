@@ -180,7 +180,7 @@ gitlab:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=websockets-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
     extraEnv:
-      GITLAB_THROTTLE_USER_ALLOW_LIST: {{ $chef_base_fe_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".user_ratelimit_bypasses | keys? | join(\",\")") | quote }}
+      {{ if (contains "gprd" .Environment.Name) }}GITLAB_THROTTLE_USER_ALLOW_LIST:{{- else -}}GITLAB_THROTTLE_USER_ALLOWLIST:{{- end }} {{ $chef_base_fe_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".user_ratelimit_bypasses | keys? | join(\",\")") | quote }}
       GITLAB_UPLOAD_API_ALLOWLIST: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_UPLOAD_API_ALLOWLIST | select(.!=null)") | quote }}
       GITLAB_GRAFANA_API_KEY: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_GRAFANA_API_KEY | select(.!=null)") | quote }}
       SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_EMAIL | select(.!=null)") | quote }}

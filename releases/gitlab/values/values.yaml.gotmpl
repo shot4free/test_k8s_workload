@@ -41,6 +41,14 @@ global:
 
   ## doc/charts/globals.md#configure-postgresql-settings
   psql:
+{{ if ((contains "gprd" .Environment.Name) | not) -}}
+    # For https://gitlab.com/gitlab-com/gl-infra/production/-/issues/4089
+    keepalives: 1
+    keepalivesIdle: 5
+    keepalivesInterval: 3
+    keepalivesCount: 3
+    tcpUserTimeout: 13000
+{{- end }}
     connectTimeout: 5 # 5 seconds
     applicationName: ""
     password:
