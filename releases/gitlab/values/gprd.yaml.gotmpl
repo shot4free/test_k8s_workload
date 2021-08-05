@@ -84,6 +84,7 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: 100000
+      GITLAB_PERFORMANCE_BAR_STATS_URL: "https://log.gprd.gitlab.net/app/dashboards#/view/823ed530-655a-11eb-a318-db81ec4462fa?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-24h%2Cto%3Anow))"
   kas:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -400,6 +401,18 @@ gitlab:
 
 global:
   appConfig:
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+      directives:
+        connect_src: "'self' https://gitlab.com https://assets.gitlab-static.net wss://gitlab.com https://sentry.gitlab.net https://customers.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
+        frame_ancestors: "'self'"
+        frame_src: "'self' https://assets.gitlab-static.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.gitlab.com"
+        img_src: "* data: blob:"
+        object_src: "'none'"
+        script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://assets.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
+        style_src: "'self' 'unsafe-inline' https://assets.gitlab-static.net"
+        worker_src: "https://assets.gitlab-static.net https://gitlab.com blob: data:"
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
