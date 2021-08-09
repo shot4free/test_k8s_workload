@@ -222,9 +222,6 @@ build-chart:
 
 notify_com_mr:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/notify-mr:${CI_IMAGE_VERSION}"
-  extends:
-    - .except-com
-    - .only-auto-deploy-false
   stage: check
   script:
     - notify-mr -s
@@ -233,6 +230,13 @@ notify_com_mr:
   # fail
   allow_failure: true
   dependencies: []
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      - $EXPEDITE_DEPLOYMENT
+  only:
+    variables:
+      - $AUTO_DEPLOY == "false"
 
 ###############################################################################
 ### Configuration Jobs ###
@@ -527,6 +531,11 @@ pre:qa:
   allow_failure: true
   variables:
     project: gitlab-org/quality/preprod
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      - $CI_COMMIT_REF_NAME != 'master'
+      - $EXPEDITE_DEPLOYMENT
   only:
     changes:
       - 'CHART_VERSION'
@@ -543,6 +552,11 @@ gstg:qa:
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/staging
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      - $CI_COMMIT_REF_NAME != 'master'
+      - $EXPEDITE_DEPLOYMENT
   only:
     changes:
       - 'CHART_VERSION'

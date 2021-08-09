@@ -42,6 +42,7 @@ else
   source <(curl -s "https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/raw/$version/bin/common.bash")
 fi
 
+EXPEDITE_DEPLOYMENT=${EXPEDITE_DEPLOYMENT:-false}
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 CHART_VERSION=$(get_charts_version)
@@ -144,7 +145,7 @@ case "$ACTION" in
       # done in the context of an MR.
       if [[ $AUTO_DEPLOY == "false" ]]; then
         helm_diff "" | tee "$HELM_DIFF_TMP_FNAME"
-        if [[ -f /k8s-workloads/notify-mr ]]; then
+        if [[ -f /k8s-workloads/notify-mr ]] && ! "${EXPEDITE_DEPLOYMENT}"; then
           /k8s-workloads/notify-mr -d "$HELM_DIFF_TMP_FNAME" -e "$environment" || echo "WARNING: notify-mr diff notification failed"
         fi
       else

@@ -50,7 +50,14 @@ On merge, configuration changes will be deployed to the following environments:
 
 ## GitLab CI/CD Variables Configuration
 
-Each variable is applied to the environment defined above
+On the Ops instance, a special variable is used [in cases of
+emergency](./DEPLOYMENT.md#in-case-of-emergency)
+
+| Variable | Description |
+| -------- | ----------- |
+| `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. |
+
+Each of the below variables is applied to the environment defined above
 
 | Variable        | Description
 | --------        | --------
