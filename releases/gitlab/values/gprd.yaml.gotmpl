@@ -153,7 +153,6 @@ gitlab:
             cpu: 1.5
             memory: 2.5G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"catchall\"}"
         extraVolumes: |
           # This is needed because of https://gitlab.com/gitlab-org/gitlab/-/issues/330317
@@ -212,7 +211,6 @@ gitlab:
             emptyDir:
               sizeLimit: 70G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
       # Run background migrations in their own shard
       - name: database-throttled
@@ -236,7 +234,6 @@ gitlab:
             cpu: 1.5
             memory: 6G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"database-throttled\"}"
       # Run Gitaly Storage Migrations on their own shards
       # https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/436
@@ -262,7 +259,6 @@ gitlab:
             cpu: 1.5
             memory: 6G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"gitaly-throttled\"}"
       - name: elasticsearch
         common:
@@ -285,7 +281,6 @@ gitlab:
             cpu: 2
             memory: 8G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"elasticsearch\"}"
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10445
@@ -311,7 +306,6 @@ gitlab:
             cpu: 1.5
             memory: 6G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"low-urgency-cpu-bound\"}"
       # This is a shard that segregates seemingly problematic queues
       - name: quarantine
@@ -367,7 +361,6 @@ gitlab:
             cpu: 2
             memory: 3.1G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-cpu-bound\"}"
       # Production resources for this shard discussed in
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10446
@@ -397,7 +390,6 @@ gitlab:
             cpu: 1.5
             memory: 3G
         extraEnv:
-          ENABLE_LOAD_BALANCING_FOR_SIDEKIQ: "true"
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
 
 global:
