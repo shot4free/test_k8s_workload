@@ -55,6 +55,8 @@ emergency](./DEPLOYMENT.md#in-case-of-emergency)
 
 | Variable | Description |
 | -------- | ----------- |
+| `OPS_API_TOKEN`       | Token utilized by the ops.gitlab.com instance to make
+API calls on behalf of the CI jobs. |
 | `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. |
 
 Each of the below variables is applied to the environment defined above
