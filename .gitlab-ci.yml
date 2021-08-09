@@ -199,6 +199,7 @@ stages:
   - gprd-cny:deploy
   - gprd:deploy:alpha
   - gprd:deploy:beta
+  - cleanup
 
 build-chart:
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
@@ -825,3 +826,19 @@ gprd-us-east1-d:auto-deploy:
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+
+###############################################################################
+# Clean up
+#   * These jobs run cleanup related tasks
+###############################################################################
+
+remove-expedite-variable:
+  stage: cleanup
+  script:
+    - "curl --fail --header \"PRIVATE-TOKEN: ${OPS_API_TOKEN}\" -X DELETE \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/variables/EXPEDITE_DEPLOYMENT\""
+  rules:
+    - if: '$CI_API_V4_URL == "https://gitlab.com/api/v4"'
+      when: never
+    - if: '$AUTO_DEPLOY == "true"'
+      when: never
+    - if: '($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) && $EXPEDITE_DEPLOYMENT'
