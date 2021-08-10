@@ -23,10 +23,6 @@ gitlab:
       api:
         nodeSelector:
           cloud.google.com/gke-nodepool: api-2
-        workhorse:
-          # This will need to be set here until https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2365
-          # is resolved
-          extraArgs: '-apiLimit 9 -apiQueueDuration 30s -apiQueueLimit 2000 -apiCiLongPollingDuration 50s -propagateCorrelationID'
       web:
         extraEnv:
           CUSTOMER_PORTAL_URL: "https://customers.stg.gitlab.com"
@@ -46,8 +42,6 @@ gitlab:
       USE_NEW_LOAD_BALANCER_QUERY: "true"
       GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
     workhorse:
-      trustedCIDRsForPropagation: ["10.0.0.0/8", "127.0.0.1/32"]
-      trustedCIDRsForXForwardedFor: ["10.0.0.0/8", "127.0.0.1/32"]
       resources:
         limits:
           memory: 2G
