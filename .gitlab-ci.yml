@@ -834,6 +834,7 @@ gprd-us-east1-d:auto-deploy:
 
 remove-expedite-variable:
   stage: cleanup
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   script:
     - "curl --fail --header \"PRIVATE-TOKEN: ${OPS_API_TOKEN}\" -X DELETE \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/variables/EXPEDITE_DEPLOYMENT\""
   rules:
