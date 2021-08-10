@@ -75,4 +75,7 @@ registry:
   hpa:
     minReplicas: 5
   storage:
-    secret: registry-storage-v2
+    secret: registry-storage-v3
+  maintenance:
+    uploadpurging:
+      enabled: false
