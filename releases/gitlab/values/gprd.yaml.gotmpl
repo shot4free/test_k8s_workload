@@ -21,7 +21,10 @@ registry:
     requests:
       memory: 3G
   storage:
-    secret: registry-storage-v2
+    secret: registry-storage-v3
+  maintenance:
+    uploadpurging:
+      enabled: false
 
 gitlab:
   gitlab-shell:
