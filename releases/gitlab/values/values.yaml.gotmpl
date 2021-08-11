@@ -692,7 +692,6 @@ gitlab:
           - port: 5000
             protocol: TCP
 
-{{ if not (contains "gprd" .Environment.Name) -}}
           # Allow internal traffic from API nodes to Kas
         - to:
           - ipBlock:
@@ -700,7 +699,6 @@ gitlab:
           ports:
           - port: 8153
             protocol: TCP
-{{- end }}
 
           # Allow internal traffic to Redis
         - to:
