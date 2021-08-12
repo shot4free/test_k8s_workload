@@ -83,7 +83,6 @@ gitlab:
     minReplicas: 30
     maxReplicas: 150
     extraEnv:
-      GITLAB_CDN_HOST: "https://gitlab.com"
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: track
@@ -433,10 +432,10 @@ global:
         - ["tags=exclude_from_kubernetes", null] # catchall on VMs
         - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
         - ["feature_category=not_owned", "default"] # Iterating to full 'default' routing for catchall
-        - ["feature_category=auto_devops,chatops,code_analytics,compliance_management,container_registry,database", "default"] # Phase 2 default routing for catchall 
-        - ["feature_category=design_management,devops_reports,epics,geo_replication,global_search,kubernetes_management", "default"] # Phase 2 default routing for catchall 
-        - ["feature_category=license,license_compliance,metrics,package_registry,product_analytics,release_evidence", "default"] # Phase 2 default routing for catchall 
-        - ["feature_category=security_orchestration,service_desk,templates,users,utilization,vulnerability_management", "default"] # Phase 2 default routing for catchall 
+        - ["feature_category=auto_devops,chatops,code_analytics,compliance_management,container_registry,database", "default"] # Phase 2 default routing for catchall
+        - ["feature_category=design_management,devops_reports,epics,geo_replication,global_search,kubernetes_management", "default"] # Phase 2 default routing for catchall
+        - ["feature_category=license,license_compliance,metrics,package_registry,product_analytics,release_evidence", "default"] # Phase 2 default routing for catchall
+        - ["feature_category=security_orchestration,service_desk,templates,users,utilization,vulnerability_management", "default"] # Phase 2 default routing for catchall
         - ["feature_category=code_review,incident_management,importers,pages", "default"] # Phase 3 default routing for catchall
         - ["feature_category=code_testing,continuous_delivery,subgroups,authentication_and_authorization,gitaly,issue_tracking,requirements_management", "default"] # Phase 4 default routing for catchall
         - ["feature_category=continuous_integration", "default"] # Phase 5 default routing for catchall
