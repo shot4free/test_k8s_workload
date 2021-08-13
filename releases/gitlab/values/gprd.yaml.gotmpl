@@ -441,7 +441,7 @@ global:
         - ["feature_category=continuous_integration", "default"] # Phase 5 default routing for catchall
         - ["feature_category=integrations,dynamic_application_security_testing", "default"] # Phase 6 default routing for catchall
         - ["feature_category=source_code_management", "default"] # Phase 7 default routing for catchall
-        - ["*", null] # catchall on k8s
+        - ["*", "default"] # catchall on k8s
 
   hosts:
     gitlab:
