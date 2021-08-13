@@ -409,6 +409,11 @@ gitlab-runner:
 ## Note: Many of these settings are configurable via globals
 gitlab:
   gitlab-shell:
+    deployment:
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 0
     extraEnv:
       USE_GITLAB_LOGGER: 1
     workhorse:
