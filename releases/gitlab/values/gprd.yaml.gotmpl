@@ -67,6 +67,9 @@ gitlab:
           minReplicas: 1
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
+        resources:
+          limits:
+            memory: 8G
       websockets:
         hpa:
           minReplicas: 2
