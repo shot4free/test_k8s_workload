@@ -20,7 +20,7 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-memory-bound-v1",
+  "name": "gitlab-sidekiq-catchall-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
