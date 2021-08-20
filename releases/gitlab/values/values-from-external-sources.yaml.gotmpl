@@ -197,4 +197,3 @@ gitlab:
   sidekiq:
     psql:
       database: {{ $chef_base_be_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_database") }}
-      host: {{ $chef_base_be_sidekiq_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
