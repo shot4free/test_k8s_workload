@@ -127,6 +127,7 @@ gitlab:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
     psql:
+      host: pgbouncer-sidekiq.int.gprd.gitlab.net
       prepared_statements: false
       load_balancing:
         discover:

@@ -331,6 +331,7 @@ gitlab:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
     psql:
+      host: pgbouncer-sidekiq.int.gstg.gitlab.net
       load_balancing:
         discover:
           nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
