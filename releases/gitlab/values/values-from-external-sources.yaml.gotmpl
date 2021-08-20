@@ -4,7 +4,6 @@
 {{- $get_role_from_chef := "../../../bin/get-role-from-chef" }}
 {{- $chef_base_role := exec $get_role_from_chef (list (print $chef_source_name "-base")) }}
 {{- $chef_base_be_role := exec $get_role_from_chef (list (print $chef_source_name "-base-be")) }}
-{{- $chef_base_be_sidekiq_role := exec $get_role_from_chef (list (print $chef_source_name "-base-be-sidekiq")) }}
 {{- $chef_base_fe_role := exec $get_role_from_chef (list (print $chef_source_name "-base-fe")) }}
 
 {{- /* As the pre environment has no redis specific roles, we only fetch for other environments */ -}}
