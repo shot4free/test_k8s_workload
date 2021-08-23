@@ -231,7 +231,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-elasticsearch
           shard: elasticsearch
-        queues: feature_category=global_search&urgency=throttled
+        queueSelector: false
+        queues: elasticsearch,cronjob:elastic_cluster_reindexing_cron,cronjob:elastic_index_bulk_cron,cronjob:elastic_index_initial_bulk_cron,cronjob:elastic_migration,elastic_commit_indexer,elastic_delete_project
         resources:
           requests:
             cpu: 800m
