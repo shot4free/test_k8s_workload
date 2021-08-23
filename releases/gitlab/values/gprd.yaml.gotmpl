@@ -64,7 +64,9 @@ gitlab:
           cloud.google.com/gke-nodepool: git-https-2
       web:
         hpa:
-          minReplicas: 1
+          minReplicas: 25
+          maxReplicas: 150
+          targetAverageValue: 3600m
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
         resources:
