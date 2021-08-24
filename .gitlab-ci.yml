@@ -194,6 +194,7 @@ stages:
   - check
   - dryrun-check
   - dryrun
+  - non-prod-cny:deploy
   - non-prod:deploy
   - non-prod:QA
   - gprd-cny:deploy
@@ -272,6 +273,36 @@ pre:upgrade:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     - bin/k-ctl upgrade
   resource_group: pre
+  only:
+    refs:
+      - master
+  variables:
+    DRY_RUN: "false"
+
+### Staging Canary
+
+gstg-cny:dryrun:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/k-ctl -D -s cny upgrade
+  resource_group: gstg-cny
+
+gstg-cny:upgrade:
+  stage: non-prod-cny:deploy
+  extends:
+    - .deploy
+    - .gstg
+    - .only-auto-deploy-false-and-config-changes
+  script:
+    - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME -s cny
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration" "cny"
+    - bin/k-ctl -s cny upgrade
+    - sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration" "cny"
+  resource_group: gstg-cny
   only:
     refs:
       - master
@@ -385,7 +416,7 @@ gstg-us-east1-d:upgrade:
   variables:
     DRY_RUN: "false"
 
-### Canary
+### Production Canary
 
 gprd-cny:dryrun:
   stage: dryrun
@@ -405,7 +436,7 @@ gprd-cny:upgrade:
     - .only-auto-deploy-false-and-config-changes
   script:
     - bin/grafana-annotate -e $CI_ENVIRONMENT_NAME -s cny
-    - sendEvent "Starting k8s configuration for $CLUSTER" "grpd" "configuration" "cny"
+    - sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
     - bin/k-ctl -s cny upgrade
     - sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
   resource_group: gprd-cny
@@ -415,7 +446,7 @@ gprd-cny:upgrade:
   variables:
     DRY_RUN: "false"
 
-### Producion
+### Production
 
 gprd:dryrun:
   stage: dryrun
@@ -603,6 +634,37 @@ pre:auto-deploy:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
+### Staging Canary
+
+gstg-cny:dryrun:auto-deploy:
+  stage: dryrun
+  extends:
+    - .deploy
+    - .gstg
+  script:
+    - bin/k-ctl -D -s cny upgrade
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true"
+  resource_group: gstg-cny
+
+gstg-cny:auto-deploy:
+  stage: non-prod-cny:deploy
+  extends:
+    - .deploy
+    - .gstg
+  script:
+    - sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment" "cny"
+    - bin/k-ctl -s cny upgrade
+    - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment" "cny"
+  resource_group: gstg-cny
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+  # FIXME: remove once tested and wired into deployer
+  when: manual
+  allow_failure: true
+
 ### Staging
 
 gstg:dryrun:auto-deploy:
@@ -701,7 +763,7 @@ gstg-us-east1-d:auto-deploy:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
-### Canary
+### Production Canary
 
 gprd-cny:dryrun:auto-deploy:
   stage: dryrun
@@ -729,7 +791,7 @@ gprd-cny:auto-deploy:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
 
-### Producion
+### Production
 
 gprd:dryrun:auto-deploy:
   stage: dryrun

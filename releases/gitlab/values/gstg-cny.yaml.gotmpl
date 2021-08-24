@@ -1,0 +1,75 @@
+---
+
+# Please note that `gstg.yaml.gotmpl` is included first for the `gstg-cny` environment,
+# this file is for `cny` specific overrides
+
+nginx-ingress:
+  controller:
+    autoscaling:
+      minReplicas: 3
+    labels: &nginx_labels
+      shard: default
+      stage: cny
+    podLabels:
+      <<: *nginx_labels
+    service:
+      labels:
+        <<: *nginx_labels
+
+gitlab:
+  gitlab-shell:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-0
+  mailroom:
+    enabled: false
+
+  sidekiq:
+    enabled: false
+  webservice:
+    common:
+      labels:
+        shard: default
+        stage: cny
+        tier: sv
+    deployments:
+      api:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
+      git:
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: git-https-0
+      web:
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
+          CANARY: "true"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: web-0
+      websockets:
+        hpa:
+          minReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: web-0
+        extraEnv:
+          GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
+          GODEBUG: madvdontneed=1
+    minReplicas: 2
+    extraEnv:
+      GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
+      DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
+      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
+      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
+
+registry:
+  hpa:
+    minReplicas: 2
+  storage:
+    secret: registry-storage-v3
+  maintenance:
+    uploadpurging:
+      enabled: false

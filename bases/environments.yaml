@@ -86,6 +86,44 @@ environments:
         nginx-ingress:
           enabled: true
 
+  gstg-cny:
+    values:
+      - <<: *regional_cluster_defaults
+      -
+        registry:
+          enabled: true
+        env_prefix: gstg
+        google_project: "gitlab-staging-1"
+        gitlab_domain: "staging.gitlab.com"
+        gitlab_endpoint: "https://staging.gitlab.com"
+        gitlab_internal_lb_dns_address: "int.gstg.gitlab.net"
+        gitlab_secrets_gkms_source: "gstg"
+        gitlab_release_name: "gitlab-cny"
+        gitlab_secrets_release_name: "gitlab-secrets-cny"
+        gitlab_secrets_namespace: "gitlab-cny"
+        gitlab_namespace: "gitlab-cny"
+        # Canary uses the same bucket as staging
+        registry_bucket_name: "gitlab-gstg-registry"
+        registry_deployment_for_image_tag: "gitlab-cny-registry"
+        registry_api_host: "registry.staging.gitlab.com"
+        gitlab_chef_source_name: "gstg"
+        stage: "cny"
+        gitlab:
+          gitlab-shell:
+            enabled: true
+          webservice:
+            enabled: true
+          kas:
+            enabled: false
+        gitlab_extras:
+          api_no_proxy: true
+          ingress_readiness: true
+          namespace: "gitlab-cny"
+        web:
+          enabled: true
+        nginx-ingress:
+          enabled: true
+
   gstg:
     values:
       - <<: *regional_cluster_defaults
@@ -149,7 +187,7 @@ environments:
         gitlab_secrets_release_name: "gitlab-secrets-cny"
         gitlab_secrets_namespace: "gitlab-cny"
         gitlab_namespace: "gitlab-cny"
-      # Canary uses the same bucket as production
+        # Canary uses the same bucket as production
         registry_bucket_name: "gitlab-gprd-registry"
         registry_deployment_for_image_tag: "gitlab-cny-registry"
         registry_api_host: "registry.gitlab.com"
