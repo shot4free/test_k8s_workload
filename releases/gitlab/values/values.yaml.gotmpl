@@ -502,6 +502,8 @@ gitlab:
             type: web
         deployment:
           terminationGracePeriodSeconds: 65
+        workhorse:
+          keywatcher: false
         extraEnv:
           ENABLE_RBTRACE: 1
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
