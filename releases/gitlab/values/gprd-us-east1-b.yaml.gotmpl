@@ -1,0 +1,12 @@
+---
+gitlab:
+  webservice:
+    deployments:
+      web:
+        workerProcesses: 6
+        resources:
+          limits:
+            memory: 12G
+          requests:
+            cpu: 4500m
+            memory: 7G
