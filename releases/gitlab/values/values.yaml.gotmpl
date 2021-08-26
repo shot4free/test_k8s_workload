@@ -987,6 +987,14 @@ gitlab:
         networking.gke.io/managed-certificates: {{ .Values | getOrNil "kas.managed_cert_name" }}
       tls:
         secretName: ""
+    customConfig:
+      gitaly:
+        global_api_rate_limit:
+          refill_rate_per_second: 30.0
+          bucket_size: 70
+        per_server_api_rate_limit:
+          refill_rate_per_second: 15.0
+          bucket_size: 40
     common:
       labels:
         type: kas
