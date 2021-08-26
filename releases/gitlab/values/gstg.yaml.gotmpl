@@ -384,7 +384,7 @@ global:
         - ["resource_boundary=cpu&urgency=high&tags!=requires_disk_io", null] # urgent-cpu-bound
         - ["resource_boundary=memory", null] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
-        - ["resource_boundary!=cpu&urgency=high", null] # urgent-other
+        - ["resource_boundary!=cpu&urgency=high", "urgent_other"] # urgent-other
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", null] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
