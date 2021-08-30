@@ -5,16 +5,10 @@ bases:
 
 ---
 {{ $namespace := .Environment.Values | getOrNil "gitlab_secrets_namespace" | default "gitlab" }}
-repositories:
-# Kubernetes incubator repo of helm charts
-- name: "kubernetes-incubator"
-  url: "https://charts.helm.sh/incubator"
-
 releases:
 - name:  {{ .Environment.Values | getOrNil "gitlab_secrets_release_name" | default "gitlab-secrets" }}
-  chart: "kubernetes-incubator/raw"
+  chart: "../../charts/raw"
   namespace: {{ $namespace }}
-  version: "0.2.3"
   installed: {{ env "GITLAB_SECRETS_INSTALLED" | default "true" }}
   values:
 {{- $env_prefix := .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}
