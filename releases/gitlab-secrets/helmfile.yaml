@@ -149,26 +149,6 @@ releases:
       - apiVersion: v1
         kind: Secret
         metadata:
-          name: registry-storage-v2
-          namespace: {{ $namespace }}
-        stringData:
-          config: |
-            gcs:
-              bucket: {{ .Environment.Values | getOrNil "registry_bucket_name" | default (printf "gitlab-%s-registry" $env_prefix) }}
-              keyfile: /etc/docker/registry/storage/gcs.json
-            maintenance:
-              uploadpurging:
-                enabled: false
-            delete:
-              enabled: true
-          gcs.json: |
-{{ $gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"google-creds\".json_base64") | b64dec | trimSuffix "\n" | indent 14 }}
-
-      # Creates the third version of the registry secret
-      #   - Removes the maintenance stanza, now configured via chart values
-      - apiVersion: v1
-        kind: Secret
-        metadata:
           name: registry-storage-v3
           namespace: {{ $namespace }}
         stringData:
