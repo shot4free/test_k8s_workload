@@ -240,6 +240,12 @@ global:
     customCAs:
       - secret: gitlab-gitaly-tls-certificate-v1
       - secret: gitlab-praefect-tls-certificate-v1
+
+  ## doc/charts/globals.md#busybox-image
+  busybox:
+    image:
+      repository: busybox
+
 ## End of global
 
 certmanager:
@@ -251,6 +257,8 @@ certmanager:
 nginx-ingress:
   enabled: {{ (.Values | getOrNil "nginx-ingress.enabled") | default "false" }}
   controller:
+    image:
+      repository: k8s.gcr.io/ingress-nginx/controller
     terminationGracePeriodSeconds: 120
     autoscaling:
       enabled: true
@@ -287,6 +295,9 @@ nginx-ingress:
     minAvailable: 2
     sysctls:
       "net.ipv4.ip_local_port_range": "11000 65500"
+  defaultBackend:
+    image:
+      repository: k8s.gcr.io/defaultbackend-amd64
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
