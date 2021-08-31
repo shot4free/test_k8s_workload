@@ -184,6 +184,21 @@ cached version of the chart.  This has a consequence of unexpected changes to
 various versions that are stored inside of Kubernetes objects , but should be
 considered a safe operation.
 
+## Helm Charts and this Repository
+
+In order to minimise the amount of external dependencies this repo has (as it's
+part of our critical deployment pipeline), and to make it easier to read and
+understand this repository, we vendor the charts that we use into this repo
+under the directory `charts`.
+
+Currently the following charts are vendored in this repo
+
+| Chart | Vendored | How to correctly do modifications |
+| -- | -- | -- |
+| `raw` | yes | This was forked from an abandoned upstream chart, so local modifications as necessary are fine |
+| `gitlab` | no | Work in upstream chart repo and then see instructions above |
+| `gitlab-runner` | no | Work in upstream chart repo and then see instructions above |
+
 ## Node Selectors
 
 Due to an unknown issue with GKE's cluster-autoscaler, we are currently using

@@ -5,14 +5,9 @@ bases:
 
 ---
 {{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
-repositories:
-- name: "kubernetes-incubator"
-  url: "https://charts.helm.sh/incubator"
-
 releases:
 - name:  {{ .Values | getOrNil "gitlab_extras.release_name" | default "gitlab-extras" }}
-  chart: "kubernetes-incubator/raw"
+  chart: "../../charts/raw"
   namespace: {{ $namespace }}
-  version: "0.2.3"
   values:
     - values.yaml.gotmpl
