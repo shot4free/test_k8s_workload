@@ -70,6 +70,11 @@ registry:
     minReplicas: 2
   storage:
     secret: registry-storage-v3
+  # When enabled, the upload purger will attempt to make deletes against the
+  # common GCS bucket. It is not suitable to be enabled in production until the
+  # following issues are resolved:
+  # https://gitlab.com/gitlab-org/container-registry/-/issues/216
+  # https://gitlab.com/gitlab-org/container-registry/-/issues/217
   maintenance:
     uploadpurging:
       enabled: false
