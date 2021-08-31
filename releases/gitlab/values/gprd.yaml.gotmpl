@@ -392,7 +392,8 @@ gitlab:
         podLabels:
           shard: urgent-other
           deployment: sidekiq-urgent-other
-        queues: resource_boundary!=cpu&urgency=high
+        queueSelector: false
+        queues: urgent_other,email_receiver,authorized_keys,authorized_project_update:authorized_project_update_project_recalculate,authorized_projects,gitlab_shell,merge,merge_requests_delete_source_branch,merge_requests_handle_assignees_change,merge_requests_resolve_todos,merge_requests_sync_code_owner_approval_rules,pipeline_cache:expire_job_cache,pipeline_default:pipeline_metrics,pipeline_hooks:build_hooks,pipeline_processing:build_success,pipeline_processing:ci_initial_pipeline_process,pipeline_processing:pipeline_process,pipeline_processing:stage_update,process_commit,project_cache,prometheus_create_default_alerts,update_highest_role
         resources:
           requests:
             cpu: 500m
