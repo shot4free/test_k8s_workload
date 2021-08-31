@@ -3,6 +3,8 @@ gitlab:
   webservice:
     deployments:
       web:
+        hpa:
+          targetAverageValue: 3000m
         workerProcesses: 6
         resources:
           limits:
