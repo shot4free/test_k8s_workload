@@ -162,7 +162,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-memory-bound
           shard: memory-bound
-        queues: resource_boundary=memory
+        queueSelector: false
+        queues: memory_bound,project_export,design_management_new_version
         resources:
           requests:
             cpu: 500m
