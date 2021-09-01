@@ -36,6 +36,8 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
+        nodeSelector:
+          cloud.google.com/gke-nodepool: api-0
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
@@ -68,6 +70,8 @@ gitlab:
 registry:
   hpa:
     minReplicas: 2
+  nodeSelector:
+    cloud.google.com/gke-nodepool: registry-0
   storage:
     secret: registry-storage-v3
   # When enabled, the upload purger will attempt to make deletes against the
