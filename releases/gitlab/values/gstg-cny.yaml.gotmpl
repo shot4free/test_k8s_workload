@@ -1,6 +1,6 @@
 ---
 
-# Please note that `gprd.yaml.gotmpl` is included first for the `gprd-cny` environment,
+# Please note that `gstg.yaml.gotmpl` is included first for the `gstg-cny` environment,
 # this file is for `cny` specific overrides
 
 nginx-ingress:
@@ -19,7 +19,7 @@ nginx-ingress:
 gitlab:
   gitlab-shell:
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-2
+      cloud.google.com/gke-nodepool: shell-0
   mailroom:
     enabled: false
 
@@ -36,36 +36,28 @@ gitlab:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
-        hpa:
-          # keeping minReplicas high enough to not suffer from node scaling
-          # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
-          minReplicas: 16
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-2
+          cloud.google.com/gke-nodepool: git-https-0
       web:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
           CANARY: "true"
-        hpa:
-          minReplicas: 16
-          maxReplicas: 50
-          targetAverageValue: 3600m
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
       websockets:
         hpa:
           minReplicas: 1
         nodeSelector:
-          cloud.google.com/gke-nodepool: websockets-1
+          cloud.google.com/gke-nodepool: web-0
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
           GODEBUG: madvdontneed=1
-    minReplicas: 5
+    minReplicas: 2
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
@@ -75,7 +67,7 @@ gitlab:
 
 registry:
   hpa:
-    minReplicas: 5
+    minReplicas: 2
   storage:
     secret: registry-storage-v3
   # When enabled, the upload purger will attempt to make deletes against the
