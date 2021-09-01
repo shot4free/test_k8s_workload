@@ -139,6 +139,10 @@ gitlab:
       maxReplicas: 5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-1
+    customConfig:
+      agent:
+        listen:
+          connections_per_token_per_minute: 10000
 global:
   appConfig:
     contentSecurityPolicy:
