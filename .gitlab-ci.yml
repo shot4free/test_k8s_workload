@@ -661,9 +661,6 @@ gstg-cny:auto-deploy:
   only:
     variables:
       - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
-  # FIXME: remove once tested and wired into deployer
-  when: manual
-  allow_failure: true
 
 ### Staging
 
