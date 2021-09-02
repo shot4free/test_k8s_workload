@@ -71,12 +71,16 @@ gitlab:
         hpa:
           minReplicas: 25
           maxReplicas: 150
-          targetAverageValue: 2200m
+          targetAverageValue: 3000m
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
         resources:
           limits:
-            memory: 8G
+            memory: 12G
+          requests:
+            cpu: 4500m
+            memory: 7G
+        workerProcesses: 6
       websockets:
         hpa:
           minReplicas: 2
