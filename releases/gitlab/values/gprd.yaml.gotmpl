@@ -440,7 +440,7 @@ global:
         - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", null] # move this to the quarantine shard
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
-        - ["resource_boundary=memory", null] # memory-bound
+        - ["resource_boundary=memory", "memory_bound"] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
         - ["resource_boundary!=cpu&urgency=high", "urgent_other"] # urgent-other
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
