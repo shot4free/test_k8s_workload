@@ -99,9 +99,6 @@ gitlab:
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
-      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
       GITLAB_PERFORMANCE_BAR_STATS_URL: "https://log.gprd.gitlab.net/app/dashboards#/view/823ed530-655a-11eb-a318-db81ec4462fa?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-24h%2Cto%3Anow))"
       GITLAB_LOG_DEPRECATIONS: "true"
   kas:
@@ -119,9 +116,6 @@ gitlab:
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
-      GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
-      GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
-      GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
       GITLAB_LOG_DEPRECATIONS: "true"
     extraInitContainers: |
       - name: write-instance-name
