@@ -289,7 +289,7 @@ gitlab:
           shard: elasticsearch
           deployment: sidekiq-elasticsearch
         queueSelector: false
-        queues: "elasticsearch,cronjob:elastic_cluster_reindexing_cron,cronjob:elastic_index_bulk_cron,cronjob:elastic_index_initial_bulk_cron,cronjob:elastic_migration,elastic_commit_indexer,elastic_delete_project"
+        queues: elasticsearch
         resources:
           requests:
             cpu: 800m
@@ -370,7 +370,7 @@ gitlab:
           shard: urgent-cpu-bound
           deployment: sidekiq-urgent-cpu-bound
         queueSelector: false
-        queues: urgent_cpu_bound,incident_management_pending_escalations_alert_check,incident_management_pending_escalations_alert_create,issue_placement,merge_request_reset_approvals,new_issue,new_merge_request,new_note,pipeline_background:ci_sync_reports_to_report_approval_rules,pipeline_cache:expire_pipeline_cache,pipeline_creation:ci_external_pull_requests_create_pipeline,pipeline_creation:create_pipeline,pipeline_creation:merge_requests_create_pipeline,pipeline_default:ci_pipeline_bridge_status,pipeline_default:ci_retry_pipeline,pipeline_default:pipeline_notification,pipeline_processing:build_finished,pipeline_processing:build_queue,pipeline_processing:ci_build_finished,pipeline_processing:update_head_pipeline_for_merge_request,post_receive,update_merge_requests
+        queues: urgent_cpu_bound
         resources:
           requests:
             cpu: 650m
@@ -400,7 +400,7 @@ gitlab:
           shard: urgent-other
           deployment: sidekiq-urgent-other
         queueSelector: false
-        queues: urgent_other,email_receiver,authorized_keys,authorized_project_update:authorized_project_update_project_recalculate,authorized_projects,gitlab_shell,merge,merge_requests_delete_source_branch,merge_requests_handle_assignees_change,merge_requests_resolve_todos,merge_requests_sync_code_owner_approval_rules,pipeline_cache:expire_job_cache,pipeline_default:pipeline_metrics,pipeline_hooks:build_hooks,pipeline_processing:build_success,pipeline_processing:ci_initial_pipeline_process,pipeline_processing:pipeline_process,pipeline_processing:stage_update,process_commit,project_cache,prometheus_create_default_alerts,update_highest_role
+        queues: urgent_other,email_receiver
         resources:
           requests:
             cpu: 500m
