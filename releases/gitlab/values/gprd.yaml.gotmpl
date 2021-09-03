@@ -438,14 +438,14 @@ global:
       routingRules:
         - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1064
         - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these, https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1087
-        - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", null] # move this to the quarantine shard
+        - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
         - ["resource_boundary=memory", "memory_bound"] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
         - ["resource_boundary!=cpu&urgency=high", "urgent_other"] # urgent-other
         - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
-        - ["feature_category=database&urgency=throttled", null] # database-throttled
-        - ["feature_category=gitaly&urgency=throttled", null] # gitaly-throttled
+        - ["feature_category=database&urgency=throttled", "database_throttled"] # database-throttled
+        - ["feature_category=gitaly&urgency=throttled", "gitaly_throttled"] # gitaly-throttled
         - ["tags=exclude_from_gitlab_com", "default"] # special case for testing (only runs actively on staging; includes geo jobs)
         - ["feature_category=not_owned", "default"] # Iterating to full 'default' routing for catchall
         - ["feature_category=auto_devops,chatops,code_analytics,compliance_management,container_registry,database", "default"] # Phase 2 default routing for catchall
