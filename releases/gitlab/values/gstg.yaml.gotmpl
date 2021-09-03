@@ -194,7 +194,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-database-throttled
           shard: database-throttled
-        queues: feature_category=database&urgency=throttled
+        queueSelector: false
+        queues: database_throttled,background_migration
         resources:
           requests:
             cpu: 500m
@@ -219,7 +220,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-gitaly-throttled
           shard: gitaly-throttled
-        queues: feature_category=gitaly&urgency=throttled
+        queueSelector: false
+        queues: gitaly_throttled,groups_schedule_bulk_repository_shard_moves,groups_update_repository_storage,projects_schedule_bulk_repository_shard_moves,projects_update_repository_storage,snippets_schedule_bulk_repository_shard_moves,snippets_update_repository_storage
         resources:
           requests:
             cpu: 500m
@@ -287,7 +289,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-quarantine
           shard: quarantine
-        queues: name=authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency
+        queueSelector: false
+        queues: quarantine,authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency
         resources:
           requests:
             cpu: 800m
