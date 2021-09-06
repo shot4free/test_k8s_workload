@@ -68,6 +68,10 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
 
 registry:
+  database:
+    enabled: false
+  migration:
+    enabled: false
   hpa:
     minReplicas: 2
   nodeSelector:
