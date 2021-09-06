@@ -6,8 +6,20 @@ nginx-ingress:
       cloud.google.com/gke-nodepool: default-2
 
 registry:
-  image:
-    tag: v3.10.0-gitlab
+  database:
+    enabled: true
+    host: pgbouncer-registry.int.gstg.gitlab.net
+    user: gitlab-registry
+    name: gitlabhq_registry
+    password:
+      secret: registry-postgresql-password-v1
+    pool:
+      maxopen: 256
+      maxidle: 256
+      maxlifetime: 5m
+  migration:
+    enabled: true
+    rootdirectory: gitlab
   storage:
     secret: registry-storage-v3
   # When enabled, the upload purger will attempt to make deletes against the
@@ -18,6 +30,8 @@ registry:
   maintenance:
     uploadpurging:
       enabled: false
+  image:
+    tag: v3.10.1-gitlab
 
 gitlab:
   mailroom:
