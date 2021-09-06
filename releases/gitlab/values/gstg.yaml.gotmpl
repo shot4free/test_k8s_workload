@@ -403,7 +403,7 @@ global:
         - ["resource_boundary=memory", "memory_bound"] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
         - ["resource_boundary!=cpu&urgency=high", "urgent_other"] # urgent-other
-        - ["resource_boundary=cpu&urgency=default,low", null] # low-urgency-cpu-bound
+        - ["resource_boundary=cpu&urgency=default,low", "low_urgency_cpu_bound"] # low-urgency-cpu-bound
         - ["feature_category=database&urgency=throttled", "database_throttled"] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", "gitaly_throttled"] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
