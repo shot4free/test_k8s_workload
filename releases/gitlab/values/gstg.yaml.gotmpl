@@ -7,8 +7,9 @@ nginx-ingress:
 
 registry:
   database:
-    enabled: false
+    enabled: true
     host: pgbouncer-registry.int.gstg.gitlab.net
+    port: 6432
     user: gitlab-registry
     name: gitlabhq_registry
     password:
@@ -18,7 +19,7 @@ registry:
       maxidle: 256
       maxlifetime: 5m
   migration:
-    enabled: false
+    enabled: true
     rootdirectory: gitlab
   storage:
     secret: registry-storage-v3
