@@ -177,7 +177,7 @@ gitlab:
           deployment: sidekiq-memory-bound
           shard: memory-bound
         queueSelector: false
-        queues: memory_bound,project_export,design_management_new_version
+        queues: memory_bound
         resources:
           requests:
             cpu: 500m
@@ -209,7 +209,7 @@ gitlab:
           deployment: sidekiq-database-throttled
           shard: database-throttled
         queueSelector: false
-        queues: database_throttled,background_migration
+        queues: database_throttled
         resources:
           requests:
             cpu: 500m
@@ -235,7 +235,7 @@ gitlab:
           deployment: sidekiq-gitaly-throttled
           shard: gitaly-throttled
         queueSelector: false
-        queues: gitaly_throttled,groups_schedule_bulk_repository_shard_moves,groups_update_repository_storage,projects_schedule_bulk_repository_shard_moves,projects_update_repository_storage,snippets_schedule_bulk_repository_shard_moves,snippets_update_repository_storage
+        queues: gitaly_throttled
         resources:
           requests:
             cpu: 500m
@@ -281,7 +281,7 @@ gitlab:
           deployment: sidekiq-low-urgency-cpu-bound
           shard: low-urgency-cpu-bound
         queueSelector: false
-        queues: low_urgency_cpu_bound,auto_merge:auto_merge_process,auto_merge:merge_trains_refresh,create_github_webhook,cronjob:ci_platform_metrics_update_cron,cronjob:environments_auto_stop_cron,cronjob:geo_sidekiq_cron_config,cronjob:gitlab_service_ping,cronjob:import_stuck_project_import_jobs,cronjob:incident_management_incident_sla_exceeded_check,cronjob:incident_management_oncall_rotations_persist_all_rotations_shifts_job,cronjob:jira_import_stuck_jira_import_jobs,cronjob:namespaces_prune_aggregation_schedules,cronjob:pages_domain_removal_cron,cronjob:pages_domain_ssl_renewal_cron,cronjob:pages_domain_verification_cron,cronjob:pipeline_schedule,cronjob:remove_expired_members,cronjob:stuck_ci_jobs,cronjob:stuck_export_jobs,cronjob:update_max_seats_used_for_gitlab_com_subscriptions,deployment:deployments_link_merge_request,deployment:deployments_update_environment,elastic_association_indexer,elastic_namespace_indexer,emails_on_push,export_csv,gcp_cluster:cluster_wait_for_app_installation,gcp_cluster:clusters_applications_wait_for_uninstall_app,github_importer:github_import_import_pull_request_merged_by,github_importer:github_import_import_pull_request_review,gitlab_performance_bar_stats,groups_update_statistics,import_issues_csv,incident_management:incident_management_add_severity_system_note,incident_management:incident_management_process_alert_worker_v2,issuable_export_csv,mail_scheduler:mail_scheduler_notification_service,namespaces_onboarding_progress,new_epic,object_pool:object_pool_join,pages,pipeline_default:ci_create_cross_project_pipeline,pipeline_default:ci_trigger_downstream_subscriptions,pipeline_hooks:pipeline_hooks,pipeline_processing:ci_build_schedule,reactive_caching,security_scans:scan_security_report_secrets,security_scans:security_store_scans,security_scans:security_track_secure_scans,security_scans:store_security_reports,vulnerability_exports_export
+        queues: low_urgency_cpu_bound
         resources:
           requests:
             cpu: 1
@@ -305,7 +305,7 @@ gitlab:
           deployment: sidekiq-quarantine
           shard: quarantine
         queueSelector: false
-        queues: quarantine,authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency
+        queues: quarantine
         resources:
           requests:
             cpu: 800m
