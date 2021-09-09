@@ -999,6 +999,9 @@ gitlab:
       tls:
         secretName: ""
     customConfig:
+      agent:
+        listen:
+          connections_per_token_per_minute: 10000
       gitaly:
         global_api_rate_limit:
           refill_rate_per_second: 30.0
