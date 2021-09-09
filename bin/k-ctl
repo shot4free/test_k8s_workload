@@ -77,7 +77,7 @@ if [[ $AUTO_DEPLOY == "true" ]]; then
 fi
 
 json_cmp() {
-  result=$(jq --argfile a "$1" --argfile b "$2" -n '($a | (.. | arrays) |= sort | del(.[] | select(.name | test("gitlab-registry-migrations-.*")))) as $a | ($b | (.. | arrays) |= sort) as $b | $a == $b')
+  result=$(jq --argfile a "$1" --argfile b "$2" -n '($a | (.. | arrays) |= sort | del(.[] | select(.name | test("gitlab-.*registry-migrations-.*")))) as $a | ($b | (.. | arrays) |= sort) as $b | $a == $b')
 
   if [[ $result == "true" ]]; then
     return 0
