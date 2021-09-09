@@ -127,7 +127,7 @@ gitlab:
           deployment: sidekiq-catchall
           shard: catchall
         queueSelector: false
-        queues: "default,mailers,project_import_schedule,service_desk_email_receiver"
+        queues: "default,mailers,project_import_schedule"
         resources:
           requests:
             cpu: 800m
@@ -352,7 +352,7 @@ gitlab:
           deployment: sidekiq-urgent-other
           shard: urgent-other
         queueSelector: false
-        queues: urgent_other,email_receiver
+        queues: urgent_other,email_receiver,service_desk_email_receiver
         resources:
           requests:
             cpu: 500m
