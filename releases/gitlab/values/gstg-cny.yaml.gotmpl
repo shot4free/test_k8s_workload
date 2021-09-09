@@ -68,21 +68,7 @@ gitlab:
       GITLAB_SIDEKIQ_SIZE_LIMITER_COMPRESSION_THRESHOLD_BYTES: "100000"
 
 registry:
-  database:
-    enabled: false
-  migration:
-    enabled: false
   hpa:
     minReplicas: 2
   nodeSelector:
     cloud.google.com/gke-nodepool: registry-0
-  storage:
-    secret: registry-storage-v3
-  # When enabled, the upload purger will attempt to make deletes against the
-  # common GCS bucket. It is not suitable to be enabled in production until the
-  # following issues are resolved:
-  # https://gitlab.com/gitlab-org/container-registry/-/issues/216
-  # https://gitlab.com/gitlab-org/container-registry/-/issues/217
-  maintenance:
-    uploadpurging:
-      enabled: false
