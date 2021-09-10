@@ -34,3 +34,7 @@ Example:
 
 * Utilizing this file change to test Expediting changes to production
 * Test 3 due to changes to our CI configuration
+
+2021-09-09
+
+* GPRD - Provision seven additional Gitaly shards: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14141
