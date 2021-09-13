@@ -11,7 +11,7 @@ include:
 variables:
   CI_IMAGE_VERSION: 'v5.4.1'
   AUTO_DEPLOY: 'false'
-  CHART_VERSION: 'e9eb8b04630bc4f3557a035fd0b5bf173aaf3cc7'
+  CHART_VERSION: '070686b38dee1374d918f2ff51df9bd3aec5f86c'
 
 #############################################################
 
