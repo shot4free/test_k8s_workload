@@ -44,7 +44,7 @@ gitlab:
       cloud.google.com/gke-nodepool: shell-2
   mailroom:
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
   webservice:
     deployments:
       api:
@@ -106,7 +106,7 @@ gitlab:
       GITLAB_LOG_DEPRECATIONS: "true"
   kas:
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     workhorse:
       scheme: 'https'
       host: 'int.gprd.gitlab.net'
@@ -243,7 +243,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 1
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           shard: database-throttled
           deployment: sidekiq-database-throttled
@@ -269,7 +269,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 3
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           shard: gitaly-throttled
           deployment: sidekiq-gitaly-throttled
@@ -292,7 +292,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 8
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           shard: elasticsearch
           deployment: sidekiq-elasticsearch
