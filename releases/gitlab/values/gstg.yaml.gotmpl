@@ -31,6 +31,10 @@ registry:
   maintenance:
     uploadpurging:
       enabled: false
+  gc:
+    disabled: false
+    maxbackoff: 30m
+    reviewafter: 30m
   image:
     tag: v3.11.0-gitlab
 
