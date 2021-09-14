@@ -143,22 +143,6 @@ releases:
       - apiVersion: v1
         kind: Secret
         metadata:
-          name: registry-storage-v3
-          namespace: {{ $namespace }}
-        stringData:
-          config: |
-            gcs:
-              bucket: {{ .Environment.Values | getOrNil "registry_bucket_name" | default (printf "gitlab-%s-registry" $env_prefix) }}
-              keyfile: /etc/docker/registry/storage/gcs.json
-            delete:
-              enabled: true
-          gcs.json: |
-{{ $gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"google-creds\".json_base64") | b64dec | trimSuffix "\n" | indent 14 }}
-      # Required to gradually rollout the new presigned download URL config (`storage.redirect.expirydelay`).
-      # Remove registry-storage-v3 once applied to all envs.
-      - apiVersion: v1
-        kind: Secret
-        metadata:
           name: registry-storage-v4
           namespace: {{ $namespace }}
         stringData:
