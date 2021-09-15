@@ -4,16 +4,10 @@ bases:
   - "../../bases/environments.yaml"
 
 ---
-{{- $runner_chart_version := "0.27.0" }}
-repositories:
-- name: "gitlab-runner"
-  url: git+ssh://git@dev.gitlab.org/gitlab/charts/gitlab-runner.git@?ref=v{{ $runner_chart_version }}&sparse=0
-
 releases:
 - name:  gitlab-runner
-  chart: "gitlab-runner/gitlab-runner"
+  chart: "../../charts/gitlab-runner/{{ .Values.env_prefix }}"
   namespace: {{ .Values | getOrNil "gitlab_runner.namespace" | default "gitlab-runner" }}
-  version: "{{ $runner_chart_version }}"
   installed: {{ .Values | getOrNil "gitlab_runner.enabled" | default "false" }}
   values:
     - values.yaml.gotmpl

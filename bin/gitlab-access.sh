@@ -31,8 +31,8 @@ ping_gitlab() {
   ping -c4 charts.gitlab.io
 }
 
-if [[ -z ${GITLAB_ACCESS_DISABLE} || -z ${ARTIFACT_AVAILABLE} ]]; then
-  echo "env var GITLAB_ACCESS_DISABLE not set or artifact not available (ARTIFACT_AVAILABLE is unset), Gitlab.com access is OPEN"
+if [[ -z ${GITLAB_ACCESS_DISABLE} ]]; then
+  echo "env var GITLAB_ACCESS_DISABLE not set, Gitlab.com access is OPEN"
 else
   case "${ACTION}" in
     enable)
