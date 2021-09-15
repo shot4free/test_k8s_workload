@@ -21,14 +21,6 @@
     # Configure SSH authentication for the helm-git plugin
     - chmod 400 "$SSH_PRIVATE_KEY"
     - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
-    - |
-      if [[ -f "./gitlab-0.0.0+$CHART_VERSION.tgz" ]]; then
-        export ARTIFACT_AVAILABLE=true
-        echo "Using chart from artifact"
-        tar xf gitlab-0.0.0+$CHART_VERSION.tgz
-      else
-        echo "Using chart from git repo"
-      fi
     -
       |
         # For logging events

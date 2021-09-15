@@ -7,11 +7,11 @@ include:
   - '/ci/cluster-init-before-script.yml'
   - '/ci/shellcheck.yml'
   - '/ci/version-checks.yml'
+  - '/ci/check-vendored-charts.yml'
 
 variables:
-  CI_IMAGE_VERSION: 'v5.4.1'
+  CI_IMAGE_VERSION: 'v5.5.1'
   AUTO_DEPLOY: 'false'
-  CHART_VERSION: 'b20dc4a86d942af7f593d33a167a285d37734626'
 
 #############################################################
 
@@ -201,22 +201,6 @@ stages:
   - gprd:deploy:alpha
   - gprd:deploy:beta
   - cleanup
-
-build-chart:
-  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
-  stage: check
-  extends:
-    - .except-com
-  script:
-    # Configure SSH authentication for the cloning our helm chart
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
-    - ./bin/get_chart.sh
-  allow_failure: true
-  artifacts:
-    name: $CHART_VERSION
-    paths:
-      - '*.tgz'
 
 #########################################
 # Attempts to find an MR on .com and add

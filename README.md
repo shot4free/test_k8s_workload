@@ -84,10 +84,6 @@ The CI job will disable access to these urls if the following conditions are met
 
 * We have the CI environment variable 'GITLAB_ACCESS_DISABLE' set. This is typically set as a Global CI variable in the projects configuration, and allows us to globally enable/disable this functionality at will.
 
-* The environment variable 'ARTIFACT_AVAILABLE' is set. This means the GitLab chart and dependencies have been cached locally using the GitLab CI cache. While the GitLab chart is pulled from dev.gitlab.org, due
-to the way helm chart dependencies work, attempting to fetch the chart dependencies makes helm call gitlab.com, so whenever we do a CI job with a chart bump, that job will fetch the new chart and dependencies to
-cache it locally for all new CI jobs.
-
 ## GitLab Secrets
 
 In order to work with the existing omnibus installation of GitLab.com, we will need to bring in a few already configured items that exist in that environment.  These items will ensure that when the Deployment is spun up inside of Kubernetes we interact appropriately with our existing infrastructure.
@@ -172,17 +168,33 @@ Then apply using `k-ctl`
 
 ## Setting Chart Version
 
-This is in a global variable called `CHART_VERSION` in the `.gitlab-ci.yml` file
+We vendor the `gitlab` and `gitlab-runner` charts into this repo. This allows
+us to minimise the amount of external dependencies invoked at runtime, and allow
+easier understanding of this repo by including all "code" needed inside it.
 
-We build our own chart versus using the official version.  This allows us to
-incrementally update the chart as we make improvements we require.  The built
-chart is then stored as an artifact and will be attempted to be reused for
-future pipelines.  Should the `CHART_VERSION` be updated, the next chart build
-that occurs on our default branch will contain the updated artifact.  Should
-`CHART_VERSION` be overridden for an environment, we will be unable to use the
-cached version of the chart.  This has a consequence of unexpected changes to
-various versions that are stored inside of Kubernetes objects , but should be
-considered a safe operation.
+We track the version of chart used in a specific environment as a `helmfile`
+value `${chart}_chart_version`. You will need to update `bases/environments.yaml`
+in the appropriate place to bump charts for your environment(s).
+
+Once you have updated `environmnents.yaml`, you can use `./bin/vendor-chart.sh`
+to easily commit the new chart to this repo. You need to pass the `vendor-chart.sh`
+two options.
+
+1) The name of the chart to vendor (currently `gitlab` or `gitlab-runner`)
+2) The environment to vendor the chart in (you need to invoke this separately
+   for each environment if multiple)
+
+An example to commit the new chart for in `gstg` for the `gitlab` chart
+
+```
+git checkout -b username/bump-chart-gitlab-in-gstg
+# edit bases/environments.yaml changing gitlab_chart_version to the new SHA
+# under the `gstg` environment
+./bin/vendor-chart.sh gitlab gstg
+git add charts/gitlab/gstg bases/environments.yaml
+git commit -m "Bump chart in gstg"
+# You are now ready to push and open an MR
+```
 
 ## Helm Charts and this Repository
 
@@ -196,8 +208,8 @@ Currently the following charts are vendored in this repo
 | Chart | Vendored | How to correctly do modifications |
 | -- | -- | -- |
 | `raw` | yes | This was forked from an abandoned upstream chart, so local modifications as necessary are fine |
-| `gitlab` | no | Work in upstream chart repo and then see instructions above |
-| `gitlab-runner` | no | Work in upstream chart repo and then see instructions above |
+| `gitlab` | yes | Work in upstream chart repo and then see instructions above |
+| `gitlab-runner` | yes | Work in upstream chart repo and then see instructions above |
 
 ## Node Selectors
 

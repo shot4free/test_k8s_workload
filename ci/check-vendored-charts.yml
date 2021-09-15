@@ -1,0 +1,13 @@
+check-vendored-charts:
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  stage: check
+  script:
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - bin/check-vendored-charts.sh
+  extends:
+    - .except-ops
+  except:
+    variables:
+      - $AUTO_DEPLOY == "true"
+      - $CI_COMMIT_REF_NAME == 'master'

@@ -8,7 +8,7 @@
 set -euf -o pipefail
 
 get_charts_version() {
-  version=${CHART_VERSION:-$(sed -n "s/^[[:space:]][[:space:]]CHART_VERSION:[[:space:]]'\\(.*\\)'/\\1/p" .gitlab-ci.yml)}
+  version=$(yq eval "explode(...) | .environments.${environment}.values[0] * .environments.${environment}.values[1] | .gitlab_chart_version" bases/environments.yaml)
   echo "$version"
 }
 
@@ -134,8 +134,6 @@ auto_deploy_check() {
 case "$ACTION" in
   install | upgrade)
     overview
-
-    helmfile "${helmfile_common_options[@]}" repos
 
     if [[ ${dry_run:-} == "true" ]]; then
       debug "-- Helm Diff --" "${_CYN}"

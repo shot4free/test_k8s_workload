@@ -4,13 +4,6 @@ bases:
   - "../../bases/environments.yaml"
 
 ---
-{{if (eq (env "ARTIFACT_AVAILABLE") "true")}}
-{{else}}
-repositories:
-  - name: gitlab
-    url: git+ssh://git@dev.gitlab.org/gitlab/charts/gitlab.git@?ref={{env "CHART_VERSION"}}
-{{end}}
-
 hooks:
   - events: ["prepare"]
     showlogs: true
@@ -26,11 +19,7 @@ releases:
     labels:
       autodeploy: true
     namespace: {{.Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-{{if (eq (env "ARTIFACT_AVAILABLE") "true")}}
-    chart: '{{(env "PWD")}}/gitlab'
-{{else}}
-    chart: 'gitlab/gitlab'
-{{end}}
+    chart: "../../charts/gitlab/{{ .Values.env_prefix }}"
     set:
       - name: "global.deployment.annotations.app\\.gitlab\\.com/app"
         value: {{env "CI_PROJECT_PATH_SLUG" | default "gitlab-com-gl-infra-k8s-workloads-gitlab-com"}}
