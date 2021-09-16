@@ -87,6 +87,11 @@ environments:
           ingress_readiness: true
         nginx-ingress:
           enabled: true
+        ssh:
+          ed25519_pub: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKXsGj8bJCsKmemysUHSf5KFU8FK7d1V9tc17mDPwaoq"
+          dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAOaMyanI+FZ/JzTqRvDbHCTdXEeEtbqxMYCaJ2w6gfiql3PirxSPv3gvDsSxrvThrYfgtfy4ntU6Fe+U0PjxstWvdw8rTY7pzGkXDZWn6Rvw9MKxKeOGlAHNeJU52UynXtzcWZAr8q5V8FcjdZeMNwDnk04DCLxhab3eLTCwa2ZdAAAAFQD0P4b+KRdfFEV76ASKDZrK3xNBWwAAAIEAguFw2EldeJrgHAxHe1buwjZ24cLEB6R/EK9omg5OXIIyosxQIzb6wkcrqdJLpH7Ekj4vZBfz8TySM7ac7NUCjrQxlXjMiqnxz/rFarVHvfm40tVnActciMwbG3/JcHMGGz9Qqaa3wiSakF2LPF3BILFn1QdK1agxJxPHj14Vyl0AAACAdJrn8OK/hebmzy+B1wf5LjhnqYixNQJWuk42/A04VeYbE08GdRAikBPiFWrGLCZcdvx7ovBbKNHCqsXSy9PVz64zcvEL2zNp+VOJu1NIdWF0DimOj3qeL4zdPbh/i1cVfy1fhiqxkbqGro3jO44o6sDPT2H/1YBfk91VAZA0L0Q="
+          ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKz88Ffi/VaKGYIqgPvV1NKgJBcSTakl48zR5gM5ZA0KPkQA57likgtlDNw+XSoX+M/rOCRw2m0za7/LR+eKY4I="
+          rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCoSAn1VeQ4tpJ+lPYbKYo6A9TlHsTc3tzmKuPp7/83DUzgUBFYvGXBpcRYHHUCh+JSpcC9ubx+nxzETKCEA7O0nAAqF2aAx666pFaJvTlFQlHVKLoP20wc/KtP6OFG5Vw1SrzTMiB8S3Ot2nAgvRCO4L7kgHfRYjLjSIA+iXJutcP0nk8qV4Tj/TnEwaSMk0qcPkpcFVy3kUYirTmx0ukuWhfY5dr9DOKldCRjfPjoV+Wcr/WpjXVcrcBz3CVKnrhOpCROyxhNO5utcbtyZHK0HuQk7VIgd/r+pwBeAAkkZ679GP/C7gX6vHwqHiaWvGxETynjbpOK9ssKo3TbJzkl"
 
   gstg-cny:
     values:
