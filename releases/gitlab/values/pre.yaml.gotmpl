@@ -84,6 +84,9 @@ gitlab:
       web:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+        sshHostKeys:
+          mount: true
+          mountName: gitlab-hostpubkeys-credential-v1
       websockets:
         deployment:
           readinessProbe:
