@@ -11,7 +11,7 @@ function vendor_chart() {
   pushd charts/"${CHART}"/"${ENVIRONMENT}"
   git -c advice.detachedHead=false checkout "${SHA}"
   helm dep update
-  rm -rf .git requirements.lock
+  rm -rf .git requirements.lock spec
   if [[ -d charts ]]; then
     git add -f charts/*.tgz
   fi
@@ -23,7 +23,7 @@ usage() {
   cat <<EOF
 $0: Vendor a chart in a specific environment to a specific version. You must give
 this tool the chart to vendor, and the environment to vendor for. The SHA is taken
-from the 'helmfile' 'bases/environments.yaml' with the variable '${CHART}_chart_version'
+from the 'helmfile' 'bases/environments.yaml' with the variable '<env>_chart_version'
 for the environment in question.
 
 USAGE:
