@@ -249,20 +249,6 @@ releases:
           ssh_host_dsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_dsa_key") | quote }}
           ssh_host_ecdsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_ecdsa_key") | quote }}
           ssh_host_rsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_rsa_key") | quote }}
-
-      # The below is the public key data and is therefore not actually secretive data
-{{ if eq .Environment.Name "pre" }}
-      - apiVersion: v1
-        kind: Secret
-        metadata:
-          name: gitlab-hostpubkeys-credential-v1
-          namespace: {{ $namespace }}
-        stringData:
-          ssh_host_ed25519_key.pub: {{ .Environment.Values | getOrNil "ssh.ed25519_pub" | quote }}
-          ssh_host_dsa_key.pub: {{ .Environment.Values | getOrNil "ssh.dsa_pub" | quote }}
-          ssh_host_ecdsa_key.pub: {{ .Environment.Values | getOrNil "ssh.ecdsa_pub" | quote }}
-          ssh_host_rsa_key.pub: {{ .Environment.Values | getOrNil "ssh.rsa_pub" | quote }}
-{{ end }}
       - apiVersion: v1
         kind: Secret
         metadata:
