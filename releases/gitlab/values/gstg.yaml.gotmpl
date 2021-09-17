@@ -15,8 +15,8 @@ registry:
     password:
       secret: registry-postgresql-password-v1
     pool:
-      maxopen: 5
-      maxidle: 5
+      maxopen: 256
+      maxidle: 256
       maxlifetime: 5m
   migration:
     enabled: true
