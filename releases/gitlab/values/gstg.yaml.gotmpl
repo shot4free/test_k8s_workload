@@ -57,7 +57,13 @@ gitlab:
     maxReplicas: 30
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
-      GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated_files_api,throttle_authenticated_files_api"
+      # The following dry-runs:
+      #   - throttle_unauthenticated
+      #   - throttle_authenticated_api
+      #   - throttle_authenticated_web
+      # Are left in the dry-run list because without them QA will be unable to run.
+      # Once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14200 is resolved we can remove them
+      GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated,throttle_authenticated_api,throttle_authenticated_web,throttle_unauthenticated_files_api,throttle_authenticated_files_api"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_SIDEKIQ_SIZE_LIMITER_MODE: compress
       GITLAB_SIDEKIQ_SIZE_LIMITER_LIMIT_BYTES: "5000000"
