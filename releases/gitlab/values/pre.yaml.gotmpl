@@ -84,6 +84,8 @@ gitlab:
       web:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-1
+        sshHostKeys:
+          mount: true
       websockets:
         deployment:
           readinessProbe:
@@ -169,3 +171,6 @@ global:
       name: pre.gitlab.com
     kas:
       name: kas.pre.gitlab.com
+  shell:
+    hostKeys:
+      secret: gitlab-hostkeys-v1
