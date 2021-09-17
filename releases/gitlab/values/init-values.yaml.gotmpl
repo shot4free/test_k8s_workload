@@ -31,7 +31,7 @@ This is being tracked in issue https://gitlab.com/gitlab-com/gl-infra/delivery/-
 {{/* Get current version of the Container Registry */}}
 {{- $registry_deployment_name := .Environment.Values | getOrNil "registry_deployment_for_image_tag" }}
 {{- $registry_current_spec := exec "kubectl" (list "get" "deployment" $registry_deployment_name "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
-{{- $registry_current_tag := ($registry_current_spec | exec "cut"  (list "-d:" "-f3")) }}
+{{- $registry_current_tag := trimSuffix "\n" ($registry_current_spec | exec "cut"  (list "-d:" "-f3")) }}
 {{- $registry_version := $registry_current_tag }}
 
 {{/* Get the Deployment we are attempting to modify */}}
@@ -73,6 +73,23 @@ Issue to track: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1222
 */}}
 
 {{- $registry_version = "v3.11.0-gitlab" }}
+
+
+{{/*
+
+Container Registry Migration Logic
+
+In here we determine when migrations should be run.  Ideally these are pulled
+out into their own job.  Until that is completed, we instead determine
+what version of the Registry is currently running, compare that to the new
+version that we are being introduced too.  If different, this must be an
+upgrade, therefore, let's ensure migrations are enabled.  Otherwise, they
+are disabled.  This is being done to remove some of the noise in our tooling
+when reviewing Merge Requests.
+
+*/}}
+
+{{- $registry_migration_run := ne $registry_version $registry_current_tag }}
 
 {{/*
 
@@ -119,3 +136,6 @@ global:
 registry:
   image:
     tag: {{ $registry_version }}
+  database:
+    migrations:
+      enabled: {{ $registry_migration_run }}
