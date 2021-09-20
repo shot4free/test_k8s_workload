@@ -128,9 +128,6 @@ gitlab:
     image:
       tag: {{ $gitlab_shell_version }}
 {{/* To be changed to something more dynamic, tracked in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1544 */}}
-  kas:
-    image:
-      tag: v14.2.2
 global:
   gitlabVersion: {{ $gitlab_version }}
 registry:
