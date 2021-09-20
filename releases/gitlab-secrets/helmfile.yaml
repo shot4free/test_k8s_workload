@@ -250,7 +250,7 @@ releases:
           ssh_host_ecdsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_ecdsa_key") | quote }}
           ssh_host_rsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_rsa_key") | quote }}
 
-{{ if eq .Environment.Name "pre" }}
+{{ if ne (.Environment.Values | getOrNil "env_prefix") "gprd" }}
       - apiVersion: v1
         kind: Secret
         metadata:

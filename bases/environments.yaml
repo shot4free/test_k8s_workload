@@ -93,44 +93,6 @@ environments:
           ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKz88Ffi/VaKGYIqgPvV1NKgJBcSTakl48zR5gM5ZA0KPkQA57likgtlDNw+XSoX+M/rOCRw2m0za7/LR+eKY4I="
           rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCoSAn1VeQ4tpJ+lPYbKYo6A9TlHsTc3tzmKuPp7/83DUzgUBFYvGXBpcRYHHUCh+JSpcC9ubx+nxzETKCEA7O0nAAqF2aAx666pFaJvTlFQlHVKLoP20wc/KtP6OFG5Vw1SrzTMiB8S3Ot2nAgvRCO4L7kgHfRYjLjSIA+iXJutcP0nk8qV4Tj/TnEwaSMk0qcPkpcFVy3kUYirTmx0ukuWhfY5dr9DOKldCRjfPjoV+Wcr/WpjXVcrcBz3CVKnrhOpCROyxhNO5utcbtyZHK0HuQk7VIgd/r+pwBeAAkkZ679GP/C7gX6vHwqHiaWvGxETynjbpOK9ssKo3TbJzkl"
 
-  gstg-cny:
-    values:
-      - <<: *regional_cluster_defaults
-      -
-        registry:
-          enabled: true
-        env_prefix: gstg
-        google_project: "gitlab-staging-1"
-        gitlab_domain: "staging.gitlab.com"
-        gitlab_endpoint: "https://staging.gitlab.com"
-        gitlab_internal_lb_dns_address: "int.gstg.gitlab.net"
-        gitlab_secrets_gkms_source: "gstg"
-        gitlab_release_name: "gitlab-cny"
-        gitlab_secrets_release_name: "gitlab-secrets-cny"
-        gitlab_secrets_namespace: "gitlab-cny"
-        gitlab_namespace: "gitlab-cny"
-        # Canary uses the same bucket as staging
-        registry_bucket_name: "gitlab-gstg-registry"
-        registry_deployment_for_image_tag: "gitlab-cny-registry"
-        registry_api_host: "registry.staging.gitlab.com"
-        gitlab_chef_source_name: "gstg"
-        stage: "cny"
-        gitlab:
-          gitlab-shell:
-            enabled: true
-          webservice:
-            enabled: true
-          kas:
-            enabled: false
-        gitlab_extras:
-          api_no_proxy: true
-          ingress_readiness: true
-          namespace: "gitlab-cny"
-        web:
-          enabled: true
-        nginx-ingress:
-          enabled: true
-
   gstg:
     values:
       - <<: *regional_cluster_defaults
@@ -148,6 +110,44 @@ environments:
         kas:
           managed_cert_name: kas-staging-gitlab-com
           domain: kas.staging.gitlab.com
+        ssh:
+          ed25519_pub: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf"
+          dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAMPKInNPflcRle9F5Qt2j9aI0EZuWQzdXTbYvsl+ChaacqCOWRMiOmXHXqetFz6jD/6Fcqg20ZATxqSskQBaRn97O/mbH+GQk4d3zw9WAEURicE8rKJop3qGtdfFxLzrTuF/PAkKRDMmutT3hwZIOO8CFWOl1BiuUYTncJTeonrfAAAAFQCujauoy3Yy+ul72b/WsTECUPj9yQAAAIBIV2yyF7RZf7IYS8tsWcKP7Y5Bv9eFdbvbtsaxcFCHcmHIGoJQrIdPoueoOb5EUTYz0NgYKsKaZzDZkgFk28GsmLxKvhnPjaw0lJVSKRchEE5xVlamOlabiRMjQ7X/bAdejkBJe96AjZZL3UO4acpwfy3Tnnap0w6YCDeaxoyHpwAAAIAU+dyNaL3Hy15VIV32QwWMekvxeptUY/DW03LNcgZZDoin87TE9xuQhM0qF3pi2i2a2ExuslgdttmYWvrbEz8eW+RFgvT5pKwWpalKWetHvtN3oYZP37ZIO1Y3Hd5A4YVcpYp1ccRayveLlCRwxb4HdGXT2OmYU+lmvimIR8zQ6A=="
+          ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="
+          rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9"
+
+  gstg-cny:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gstg_values
+      -
+        gitlab:
+          gitlab-shell:
+            enabled: true
+          webservice:
+            enabled: true
+          kas:
+            enabled: false
+        gitlab_chef_source_name: "gstg"
+        gitlab_extras:
+          api_no_proxy: true
+          ingress_readiness: true
+          namespace: "gitlab-cny"
+        gitlab_namespace: "gitlab-cny"
+        gitlab_release_name: "gitlab-cny"
+        gitlab_secrets_gkms_source: "gstg"
+        gitlab_secrets_namespace: "gitlab-cny"
+        gitlab_secrets_release_name: "gitlab-secrets-cny"
+        nginx-ingress:
+          enabled: true
+        registry_bucket_name: "gitlab-gstg-registry"
+        registry_deployment_for_image_tag: "gitlab-cny-registry"
+        registry_api_host: "registry.staging.gitlab.com"
+        registry:
+          enabled: true
+        stage: "cny"
+        web:
+          enabled: true
 
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
