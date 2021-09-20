@@ -181,7 +181,7 @@ global:
       secret: gitlab-shell-credential-v1
       key: secret
     hostKeys:
-      secret: gitlab-hostkeys-credential-v1
+      secret: gitlab-hostkeys-v1
 
   ## Rails application secrets
   ## Secret created according to doc/installation/secrets.md#gitlab-rails-secret
@@ -513,6 +513,8 @@ gitlab:
             type: web
         deployment:
           terminationGracePeriodSeconds: 65
+        sshHostKeys:
+          mount: true
         workhorse:
           keywatcher: false
         extraEnv:

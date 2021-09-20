@@ -179,28 +179,34 @@ environments:
         cluster: gstg-us-east1-d
         region: us-east1-d
 
-  gprd-cny:
+  gprd:
     values:
       - <<: *regional_cluster_defaults
-      -
-        registry:
-          enabled: true
+      - &gprd_values
+        cluster: gprd-gitlab-gke
         env_prefix: gprd
-        google_project: "gitlab-production"
+        gitlab_chart_version: b20dc4a86d942af7f593d33a167a285d37734626
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
-        gitlab_secrets_gkms_source: "gprd"
-        gitlab_release_name: "gitlab-cny"
-        gitlab_secrets_release_name: "gitlab-secrets-cny"
-        gitlab_secrets_namespace: "gitlab-cny"
-        gitlab_namespace: "gitlab-cny"
-        # Canary uses the same bucket as production
-        registry_bucket_name: "gitlab-gprd-registry"
-        registry_deployment_for_image_tag: "gitlab-cny-registry"
+        google_project: "gitlab-production"
+        kas:
+          managed_cert_name: kas-gitlab-com
+          domain: kas.gitlab.com
+        region: us-east1
         registry_api_host: "registry.gitlab.com"
-        gitlab_chef_source_name: "gprd"
-        stage: "cny"
+        registry_deployment_for_image_tag: "gitlab-registry"
+        ssh:
+          dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAMPKInNPflcRle9F5Qt2j9aI0EZuWQzdXTbYvsl+ChaacqCOWRMiOmXHXqetFz6jD/6Fcqg20ZATxqSskQBaRn97O/mbH+GQk4d3zw9WAEURicE8rKJop3qGtdfFxLzrTuF/PAkKRDMmutT3hwZIOO8CFWOl1BiuUYTncJTeonrfAAAAFQCujauoy3Yy+ul72b/WsTECUPj9yQAAAIBIV2yyF7RZf7IYS8tsWcKP7Y5Bv9eFdbvbtsaxcFCHcmHIGoJQrIdPoueoOb5EUTYz0NgYKsKaZzDZkgFk28GsmLxKvhnPjaw0lJVSKRchEE5xVlamOlabiRMjQ7X/bAdejkBJe96AjZZL3UO4acpwfy3Tnnap0w6YCDeaxoyHpwAAAIAU+dyNaL3Hy15VIV32QwWMekvxeptUY/DW03LNcgZZDoin87TE9xuQhM0qF3pi2i2a2ExuslgdttmYWvrbEz8eW+RFgvT5pKwWpalKWetHvtN3oYZP37ZIO1Y3Hd5A4YVcpYp1ccRayveLlCRwxb4HdGXT2OmYU+lmvimIR8zQ6A=="
+          ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="
+          ed25519_pub: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf"
+          rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9"
+
+  gprd-cny:
+    values:
+      - <<: *regional_cluster_defaults
+      - <<: *gprd_values
+      -
         gitlab:
           gitlab-shell:
             enabled: true
@@ -208,32 +214,26 @@ environments:
             enabled: true
           kas:
             enabled: false
+        gitlab_chef_source_name: "gprd"
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
           namespace: "gitlab-cny"
-        web:
-          enabled: true
+        gitlab_namespace: "gitlab-cny"
+        gitlab_release_name: "gitlab-cny"
+        gitlab_secrets_gkms_source: "gprd"
+        gitlab_secrets_namespace: "gitlab-cny"
+        gitlab_secrets_release_name: "gitlab-secrets-cny"
         nginx-ingress:
           enabled: true
-
-  gprd:
-    values:
-      - <<: *regional_cluster_defaults
-      - &gprd_values
-        gitlab_chart_version: b20dc4a86d942af7f593d33a167a285d37734626
-        env_prefix: gprd
-        google_project: "gitlab-production"
-        gitlab_domain: "gitlab.com"
-        gitlab_endpoint: "https://gitlab.com"
-        gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
-        registry_deployment_for_image_tag: "gitlab-registry"
+        registry:
+          enabled: true
         registry_api_host: "registry.gitlab.com"
-        cluster: gprd-gitlab-gke
-        region: us-east1
-        kas:
-          managed_cert_name: kas-gitlab-com
-          domain: kas.gitlab.com
+        registry_bucket_name: "gitlab-gprd-registry"
+        registry_deployment_for_image_tag: "gitlab-cny-registry"
+        stage: "cny"
+        web:
+          enabled: true
 
   # Zonal clusters for gprd, these three environments
   # inherit from the gprd environemnt, which is the
