@@ -53,6 +53,8 @@ gitlab:
           GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
           GITLAB_TRACING: "opentracing://jaeger?udp_endpoint=localhost%3A6831&sampler=probabilistic&sampler_param=0.01&service_name=web"
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
+        sshHostKeys:
+          mount: true
     minReplicas: 2
     maxReplicas: 30
     extraEnv:
@@ -440,6 +442,8 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
-
+  shell:
+    hostKeys:
+      secret: gitlab-hostkeys-v1
   tracing:
     urlTemplate: 'https://jaeger.gstg.gitlab.net/search?service={{ "{{" }} service {{ "}}" }}&tags=%7B{{ "\"" }}correlation_id{{ "\"" }}%3A{{ "\""}}{{ "{{" }} correlation_id {{ "}}" }}{{ "\"" }}%7D'
