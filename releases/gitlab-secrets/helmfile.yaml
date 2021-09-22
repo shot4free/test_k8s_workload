@@ -239,16 +239,6 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-shell\".secret_token") | quote }}
-      - apiVersion: v1
-        kind: Secret
-        metadata:
-          name: gitlab-hostkeys-credential-v1
-          namespace: {{ $namespace }}
-        stringData:
-          ssh_host_ed25519_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_ed25519_key") | quote }}
-          ssh_host_dsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_dsa_key") | quote }}
-          ssh_host_ecdsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_ecdsa_key") | quote }}
-          ssh_host_rsa_key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssh.host_keys.ssh_host_rsa_key") | quote }}
 
       - apiVersion: v1
         kind: Secret
