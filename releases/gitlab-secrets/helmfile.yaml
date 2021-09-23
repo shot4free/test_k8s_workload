@@ -286,6 +286,21 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           shared_secret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-pages\".api_secret_key") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-pages-auth-secret-v1
+          namespace: {{ $namespace }}
+        stringData:
+          password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-pages\".auth_secret") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-pages-auth-client-secret-v1
+          namespace: {{ $namespace }}
+        stringData:
+          appid: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-pages\".gitlab_id") | quote }}
+          appsecret: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-pages\".gitlab_secret") | quote }}
 {{ if .Values | getOrNil "gitlab_runner.enabled" | default false }}
       - apiVersion: v1
         kind: Secret
@@ -303,6 +318,14 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           gitaly.crt: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.trusted_certs[\"gitaly.crt\"]") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-pages-tls-certificate-v1
+          namespace: {{ $namespace }}
+        stringData:
+          tls.crt: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.pages_certificate") | quote }}
+          tls.key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.pages_private_key") | quote }}
       - apiVersion: v1
         kind: Secret
         metadata:
