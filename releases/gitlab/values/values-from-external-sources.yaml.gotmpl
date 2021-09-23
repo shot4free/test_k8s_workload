@@ -84,6 +84,13 @@ global:
 
   pages:
     host: {{ $chef_base_role | exec "jq" (list "-j" ".default_attributes.\"omnibus-gitlab\".gitlab_rb.pages_external_url | ltrimstr(\"https://\")") }}
+{{- if eq .Environment.Name "pre" }}
+    {{ $externalPagesIP := exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=pages-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
+    externalHttp:
+      - {{ $externalPagesIP }}
+    externalHttps:
+      - {{ $externalPagesIP }}
+{{- end }}
 
   psql:
     host: {{ $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_host") }}
