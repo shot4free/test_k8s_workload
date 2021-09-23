@@ -97,6 +97,9 @@ gitlab:
       enabled: true
       dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
       environment: {{ .Environment.Name }}
+    service:
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
     statusUri: "/-/readiness"
     useProxyV2: true
 
