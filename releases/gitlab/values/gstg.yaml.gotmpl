@@ -150,7 +150,8 @@ gitlab:
         podLabels:
           deployment: sidekiq-imports
           shard: imports
-        queues: name=repository_import
+        queueSelector: false
+        queues: imports
         resources:
           requests:
             cpu: 800m
@@ -395,6 +396,7 @@ global:
         - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630
         - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these: https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
+        - ["worker_name=RepositoryImportWorker", "imports"] # imports
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
         - ["resource_boundary=memory", "memory_bound"] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
