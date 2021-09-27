@@ -133,7 +133,7 @@ variables:
     variables:
       - $AUTO_DEPLOY == "false"
     changes:
-      - 'CHART_VERSION'
+      - 'charts/gitlab/**'
       - 'bases/**/*'
       - 'bin/**/*'
       - 'releases/**/*'
