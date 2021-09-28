@@ -203,3 +203,6 @@ gitlab:
   sidekiq:
     psql:
       database: {{ $chef_base_be_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".db_database") }}
+    extraEnv:
+      SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_EMAIL | select(.!=null)") | quote }}
+      SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_TOKEN | select(.!=null)") | quote }}
