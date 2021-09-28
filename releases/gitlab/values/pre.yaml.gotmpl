@@ -24,7 +24,7 @@ nginx-ingress:
                       - controller
               topologyKey: kubernetes.io/hostname
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-1
+      cloud.google.com/gke-nodepool: default-2
 
 registry:
   database:
@@ -43,7 +43,7 @@ registry:
     disablemirrorfs: true
     rootdirectory: gitlab
   nodeSelector:
-    cloud.google.com/gke-nodepool: default-1
+    cloud.google.com/gke-nodepool: default-2
   gc:
     disabled: false
     maxbackoff: 30m
@@ -120,22 +120,22 @@ gitlab:
         ingress:
           path: '/api'
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-1
+          cloud.google.com/gke-nodepool: default-2
       git:
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-1
+          cloud.google.com/gke-nodepool: default-2
         shutdown:
           blackoutSeconds: 0
       web:
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-1
+          cloud.google.com/gke-nodepool: default-2
       websockets:
         deployment:
           readinessProbe:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-1
+          cloud.google.com/gke-nodepool: default-2
         shutdown:
           blackoutSeconds: 0
     workerProcesses: 2
@@ -158,10 +158,10 @@ gitlab:
     minReplicas: 2
     maxReplicas: 5
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-1
+      cloud.google.com/gke-nodepool: default-2
   mailroom:
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-1
+      cloud.google.com/gke-nodepool: default-2
   sidekiq:
     pods:
       - name: catchall
@@ -169,7 +169,7 @@ gitlab:
           labels:
             shard: catchall
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-1
+          cloud.google.com/gke-nodepool: default-2
         concurrency: 25
         minReplicas: 1
         maxReplicas: 5
@@ -182,7 +182,7 @@ gitlab:
       minReplicas: 1
       maxReplicas: 5
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-1
+      cloud.google.com/gke-nodepool: default-2
 global:
   appConfig:
     contentSecurityPolicy:
