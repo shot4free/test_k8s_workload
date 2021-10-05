@@ -177,7 +177,7 @@ gitlab:
   webservice:
     deployments:
       # after successful deployment to non-prod envs this condition can go away https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1974
-      {{- if and (ne "gprd" .Environment.Name) (ne "gprd-cny" .Environment.Name) (ne "gprd-us-east1-b" .Environment.Name) (ne "gprd-us-east1-c" .Environment.Name) (ne "gprd-us-east1-d" .Environment.Name) }}
+      {{- if not (contains "gprd" .Environment.Name) }}
       api:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
