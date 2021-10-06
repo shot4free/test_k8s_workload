@@ -38,3 +38,7 @@ Example:
 2021-09-09
 
 * GPRD - Provision seven additional Gitaly shards: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14141
+
+2021-10-07
+
+* GPRD - Add connection to new Redis Ratelimiting servers
