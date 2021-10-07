@@ -12,14 +12,21 @@ nginx-ingress:
         memory: 1G
 
 registry:
-  hpa:
-    # min is set higher until we have more control over the HPA
-    # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
-    minReplicas: 20
-    maxReplicas: 90
-  resources:
-    requests:
-      memory: 3G
+  database:
+    enabled: true
+    host: pgbouncer-registry.int.gprd.gitlab.net
+    port: 6432
+    user: gitlab-registry
+    name: gitlabhq_registry
+    password:
+      secret: registry-postgresql-password-v1
+    pool:
+      maxopen: 30
+      maxidle: 30
+      maxlifetime: 5m
+  migration:
+    enabled: true
+    rootdirectory: gitlab
   storage:
     secret: registry-storage-v4
   # When enabled, the upload purger will attempt to make deletes against the
@@ -30,6 +37,14 @@ registry:
   maintenance:
     uploadpurging:
       enabled: false
+  hpa:
+    # min is set higher until we have more control over the HPA
+    # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
+    minReplicas: 20
+    maxReplicas: 90
+  resources:
+    requests:
+      memory: 3G
 
 gitlab:
   gitlab-shell:
