@@ -19,9 +19,6 @@ dir="$(
 
 CHART="${CHART:-gitlab}"
 
-export HELM_TILLER_LOGS=true
-export HELM_TILLER_LOGS_DIR=${PWD}/tiller.log
-
 # Source common functions and variable exports
 # that are common to all charts
 
@@ -154,7 +151,7 @@ case "$ACTION" in
         auto_deploy_check "$HELM_DIFF_TMP_FNAME"
       fi
     else
-      tail --pid=$$ --retry --follow "${HELM_TILLER_LOGS_DIR}" &
+      ./bin/watch-gitlab-deployments.sh "${NAMESPACE}" &
 
       helmfile "${helmfile_common_options[@]}" apply "${helmfile_cmd_options[@]}"
     fi
@@ -164,7 +161,7 @@ case "$ACTION" in
     # `helmfile` outputs less information for this command
     # since `helm` does better, let's leave that in place
     debug "-- Helm List --" "${_CYN}"
-    helm tiller run helm list
+    helm list
     ;;
 
   remove)
