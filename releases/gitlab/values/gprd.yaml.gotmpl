@@ -18,12 +18,15 @@ registry:
     port: 6432
     user: gitlab-registry
     name: gitlabhq_registry
+    connecttimeout: 5s
+    draintimeout: 15s
     password:
       secret: registry-postgresql-password-v1
     pool:
       maxopen: 30
       maxidle: 30
       maxlifetime: 5m
+      maxidletime: 5m
   migration:
     enabled: true
     rootdirectory: gitlab
