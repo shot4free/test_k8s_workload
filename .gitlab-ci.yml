@@ -10,7 +10,7 @@ include:
   - '/ci/check-vendored-charts.yml'
 
 variables:
-  CI_IMAGE_VERSION: 'v5.5.1'
+  CI_IMAGE_VERSION: 'v5.5.2'
   AUTO_DEPLOY: 'false'
 
 #############################################################
