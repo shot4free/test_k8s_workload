@@ -444,8 +444,8 @@ global:
 
     sidekiq:
       routingRules:
-        - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630
-        - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these: https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263
+        # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
+        - ["tags=needs_own_queue", null]
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
         - ["worker_name=RepositoryImportWorker", "imports"] # imports
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
