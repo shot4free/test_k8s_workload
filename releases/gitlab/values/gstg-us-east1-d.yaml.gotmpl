@@ -1,0 +1,14 @@
+---
+global:
+  hosts:
+    # gcloud compute address nginx-gke-gstg-us-east1-d
+    externalIP: 10.224.46.37
+gitlab:
+  gitlab-shell:
+    service:
+      # gcloud compute address ssh-gke-gstg-us-east1-d
+      loadBalancerIP: 10.224.46.6
+registry:
+  service:
+    # gcloud compute address registry-gke-gstg-us-east1-d
+    loadBalancerIP: 10.224.46.3

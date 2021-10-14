@@ -109,7 +109,7 @@ global:
 
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     lfs:
-      enabled: false
+      enabled: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
@@ -119,12 +119,12 @@ global:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     uploads:
-      enabled: false
+      enabled: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
     packages:
-      enabled: false
+      enabled: true
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
@@ -158,6 +158,9 @@ global:
         key: incoming_email_password
       expungeDeleted: true
 
+    sentry:
+      enabled: true
+
     serviceDeskEmail:
       password:
         secret: gitlab-mailroom-imap-v1
@@ -166,6 +169,8 @@ global:
 
     ## doc/charts/globals.md#omniauth
     omniauth:
+      enabled: true
+      blockAutoCreatedUsers: false
       allowSingleSignOn: true
   ## End of global.appConfig
 
@@ -218,6 +223,7 @@ global:
   ## doc/installation/deployment.md#outgoing-email
   ## Outgoing email server settings
   smtp:
+    address: smtp.mailgun.org
     enabled: true
     port: 2525
     user_name: ""
@@ -226,6 +232,7 @@ global:
       secret: gitlab-smtp-credential-v1
       key: secret
     pool: true
+    starttls_auto: true
 
   ## doc/installation/secrets.md#gitlab-workhorse-secret
   workhorse:
@@ -440,6 +447,10 @@ gitlab:
         memory: 1G
       limits:
         memory: 1G
+    service:
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
+      type: LoadBalancer
     config:
       # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/13548
       clientAliveInterval: 30
