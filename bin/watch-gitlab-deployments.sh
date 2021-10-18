@@ -10,4 +10,4 @@ while [[ $(helm -n gitlab status -o json gitlab | jq -r .info.status) == "deploy
   sleep 1
 done
 sleep 60
-kubectl -n "${NAMESPACE}" get deployment -o name | xargs -P0 -L1 kubectl -n gitlab rollout status
+kubectl -n "${NAMESPACE}" get deployment -o name | xargs -P0 -L1 kubectl -n "${NAMESPACE}" rollout status
