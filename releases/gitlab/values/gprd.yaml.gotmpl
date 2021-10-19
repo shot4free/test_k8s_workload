@@ -205,8 +205,8 @@ gitlab:
           labels:
             shard: memory-bound
         concurrency: 1
-        minReplicas: 8
-        maxReplicas: 16
+        minReplicas: 32
+        maxReplicas: 32
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
         podLabels:
