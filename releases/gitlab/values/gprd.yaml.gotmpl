@@ -154,7 +154,7 @@ gitlab:
           targetAverageValue: 600m
         concurrency: 15
         minReplicas: 56
-        maxReplicas: 225
+        maxReplicas: 290
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
@@ -365,7 +365,7 @@ gitlab:
         hpa:
           targetAverageValue: 500m
         minReplicas: 30
-        maxReplicas: 130
+        maxReplicas: 160
         memoryKiller:
           checkInterval: 3
           graceTime: 900
