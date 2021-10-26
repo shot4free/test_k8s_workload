@@ -10,7 +10,7 @@ include:
   - '/ci/check-vendored-charts.yml'
 
 variables:
-  CI_IMAGE_VERSION: 'v5.5.1'
+  CI_IMAGE_VERSION: 'v5.7.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -554,6 +554,7 @@ pre:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
+      - 'charts/gitlab/**'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
@@ -575,6 +576,7 @@ gstg:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
+      - 'charts/gitlab/**'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'

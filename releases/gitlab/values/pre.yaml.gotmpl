@@ -49,6 +49,9 @@ registry:
     maxbackoff: 30m
     reviewafter: 5m
     noidlebackoff: true
+  service:
+    # gcloud compute address registry-gke-pre
+    loadBalancerIP: 10.232.20.237
   storage:
     secret: registry-storage-v4
   maintenance:
@@ -57,6 +60,9 @@ registry:
 
 gitlab:
   gitlab-pages:
+    common:
+      labels:
+        type: web-pages
     deployment:
       strategy:
         rollingUpdate:
@@ -85,6 +91,8 @@ gitlab:
           - port: 53
             protocol: UDP
           - port: 53
+            protocol: TCP
+          - port: 8181
             protocol: TCP
         - to:
           - ipBlock:
@@ -159,6 +167,9 @@ gitlab:
     maxReplicas: 5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    service:
+      # gcloud compute address ssh-gke-pre
+      loadBalancerIP: 10.232.20.28
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -177,14 +188,19 @@ gitlab:
       host: 10.33.1.14
   kas:
     image:
-      tag: v14.3.3-race
+      tag: v14.5.0-rc1-race
     hpa:
       minReplicas: 1
       maxReplicas: 5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    service:
+      # gcloud compute address kas-internal-gke-pre
+      loadBalancerIP: 10.232.20.117
 global:
   appConfig:
+    artifacts:
+      bucket: gitlab-pre-artifacts
     contentSecurityPolicy:
       enabled: true
       report_only: false
@@ -199,18 +215,41 @@ global:
         script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://pre.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
         style_src: "'self' 'unsafe-inline' https://pre.gitlab-static.net"
         worker_src: "https://pre.gitlab-static.net https://pre.gitlab.com blob: data:"
+    dependencyProxy:
+      enabled: true
+      bucket: gitlab-pre-dependency-proxy
+    externalDiffs:
+      bucket: gitlab-pre-external-diffs
+    incomingEmail:
+      address: "incoming-pre+%{key}@incoming.gitlab.com"
+      user: incoming-pre@incoming.gitlab.com
+    lfs:
+      bucket: gitlab-pre-lfs-objects
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
+    packages:
+      bucket: gitlab-pre-package-repo
+    sentry:
+      dsn: https://e9401448c5c04c39823793199b8f7c49@sentry.gitlab.net/22
+    terraformState:
+      bucket: gitlab-pre-terraform-state
+    uploads:
+      bucket: gitlab-pre-uploads
 
   email:
+    from: notify@mg.pre.gitlab.com
     reply_to: noreply@pre.gitlab.com
 
   hosts:
+    # gcloud compute address nginx-gke-pre
+    externalIP: 10.232.20.81
     gitlab:
       name: pre.gitlab.com
     kas:
       name: kas.pre.gitlab.com
+    registry:
+      name: registry.pre.gitlab.com
   ingress:
     tls:
       secretName: gitlab-pages-tls-certificate-v1
@@ -222,6 +261,26 @@ global:
     authSecret:
       secret: gitlab-pages-auth-secret-v1
     enabled: true
+    # gcloud compute address pages-gke-pre
+    externalHttp:
+      # gcloud compute address pages-gke-pre
+      - 10.232.20.119
+    externalHttps:
+      # gcloud compute address pages-gke-pre
+      - 10.232.20.119
+    host: pre.gitlab.io
+  psql:
+    host: 10.33.1.14
+  redis:
+    host: 10.232.7.3
+    password:
+      enabled: false
+      key: secret
+      secret: gitlab-redis-credential-v1
+    port: "6379"
+  smtp:
+    domain: mg.pre.gitlab.com
+    user_name: postmaster@mg.pre.gitlab.com
   shell:
     hostKeys:
       secret: gitlab-hostkeys-v1

@@ -39,6 +39,57 @@ registry:
     maxReplicas: 20
 
 gitlab:
+  gitlab-pages:
+    common:
+      labels:
+        type: web-pages
+    deployment:
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 0
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
+      FF_ENABLE_REDIRECTS: "true"
+      FF_ENABLE_PLACEHOLDERS: "true"
+    headers:
+      - "Permissions-Policy: interest-cohort=()"
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
+      pullSecrets:
+        - name: dev-registry-access-v1
+    internalGitlabServer: "http://{{ .Release.Name }}-webservice-api.{{ .Release.Name }}.svc:8181"
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 53
+            protocol: UDP
+          - port: 53
+            protocol: TCP
+          - port: 8181
+            protocol: TCP
+        - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+              - 10.0.0.0/8
+              - 169.254.169.254/32
+    propagateCorrelationId: true
+    sentry:
+      enabled: true
+      dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
+      environment: {{ .Environment.Values | getOrNil "env_prefix" }}
+    service:
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
+    statusUri: "/-/readiness"
+    useProxyV2: true
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -77,9 +128,12 @@ gitlab:
         memory: 5G
   kas:
     image:
-      tag: v14.3.3-race
+      tag: v14.5.0-rc1-race
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    service:
+      # gcloud compute address kas-internal-gke-gstg
+      loadBalancerIP: 10.224.34.18
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
@@ -373,6 +427,8 @@ gitlab:
 
 global:
   appConfig:
+    artifacts:
+      bucket: gitlab-gstg-artifacts
     contentSecurityPolicy:
       enabled: true
       report_only: false
@@ -386,6 +442,20 @@ global:
         script_src: "'strict-dynamic' 'self' 'unsafe-inline' 'unsafe-eval' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com https://*.pendo.io"
         style_src: "'self' 'unsafe-inline' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net"
         worker_src: "https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://staging.gitlab.com blob: data:"
+    cron_jobs:
+      schedule_migrate_external_diffs_worker:
+        cron: "*/5 * * * *"
+    dependencyProxy:
+      enabled: true
+      bucket: gitlab-gstg-dependency-proxy
+    externalDiffs:
+      enabled: true
+      bucket: gitlab-gstg-external-diffs
+    incomingEmail:
+      address: "incoming-staging+%{key}@gitlab.com"
+      user: incoming-staging@gitlab.com
+    lfs:
+      bucket: gitlab-gstg-lfs-objects
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -394,10 +464,20 @@ global:
         - secret: gitlab-bitbucket-oauth2-v1
         - secret: gitlab-group-saml-oauth2-v1
         - secret: gitlab-salesforce-oauth2-v1
+    packages:
+      bucket: gitlab-gstg-package-repo
+    sentry:
+      clientside_dsn: https://526a2f38a53d44e3a8e69bfa001d1e8b@sentry.gitlab.net/15
+      dsn: https://0cfeea6daa0d4f2a90c1e86b4b82830a:ec54f3af800242fd8ff023305035c514@sentry.gitlab.net/10
+      environment: gstg
+    serviceDeskEmail:
+      enabled: true
+      address: "contact-project-staging+%{key}@incoming.gitlab.com"
+      user: contact-project-staging@incoming.gitlab.com
     sidekiq:
       routingRules:
-        - ["worker_name=ProjectImportScheduleWorker", null] # we cannot migrate this worker yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630
-        - ["worker_name=EmailReceiverWorker,ServiceDeskEmailReceiverWorker", null] # we need to change mail_room config to migrate these: https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263
+        # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
+        - ["tags=needs_own_queue", null]
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
         - ["worker_name=RepositoryImportWorker", "imports"] # imports
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
@@ -408,8 +488,14 @@ global:
         - ["feature_category=database&urgency=throttled", "database_throttled"] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", "gitaly_throttled"] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
+    terraformState:
+      enabled: true
+      bucket: gitlab-gstg-terraform-state
+    uploads:
+      bucket: gitlab-gstg-uploads
 
   email:
+    from: gitlab@mg.gitlab.com
     reply_to: noreply@staging.gitlab.com
 
   geo:
@@ -421,14 +507,31 @@ global:
         secret: gitlab-registry-notification-v1
     replication:
       enabled: true
-
   hosts:
     gitlab:
       name: staging.gitlab.com
     kas:
       name: kas.staging.gitlab.com
+    registry:
+      name: registry.staging.gitlab.com
 
+  pages:
+    host: staging.gitlab.io
+
+  ingress:
+    tls:
+      secretName: gitlab-pages-tls-certificate-v1
+  oauth:
+    gitlab-pages:
+      secret: gitlab-pages-auth-client-secret-v1
+  pages:
+    accessControl: true
+    authSecret:
+      secret: gitlab-pages-auth-secret-v1
+    host: staging.gitlab.io
   psql:
+    host: pgbouncer.int.gstg.gitlab.net
+    port: 6432
     prepared_statements: false
     load_balancing:
       discover:
@@ -437,5 +540,86 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
+  redis:
+    cache:
+      host: gstg-redis-cache
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-cache-sentinel-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-cache-sentinel-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-cache-sentinel-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    host: gstg-redis
+    password:
+      enabled: true
+      key: secret
+      secret: gitlab-redis-credential-v1
+    queues:
+      host: gstg-redis-sidekiq
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-sidekiq-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-sidekiq-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-sidekiq-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    rateLimiting:
+      host: gstg-redis-ratelimiting
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-ratelimiting-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-ratelimiting-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-ratelimiting-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    sentinels:
+    - host: redis-01-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    - host: redis-02-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    - host: redis-03-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    sharedState:
+      host: gstg-redis
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    traceChunks:
+      host: gstg-redis-tracechunks
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-tracechunks-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-tracechunks-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-tracechunks-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+  smtp:
+    domain: mg.staging.gitlab.com
+    user_name: postmaster@mg.staging.gitlab.com
   tracing:
     urlTemplate: 'https://jaeger.gstg.gitlab.net/search?service={{ "{{" }} service {{ "}}" }}&tags=%7B{{ "\"" }}correlation_id{{ "\"" }}%3A{{ "\""}}{{ "{{" }} correlation_id {{ "}}" }}{{ "\"" }}%7D'

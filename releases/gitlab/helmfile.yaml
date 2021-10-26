@@ -38,7 +38,5 @@ releases:
 {{ if .Values | getOrNil "env_prefix" | default false }}
       - 'values/{{ .Environment.Values.env_prefix }}.yaml.gotmpl'
 {{ end }}
-{{ if eq (exec "../../bin/file-exists" (list (print "values/" .Environment.Name ".yaml.gotmpl"))) "true" }}
       - 'values/{{ .Environment.Name }}.yaml.gotmpl'
-{{ end }}
       - values/values-from-external-sources.yaml.gotmpl

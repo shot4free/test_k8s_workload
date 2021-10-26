@@ -176,7 +176,7 @@ We track the version of chart used in a specific environment as a `helmfile`
 value `${chart}_chart_version`. You will need to update `bases/environments.yaml`
 in the appropriate place to bump charts for your environment(s).
 
-Once you have updated `environmnents.yaml`, you can use `./bin/vendor-chart.sh`
+Once you have updated `environments.yaml`, you can use `./bin/vendor-chart.sh`
 to easily commit the new chart to this repo. You need to pass the `vendor-chart.sh`
 two options.
 
@@ -195,6 +195,12 @@ git add charts/gitlab/gstg bases/environments.yaml
 git commit -m "Bump chart in gstg"
 # You are now ready to push and open an MR
 ```
+
+It is expected that if you are bumping the version in one environment you will
+take responsibility for bumping all other environments in due course.  If your
+focus/requirement is only `gstg` and `gprd`, you should probably do `pre` when
+you do `gstg` (same MR) unless there are extenuating circumstances (e.g.
+other work ongoing on pre that shouldn't be interrupted, etc.)
 
 ## Helm Charts and this Repository
 
