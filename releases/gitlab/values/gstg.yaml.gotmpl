@@ -39,6 +39,57 @@ registry:
     maxReplicas: 20
 
 gitlab:
+  gitlab-pages:
+    common:
+      labels:
+        type: web-pages
+    deployment:
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 0
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
+      FF_ENABLE_REDIRECTS: "true"
+      FF_ENABLE_PLACEHOLDERS: "true"
+    headers:
+      - "Permissions-Policy: interest-cohort=()"
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
+      pullSecrets:
+        - name: dev-registry-access-v1
+    internalGitlabServer: "http://{{ .Release.Name }}-webservice-api.{{ .Release.Name }}.svc:8181"
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 53
+            protocol: UDP
+          - port: 53
+            protocol: TCP
+          - port: 8181
+            protocol: TCP
+        - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+              - 10.0.0.0/8
+              - 169.254.169.254/32
+    propagateCorrelationId: true
+    sentry:
+      enabled: true
+      dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
+      environment: {{ .Environment.Values | getOrNil "env_prefix" }}
+    service:
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
+    statusUri: "/-/readiness"
+    useProxyV2: true
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -456,7 +507,6 @@ global:
         secret: gitlab-registry-notification-v1
     replication:
       enabled: true
-
   hosts:
     gitlab:
       name: staging.gitlab.com
@@ -468,6 +518,17 @@ global:
   pages:
     host: staging.gitlab.io
 
+  ingress:
+    tls:
+      secretName: gitlab-pages-tls-certificate-v1
+  oauth:
+    gitlab-pages:
+      secret: gitlab-pages-auth-client-secret-v1
+  pages:
+    accessControl: true
+    authSecret:
+      secret: gitlab-pages-auth-secret-v1
+    host: staging.gitlab.io
   psql:
     host: pgbouncer.int.gstg.gitlab.net
     port: 6432
