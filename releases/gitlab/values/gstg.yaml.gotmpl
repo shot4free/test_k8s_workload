@@ -54,6 +54,9 @@ gitlab:
       FF_ENABLE_PLACEHOLDERS: "true"
     headers:
       - "Permissions-Policy: interest-cohort=()"
+    hpa:
+      minReplicas: 2
+      targetAverageValue: 3000m
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
       pullSecrets:
@@ -81,6 +84,12 @@ gitlab:
               - 10.0.0.0/8
               - 169.254.169.254/32
     propagateCorrelationId: true
+    resources:
+      requests:
+        cpu: 3200m
+        memory: 70MB
+      limits:
+        memory: 1GB
     sentry:
       enabled: true
       dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
