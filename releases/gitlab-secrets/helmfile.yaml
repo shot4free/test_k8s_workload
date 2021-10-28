@@ -156,6 +156,9 @@ releases:
               expirydelay: 15m
           gcs.json: |
 {{ $gkms_omnibus_secrets | exec "jq" (list "-r" ".\"gitlab-server\".\"google-creds\".json_base64") | b64dec | trimSuffix "\n" | indent 14 }}
+
+# only add this secret to pre and gstg environment for the moment:
+{{ if or (eq (.Environment.Values | getOrNil "env_prefix") "pre") (eq (.Environment.Values | getOrNil "env_prefix") "gstg") }}
       - apiVersion: v1
         kind: Secret
         metadata:
@@ -163,6 +166,7 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.registry.postgres_password") | quote }}
+{{ end }}
       - apiVersion: v1
         kind: Secret
         metadata:
