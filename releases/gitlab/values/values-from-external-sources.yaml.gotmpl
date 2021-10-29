@@ -19,12 +19,9 @@ gitlab:
 {{- $rack_attack_ip_whitelist := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.ip_whitelist") }}
   webservice:
     deployments:
-      # after successful deployment to non-prod envs this condition can go away https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1974
-      {{- if not (contains "gprd" .Environment.Name) }}
       api:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=api-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
-      {{- end }}
       git:
         service:
           loadBalancerIP: {{ exec "gcloud" (list "--project" .Environment.Values.google_project "compute" "addresses" "list" "--filter" (printf "name=git-https-gke-%s" .Environment.Name) "--format" "value(address)" "--verbosity" "error") }}
