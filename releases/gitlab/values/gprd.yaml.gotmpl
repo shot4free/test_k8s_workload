@@ -20,6 +20,33 @@ registry:
   resources:
     requests:
       memory: 3G
+  database:
+    # This setting should not be disabled (unless we decide to do a full rollback during Phase 1 of the
+    # upgrade/migration, in which case we have to first copy the bucket data from the new prefix to the
+    # old prefix). Disabling this would cause repositories that were registered on the database to
+    # become inaccessible. In case of an issue with the upgrade/migration, we should instead turn off
+    # the `container_registry_migration_phase1` feature flag
+    # (https://gitlab.com/gitlab-org/gitlab/-/issues/335703), which will pause the addition of _more_
+    # repositories to the database while continuing to serve requests for those already there.
+    enabled: true
+    host: pgbouncer-registry.int.gprd.gitlab.net
+    port: 6432
+    user: gitlab-registry
+    name: gitlabhq_registry
+    connecttimeout: 5s
+    draintimeout: 15s
+    password:
+      secret: registry-postgresql-password-v1
+    pool:
+      maxopen: 30
+      maxidle: 15
+      maxlifetime: 30m
+      maxidletime: 5m
+  migration:
+    # This setting should not be disabled in case of a rollback. Please see the comments for the
+    # `database.enabled` configuration parameter for additional details (the same applies here).
+    enabled: true
+    rootdirectory: gitlab
   storage:
     secret: registry-storage-v4
   # When enabled, the upload purger will attempt to make deletes against the
