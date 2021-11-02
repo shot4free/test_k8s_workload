@@ -27,7 +27,7 @@ registry:
     # become inaccessible. In case of an issue with the upgrade/migration, we should instead turn off
     # the `container_registry_migration_phase1` feature flag
     # (https://gitlab.com/gitlab-org/gitlab/-/issues/335703), which will pause the addition of _more_
-    # repositories to the database, while continuing to serve requests for those already there.
+    # repositories to the database while continuing to serve requests for those already there.
     enabled: true
     host: pgbouncer-registry.int.gprd.gitlab.net
     port: 6432
