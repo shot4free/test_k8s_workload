@@ -14,61 +14,61 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-catchall-v2",
+  "name": "gitlab-sidekiq-catchall-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-database-throttled-v2",
+  "name": "gitlab-sidekiq-database-throttled-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-elasticsearch-v2",
+  "name": "gitlab-sidekiq-elasticsearch-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-gitaly-throttled-v2",
+  "name": "gitlab-sidekiq-gitaly-throttled-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-imports-v2",
+  "name": "gitlab-sidekiq-imports-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-low-urgency-cpu-bound-v2",
+  "name": "gitlab-sidekiq-low-urgency-cpu-bound-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-memory-bound-v2",
+  "name": "gitlab-sidekiq-memory-bound-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-urgent-cpu-bound-v2",
+  "name": "gitlab-sidekiq-urgent-cpu-bound-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-urgent-other-v2",
+  "name": "gitlab-sidekiq-urgent-other-v1",
   "change": "MODIFY"
 },
 {
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-quarantine-v2",
+  "name": "gitlab-sidekiq-quarantine-v1",
   "change": "MODIFY"
 }]

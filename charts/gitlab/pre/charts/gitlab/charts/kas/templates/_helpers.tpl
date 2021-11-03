@@ -36,9 +36,5 @@ sentinel:
   {{ end }}
   master_name: {{ template "gitlab.redis.host" . }}
 {{- end -}}
-{{- if eq (.redisMergedConfig.scheme | default "") "rediss" }}
-tls:
-  enabled: true
-{{- end -}}
 {{- end -}}
 {{- end -}}
