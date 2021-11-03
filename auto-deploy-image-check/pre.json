@@ -26,7 +26,7 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-sidekiq-catchall-v2",
+  "name": "gitlab-sidekiq-catchall-v1",
   "change": "MODIFY"
 },{
   "api": "apps",
