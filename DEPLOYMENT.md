@@ -58,6 +58,32 @@ create a new pipeline that targets all environments.  QA jobs run for select
 changes that target our Preprod and Staging environments.  See the [resolving QA failures](https://gitlab.com/gitlab-org/release/docs/-/blob/master/runbooks/resolving-qa-failures.md) runbook for help with failing tests. The jobs which target
 our production main stage are automatically promoted following successful QA smoke tests. Separate MRs should be used to target changes on the different environments to avoid accidental promotion. 
 
+### Configuration Changes Specific to the Container Registry
+
+Our Container Registry is not auto-deployed.  There, the version is bumped
+manually at this moment in time.  See
+[bases/environments.yaml](bases/environments.yaml) and look for the
+`registry_version` key for the environment you are intersted in.
+
+Note that there's some interesting logic related to how the Container Registry
+runs the migrations.
+
+1. The first pipeline that upgrades the Container Registry will seemingly create
+   a new Kubernetes Job object `gitlab-registry-migrations-<number>`.
+1. Upon creation, the latest migrations for the given version of the Container
+   Registry will execute.
+1. The next job, whether that be a Configuration Change induced pipeline, or an
+   Auto-Deploy induced pipeline, will remove that job.
+
+This is to reduce how often that job runs.  If one see the removal of this Job
+in a diff for a configuration change, or during an auto-deploy, there is no need
+to worry as this is expected.  If the jobs do not remove themselves or are
+showing up when not expected as documented above, we have some investigation to
+perform.
+
+The logic for the above is located at: [releases/gitlab/values/init-values.yaml.gotmpl](releases/gitlab/values/init-values.yaml.gotmpl)
+It is set or unset via the variable `$registry_migration_run`.
+
 ### Auto-Deploy with Configuration Changes
 
 [Auto-Deploy](https://gitlab.com/gitlab-org/release/docs/-/blob/master/general/deploy/auto-deploy.md) runs a pipeline in this project that will update application images for the [GitLab Helm Chart](https://docs.gitlab.com/charts/#gitlab-cloud-native-helm-chart).  This pipeline runs on ops and is limited to a single environment.  There are two stages, Diff and Deploy that perform the following:
