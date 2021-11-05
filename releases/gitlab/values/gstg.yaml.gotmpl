@@ -109,7 +109,7 @@ gitlab:
           cloud.google.com/gke-nodepool: api-2
       web:
         extraEnv:
-          CUSTOMER_PORTAL_URL: "https://customers.stg.gitlab.com"
+          CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
           GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
           GITLAB_TRACING: "opentracing://jaeger?udp_endpoint=localhost%3A6831&sampler=probabilistic&sampler_param=0.01&service_name=web"
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
@@ -157,7 +157,7 @@ gitlab:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       USE_GITLAB_LOGGER: 1
       GITLAB_LOG_DEPRECATIONS: "true"
-      CUSTOMER_PORTAL_URL: "https://customers.stg.gitlab.com"
+      CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
     extraInitContainers: |
       - name: write-instance-name
         args:
@@ -442,9 +442,9 @@ global:
       enabled: true
       report_only: false
       directives:
-        connect_src: "'self' https://staging.gitlab.com https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net wss://gitlab.com wss://staging.gitlab.com wss://gstg.gitlab.com https://sentry.gitlab.net https://customers.stg.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
+        connect_src: "'self' https://staging.gitlab.com https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net wss://gitlab.com wss://staging.gitlab.com wss://gstg.gitlab.com https://sentry.gitlab.net https://customers.staging.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
         frame_ancestors: "'self'"
-        frame_src: "'self' https://gl-staging.freetls.fastly.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.stg.gitlab.com"
+        frame_src: "'self' https://gl-staging.freetls.fastly.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.staging.gitlab.com"
         img_src: "* data: blob:"
         object_src: "'none'"
         report_uri: "https://sentry.gitlab.net/api/15/security/?sentry_key=526a2f38a53d44e3a8e69bfa001d1e8b"
