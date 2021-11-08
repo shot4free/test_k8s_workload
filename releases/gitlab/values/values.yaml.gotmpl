@@ -449,7 +449,7 @@ gitlab:
       - "Permissions-Policy: interest-cohort=()"
     hpa:
       minReplicas: 2
-      targetAverageValue: 3000m
+      targetAverageValue: 800m
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
       pullSecrets:
@@ -481,7 +481,7 @@ gitlab:
     propagateCorrelationId: true
     resources:
       requests:
-        cpu: 3200m
+        cpu: 1000m
         memory: 3G
       limits:
         memory: 5G
