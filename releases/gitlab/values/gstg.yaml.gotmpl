@@ -40,6 +40,8 @@ registry:
 
 gitlab:
   gitlab-pages:
+    hpa:
+      targetAverageValue: 3000m
     resources:
       requests:
         cpu: 3200m
