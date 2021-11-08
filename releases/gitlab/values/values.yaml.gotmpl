@@ -449,7 +449,7 @@ gitlab:
       - "Permissions-Policy: interest-cohort=()"
     hpa:
       minReplicas: 2
-      targetAverageValue: 80%
+      targetAverageValue: 3000m
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
       pullSecrets:
