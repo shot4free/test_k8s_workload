@@ -30,6 +30,9 @@ global:
       - 10.224.34.56
 
 gitlab:
+  gitlab-pages:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-0

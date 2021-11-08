@@ -60,66 +60,14 @@ registry:
 
 gitlab:
   gitlab-pages:
-    common:
-      labels:
-        type: web-pages
-    deployment:
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 0
-    extraEnv:
-      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
-      FF_ENABLE_REDIRECTS: "true"
-      FF_ENABLE_PLACEHOLDERS: "true"
-    headers:
-      - "Permissions-Policy: interest-cohort=()"
-    hpa:
-      # Preprod has small nodes, so we scale very differently in this environment
-      targetAverageValue: 800m
-    image:
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
-      pullSecrets:
-        - name: dev-registry-access-v1
-    internalGitlabServer: "http://{{ .Release.Name }}-webservice-api.{{ .Release.Name }}.svc:8181"
-    networkpolicy:
-      enabled: true
-      egress:
-        enabled: true
-        rules:
-        - to:
-          - ipBlock:
-              cidr: 10.0.0.0/8
-          ports:
-          - port: 53
-            protocol: UDP
-          - port: 53
-            protocol: TCP
-          - port: 8181
-            protocol: TCP
-        - to:
-          - ipBlock:
-              cidr: 0.0.0.0/0
-              except:
-              - 10.0.0.0/8
-              - 169.254.169.254/32
-    propagateCorrelationId: true
+    nodeSelector:
+      cloud.google.com/gke-nodepool: default-2
     resources:
       requests:
         cpu: 1000m
         memory: 70M
       limits:
         memory: 1G
-    sentry:
-      enabled: true
-      dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
-      environment: {{ .Environment.Name }}
-    service:
-      annotations:
-        cloud.google.com/load-balancer-type: Internal
-    statusUri: "/-/readiness"
-    useProxyV2: true
-
   webservice:
     hpa:
       minReplicas: 2
@@ -259,18 +207,8 @@ global:
       name: kas.pre.gitlab.com
     registry:
       name: registry.pre.gitlab.com
-  ingress:
-    tls:
-      secretName: gitlab-pages-tls-certificate-v1
-  oauth:
-    gitlab-pages:
-      secret: gitlab-pages-auth-client-secret-v1
   pages:
-    accessControl: true
-    authSecret:
-      secret: gitlab-pages-auth-secret-v1
     enabled: true
-    # gcloud compute address pages-gke-pre
     externalHttp:
       # gcloud compute address pages-gke-pre
       - 10.232.20.119
