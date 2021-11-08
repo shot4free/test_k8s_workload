@@ -3,6 +3,14 @@ global:
   hosts:
     # gcloud compute address nginx-gke-gprd-us-east1-d
     externalIP: 10.221.15.31
+  pages:
+    enabled: true
+    externalHttp:
+      # gcloud compute address pages-gke-gprd-us-east1-d
+      - 10.221.15.6
+    externalHttps:
+      # gcloud compute address pages-gke-gprd-us-east1-d
+      - 10.221.15.6
 gitlab:
   gitlab-shell:
     service:

@@ -23,15 +23,21 @@ global:
     path: "/*"
     tls:
       enabled: true
+      secretName: gitlab-pages-tls-certificate-v1
 
   kas:
     enabled: {{ .Values.gitlab.kas.enabled }}
-
+  oauth:
+    gitlab-pages:
+      secret: gitlab-pages-auth-client-secret-v1
   pages:
     accessControl: true
+    authSecret:
+      secret: gitlab-pages-auth-secret-v1
     apiSecret:
       secret: gitlab-pages-api-credential-v1
     externalHttps: true
+    host: gitlab.io
     objectStore:
       enabled: true
       bucket: "gitlab-{{ .Values | getOrNil "env_prefix" }}-pages"
@@ -426,6 +432,67 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
+  gitlab-pages:
+    common:
+      labels:
+        type: web-pages
+    deployment:
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 0
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
+      FF_ENABLE_REDIRECTS: "true"
+      FF_ENABLE_PLACEHOLDERS: "true"
+    headers:
+      - "Permissions-Policy: interest-cohort=()"
+    hpa:
+      minReplicas: 2
+      targetAverageValue: 80%
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-pages
+      pullSecrets:
+        - name: dev-registry-access-v1
+    internalGitlabServer: "http://{{ .Release.Name }}-webservice-api.{{ .Release.Name }}.svc:8181"
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+        - to:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+          ports:
+          - port: 53
+            protocol: UDP
+          - port: 53
+            protocol: TCP
+          - port: 8181
+            protocol: TCP
+        - to:
+          - ipBlock:
+              cidr: 0.0.0.0/0
+              except:
+              - 10.0.0.0/8
+              - 169.254.169.254/32
+    nodeSelector:
+      cloud.google.com/gke-nodepool: pages-0
+    propagateCorrelationId: true
+    resources:
+      requests:
+        cpu: 3200m
+        memory: 3G
+      limits:
+        memory: 5G
+    sentry:
+      enabled: true
+      dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
+      environment: {{ .Environment.Values | getOrNil "env_prefix" }}
+    service:
+      annotations:
+        cloud.google.com/load-balancer-type: Internal
+    useProxyV2: true
   gitlab-shell:
     deployment:
       strategy:
