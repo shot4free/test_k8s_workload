@@ -17,9 +17,6 @@ nginx-ingress:
         <<: *nginx_labels
 
 gitlab:
-  gitlab-pages:
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
