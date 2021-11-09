@@ -35,6 +35,14 @@ registry:
     disabled: false
     maxbackoff: 30m
     reviewafter: 30m
+  validation:
+    disabled: false
+    manifests:
+      referencelimit: 200
+      urls:
+        # this is needed to keep backwards compatibility when `validation.disabled: false`, as by default an empty `allow` means no URLs are allowed
+        allow:
+          - .*
   hpa:
     maxReplicas: 20
 
