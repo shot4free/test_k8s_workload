@@ -49,10 +49,11 @@ registry:
 gitlab:
   gitlab-pages:
     hpa:
-      targetAverageValue: 800m
+      minReplicas: 2
+      targetAverageValue: 400m
     resources:
       requests:
-        cpu: 1000m
+        cpu: 500m
         memory: 70M
       limits:
         memory: 1G

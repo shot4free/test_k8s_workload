@@ -69,12 +69,13 @@ registry:
 gitlab:
   gitlab-pages:
     hpa:
-      targetAverageValue: 800m
+      minReplicas: 1
+      targetAverageValue: 400m
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
     resources:
       requests:
-        cpu: 1000m
+        cpu: 500m
         memory: 70M
       limits:
         memory: 1G
