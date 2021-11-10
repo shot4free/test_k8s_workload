@@ -2,6 +2,10 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 5.4.2 (2021-11-08)
+
+No changes.
+
 ## 5.4.1 (2021-10-28)
 
 No changes.
@@ -181,6 +185,10 @@ No changes.
 ### Security (1 change)
 
 - [Do not automount SA token when not needed](gitlab-org/charts/gitlab@108af40ae28e55c882feae66eaecd3a0d0f45996) ([merge request](gitlab-org/charts/gitlab!2093))
+
+## 5.0.12 (2021-11-05)
+
+No changes.
 
 ## 5.0.11 (2021-09-23)
 
