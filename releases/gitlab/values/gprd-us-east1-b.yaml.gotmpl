@@ -1,0 +1,22 @@
+---
+global:
+  hosts:
+    # gcloud compute address nginx-gke-gprd-us-east1-b
+    externalIP: 10.221.13.25
+  pages:
+    enabled: true
+    externalHttp:
+      # gcloud compute address pages-gke-gprd-us-east1-b
+      - 10.221.13.5
+    externalHttps:
+      # gcloud compute address pages-gke-gprd-us-east1-b
+      - 10.221.13.5
+gitlab:
+  gitlab-shell:
+    service:
+      # gcloud compute address ssh-gke-gprd-us-east1-b
+      loadBalancerIP: 10.221.13.40
+registry:
+  service:
+    # gcloud compute address registry-gke-gprd-us-east1-b
+    loadBalancerIP: 10.221.13.41

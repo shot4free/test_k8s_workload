@@ -20,6 +20,33 @@ registry:
   resources:
     requests:
       memory: 3G
+  database:
+    # This setting should not be disabled (unless we decide to do a full rollback during Phase 1 of the
+    # upgrade/migration, in which case we have to first copy the bucket data from the new prefix to the
+    # old prefix). Disabling this would cause repositories that were registered on the database to
+    # become inaccessible. In case of an issue with the upgrade/migration, we should instead turn off
+    # the `container_registry_migration_phase1` feature flag
+    # (https://gitlab.com/gitlab-org/gitlab/-/issues/335703), which will pause the addition of _more_
+    # repositories to the database while continuing to serve requests for those already there.
+    enabled: true
+    host: pgbouncer-registry.int.gprd.gitlab.net
+    port: 6432
+    user: gitlab-registry
+    name: gitlabhq_registry
+    connecttimeout: 5s
+    draintimeout: 15s
+    password:
+      secret: registry-postgresql-password-v1
+    pool:
+      maxopen: 30
+      maxidle: 15
+      maxlifetime: 30m
+      maxidletime: 5m
+  migration:
+    # This setting should not be disabled in case of a rollback. Please see the comments for the
+    # `database.enabled` configuration parameter for additional details (the same applies here).
+    enabled: true
+    rootdirectory: gitlab
   storage:
     secret: registry-storage-v4
   # When enabled, the upload purger will attempt to make deletes against the
@@ -30,8 +57,28 @@ registry:
   maintenance:
     uploadpurging:
       enabled: false
+  gc:
+    disabled: false
+  validation:
+    disabled: false
+    manifests:
+      referencelimit: 200
+      urls:
+        # this is needed to keep backwards compatibility when `validation.disabled: false`, as by default an empty `allow` means no URLs are allowed
+        allow:
+          - .*
 
 gitlab:
+  gitlab-pages:
+    hpa:
+      minReplicas: 2
+      targetAverageValue: 800m
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 4G
+      limits:
+        memory: 6G
   gitlab-shell:
     resources:
       requests:
@@ -103,9 +150,12 @@ gitlab:
       GITLAB_LOG_DEPRECATIONS: "true"
   kas:
     image:
-      tag: v14.4.0-rc1
+      tag: v14.5.0-rc2
     nodeSelector:
       cloud.google.com/gke-nodepool: default-3
+    service:
+      # gcloud compute address kas-internal-gke-gprd
+      loadBalancerIP: 10.216.8.102
     workhorse:
       scheme: 'https'
       host: 'int.gprd.gitlab.net'
@@ -419,7 +469,11 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
 
 global:
+  email:
+    from: gitlab@mg.gitlab.com
   appConfig:
+    artifacts:
+      bucket: gitlab-gprd-artifacts
     contentSecurityPolicy:
       enabled: true
       report_only: false
@@ -432,6 +486,21 @@ global:
         script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://assets.gitlab-static.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com"
         style_src: "'self' 'unsafe-inline' https://assets.gitlab-static.net"
         worker_src: "https://assets.gitlab-static.net https://gitlab.com blob: data:"
+        report_uri: "https://sentry.gitlab.net/api/105/security/?sentry_key=a42ea3adc19140d9a6424906e12fba86"
+    cron_jobs:
+      schedule_migrate_external_diffs_worker:
+        cron: "*/1 * * * *"
+    dependencyProxy:
+      enabled: true
+      bucket: gitlab-gprd-dependency-proxy
+    externalDiffs:
+      enabled: true
+      bucket: gitlab-gprd-external-diffs
+    incomingEmail:
+      address: "incoming+%{key}@incoming.gitlab.com"
+      user: incoming@gitlab.com
+    lfs:
+      bucket: gitlab-gprd-lfs-objects
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -440,7 +509,16 @@ global:
         - secret: gitlab-bitbucket-oauth2-v1
         - secret: gitlab-group-saml-oauth2-v1
         - secret: gitlab-salesforce-oauth2-v1
-
+    packages:
+      bucket: gitlab-gprd-package-repo
+    sentry:
+      clientside_dsn: https://526a2f38a53d44e3a8e69bfa001d1e8b@sentry.gitlab.net/15
+      dsn: https://c0d96870a71a4217adfe015d2bd926c2:69ccdf0a405c41b78e05ab18d92bfa8d@sentry.gitlab.net/2
+      environment: gprd
+    serviceDeskEmail:
+      enabled: true
+      address: "contact-project+%{key}@incoming.gitlab.com"
+      user: contact-project@incoming.gitlab.com
     sidekiq:
       routingRules:
         # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
@@ -455,14 +533,107 @@ global:
         - ["feature_category=database&urgency=throttled", "database_throttled"] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", "gitaly_throttled"] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
+    terraformState:
+      enabled: true
+      bucket: gitlab-gprd-terraform-state
+    uploads:
+      bucket: gitlab-gprd-uploads
+    extra:
+      oneTrustId: 7f944245-c5cd-4eed-a90e-dd955adfdd08
 
   hosts:
     gitlab:
       name: gitlab.com
     kas:
       name: kas.gitlab.com
+    registry:
+      name: registry.gitlab.com
+
+  redis:
+    cache:
+      host: gprd-redis-cache
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-cache-sentinel-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-cache-sentinel-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-cache-sentinel-03-db-gprd.c.gitlab-production.internal
+        port: 26379
+    host: gprd-redis
+    password:
+      enabled: true
+      key: secret
+      secret: gitlab-redis-credential-v1
+    queues:
+      host: gprd-redis-sidekiq
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-sidekiq-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-sidekiq-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-sidekiq-03-db-gprd.c.gitlab-production.internal
+        port: 26379
+    rateLimiting:
+      host: gprd-redis-ratelimiting
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-ratelimiting-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-ratelimiting-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-ratelimiting-03-db-gprd.c.gitlab-production.internal
+        port: 26379
+    sentinels:
+    - host: redis-01-db-gprd.c.gitlab-production.internal
+      port: 26379
+    - host: redis-02-db-gprd.c.gitlab-production.internal
+      port: 26379
+    - host: redis-03-db-gprd.c.gitlab-production.internal
+      port: 26379
+    sharedState:
+      host: gprd-redis
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-03-db-gprd.c.gitlab-production.internal
+        port: 26379
+    traceChunks:
+      host: gprd-redis-tracechunks
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-tracechunks-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-tracechunks-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-tracechunks-03-db-gprd.c.gitlab-production.internal
+        port: 26379
+
+  pages:
+    host: gitlab.io
 
   psql:
+    host: pgbouncer.int.gprd.gitlab.net
+    port: 6432
     prepared_statements: false
     load_balancing:
       discover:
@@ -471,3 +642,7 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
+
+  smtp:
+    domain: mg.gitlab.com
+    user_name: dotcom-rotated@mg.gitlab.com

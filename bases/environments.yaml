@@ -59,7 +59,7 @@ environments:
       - <<: *regional_cluster_defaults
       - &pre_values
         gitlab_runner_chart_version: 20683318add4eb99a8a8508932860c20f0ae70f6
-        gitlab_chart_version: b0519503ad754ed0bf4032a8b8ac67ff363810fd
+        gitlab_chart_version: 7d847fbc8ec7c12d87dc89e22d8a35fefc59398c
         env_prefix: pre
         google_project: "gitlab-pre"
         gitlab_domain: "pre.gitlab.com"
@@ -69,7 +69,7 @@ environments:
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.pre.gitlab.com"
         registry_bucket_name: "gitlab-pre-container-registry"
-        registry_version: v3.12.0-gitlab
+        registry_version: v3.14.3-gitlab
         gitlab:
           gitlab-shell:
             enabled: true
@@ -98,7 +98,7 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       - &gstg_values
-        gitlab_chart_version: b0519503ad754ed0bf4032a8b8ac67ff363810fd
+        gitlab_chart_version: 7d847fbc8ec7c12d87dc89e22d8a35fefc59398c
         env_prefix: gstg
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
@@ -106,7 +106,7 @@ environments:
         gitlab_internal_lb_dns_address: "int.gstg.gitlab.net"
         registry_api_host: "registry.staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
-        registry_version: v3.12.0-gitlab
+        registry_version: v3.14.3-gitlab
         cluster: gstg-gitlab-gke
         region: us-east1
         kas:
@@ -187,7 +187,7 @@ environments:
       - &gprd_values
         cluster: gprd-gitlab-gke
         env_prefix: gprd
-        gitlab_chart_version: b0519503ad754ed0bf4032a8b8ac67ff363810fd
+        gitlab_chart_version: 7d847fbc8ec7c12d87dc89e22d8a35fefc59398c
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
@@ -198,7 +198,7 @@ environments:
         region: us-east1
         registry_api_host: "registry.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
-        registry_version: v3.11.1-gitlab
+        registry_version: v3.14.3-gitlab
         ssh:
           dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAMPKInNPflcRle9F5Qt2j9aI0EZuWQzdXTbYvsl+ChaacqCOWRMiOmXHXqetFz6jD/6Fcqg20ZATxqSskQBaRn97O/mbH+GQk4d3zw9WAEURicE8rKJop3qGtdfFxLzrTuF/PAkKRDMmutT3hwZIOO8CFWOl1BiuUYTncJTeonrfAAAAFQCujauoy3Yy+ul72b/WsTECUPj9yQAAAIBIV2yyF7RZf7IYS8tsWcKP7Y5Bv9eFdbvbtsaxcFCHcmHIGoJQrIdPoueoOb5EUTYz0NgYKsKaZzDZkgFk28GsmLxKvhnPjaw0lJVSKRchEE5xVlamOlabiRMjQ7X/bAdejkBJe96AjZZL3UO4acpwfy3Tnnap0w6YCDeaxoyHpwAAAIAU+dyNaL3Hy15VIV32QwWMekvxeptUY/DW03LNcgZZDoin87TE9xuQhM0qF3pi2i2a2ExuslgdttmYWvrbEz8eW+RFgvT5pKwWpalKWetHvtN3oYZP37ZIO1Y3Hd5A4YVcpYp1ccRayveLlCRwxb4HdGXT2OmYU+lmvimIR8zQ6A=="
           ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="

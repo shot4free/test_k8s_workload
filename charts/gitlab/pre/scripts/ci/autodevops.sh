@@ -8,8 +8,8 @@ export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
 
 # Derive the Helm RELEASE argument from CI_ENVIRONMENT_SLUG
 if [[ $CI_ENVIRONMENT_SLUG =~ ^.{3}-review ]]; then
-  # if a "review", use $REVIEW_REF_PREFIX$CI_COMMIT_REF_NAME
-  RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_NAME}
+  # if a "review", use $REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}
   # Trim release name to leave room for prefixes/suffixes
   RELEASE_NAME=${RELEASE_NAME:0:30}
   # Trim any hyphens in the suffix
@@ -158,7 +158,7 @@ CIYAML
     gitlab-shell:
       minReplicas: 1    # 2
       maxReplicas: 2    # 10
-    task-runner:
+    toolbox:
       enabled: true
   nginx-ingress:
     controller:
@@ -257,13 +257,13 @@ function wait_for_deploy {
   echo ""
 }
 
-function restart_task_runner() {
-  # restart the task-runner pods, by deleting them
+function restart_toolbox() {
+  # restart the toolbox pods, by deleting them
   # the ReplicaSet of the Deployment will re-create them
   # this ensure we run up-to-date on tags like `master` when there
   # have been no changes to the configuration to warrant a restart
   # via metadata checksum annotations
-  kubectl -n ${NAMESPACE} delete pods -lapp=task-runner,release=${RELEASE_NAME}
+  kubectl -n ${NAMESPACE} delete pods -lapp=toolbox,release=${RELEASE_NAME}
   # always "succeed" so not to block.
   return 0
 }

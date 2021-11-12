@@ -35,10 +35,28 @@ registry:
     disabled: false
     maxbackoff: 30m
     reviewafter: 30m
+  validation:
+    disabled: false
+    manifests:
+      referencelimit: 200
+      urls:
+        # this is needed to keep backwards compatibility when `validation.disabled: false`, as by default an empty `allow` means no URLs are allowed
+        allow:
+          - .*
   hpa:
     maxReplicas: 20
 
 gitlab:
+  gitlab-pages:
+    hpa:
+      minReplicas: 2
+      targetAverageValue: 400m
+    resources:
+      requests:
+        cpu: 500m
+        memory: 70M
+      limits:
+        memory: 1G
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
@@ -49,7 +67,7 @@ gitlab:
           cloud.google.com/gke-nodepool: api-2
       web:
         extraEnv:
-          CUSTOMER_PORTAL_URL: "https://customers.stg.gitlab.com"
+          CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
           GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
           GITLAB_TRACING: "opentracing://jaeger?udp_endpoint=localhost%3A6831&sampler=probabilistic&sampler_param=0.01&service_name=web"
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
@@ -77,9 +95,12 @@ gitlab:
         memory: 5G
   kas:
     image:
-      tag: v14.4.0-rc1-race
+      tag: v14.5.0-rc2-race
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    service:
+      # gcloud compute address kas-internal-gke-gstg
+      loadBalancerIP: 10.224.34.18
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
@@ -94,7 +115,7 @@ gitlab:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       USE_GITLAB_LOGGER: 1
       GITLAB_LOG_DEPRECATIONS: "true"
-      CUSTOMER_PORTAL_URL: "https://customers.stg.gitlab.com"
+      CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
     extraInitContainers: |
       - name: write-instance-name
         args:
@@ -373,19 +394,35 @@ gitlab:
 
 global:
   appConfig:
+    artifacts:
+      bucket: gitlab-gstg-artifacts
     contentSecurityPolicy:
       enabled: true
       report_only: false
       directives:
-        connect_src: "'self' https://staging.gitlab.com https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net wss://gitlab.com wss://staging.gitlab.com wss://gstg.gitlab.com https://sentry.gitlab.net https://customers.stg.gitlab.com https://snowplow.trx.gitlab.net https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
+        connect_src: "'self' https://staging.gitlab.com https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net wss://gitlab.com wss://staging.gitlab.com wss://gstg.gitlab.com https://sentry.gitlab.net https://customers.staging.gitlab.com https://snowplow.trx.gitlab.net https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
         frame_ancestors: "'self'"
-        frame_src: "'self' https://gl-staging.freetls.fastly.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.stg.gitlab.com"
+        frame_src: "'self' https://gl-staging.freetls.fastly.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.staging.gitlab.com"
         img_src: "* data: blob:"
         object_src: "'none'"
         report_uri: "https://sentry.gitlab.net/api/15/security/?sentry_key=526a2f38a53d44e3a8e69bfa001d1e8b"
         script_src: "'strict-dynamic' 'self' 'unsafe-inline' 'unsafe-eval' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com https://*.pendo.io"
         style_src: "'self' 'unsafe-inline' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net"
         worker_src: "https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://staging.gitlab.com blob: data:"
+    cron_jobs:
+      schedule_migrate_external_diffs_worker:
+        cron: "*/5 * * * *"
+    dependencyProxy:
+      enabled: true
+      bucket: gitlab-gstg-dependency-proxy
+    externalDiffs:
+      enabled: true
+      bucket: gitlab-gstg-external-diffs
+    incomingEmail:
+      address: "incoming-staging+%{key}@gitlab.com"
+      user: incoming-staging@gitlab.com
+    lfs:
+      bucket: gitlab-gstg-lfs-objects
     omniauth:
       providers:
         - secret: gitlab-google-oauth2-v1
@@ -394,6 +431,16 @@ global:
         - secret: gitlab-bitbucket-oauth2-v1
         - secret: gitlab-group-saml-oauth2-v1
         - secret: gitlab-salesforce-oauth2-v1
+    packages:
+      bucket: gitlab-gstg-package-repo
+    sentry:
+      clientside_dsn: https://526a2f38a53d44e3a8e69bfa001d1e8b@sentry.gitlab.net/15
+      dsn: https://0cfeea6daa0d4f2a90c1e86b4b82830a:ec54f3af800242fd8ff023305035c514@sentry.gitlab.net/10
+      environment: gstg
+    serviceDeskEmail:
+      enabled: true
+      address: "contact-project-staging+%{key}@incoming.gitlab.com"
+      user: contact-project-staging@incoming.gitlab.com
     sidekiq:
       routingRules:
         # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
@@ -408,8 +455,16 @@ global:
         - ["feature_category=database&urgency=throttled", "database_throttled"] # database-throttled
         - ["feature_category=gitaly&urgency=throttled", "gitaly_throttled"] # gitaly-throttled
         - ["*", "default"] # catchall on k8s
+    terraformState:
+      enabled: true
+      bucket: gitlab-gstg-terraform-state
+    uploads:
+      bucket: gitlab-gstg-uploads
+    extra:
+      oneTrustId: 7f944245-c5cd-4eed-a90e-dd955adfdd08
 
   email:
+    from: gitlab@mg.gitlab.com
     reply_to: noreply@staging.gitlab.com
 
   geo:
@@ -421,14 +476,19 @@ global:
         secret: gitlab-registry-notification-v1
     replication:
       enabled: true
-
   hosts:
     gitlab:
       name: staging.gitlab.com
     kas:
       name: kas.staging.gitlab.com
+    registry:
+      name: registry.staging.gitlab.com
 
+  pages:
+    host: staging.gitlab.io
   psql:
+    host: pgbouncer.int.gstg.gitlab.net
+    port: 6432
     prepared_statements: false
     load_balancing:
       discover:
@@ -437,5 +497,86 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
+  redis:
+    cache:
+      host: gstg-redis-cache
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-cache-sentinel-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-cache-sentinel-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-cache-sentinel-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    host: gstg-redis
+    password:
+      enabled: true
+      key: secret
+      secret: gitlab-redis-credential-v1
+    queues:
+      host: gstg-redis-sidekiq
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-sidekiq-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-sidekiq-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-sidekiq-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    rateLimiting:
+      host: gstg-redis-ratelimiting
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-ratelimiting-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-ratelimiting-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-ratelimiting-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    sentinels:
+    - host: redis-01-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    - host: redis-02-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    - host: redis-03-db-gstg.c.gitlab-staging-1.internal
+      port: 26379
+    sharedState:
+      host: gstg-redis
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+    traceChunks:
+      host: gstg-redis-tracechunks
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-tracechunks-01-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-tracechunks-02-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+      - host: redis-tracechunks-03-db-gstg.c.gitlab-staging-1.internal
+        port: 26379
+  smtp:
+    domain: mg.staging.gitlab.com
+    user_name: postmaster@mg.staging.gitlab.com
   tracing:
     urlTemplate: 'https://jaeger.gstg.gitlab.net/search?service={{ "{{" }} service {{ "}}" }}&tags=%7B{{ "\"" }}correlation_id{{ "\"" }}%3A{{ "\""}}{{ "{{" }} correlation_id {{ "}}" }}{{ "\"" }}%7D'

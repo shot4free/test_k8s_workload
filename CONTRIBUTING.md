@@ -45,7 +45,7 @@ Keep the following flow in mind:
 
 1. In order to make matters simpler, assume that the contributor has a limited perspective into how services run, so double check the intention of the MR.
 1. Ensure that the MR description has context on why the change is made, and links to the applicable resources such as issues, epics, other related MRs as well as related Chef changes. Correct descriptions make it simpler to understand context by others not participating in the work, long after the MR is merged.
-1. Ensure that MRs for production web fleet changes are linked to a corresponding change issue](https://about.gitlab.com/handbook/engineering/infrastructure/change-management/#change-request-workflows). 
+1. Ensure that MRs for production web fleet changes are linked to a corresponding [change issue](https://about.gitlab.com/handbook/engineering/infrastructure/change-management/#change-request-workflows).
 1. Ensure that the MR has labels. Labels make it simpler to track multiple changes over time.
 1. Review the CI pipeline comments from `ops-gitlab-net` user, as they contain the full pipeline run from the operational instance. The pipelines in the MR widget only run syntax checks.
 1. Before merging the MR, ensure that the `Reviewer Check-list` section in the MR description is addressed.
