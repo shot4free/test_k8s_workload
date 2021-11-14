@@ -160,6 +160,12 @@ gitlab:
       scheme: 'https'
       host: 'int.gprd.gitlab.net'
       port: 443
+    resources:
+      limits:
+        memory: 512M
+      requests:
+        cpu: 100m
+        memory: 256M
     customConfig:
       observability:
         sentry:
