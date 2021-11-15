@@ -133,7 +133,7 @@ variables:
     variables:
       - $AUTO_DEPLOY == "false"
     changes:
-      - 'charts/gitlab/**'
+      - 'charts/gitlab/**/*'
       - 'bases/**/*'
       - 'bin/**/*'
       - 'releases/**/*'
@@ -554,7 +554,7 @@ pre:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
-      - 'charts/gitlab/**'
+      - 'charts/gitlab/**/*'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
@@ -576,7 +576,7 @@ gstg:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
-      - 'charts/gitlab/**'
+      - 'charts/gitlab/**/*'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
