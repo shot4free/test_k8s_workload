@@ -69,7 +69,7 @@ environments:
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_api_host: "registry.pre.gitlab.com"
         registry_bucket_name: "gitlab-pre-container-registry"
-        registry_version: v3.14.3-gitlab
+        registry_version: v3.15.0-gitlab
         gitlab:
           gitlab-shell:
             enabled: true
@@ -106,7 +106,7 @@ environments:
         gitlab_internal_lb_dns_address: "int.gstg.gitlab.net"
         registry_api_host: "registry.staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
-        registry_version: v3.14.3-gitlab
+        registry_version: v3.15.0-gitlab
         cluster: gstg-gitlab-gke
         region: us-east1
         kas:
