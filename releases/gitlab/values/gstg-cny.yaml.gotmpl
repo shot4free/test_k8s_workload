@@ -28,6 +28,29 @@ global:
     externalHttps:
       # gcloud compute address pages-gke-gstg-cny
       - 10.224.34.56
+  psql:
+    main:
+      host: pgbouncer.int.gstg.gitlab.net
+      port: 6432
+      prepared_statements: false
+      load_balancing:
+        discover:
+          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+          record: db-replica.service.consul.
+          record_type: SRV
+          port: 8600
+          use_tcp: true
+    ci:
+      host: pgbouncer.int.gstg.gitlab.net
+      port: 6432
+      prepared_statements: false
+      load_balancing:
+        discover:
+          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+          record: ci-db-replica.service.consul.
+          record_type: SRV
+          port: 8600
+          use_tcp: true
 
 gitlab:
   gitlab-pages:
@@ -82,6 +105,8 @@ gitlab:
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
+      GITLAB_MULTIPLE_DATABASE_METRICS: "true"
 
 registry:
   hpa:
