@@ -589,19 +589,6 @@ global:
         port: 26379
       - host: redis-tracechunks-03-db-gstg.c.gitlab-staging-1.internal
         port: 26379
-    sessions:
-      host: gstg-redis-sessions
-      password:
-        enabled: true
-        key: secret
-        secret: gitlab-redis-credential-v1
-      sentinels:
-      - host: redis-sessions-01-db-gstg.c.gitlab-staging-1.internal
-        port: 26379
-      - host: redis-sessions-02-db-gstg.c.gitlab-staging-1.internal
-        port: 26379
-      - host: redis-sessions-03-db-gstg.c.gitlab-staging-1.internal
-        port: 26379
   smtp:
     domain: mg.staging.gitlab.com
     user_name: postmaster@mg.staging.gitlab.com
