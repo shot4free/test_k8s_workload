@@ -551,6 +551,8 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+          GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+          ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: api-1
         shutdown:
@@ -592,6 +594,8 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+          GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+          ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: web-1
         sharedTmpDir:
@@ -632,6 +636,8 @@ gitlab:
           # See https://gitlab.com/gitlab-org/gitlab-workhorse/-/issues/352
           GODEBUG: madvdontneed=1
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+          GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+          ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-1
         shutdown:
@@ -896,6 +902,8 @@ gitlab:
       SIDEKIQ_LOG_ARGUMENTS: "1"
       USE_GITLAB_LOGGER: 1
       ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     networkpolicy:
       enabled: true
       egress:
