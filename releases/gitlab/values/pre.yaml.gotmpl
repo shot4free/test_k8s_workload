@@ -131,6 +131,8 @@ gitlab:
     extraEnv:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
   gitlab-shell:
+    metrics:
+      enabled: true
     minReplicas: 2
     maxReplicas: 5
     nodeSelector:
