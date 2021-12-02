@@ -118,6 +118,8 @@ gitlab:
       USE_GITLAB_LOGGER: 1
       GITLAB_LOG_DEPRECATIONS: "true"
       CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
+      GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
+      GITLAB_MULTIPLE_DATABASE_METRICS: "true"
     extraInitContainers: |
       - name: write-instance-name
         args:
@@ -393,6 +395,15 @@ gitlab:
           record_type: SRV
           port: 8600
           use_tcp: true
+      ci:
+        host: pgbouncer-sidekiq.int.gstg.gitlab.net
+        load_balancing:
+          discover:
+            nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+            record: ci-db-replica.service.consul.
+            record_type: SRV
+            port: 8600
+            use_tcp: true
 
 global:
   appConfig:
