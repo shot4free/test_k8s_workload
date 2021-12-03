@@ -602,6 +602,19 @@ global:
         port: 26379
       - host: redis-ratelimiting-03-db-gprd.c.gitlab-production.internal
         port: 26379
+    sessions:
+      host: gprd-redis-sessions
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-sessions-01-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-sessions-02-db-gprd.c.gitlab-production.internal
+        port: 26379
+      - host: redis-sessions-03-db-gprd.c.gitlab-production.internal
+        port: 26379
     sentinels:
     - host: redis-01-db-gprd.c.gitlab-production.internal
       port: 26379
