@@ -59,7 +59,7 @@ environments:
       - <<: *regional_cluster_defaults
       - &pre_values
         gitlab_runner_chart_version: 20683318add4eb99a8a8508932860c20f0ae70f6
-        gitlab_chart_version: 7d847fbc8ec7c12d87dc89e22d8a35fefc59398c
+        gitlab_chart_version: 425d44208c13b97faa09f65747e09ec28ec31f4c
         env_prefix: pre
         google_project: "gitlab-pre"
         gitlab_domain: "pre.gitlab.com"
@@ -98,7 +98,7 @@ environments:
     values:
       - <<: *regional_cluster_defaults
       - &gstg_values
-        gitlab_chart_version: 7d847fbc8ec7c12d87dc89e22d8a35fefc59398c
+        gitlab_chart_version: 425d44208c13b97faa09f65747e09ec28ec31f4c
         env_prefix: gstg
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
