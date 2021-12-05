@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.14.2-gitlab'
+  tag: 'v3.17.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -77,6 +77,7 @@ networkpolicy:
   annotations: {}
 
 ingress:
+  apiVersion:
   enabled:
   proxyReadTimeout: 900
   proxyBodySize: "0"
