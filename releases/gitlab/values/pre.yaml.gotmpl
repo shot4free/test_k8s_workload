@@ -140,6 +140,7 @@ gitlab:
     service:
       # gcloud compute address ssh-gke-pre
       loadBalancerIP: 10.232.20.28
+    sshDaemon: gitlab-sshd
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
