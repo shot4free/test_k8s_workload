@@ -54,3 +54,7 @@ Example:
 2021-12-06
 
 * GSTG - Reverts the storage configuration for staging, see https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1036
+
+2021-12-06
+
+* GSTG - Adds new storage configuration for staging that adds the HDD server to Praefect, see https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1043
