@@ -50,3 +50,7 @@ Example:
 2021-12-03
 
 * GSTG - Updates the storage configuration for staging: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14738
+
+2021-12-06
+
+* GSTG - Reverts the storage configuration for staging, see https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1036
