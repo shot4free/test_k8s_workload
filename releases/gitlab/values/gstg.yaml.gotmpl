@@ -82,6 +82,9 @@ gitlab:
       GITLAB_LOG_DEPRECATIONS: "true"
       GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
       GITLAB_MULTIPLE_DATABASE_METRICS: "true"
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     workhorse:
       resources:
         limits:
@@ -120,6 +123,9 @@ gitlab:
       CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
       GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
       GITLAB_MULTIPLE_DATABASE_METRICS: "true"
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     extraInitContainers: |
       - name: write-instance-name
         args:
