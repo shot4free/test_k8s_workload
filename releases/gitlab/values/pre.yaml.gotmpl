@@ -130,6 +130,9 @@ gitlab:
         memory: 1.25G
     extraEnv:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
   gitlab-shell:
     metrics:
       enabled: true
@@ -155,6 +158,10 @@ gitlab:
         concurrency: 25
         minReplicas: 1
         maxReplicas: 5
+    extraEnv:
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     psql:
       host: 10.33.1.14
   kas:
