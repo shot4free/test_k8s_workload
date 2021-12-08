@@ -11,7 +11,7 @@ function vendor_chart() {
   pushd charts/"${CHART}"/"${ENVIRONMENT}"
   git -c advice.detachedHead=false checkout "${SHA}"
   helm dep update
-  rm -rf .git doc examples requirements.lock spec
+  rm -rf .git doc examples requirements.lock scripts spec
   if [[ -d charts ]]; then
     git add -f charts/*.tgz
   fi

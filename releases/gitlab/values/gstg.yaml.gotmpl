@@ -82,6 +82,9 @@ gitlab:
       GITLAB_LOG_DEPRECATIONS: "true"
       GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
       GITLAB_MULTIPLE_DATABASE_METRICS: "true"
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     workhorse:
       resources:
         limits:
@@ -118,6 +121,11 @@ gitlab:
       USE_GITLAB_LOGGER: 1
       GITLAB_LOG_DEPRECATIONS: "true"
       CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
+      GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
+      GITLAB_MULTIPLE_DATABASE_METRICS: "true"
+      # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
+      GITLAB_ENABLE_QUERY_ANALYZERS: "true"
+      ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     extraInitContainers: |
       - name: write-instance-name
         args:
@@ -393,6 +401,15 @@ gitlab:
           record_type: SRV
           port: 8600
           use_tcp: true
+      ci:
+        host: pgbouncer-sidekiq.int.gstg.gitlab.net
+        load_balancing:
+          discover:
+            nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+            record: ci-db-replica.service.consul.
+            record_type: SRV
+            port: 8600
+            use_tcp: true
 
 global:
   appConfig:
@@ -464,6 +481,7 @@ global:
       bucket: gitlab-gstg-uploads
     extra:
       oneTrustId: 7f944245-c5cd-4eed-a90e-dd955adfdd08
+      googleTagManagerNonceId: GTM-NJXWQL
 
   email:
     from: gitlab@mg.gitlab.com

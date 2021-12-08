@@ -41,9 +41,9 @@ data:
     listen-http=0.0.0.0:9090
     {{- else }}
       {{- if not (empty $.Values.global.pages.externalHttp) }}
-    listen-http=0.0.0.0:{{ .Values.service.internalPort }}
+    listen-{{ if .Values.useHTTPProxy }}proxy{{ else }}http{{ end }}=0.0.0.0:{{ .Values.service.internalPort | int }}
       {{-  else  }}
-    listen-http=0.0.0.0:9090
+    listen-{{ if .Values.useHTTPProxy }}proxy{{ else }}http{{ end }}=0.0.0.0:9090
       {{- end }}
       {{- if not (empty $.Values.global.pages.externalHttps) }}
     listen-https{{ if .Values.useProxyV2 }}-proxyv2{{ end }}=0.0.0.0:{{ .Values.service.customDomains.internalHttpsPort | int }}
@@ -72,6 +72,9 @@ data:
     {{- end }}
     {{- if .Values.maxConnections }}
     max-conns={{ .Values.maxConnections }}
+    {{- end }}
+    {{- if .Values.maxURILength }}
+    max-uri-length={{ .Values.maxURILength }}
     {{- end }}
     {{- if .Values.gitlabClientHttpTimeout }}
     gitlab-client-http-timeout={{ .Values.gitlabClientHttpTimeout }}
@@ -115,6 +118,12 @@ data:
     {{- end }}
     {{- if .Values.zipOpenTimeout }}
     zip-open-timeout={{ .Values.zipOpenTimeout }}
+    {{- end }}
+    {{- if .Values.rateLimitSourceIP }}
+    rate-limit-source-ip={{ .Values.rateLimitSourceIP }}
+    {{- end }}
+    {{- if .Values.rateLimitSourceIPBurst }}
+    rate-limit-source-ip-burst={{ .Values.rateLimitSourceIPBurst }}
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

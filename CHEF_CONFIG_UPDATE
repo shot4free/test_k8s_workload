@@ -46,3 +46,15 @@ Example:
 2021-10-07
 
 * GPRD - Add connection to new Redis Ratelimiting servers
+
+2021-12-03
+
+* GSTG - Updates the storage configuration for staging: https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14738
+
+2021-12-06
+
+* GSTG - Reverts the storage configuration for staging, see https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1036
+
+2021-12-06
+
+* GSTG - Adds new storage configuration for staging that adds the HDD server to Praefect, see https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1043
