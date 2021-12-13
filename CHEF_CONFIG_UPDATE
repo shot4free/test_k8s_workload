@@ -62,3 +62,7 @@ Example:
 2021-12-09
 
 * GSTG - We are going to revert the configuration again after consideration and deciding not to move forward with production, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14738
+
+2021-12-13
+
+* GSTG - Updating the monitoring whitelist due to failing healthchecks https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6055#note_770862947
