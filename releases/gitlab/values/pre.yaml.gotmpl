@@ -148,8 +148,6 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
   sidekiq:
-    health_checks:
-      port: 3808
     pods:
       - name: catchall
         common:
