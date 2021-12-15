@@ -1,3 +1,3 @@
-helm 3.2.4
+helm 3.7.0
 helmfile 0.141.0
 yq v4.11.2
