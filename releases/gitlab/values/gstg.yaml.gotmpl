@@ -115,8 +115,6 @@ gitlab:
           dsn: https://af4940ad841b46d78708595fc654af78@sentry.gitlab.net/124
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
   sidekiq:
-    health_checks:
-      port: 3808
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       USE_GITLAB_LOGGER: 1
