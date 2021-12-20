@@ -500,8 +500,6 @@ global:
         worker_src: "https://gitlab.com blob: data:"
         report_uri: "https://sentry.gitlab.net/api/105/security/?sentry_key=a42ea3adc19140d9a6424906e12fba86"
     cron_jobs:
-      expire_build_artifacts_worker:
-        cron: "0 1 22 11 *"
       schedule_migrate_external_diffs_worker:
         cron: "*/1 * * * *"
     dependencyProxy:
