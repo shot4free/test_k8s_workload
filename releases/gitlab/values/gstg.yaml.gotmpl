@@ -57,6 +57,8 @@ gitlab:
         memory: 70M
       limits:
         memory: 1G
+    extraEnv:
+      FF_HANDLE_CACHE_HEADERS: "true"
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
