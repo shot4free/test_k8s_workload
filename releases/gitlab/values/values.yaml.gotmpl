@@ -1173,7 +1173,8 @@ gitlab:
   toolbox:
     backups:
       objectStorage:
-        config:
-          secret: s3cmd-config
-          key: config
+          # This is a required configuration despite being disabled
+          # setting it to fake empty values, otherwise our chart fails
+          secret: empty
+          key: empty
     enabled: false
