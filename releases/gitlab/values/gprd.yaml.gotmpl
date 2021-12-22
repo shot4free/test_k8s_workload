@@ -81,6 +81,9 @@ gitlab:
         memory: 6G
     extraEnv:
       FF_HANDLE_CACHE_HEADERS: "true"
+      FF_ENFORCE_IP_RATE_LIMITS: "false"
+    rateLimitSourceIP: 10
+    rateLimitSourceIPBurst: 100
   gitlab-shell:
     resources:
       requests:
