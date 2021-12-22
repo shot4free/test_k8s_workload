@@ -79,6 +79,8 @@ gitlab:
         memory: 4G
       limits:
         memory: 6G
+    extraEnv:
+      FF_HANDLE_CACHE_HEADERS: "true"
   gitlab-shell:
     resources:
       requests:
@@ -657,8 +659,6 @@ global:
 
   pages:
     host: gitlab.io
-    extraEnv:
-      FF_HANDLE_CACHE_HEADERS: true
 
   psql:
     host: pgbouncer.int.gprd.gitlab.net
