@@ -59,6 +59,9 @@ gitlab:
         memory: 1G
     extraEnv:
       FF_HANDLE_CACHE_HEADERS: "true"
+      FF_ENFORCE_IP_RATE_LIMITS: "false"
+    rateLimitSourceIP: 10
+    rateLimitSourceIPBurst: 100
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
