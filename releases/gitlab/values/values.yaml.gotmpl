@@ -1171,4 +1171,9 @@ gitlab:
             - port: 8155
               protocol: TCP
   toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: s3cmd-config
+          key: config
     enabled: false
