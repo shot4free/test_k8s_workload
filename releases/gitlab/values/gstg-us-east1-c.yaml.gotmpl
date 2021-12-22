@@ -12,6 +12,8 @@ global:
     externalHttps:
       # gcloud compute address pages-gke-gstg-us-east1-c
       - 10.224.45.49
+    extraEnv:
+      FF_HANDLE_CACHE_HEADERS: true
 gitlab:
   gitlab-shell:
     service:
