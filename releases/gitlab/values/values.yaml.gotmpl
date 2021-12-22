@@ -486,6 +486,8 @@ gitlab:
         cloud.google.com/load-balancer-type: Internal
     useHTTPProxy: true
     useProxyV2: true
+    rateLimitSourceIP: 10
+    rateLimitSourceIPBurst: 100
   gitlab-shell:
     deployment:
       strategy:
