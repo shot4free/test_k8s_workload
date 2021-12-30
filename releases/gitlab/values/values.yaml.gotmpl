@@ -1171,11 +1171,4 @@ gitlab:
             - port: 8155
               protocol: TCP
   toolbox:
-    backups:
-      objectStorage:
-        config:
-          # This is a required configuration despite being disabled
-          # setting it to fake empty values, otherwise our chart fails
-          secret: empty
-          key: empty
     enabled: false
