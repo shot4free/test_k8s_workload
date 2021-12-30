@@ -69,7 +69,7 @@ global:
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
-    apiVersion: ""
+    apiVersion:
     configureCertmanager: true
     provider: nginx
     annotations: {}
@@ -744,9 +744,6 @@ nginx-ingress:
       server-tokens: "false"
     service:
       externalTrafficPolicy: "Local"
-    ingressClassByName: false
-    ingressClassResource:
-      name: "{{ .Release.Name }}-nginx"
     resources:
       requests:
         cpu: 100m
@@ -777,10 +774,7 @@ nginx-ingress:
         memory: 5Mi
   rbac:
     create: true
-    # Needed for k8s 1.20 and 1.21
-    # https://github.com/kubernetes/ingress-nginx/issues/7510
-    # https://github.com/kubernetes/ingress-nginx/issues/7519
-    scope: false
+    scope: true
   serviceAccount:
     create: true
 

@@ -1,6 +1,4 @@
 {{/* vim: set filetype=mustache: */}}
-{{/* GitLab additions included at end of file */}}
-
 {{/*
 Expand the name of the chart.
 */}}
@@ -37,7 +35,7 @@ Create a default fully qualified controller name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "ingress-nginx.controller.fullname" -}}
-{{- printf "%s-%s" (include "ingress-nginx.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "ingress-nginx.fullname" .) "controller" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -60,7 +58,7 @@ Create a default fully qualified default backend name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "ingress-nginx.defaultBackend.fullname" -}}
-{{- printf "%s-%s" (include "ingress-nginx.fullname" .) .Values.defaultBackend.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "ingress-nginx.fullname" .) "default-backend" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -68,7 +66,6 @@ Common labels
 */}}
 {{- define "ingress-nginx.labels" -}}
 helm.sh/chart: {{ include "ingress-nginx.chart" . }}
-{{ include "ingress-nginx.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -129,16 +126,6 @@ Check the ingress controller version tag is at most three versions behind the la
 {{- if not (semverCompare ">=0.27.0-0" .Values.controller.image.tag) -}}
 {{- fail "Controller container image tag should be 0.27.0 or higher" -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-IngressClass parameters.
-*/}}
-{{- define "ingressClass.parameters" -}}
-  {{- if .Values.controller.ingressClassResource.parameters -}}
-          parameters:
-{{ toYaml .Values.controller.ingressClassResource.parameters | indent 4}}
-  {{ end }}
 {{- end -}}
 
 {{/* GitLab-provided partials starting below */}}
