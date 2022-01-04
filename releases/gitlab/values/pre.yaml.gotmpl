@@ -23,8 +23,9 @@ nginx-ingress:
                     values:
                       - controller
               topologyKey: kubernetes.io/hostname
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+
+  nodeSelector:
+    cloud.google.com/gke-nodepool: default-2
 
 registry:
   database:
