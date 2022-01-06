@@ -5,7 +5,6 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
-    component: "{{ .Values.controller.name }}"
     {{- include "ingress-nginx.labels" . | nindent 4 }}
   name: {{ include "ingress-nginx.fullname" . }}
 rules:
@@ -43,9 +42,11 @@ rules:
     verbs:
       - get
       - list
+      - update
       - watch
   - apiGroups:
-      - networking.k8s.io
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
     resources:
       - ingresses
     verbs:
@@ -60,13 +61,14 @@ rules:
       - create
       - patch
   - apiGroups:
-      - networking.k8s.io
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
     resources:
       - ingresses/status
     verbs:
       - update
   - apiGroups:
-      - networking.k8s.io
+      - "networking.k8s.io" # k8s 1.14+
     resources:
       - ingressclasses
     verbs:
