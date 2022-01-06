@@ -52,7 +52,6 @@ data:
       {{- with .Values.validation.manifests }}
       manifests:
         referencelimit: {{ .referencelimit }}
-        payloadsizelimit: {{ .payloadsizelimit }}
         urls:
           allow:
         {{- range .urls.allow }}

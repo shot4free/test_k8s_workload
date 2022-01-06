@@ -1,4 +1,4 @@
-{{- if and .Values.podSecurityPolicy.enabled (empty .Values.controller.existingPsp) -}}
+{{- if .Values.podSecurityPolicy.enabled -}}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -23,7 +23,7 @@ spec:
   # Allow core volume types.
   volumes:
     - 'configMap'
-    - 'emptyDir'
+    #- 'emptyDir'
     #- 'projected'
     - 'secret'
     #- 'downwardAPI'
