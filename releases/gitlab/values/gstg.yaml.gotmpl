@@ -99,6 +99,9 @@ gitlab:
         cpu: 4
         memory: 5G
   kas:
+    global:
+      ingress:
+        class: ""
     image:
       tag: v14.5.0-race
     nodeSelector:
