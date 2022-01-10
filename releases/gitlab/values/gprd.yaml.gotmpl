@@ -4,12 +4,12 @@ nginx-ingress:
   controller:
     autoscaling:
       minReplicas: 10
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
     resources:
       requests:
         cpu: 1
         memory: 1G
+  nodeSelector:
+    cloud.google.com/gke-nodepool: default-3
 
 registry:
   hpa:
