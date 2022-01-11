@@ -72,6 +72,7 @@ gitlab:
   gitlab-pages:
     hpa:
       minReplicas: 2
+      maxReplicas: 20
       targetAverageValue: 800m
     resources:
       requests:
