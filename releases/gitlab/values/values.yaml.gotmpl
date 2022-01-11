@@ -443,7 +443,7 @@ gitlab:
           maxSurge: 25%
           maxUnavailable: 0
     extraEnv:
-      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
+      GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages?debug_logging=true"
       FF_ENABLE_REDIRECTS: "true"
       FF_ENABLE_PLACEHOLDERS: "true"
     headers:
