@@ -173,6 +173,13 @@ releases:
       - apiVersion: v1
         kind: Secret
         metadata:
+          name: registry-cdn-private-key-v1
+          namespace: {{ $namespace }}
+        stringData:
+          private-key: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.registry._k8s_cdn_private_key") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
           name: gitlab-postgres-credential-v1
           namespace: {{ $namespace }}
         stringData:
