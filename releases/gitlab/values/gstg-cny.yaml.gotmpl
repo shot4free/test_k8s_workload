@@ -57,18 +57,27 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         nodeSelector:
           cloud.google.com/gke-nodepool: api-0
+        service:
+          # gcloud compute address api-gke-gstg-cny
+          loadBalancerIP: 10.224.34.72
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-0
+        service:
+          # gcloud compute address git-https-gke-gstg-cny
+          loadBalancerIP: 10.224.34.201
       web:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
           CANARY: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
+        service:
+          # gcloud compute address web-gke-gstg-cny
+          loadBalancerIP: 10.224.34.199
       websockets:
         hpa:
           minReplicas: 1
@@ -78,6 +87,9 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
           GODEBUG: madvdontneed=1
+        service:
+          # gcloud compute address websockets-gke-gstg-cny
+          loadBalancerIP: 10.224.34.200
     minReplicas: 2
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"

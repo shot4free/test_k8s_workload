@@ -153,6 +153,8 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
+    workhorse:
+      sentryDSN: "https://2d4033147e9e4d38a071aca58bc816a8@sentry.gitlab.net/14"
   kas:
     image:
       tag: v14.5.0
@@ -200,6 +202,7 @@ gitlab:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
     psql:
+      database: gitlabhq_production_sidekiq
       host: pgbouncer-sidekiq.int.gprd.gitlab.net
       prepared_statements: false
       load_balancing:

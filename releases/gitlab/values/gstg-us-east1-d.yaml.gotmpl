@@ -17,6 +17,24 @@ gitlab:
     service:
       # gcloud compute address ssh-gke-gstg-us-east1-d
       loadBalancerIP: 10.224.46.6
+  webservice:
+    deployments:
+      api:
+        service:
+          # gcloud compute address api-gke-gstg-us-east1-d
+          loadBalancerIP: 10.224.46.22
+      git:
+        service:
+          # gcloud compute address git-https-gke-gstg-us-east1-d
+          loadBalancerIP: 10.224.46.32
+      web:
+        service:
+          # gcloud compute address web-gke-gstg-us-east1-d
+          loadBalancerIP: 10.224.46.18
+      websockets:
+        service:
+          # gcloud compute address websockets-gke-gstg-us-east1-d
+          loadBalancerIP: 10.224.46.209
 registry:
   service:
     # gcloud compute address registry-gke-gstg-us-east1-d

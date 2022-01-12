@@ -99,14 +99,23 @@ gitlab:
           path: '/api'
         nodeSelector:
           cloud.google.com/gke-nodepool: default-2
+        service:
+          # gcloud compute address api-gke-pre
+          loadBalancerIP: 10.232.20.95
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-2
+        service:
+          # gcloud compute address git-https-gke-pre
+          loadBalancerIP: 10.232.20.118
         shutdown:
           blackoutSeconds: 0
       web:
         nodeSelector:
           cloud.google.com/gke-nodepool: default-2
+        service:
+          # gcloud compute address web-gke-pre
+          loadBalancerIP: 10.232.20.112
       websockets:
         deployment:
           readinessProbe:
@@ -114,8 +123,14 @@ gitlab:
           terminationGracePeriodSeconds: 30
         nodeSelector:
           cloud.google.com/gke-nodepool: default-2
+        service:
+          # gcloud compute address websockets-gke-pre
+          loadBalancerIP: 10.232.20.115
         shutdown:
           blackoutSeconds: 0
+    rack_attack:
+      git_basic_auth:
+        enabled: false
     workerProcesses: 2
     workhorse:
       resources:

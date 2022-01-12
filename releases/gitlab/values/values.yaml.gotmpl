@@ -736,6 +736,12 @@ gitlab:
         nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
 {{- end }}
       proxyBodySize: 0
+    rack_attack:
+      git_basic_auth:
+        enabled: true
+        maxretry: 30
+        findtime: 180
+        bantime: 3600      
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
