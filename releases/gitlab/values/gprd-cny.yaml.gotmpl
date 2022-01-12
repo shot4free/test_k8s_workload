@@ -43,12 +43,18 @@ gitlab:
           # keeping minReplicas high enough to not suffer from node scaling
           # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
           minReplicas: 16
+        service:
+          # gcloud compute address api-gke-gprd-cny
+          loadBalancerIP: 10.216.8.13
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
+        service:
+          # gcloud compute address git-https-gke-gprd-cny
+          loadBalancerIP: 10.216.8.10
       web:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
@@ -66,6 +72,9 @@ gitlab:
             memory: 7G
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
+        service:
+          # gcloud compute address web-gke-gprd-cny
+          loadBalancerIP: 10.216.8.87
       websockets:
         hpa:
           minReplicas: 1
@@ -75,6 +84,9 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
           GODEBUG: madvdontneed=1
+        service:
+          # gcloud compute address websockets-gke-gprd-cny
+          loadBalancerIP: 10.216.8.15
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
