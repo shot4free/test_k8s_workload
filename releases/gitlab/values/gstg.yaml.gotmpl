@@ -5,6 +5,15 @@ nginx-ingress:
     cloud.google.com/gke-nodepool: default-2
 
 registry:
+  middleware:
+    storage:
+      - name: googlecdn
+        options:
+          baseurl: cdn.registry.staging.gitlab.com
+          privatekeySecret:
+            secret: registry-cdn-private-key-v1
+            key: private-key
+          keyname: gstg-registry-cdn
   database:
     enabled: true
     host: pgbouncer-registry.int.gstg.gitlab.net
