@@ -34,9 +34,6 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
   gitlab-shell:
-    metrics:
-      enabled: true
-    sshDaemon: gitlab-sshd
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-0
     service:

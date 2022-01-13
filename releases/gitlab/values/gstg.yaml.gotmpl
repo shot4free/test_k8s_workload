@@ -55,6 +55,10 @@ registry:
     maxReplicas: 20
 
 gitlab:
+  gitlab-shell:
+    metrics:
+      enabled: true
+    sshDaemon: gitlab-sshd
   gitlab-pages:
     hpa:
       minReplicas: 2
