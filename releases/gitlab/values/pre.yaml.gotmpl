@@ -28,6 +28,15 @@ nginx-ingress:
     cloud.google.com/gke-nodepool: default-2
 
 registry:
+  middleware:
+    storage:
+      - name: googlecdn
+        options:
+          baseurl: cdn.registry.pre.gitlab.com
+          privatekeySecret:
+            secret: registry-cdn-private-key-v1
+            key: private-key
+          keyname: private-key
   database:
     enabled: true
     host: 10.33.1.2
