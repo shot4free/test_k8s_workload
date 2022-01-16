@@ -84,6 +84,8 @@ gitlab:
       FF_HANDLE_CACHE_HEADERS: "true"
   gitlab-shell:
     resources:
+      limits:
+        memory: 1.5G
       requests:
         cpu: 2000m
     hpa:
