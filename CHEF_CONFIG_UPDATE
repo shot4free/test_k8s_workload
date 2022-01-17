@@ -5,6 +5,10 @@ Example:
 
 * GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146
 
+2022-01-17
+
+* Pages certificates were updated https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6160
+
 2021-10-26
 
 * GSTG-CNY add new gitaly node https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2087
