@@ -187,7 +187,7 @@ environments:
       - &gprd_values
         cluster: gprd-gitlab-gke
         env_prefix: gprd
-        gitlab_chart_version: 842cea70d3b8cef1007685505bafae3963c26f31
+        gitlab_chart_version: fa01e4231bc08ee86a30ba773b015ec82b23b3bd
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         gitlab_internal_lb_dns_address: "int.gprd.gitlab.net"
