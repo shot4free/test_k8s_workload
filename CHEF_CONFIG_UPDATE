@@ -70,3 +70,7 @@ Example:
 2021-12-13
 
 * GSTG - Updating the monitoring whitelist due to failing healthchecks https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6055#note_770862947
+
+2022-01-19
+
+* GPRD - Secret added for the Registry CDN https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14900
