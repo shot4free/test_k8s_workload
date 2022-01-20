@@ -12,6 +12,16 @@ nginx-ingress:
     cloud.google.com/gke-nodepool: default-3
 
 registry:
+  middleware:
+    storage:
+      - name: googlecdn
+        options:
+          baseurl: cdn.registry.gitlab.com
+          privatekeySecret:
+            secret: registry-cdn-private-key-v1
+            key: private-key
+          keyname: gprd-registry-cdn
+          ipfilteredby: gcp
   hpa:
     # min is set higher until we have more control over the HPA
     # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
