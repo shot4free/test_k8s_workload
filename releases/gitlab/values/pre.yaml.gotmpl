@@ -91,6 +91,9 @@ gitlab:
         memory: 70M
       limits:
         memory: 1G
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   webservice:
     hpa:
       minReplicas: 2

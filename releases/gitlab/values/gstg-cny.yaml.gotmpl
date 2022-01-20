@@ -33,6 +33,9 @@ gitlab:
   gitlab-pages:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-0
@@ -94,6 +97,9 @@ gitlab:
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
 
 registry:
   hpa:
@@ -103,3 +109,6 @@ registry:
   service:
     # gcloud compute address registry-gke-gstg-cny
     loadBalancerIP: 10.224.34.100
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: gitlab-cny-registry@{{ .Values.google_project }}.iam.gserviceaccount.com
