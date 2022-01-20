@@ -76,9 +76,6 @@ gitlab:
       FF_ENFORCE_IP_RATE_LIMITS: "false"
     rateLimitSourceIP: 10
     rateLimitSourceIPBurst: 100
-    serviceAccount:
-      annotations:
-        iam.gke.io/gcp-service-account: gitlab-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
