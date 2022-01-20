@@ -484,6 +484,9 @@ gitlab:
     service:
       annotations:
         cloud.google.com/load-balancer-type: Internal
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
     useHTTPProxy: true
     useProxyV2: true
   gitlab-shell:

@@ -17,6 +17,10 @@ nginx-ingress:
         <<: *nginx_labels
 
 gitlab:
+  gitlab-pages:
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
@@ -92,6 +96,9 @@ gitlab:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_LOG_DEPRECATIONS: "true"
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
 
 global:
   pages:
@@ -109,6 +116,9 @@ registry:
   service:
     # gcloud compute address registry-gke-gprd-cny
     loadBalancerIP: 10.216.8.18
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: gitlab-cny-registry@{{ .Values.google_project }}.iam.gserviceaccount.com
   storage:
     secret: registry-storage-v4
   # When enabled, the upload purger will attempt to make deletes against the
@@ -121,4 +131,3 @@ registry:
       enabled: false
   gc:
     disabled: false
-
