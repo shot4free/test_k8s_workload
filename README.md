@@ -94,7 +94,10 @@ There is an upstream helm chart wrapped into a helm release called `gitlab-secre
 
 When creating a secret, attempt to follow the documentation as close as possible and utilize the default values where possible.  Except when naming the secret.  When naming the secret, attempt to provide some form of version control that way if we need to rotate a secret we can do so and still have a fall back in the case where a new secret prevents the start-up of a Pod.  Example, if we utilize the name `some-secret` in our own documentation, utilize `some-secret-v1`, where `-v1` will be utilize for future usage in secret rotations.
 
-### Secret Rotation
+### Secret Rotation (including secrets synced from chef)
+
+Note that the below process will create two secrets with the same content, but this is important as Kubernetes
+will only rotate the pods if we change the name of the secret object used in the deployment.
 
 1. Duplicate the secret that already exists
 1. Change the name of the secret by incrementing it's version control portion of the name
@@ -102,10 +105,11 @@ When creating a secret, attempt to follow the documentation as close as possible
 1. Find the location in our `gitlab` release and modify the secret object to be used by changing the name appropriately
 1. Create a Merge Request
 1. Proceed to follow our [CONTRIBUTING.md](CONTRIBUTING.md) document to complete the roll-out of said secret
+1. Optionally do another MR to remove the previous version of the secret
 
 ## Create/Apply Configurations
 
-### Chef Managed Secrets/Configurations
+### Chef Managed Configurations
 
 For any changes to configurations that are stored in Chef:
 
