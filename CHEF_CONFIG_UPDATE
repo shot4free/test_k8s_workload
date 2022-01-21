@@ -5,6 +5,11 @@ Example:
 
 * GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146
 
+
+2022-01-21
+
+* add gitlab-qa and gitlab-qa-bot to rate limit exclusion in gstg - https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1221
+
 2022-01-17
 
 * Pages certificates were updated https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6160
