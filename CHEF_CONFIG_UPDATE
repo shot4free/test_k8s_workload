@@ -79,3 +79,7 @@ Example:
 2022-01-19
 
 * GPRD - Secret added for the Registry CDN https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/14900
+
+2022-01-21
+
+* GSTG - Rate limit bypass for gitlab-qa in production https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1222
