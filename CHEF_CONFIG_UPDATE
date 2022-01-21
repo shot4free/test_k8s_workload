@@ -8,6 +8,7 @@ Example:
 
 2022-01-21
 
+* add gitlab-release-tools-bot to rate limit exclusion in gprd - https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2195
 * add gitlab-qa and gitlab-qa-bot to rate limit exclusion in gstg - https://gitlab.com/gitlab-com/gl-infra/chef-repo/-/merge_requests/1221
 
 2022-01-17
