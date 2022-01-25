@@ -91,6 +91,13 @@ gitlab:
         memory: 70M
       limits:
         memory: 1G
+    extraEnv:
+      FF_HANDLE_CACHE_HEADERS: "true"
+      FF_ENFORCE_IP_RATE_LIMITS: "false"
+    rateLimitSourceIP: 20
+    rateLimitSourceIPBurst: 1000
+    rateLimitDomain: 1000
+    rateLimitDomainBurst: 10000
   webservice:
     hpa:
       minReplicas: 2
