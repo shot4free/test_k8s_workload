@@ -5,6 +5,8 @@ Example:
 
 * GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146
 
+2022-01-25
+* add gitaly node nsf-file68 https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6214
 
 2022-01-21
 
