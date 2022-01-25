@@ -197,7 +197,7 @@ gitlab:
       sentryDSN: "https://2d4033147e9e4d38a071aca58bc816a8@sentry.gitlab.net/14"
   kas:
     image:
-      tag: v14.9.0
+      tag: 14-10-202204121520-1ad684ad2e5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-3
     service:
@@ -222,6 +222,8 @@ gitlab:
         sentry:
           dsn: https://af4940ad841b46d78708595fc654af78@sentry.gitlab.net/124
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
+        google_profiler:
+          enabled: true
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
