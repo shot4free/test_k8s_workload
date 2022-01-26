@@ -95,9 +95,9 @@ gitlab:
       FF_HANDLE_CACHE_HEADERS: "true"
       FF_ENFORCE_IP_RATE_LIMITS: "false"
     rateLimitSourceIP: 20
-    rateLimitSourceIPBurst: 1000
-    rateLimitDomain: 1000
-    rateLimitDomainBurst: 10000
+    rateLimitSourceIPBurst: 500
+    rateLimitDomain: 500
+    rateLimitDomainBurst: 5000
   gitlab-shell:
     resources:
       limits:
