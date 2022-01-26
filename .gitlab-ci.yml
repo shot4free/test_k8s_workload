@@ -8,12 +8,18 @@ include:
   - '/ci/shellcheck.yml'
   - '/ci/version-checks.yml'
   - '/ci/check-vendored-charts.yml'
+  # Dependency scanning
+  # https://docs.gitlab.com/ee/user/application_security/dependency_scanning/
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
   CI_IMAGE_VERSION: 'v5.8.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
+
+dependency_scanning:
+  stage: check
 
 .pre-base:
   variables:
