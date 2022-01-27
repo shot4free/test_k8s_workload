@@ -484,6 +484,21 @@ global:
     enabled: false
     service:
       apiExternalPort: 8153 # port for connections from the GitLab backend
+    hpa:
+      customMetrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 50
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: AverageValue
+              averageValue: 384Mi
+
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell
   shell:

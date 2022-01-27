@@ -15,8 +15,11 @@ spec:
   minReplicas: {{ .Values.minReplicas }}
   maxReplicas: {{ .Values.maxReplicas }}
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageValue: {{ .Values.hpa.targetAverageValue }}
+  {{- if not .Values.hpa.customMetrics }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageValue: {{ .Values.hpa.targetAverageValue }}
+  {{- else -}}
+    {{- toYaml .Values.hpa.customMetrics | nindent 4 -}}
 {{- end -}}
