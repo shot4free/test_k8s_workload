@@ -25,8 +25,8 @@ registry:
   hpa:
     # min is set higher until we have more control over the HPA
     # in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
-    minReplicas: 35
-    maxReplicas: 35
+    minReplicas: 20
+    maxReplicas: 90
   resources:
     requests:
       memory: 3G
@@ -82,8 +82,8 @@ registry:
 gitlab:
   gitlab-pages:
     hpa:
-      minReplicas: 6
-      maxReplicas: 6
+      minReplicas: 2
+      maxReplicas: 20
       targetAverageValue: 800m
     resources:
       requests:
@@ -99,9 +99,6 @@ gitlab:
     rateLimitDomain: 1000
     rateLimitDomainBurst: 10000
   gitlab-shell:
-    hpa:
-      minReplicas: 40
-      maxReplicas: 40
     resources:
       limits:
         memory: 1.5G
@@ -120,8 +117,7 @@ gitlab:
     deployments:
       api:
         hpa:
-          minReplicas: 42
-          minReplicas: 42
+          minReplicas: 25
           targetAverageValue: 3600m
         workhorse:
           resources:
@@ -137,15 +133,12 @@ gitlab:
             cpu: 4500m
             memory: 7G
       git:
-        hpa:
-          minReplicas: 83
-          minReplicas: 83
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
       web:
         hpa:
           minReplicas: 25
-          maxReplicas: 25
+          maxReplicas: 150
           targetAverageValue: 3000m
         nodeSelector:
           cloud.google.com/gke-nodepool: web-0
@@ -182,9 +175,6 @@ gitlab:
     workhorse:
       sentryDSN: "https://2d4033147e9e4d38a071aca58bc816a8@sentry.gitlab.net/14"
   kas:
-    hpa:
-      minReplicas: 4
-      maxReplicas: 4
     image:
       tag: v14.5.0
     nodeSelector:
@@ -249,8 +239,8 @@ gitlab:
         hpa:
           targetAverageValue: 600m
         concurrency: 15
-        minReplicas: 140
-        maxReplicas: 140
+        minReplicas: 56
+        maxReplicas: 225
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
@@ -301,8 +291,8 @@ gitlab:
           labels:
             shard: memory-bound
         concurrency: 1
-        minReplicas: 14
-        maxReplicas: 14
+        minReplicas: 8
+        maxReplicas: 16
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
         podLabels:
@@ -382,7 +372,7 @@ gitlab:
           labels:
             shard: elasticsearch
         concurrency: 2
-        minReplicas: 8
+        minReplicas: 2
         maxReplicas: 8
         nodeSelector:
           cloud.google.com/gke-nodepool: default-3
@@ -408,8 +398,8 @@ gitlab:
           labels:
             shard: low-urgency-cpu-bound
         concurrency: 5
-        minReplicas: 24
-        maxReplicas: 24
+        minReplicas: 10
+        maxReplicas: 100
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
         podLabels:
@@ -432,8 +422,8 @@ gitlab:
           labels:
             shard: quarantine
         concurrency: 15
-        minReplicas: 23
-        maxReplicas: 23
+        minReplicas: 10
+        maxReplicas: 50
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-catchall-2
         podLabels:
@@ -460,8 +450,8 @@ gitlab:
         concurrency: 5
         hpa:
           targetAverageValue: 500m
-        minReplicas: 38
-        maxReplicas: 38
+        minReplicas: 30
+        maxReplicas: 130
         memoryKiller:
           checkInterval: 3
           graceTime: 900
