@@ -188,10 +188,13 @@ gitlab:
       port: 443
     resources:
       limits:
-        memory: 512M
+        memory: 768M
       requests:
         cpu: 100m
-        memory: 256M
+        memory: 512M
+    hpa:
+      targetAverageValue: 500m
+    minReplicas: 4
     customConfig:
       observability:
         sentry:
