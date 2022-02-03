@@ -189,10 +189,13 @@ gitlab:
       port: 443
     resources:
       limits:
-        memory: 512M
+        memory: 768M
       requests:
         cpu: 100m
-        memory: 256M
+        memory: 512M
+    hpa:
+      targetAverageValue: 500m
+    minReplicas: 4
     customConfig:
       observability:
         sentry:
@@ -578,6 +581,345 @@ global:
     extra:
       oneTrustId: 7f944245-c5cd-4eed-a90e-dd955adfdd08
       googleTagManagerNonceId: GTM-NJXWQL
+
+  gitaly:
+    external:
+      - hostname: file-01-stor-gprd.c.gitlab-production.internal
+        name: default
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gprd.c.gitlab-production.internal
+        name: nfs-file01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gprd.c.gitlab-production.internal
+        name: nfs-file02
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-03-stor-gprd.c.gitlab-production.internal
+        name: nfs-file03
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-04-stor-gprd.c.gitlab-production.internal
+        name: nfs-file04
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-05-stor-gprd.c.gitlab-production.internal
+        name: nfs-file05
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-06-stor-gprd.c.gitlab-production.internal
+        name: nfs-file06
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-07-stor-gprd.c.gitlab-production.internal
+        name: nfs-file07
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-08-stor-gprd.c.gitlab-production.internal
+        name: nfs-file08
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-09-stor-gprd.c.gitlab-production.internal
+        name: nfs-file09
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-10-stor-gprd.c.gitlab-production.internal
+        name: nfs-file10
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-11-stor-gprd.c.gitlab-production.internal
+        name: nfs-file11
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-12-stor-gprd.c.gitlab-production.internal
+        name: nfs-file12
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-13-stor-gprd.c.gitlab-production.internal
+        name: nfs-file13
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-14-stor-gprd.c.gitlab-production.internal
+        name: nfs-file14
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-15-stor-gprd.c.gitlab-production.internal
+        name: nfs-file15
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-16-stor-gprd.c.gitlab-production.internal
+        name: nfs-file16
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-17-stor-gprd.c.gitlab-production.internal
+        name: nfs-file17
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-18-stor-gprd.c.gitlab-production.internal
+        name: nfs-file18
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-19-stor-gprd.c.gitlab-production.internal
+        name: nfs-file19
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-20-stor-gprd.c.gitlab-production.internal
+        name: nfs-file20
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-21-stor-gprd.c.gitlab-production.internal
+        name: nfs-file21
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-22-stor-gprd.c.gitlab-production.internal
+        name: nfs-file22
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-23-stor-gprd.c.gitlab-production.internal
+        name: nfs-file23
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-24-stor-gprd.c.gitlab-production.internal
+        name: nfs-file24
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-25-stor-gprd.c.gitlab-production.internal
+        name: nfs-file25
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-26-stor-gprd.c.gitlab-production.internal
+        name: nfs-file26
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-27-stor-gprd.c.gitlab-production.internal
+        name: nfs-file27
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-28-stor-gprd.c.gitlab-production.internal
+        name: nfs-file28
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-29-stor-gprd.c.gitlab-production.internal
+        name: nfs-file29
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-30-stor-gprd.c.gitlab-production.internal
+        name: nfs-file30
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-31-stor-gprd.c.gitlab-production.internal
+        name: nfs-file31
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-32-stor-gprd.c.gitlab-production.internal
+        name: nfs-file32
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-33-stor-gprd.c.gitlab-production.internal
+        name: nfs-file33
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-34-stor-gprd.c.gitlab-production.internal
+        name: nfs-file34
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-35-stor-gprd.c.gitlab-production.internal
+        name: nfs-file35
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-36-stor-gprd.c.gitlab-production.internal
+        name: nfs-file36
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-37-stor-gprd.c.gitlab-production.internal
+        name: nfs-file37
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-38-stor-gprd.c.gitlab-production.internal
+        name: nfs-file38
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-39-stor-gprd.c.gitlab-production.internal
+        name: nfs-file39
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-40-stor-gprd.c.gitlab-production.internal
+        name: nfs-file40
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-41-stor-gprd.c.gitlab-production.internal
+        name: nfs-file41
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-42-stor-gprd.c.gitlab-production.internal
+        name: nfs-file42
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-43-stor-gprd.c.gitlab-production.internal
+        name: nfs-file43
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-44-stor-gprd.c.gitlab-production.internal
+        name: nfs-file44
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-45-stor-gprd.c.gitlab-production.internal
+        name: nfs-file45
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-46-stor-gprd.c.gitlab-production.internal
+        name: nfs-file46
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-47-stor-gprd.c.gitlab-production.internal
+        name: nfs-file47
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-48-stor-gprd.c.gitlab-production.internal
+        name: nfs-file48
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-49-stor-gprd.c.gitlab-production.internal
+        name: nfs-file49
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-50-stor-gprd.c.gitlab-production.internal
+        name: nfs-file50
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-51-stor-gprd.c.gitlab-production.internal
+        name: nfs-file51
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-52-stor-gprd.c.gitlab-production.internal
+        name: nfs-file52
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-53-stor-gprd.c.gitlab-production.internal
+        name: nfs-file53
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-54-stor-gprd.c.gitlab-production.internal
+        name: nfs-file54
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-55-stor-gprd.c.gitlab-production.internal
+        name: nfs-file55
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-56-stor-gprd.c.gitlab-production.internal
+        name: nfs-file56
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-57-stor-gprd.c.gitlab-production.internal
+        name: nfs-file57
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-58-stor-gprd.c.gitlab-production.internal
+        name: nfs-file58
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-59-stor-gprd.c.gitlab-production.internal
+        name: nfs-file59
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-60-stor-gprd.c.gitlab-production.internal
+        name: nfs-file60
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-61-stor-gprd.c.gitlab-production.internal
+        name: nfs-file61
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-62-stor-gprd.c.gitlab-production.internal
+        name: nfs-file62
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-63-stor-gprd.c.gitlab-production.internal
+        name: nfs-file63
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-64-stor-gprd.c.gitlab-production.internal
+        name: nfs-file64
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-65-stor-gprd.c.gitlab-production.internal
+        name: nfs-file65
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-66-stor-gprd.c.gitlab-production.internal
+        name: nfs-file66
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-67-stor-gprd.c.gitlab-production.internal
+        name: nfs-file67
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-68-stor-gprd.c.gitlab-production.internal
+        name: nfs-file68
+        port: "9999"
+        tlsEnabled: false
+      - hostname: i.gprd-gcp-tcp-lb-internal-praefect.il4.us-east1.lb.gitlab-production.internal
+        name: praefect-file01
+        port: "2305"
+        tlsEnabled: false
+      - hostname: file-cny-01-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-cny01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-marquee-01-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-marquee01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-marquee-02-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-marquee02
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-marquee-03-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-marquee03
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-01-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-02-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd02
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-03-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd03
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-04-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd04
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-05-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd05
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-06-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd06
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-07-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd07
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-08-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd08
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-09-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd09
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-hdd-10-stor-gprd.c.gitlab-production.internal
+        name: nfs-file-hdd10
+        port: "9999"
+        tlsEnabled: false      
 
   hosts:
     gitlab:

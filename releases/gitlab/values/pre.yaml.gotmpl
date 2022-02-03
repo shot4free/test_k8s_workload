@@ -93,9 +93,10 @@ gitlab:
         memory: 1G
     extraEnv:
       FF_HANDLE_CACHE_HEADERS: "true"
-      FF_ENFORCE_IP_RATE_LIMITS: "false"
+      FF_ENFORCE_IP_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
     rateLimitSourceIP: 20
-    rateLimitSourceIPBurst: 500
+    rateLimitSourceIPBurst: 1000
     rateLimitDomain: 500
     rateLimitDomainBurst: 5000
   webservice:
@@ -252,6 +253,21 @@ global:
   email:
     from: notify@mg.pre.gitlab.com
     reply_to: noreply@pre.gitlab.com
+
+  gitaly:
+    external:
+      - hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
+        name: default
+        port: "9999"
+        tlsEnabled: false
+      - hostname: praefect-01-stor-pre.c.gitlab-pre.internal
+        name: praefect
+        port: "2305"
+        tlsEnabled: false
+      - hostname: gitaly-03-sv-pre.c.gitlab-pre.internal
+        name: gitaly-03
+        port: "9999"
+        tlsEnabled: false    
 
   hosts:
     # gcloud compute address nginx-gke-pre

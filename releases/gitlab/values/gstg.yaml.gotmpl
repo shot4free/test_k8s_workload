@@ -73,9 +73,10 @@ gitlab:
         memory: 1G
     extraEnv:
       FF_HANDLE_CACHE_HEADERS: "true"
-      FF_ENFORCE_IP_RATE_LIMITS: "false"
+      FF_ENFORCE_IP_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
     rateLimitSourceIP: 20
-    rateLimitSourceIPBurst: 500
+    rateLimitSourceIPBurst: 1000
     rateLimitDomain: 500
     rateLimitDomainBurst: 5000
   mailroom:
@@ -518,6 +519,118 @@ global:
         secret: gitlab-registry-notification-v1
     replication:
       enabled: true
+
+  gitaly:
+    external:
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: default
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file02
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file03
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file04
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file05
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file06
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file07
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file08
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file09
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file10
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file11
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file12
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file13
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file14
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file15
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file16
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file17
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file18
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file19
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-02-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file20
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-zfs-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file21
+        port: "9999"
+        tlsEnabled: false
+      - hostname: i.gstg-gcp-tcp-lb-internal-praefect.il4.us-east1.lb.gitlab-staging-1.internal
+        name: nfs-file22
+        port: "2305"
+        tlsEnabled: false
+      - hostname: file-hdd-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file23
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-06-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file24
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-cny-01-stor-gstg.c.gitlab-staging-1.internal
+        name: nfs-file-cny01
+        port: "9999"
+        tlsEnabled: false
+      - hostname: i.gstg-gcp-tcp-lb-internal-praefect-cny.il4.us-east1.lb.gitlab-staging-1.internal
+        name: nfs-file-cny02
+        port: "2305"
+        tlsEnabled: false    
+  
   hosts:
     gitlab:
       name: staging.gitlab.com
