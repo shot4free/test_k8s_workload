@@ -22,6 +22,9 @@ gitlab:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
+    metrics:
+      enabled: true
+    sshDaemon: gitlab-sshd
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
     service:
