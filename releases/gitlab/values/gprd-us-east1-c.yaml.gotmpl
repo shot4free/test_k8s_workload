@@ -13,6 +13,9 @@ global:
       - 10.221.14.130
 gitlab:
   gitlab-shell:
+    metrics:
+      enabled: true
+    sshDaemon: gitlab-sshd
     service:
       # gcloud compute address ssh-gke-gprd-us-east1-c
       loadBalancerIP: 10.221.14.5
