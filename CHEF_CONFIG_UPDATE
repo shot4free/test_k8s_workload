@@ -5,6 +5,11 @@ Example:
 
 * GPRD - Enable Service Desk Feature - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3146
 
+---
+
+2022-02-07
+
+* Preprod Update secret object for Redis - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6290
 
 2022-01-21
 
