@@ -39,6 +39,9 @@ gitlab:
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-0
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     service:
       # gcloud compute address ssh-gke-gstg-cny
       loadBalancerIP: 10.224.34.124
