@@ -22,11 +22,16 @@ gitlab:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
       enabled: true
     sshDaemon: gitlab-sshd
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-cny-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     service:
       # gcloud compute address ssh-gke-gprd-cny
       loadBalancerIP: 10.216.8.61

@@ -111,6 +111,9 @@ gitlab:
     maxReplicas: 150
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-3
