@@ -58,8 +58,13 @@ registry:
 
 gitlab:
   gitlab-shell:
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
       enabled: true
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
   gitlab-pages:
     hpa:

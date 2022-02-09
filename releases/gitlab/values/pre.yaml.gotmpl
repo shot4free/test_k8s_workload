@@ -169,6 +169,8 @@ gitlab:
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
   gitlab-shell:
+    extraEnv:
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
       enabled: true
     minReplicas: 2
@@ -178,6 +180,9 @@ gitlab:
     service:
       # gcloud compute address ssh-gke-pre
       loadBalancerIP: 10.232.20.28
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
   mailroom:
     nodeSelector:
