@@ -65,6 +65,7 @@ gitlab:
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
+    sshDaemon: gitlab-sshd
   gitlab-pages:
     hpa:
       minReplicas: 2
