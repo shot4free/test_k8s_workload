@@ -234,6 +234,7 @@ environments:
         registry_api_host: "registry.gitlab.com"
         registry_bucket_name: "gitlab-gprd-registry"
         registry_deployment_for_image_tag: "gitlab-cny-registry"
+        registry_version: v3.24.1-gitlab
         stage: "cny"
         web:
           enabled: true
