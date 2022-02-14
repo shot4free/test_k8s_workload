@@ -84,6 +84,8 @@ gitlab:
     rateLimitSourceIPBurst: 1000
     rateLimitDomain: 500
     rateLimitDomainBurst: 5000
+    zipCache:
+      expiration: 1.5m
   mailroom:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
