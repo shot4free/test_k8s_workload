@@ -23,7 +23,7 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
     extraEnv:
-      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
+      GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell&debug_logging=true
     metrics:
       enabled: true
     sshDaemon: gitlab-sshd
