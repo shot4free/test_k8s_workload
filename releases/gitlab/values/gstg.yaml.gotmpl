@@ -87,6 +87,13 @@ gitlab:
     zipCache:
       expiration: 1.5m
   mailroom:
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
+      # Pin the tag to avoid following the chart default
+      # https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/201
+      tag: 0.0.19
+      pullSecrets:
+        - name: dev-registry-access-v1
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
   webservice:

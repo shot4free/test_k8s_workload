@@ -37,6 +37,13 @@ gitlab:
       loadBalancerIP: 10.216.8.61
   mailroom:
     enabled: false
+    image:
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
+      # Pin the tag to avoid following the chart default
+      # https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/201
+      tag: 0.0.10
+      pullSecrets:
+        - name: dev-registry-access-v1
 
   sidekiq:
     enabled: false
