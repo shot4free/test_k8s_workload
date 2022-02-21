@@ -190,7 +190,7 @@ environments:
         gitlab_chart_version: b61174649493db72d15fce4334a3fd14e58d58e6
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
-        nginx_ingress_server_alias: "int.gprd.gitlab.net"
+        nginx_ingress_server_alias: "int.gprd.gitlab.net,*.ci-gateway.int.gprd.gitlab.net"
         google_project: "gitlab-production"
         kas:
           managed_cert_name: kas-gitlab-com
