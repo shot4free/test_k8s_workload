@@ -55,8 +55,8 @@ resources:
         nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/service-upstream: "true"
-{{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
-        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
+{{- if (.Values | getOrNil "nginx_ingress_server_alias") | default false }}
+        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "nginx_ingress_server_alias" }}
 {{- end }}
       labels:
         app: webservice
@@ -93,8 +93,8 @@ resources:
         kubernetes.io/ingress.provider: nginx
         nginx.ingress.kubernetes.io/service-upstream: "true"
         nginx.ingress.kubernetes.io/rewrite-target: "/$2"
-{{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
-        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
+{{- if (.Values | getOrNil "nginx_ingress_server_alias") | default false }}
+        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "nginx_ingress_server_alias" }}
 {{- end }}
       labels:
         app: webservice

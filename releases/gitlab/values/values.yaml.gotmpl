@@ -735,8 +735,8 @@ gitlab:
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-connect-timeout: 300
         nginx.ingress.kubernetes.io/proxy-read-timeout: 3600
-{{- if (.Values | getOrNil "gitlab_internal_lb_dns_address") | default false }}
-        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "gitlab_internal_lb_dns_address" }}
+{{- if (.Values | getOrNil "nginx_ingress_server_alias") | default false }}
+        nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "nginx_ingress_server_alias" }}
 {{- end }}
       proxyBodySize: 0
     rack_attack:
@@ -744,7 +744,7 @@ gitlab:
         enabled: true
         maxretry: 30
         findtime: 180
-        bantime: 3600      
+        bantime: 3600
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee
       pullSecrets:
