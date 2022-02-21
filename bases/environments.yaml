@@ -103,7 +103,7 @@ environments:
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
         gitlab_endpoint: "https://staging.gitlab.com"
-        nginx_ingress_server_alias: "int.gstg.gitlab.net,*.int.gstg.gitlab.net"
+        nginx_ingress_server_alias: "int.gstg.gitlab.net,*.ci-gateway.int.gstg.gitlab.net"
         registry_api_host: "registry.staging.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
         registry_version: v3.28.1-gitlab
