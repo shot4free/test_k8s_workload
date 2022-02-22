@@ -74,7 +74,7 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: {{ default .Values.global.affinity.podAntiAffinity.topologyKey .Values.affinity.podAntiAffinity.topologyKey | quote }}
+            - topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchLabels:
                   {{- toYaml .Values.antiAffinityLabels.matchLabels | nindent 18 }}
@@ -85,7 +85,7 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 1
             podAffinityTerm:
-              topologyKey: {{ default .Values.global.affinity.podAntiAffinity.topologyKey .Values.affinity.podAntiAffinity.topologyKey | quote }}
+              topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
                   {{- toYaml .Values.antiAffinityLabels.matchLabels | nindent 18 }}

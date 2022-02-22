@@ -272,9 +272,8 @@ controller:
   ## Node labels for controller pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  ## GitLab change: disable default nodeSelector
-  # nodeSelector:
-  #   kubernetes.io/os: linux
+  nodeSelector:
+    kubernetes.io/os: linux
 
   ## Liveness and readiness probe values
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -595,9 +594,8 @@ controller:
       ##
       priorityClassName: ""
       podAnnotations: {}
-      ## GitLab change: disable default nodeSelector
-      # nodeSelector:
-      #   kubernetes.io/os: linux
+      nodeSelector:
+        kubernetes.io/os: linux
       tolerations: []
       runAsUser: 2000
 
@@ -771,9 +769,8 @@ defaultBackend:
   ## Node labels for default backend pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  ## GitLab change: disable default nodeSelector
-  # nodeSelector:
-  #   kubernetes.io/os: linux
+  nodeSelector:
+    kubernetes.io/os: linux
 
   ## Annotations to be added to default backend pods
   ##

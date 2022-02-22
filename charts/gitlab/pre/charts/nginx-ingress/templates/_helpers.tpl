@@ -145,3 +145,11 @@ IngressClass parameters.
 {{- define "ingress-nginx.tcp-configmap" -}}
 {{ default (printf "%s-%s" (include "ingress-nginx.fullname" .) "tcp") .Values.tcpExternalConfig }}
 {{- end -}}
+
+{{- define "ingress-nginx.controller.ingress-class" -}}
+{{- if not .Values.controller.ingressClass -}}
+{{ .Release.Name }}-nginx
+{{- else -}}
+nginx
+{{- end -}}
+{{- end -}}

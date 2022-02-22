@@ -63,7 +63,3 @@ serviceLabels: {}
 
 statefulset:
   strategy: {}
-
-affinity:
-  podAntiAffinity:
-    topologyKey:

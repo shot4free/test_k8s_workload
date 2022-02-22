@@ -142,7 +142,3 @@ serviceAccount:
 
 statefulset:
   strategy: {}
-
-affinity:
-  podAntiAffinity:
-    topologyKey:

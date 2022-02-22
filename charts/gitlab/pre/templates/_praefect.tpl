@@ -62,9 +62,7 @@ Return the praefect internal port
 {{- define "gitlab.praefect.internalPort" -}}
 {{- $internalPort := 0 -}}
 {{- if hasKey .Values "praefect" -}}
-{{-   if hasKey .Values.praefect "service" -}}
-{{-     $internalPort = .Values.praefect.service.internalPort -}}
-{{-   end -}}
+{{-   $internalPort = .Values.praefect.service.internalPort -}}
 {{- end -}}
 {{- coalesce $internalPort .Values.global.praefect.service.internalPort -}}
 {{- end -}}
@@ -75,11 +73,7 @@ Return the praefect TLS internal port
 {{- define "gitlab.praefect.tls.internalPort" -}}
 {{- $internalPort := 0 -}}
 {{- if hasKey .Values "praefect" -}}
-{{-   if hasKey .Values.praefect "service" -}}
-{{-     if hasKey .Values.praefect.service "tls" -}}
-{{-       $internalPort = .Values.praefect.service.tls.internalPort -}}
-{{-     end -}}
-{{-   end -}}
+{{-   $internalPort = .Values.praefect.service.tls.internalPort -}}
 {{- end -}}
 {{- coalesce $internalPort .Values.global.praefect.service.tls.internalPort -}}
 {{- end -}}
@@ -90,9 +84,7 @@ Return the praefect external port
 {{- define "gitlab.praefect.externalPort" -}}
 {{- $externalPort := 0 -}}
 {{- if hasKey .Values "praefect" -}}
-{{-   if hasKey .Values.praefect "service" -}}
-{{-     $externalPort = .Values.praefect.service.externalPort -}}
-{{-   end -}}
+{{-   $externalPort = .Values.praefect.service.externalPort -}}
 {{- end -}}
 {{- coalesce $externalPort .Values.global.praefect.service.externalPort -}}
 {{- end -}}
@@ -103,9 +95,7 @@ Return the praefect TLS external port
 {{- define "gitlab.praefect.tls.externalPort" -}}
 {{- $externalPort := 0 -}}
 {{- if hasKey .Values "praefect" -}}
-{{-   if hasKey .Values.praefect "service" -}}
-{{-     $externalPort = .Values.praefect.service.tls.externalPort -}}
-{{-   end -}}
+{{-   $externalPort = .Values.praefect.service.tls.externalPort -}}
 {{- end -}}
 {{- coalesce $externalPort .Values.global.praefect.service.tls.externalPort -}}
 {{- end -}}

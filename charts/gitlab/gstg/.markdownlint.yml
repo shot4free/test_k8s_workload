@@ -22,13 +22,10 @@ no-emphasis-as-heading: false
 first-line-h1: false
 code-block-style:
   style: "fenced"
-emphasis-style: false
-strong-style: false
 proper-names:
   names: [
     "Akismet",
     "Alertmanager",
-    "AlmaLinux",
     "API",
     "Asana",
     "Auth0",
@@ -94,7 +91,7 @@ proper-names:
     "markdownlint",
     "Mattermost",
     "Microsoft",
-    "minikube",
+    "Minikube",
     "MinIO",
     "ModSecurity",
     "NGINX Ingress",
@@ -106,7 +103,6 @@ proper-names:
     "OpenID",
     "OpenShift",
     "PgBouncer",
-    "Postfix",
     "PostgreSQL",
     "Praefect",
     "Prometheus",
@@ -121,7 +117,6 @@ proper-names:
     "runit",
     "Salesforce",
     "SAML",
-    "Sendmail",
     "Sentry",
     "Sidekiq",
     "Shibboleth",
