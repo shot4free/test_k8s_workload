@@ -63,10 +63,10 @@ data:
       {{- if eq .contentSecurityPolicy.enabled true }}
       {{-   include "gitlab.appConfig.content_security_policy" . | nindent 8 }}
       {{- end }}
-      {{-   if .incomingEmail.enabled }}
+      {{-   if eq .incomingEmail.enabled true }}
       {{-     include "gitlab.appConfig.incoming_email" . | nindent 6 }}
       {{-   end }}
-      {{-   if .serviceDeskEmail.enabled }}
+      {{-   if eq .serviceDeskEmail.enabled true }}
       {{-     include "gitlab.appConfig.service_desk_email" . | nindent 6 }}
       {{-   end }}
       {{-   include "gitlab.appConfig.cronJobs" . | nindent 6 }}

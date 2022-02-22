@@ -31,6 +31,12 @@ global:
     # pullPolicy: IfNotPresent
     # pullSecrets: []
 
+  ## GitLab operator is DEPRECATED. DO NOT USE.
+  operator:
+    enabled: false
+    rollout:
+      autoPause: true
+
   ## Supplemental Pod labels. Will not be used for selectors.
   pod:
     labels: {}
@@ -66,7 +72,6 @@ global:
     apiVersion: ""
     configureCertmanager: true
     provider: nginx
-    # class:
     annotations: {}
     enabled: true
     tls: {}
@@ -363,10 +368,6 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
-      authToken: {}
-        # secret:
-        # key:
 
     ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#service-desk-email
     serviceDeskEmail:
@@ -389,10 +390,6 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
-      authToken: {}
-        # secret:
-        # key:
 
     ## https://docs.gitlab.com/charts/charts/globals#ldap
     ldap:
@@ -615,9 +612,6 @@ global:
     annotations: {}
 
   antiAffinity: soft
-  affinity:
-    podAntiAffinity:
-      topologyKey: "kubernetes.io/hostname"
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-workhorse-settings
   ## Global settings related to Workhorse
@@ -742,7 +736,7 @@ nginx-ingress:
       externalTrafficPolicy: "Local"
     ingressClassByName: false
     ingressClassResource:
-      name: '{{ include "ingress.class.name" $ }}'
+      name: "{{ .Release.Name }}-nginx"
     resources:
       requests:
         cpu: 100m
