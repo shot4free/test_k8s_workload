@@ -186,6 +186,9 @@ gitlab:
     workhorse:
       sentryDSN: "https://2d4033147e9e4d38a071aca58bc816a8@sentry.gitlab.net/14"
   kas:
+    global:
+      ingress:
+        class: "" # Must be set to "" otherwise, defaults to `gitlab-nginx`; we want to use the default for GKE, which is the GCE Ingress class
     image:
       tag: v14.8.1
     nodeSelector:

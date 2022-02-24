@@ -1064,9 +1064,6 @@ gitlab:
       pullSecrets:
         - name: dev-registry-access-kas-v1
       repository: dev.gitlab.org:5005/gitlab/gitlab-agent/kas
-    global:
-      ingress:
-        class: "" # Must be set to empty otherwise, defaults to `gitlab-nginx`; we want to use the default for GKE, which is the GCE Ingress class
     ingress:
       enabled: true
       annotations:
