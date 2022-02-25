@@ -40,7 +40,11 @@ resources:
 {{- end }}
 
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
+  {{ if regexMatch "^gprd.*" .Environment.Name -}}
   - apiVersion: networking.k8s.io/v1beta1
+  {{- else -}}
+  - apiVersion: networking.k8s.io/v1
+  {{- end }}
     kind: Ingress
     metadata:
       annotations:
@@ -74,8 +78,15 @@ resources:
         http:
           paths:
           - backend:
+              {{ if regexMatch "^gprd.*" .Environment.Name -}}
               serviceName: {{ $namespace }}-webservice-api
               servicePort: 8181
+              {{- else -}}
+              service:
+                name: {{ $namespace }}-webservice-api
+                port:
+                  number: 8181
+              {{- end }}
             path: /api/v[0..9]/jobs/[0-9]+/artifacts$
             pathType: ImplementationSpecific
       tls:
