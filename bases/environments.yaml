@@ -260,6 +260,7 @@ environments:
       -
         cluster: gprd-us-east1-c
         region: us-east1-c
+        registry_version: v3.30.0-gitlab
 
   gprd-us-east1-d:
     values:
