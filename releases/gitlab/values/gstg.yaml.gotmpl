@@ -500,6 +500,7 @@ global:
     sidekiq:
       routingRules:
         # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
+        - ["worker_name=ProjectImportScheduleWorker", "default"]  # temporary before remove ProjectImportScheduleWorker's needs_own_queue tag https://gitlab.com/gitlab-org/gitlab/-/merge_requests/81960
         - ["tags=needs_own_queue", null]
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
         - ["worker_name=RepositoryImportWorker", "imports"] # imports
@@ -643,8 +644,8 @@ global:
       - hostname: i.gstg-gcp-tcp-lb-internal-praefect-cny.il4.us-east1.lb.gitlab-staging-1.internal
         name: nfs-file-cny02
         port: "2305"
-        tlsEnabled: false    
-  
+        tlsEnabled: false
+
   hosts:
     gitlab:
       name: staging.gitlab.com
