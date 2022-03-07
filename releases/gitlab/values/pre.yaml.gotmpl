@@ -214,9 +214,6 @@ gitlab:
     psql:
       host: 10.33.1.14
   kas:
-    global:
-      ingress:
-        class: none # Must be set to `none` otherwise, defaults to `gitlab-nginx`; we want to use the default for GKE, which is the GCE Ingress class
     image:
       tag: v14.8.1-race
     hpa:
