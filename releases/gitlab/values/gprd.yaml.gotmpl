@@ -251,6 +251,15 @@ gitlab:
           record_type: SRV
           port: 8600
           use_tcp: true
+      ci:
+        host: pgbouncer-sidekiq.int.gprd.gitlab.net
+        load_balancing:
+          discover:
+            nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+            record: ci-db-replica.service.consul.
+            record_type: SRV
+            port: 8600
+            use_tcp: true
     pods:
       - name: catchall
         common:
@@ -1052,6 +1061,17 @@ global:
         record_type: SRV
         port: 8600
         use_tcp: true
+    ci:
+      host: pgbouncer.int.gprd.gitlab.net
+      port: 6432
+      prepared_statements: false
+      load_balancing:
+        discover:
+          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
+          record: ci-db-replica.service.consul.
+          record_type: SRV
+          port: 8600
+          use_tcp: true
 
   smtp:
     domain: mg.gitlab.com
