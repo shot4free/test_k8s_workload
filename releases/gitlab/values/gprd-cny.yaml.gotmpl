@@ -124,16 +124,6 @@ global:
     externalHttps:
       # gcloud compute address pages-gke-gprd-cny
       - 10.216.8.25
-  psql:
-    ci:
-      host: pgbouncer.int.gprd.gitlab.net
-      load_balancing:
-        discover:
-          nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
-          record: ci-db-replica.service.consul.
-          record_type: SRV
-          port: 8600
-          use_tcp: true
 
 registry:
   hpa:
