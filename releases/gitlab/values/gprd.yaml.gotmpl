@@ -182,6 +182,8 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_PERFORMANCE_BAR_STATS_URL: "https://log.gprd.gitlab.net/app/dashboards#/view/823ed530-655a-11eb-a318-db81ec4462fa?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-24h%2Cto%3Anow))"
       GITLAB_LOG_DEPRECATIONS: "true"
+      GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
+      GITLAB_MULTIPLE_DATABASE_METRICS: "true"
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
@@ -217,6 +219,8 @@ gitlab:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       GITLAB_LOG_DEPRECATIONS: "true"
+      GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
+      GITLAB_MULTIPLE_DATABASE_METRICS: "true"
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
