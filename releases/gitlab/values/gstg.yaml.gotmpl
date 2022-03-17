@@ -474,6 +474,9 @@ global:
     cron_jobs:
       schedule_migrate_external_diffs_worker:
         cron: "*/5 * * * *"
+      test_data_cleanup_worker:
+        cron: "* * */3 * *"
+        job_class: "Quality::TestDataCleanupWorker"
     dependencyProxy:
       enabled: true
       bucket: gitlab-gstg-dependency-proxy
