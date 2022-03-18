@@ -29,6 +29,10 @@ global:
       # gcloud compute address pages-gke-gstg-cny
       - 10.224.34.56
 
+  psql:
+    ci:
+      host: pgbouncer-ci.int.gstg.gitlab.net
+
 gitlab:
   gitlab-pages:
     nodeSelector:
