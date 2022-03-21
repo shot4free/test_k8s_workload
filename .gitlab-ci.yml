@@ -13,7 +13,7 @@ include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v5.8.0'
+  CI_IMAGE_VERSION: 'v5.10.1'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -207,6 +207,7 @@ stages:
   - gprd:deploy:alpha
   - gprd:deploy:beta
   - cleanup
+  - scheduled
 
 #########################################
 # Attempts to find an MR on .com and add
@@ -894,3 +895,35 @@ remove-expedite-variable:
     - if: '$AUTO_DEPLOY == "true"'
       when: never
     - if: '($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) && $EXPEDITE_DEPLOYMENT'
+
+###############################################################################
+# scheduled
+#   * These jobs run on a schedule for maintenance tasks
+###############################################################################
+
+open-chart-bump-mr-pre:
+  stage: scheduled
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  script:
+    - ./bin/autobump-gitlab-chart.sh pre
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: never
+
+open-chart-bump-mr-gstg:
+  stage: scheduled
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  script:
+    - ./bin/autobump-gitlab-chart.sh gstg
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: never
+
+open-chart-bump-mr-gprd:
+  stage: scheduled
+  image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
+  script:
+    - ./bin/autobump-gitlab-chart.sh gprd
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: never

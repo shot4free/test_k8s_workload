@@ -1,3 +1,4 @@
 helm 3.7.0
 helmfile 0.143.0
 yq v4.11.2
+glab 1.22.0
