@@ -4,10 +4,10 @@ environments:
   # be merged into other environments.
   __base:
     values:
-      # These defaults are for services that are enabled
-      # on all regional clusters, in all environments
-      # These are read by values.yaml.gotmpl
       - &regional_cluster_defaults
+        # These defaults are for services that are enabled
+        # on all regional clusters, in all environments
+        # These are read by values.yaml.gotmpl
         # Registry is disabled by default on the regional cluster
         # and enabled selectively for preprod and canary
         registry:
@@ -25,10 +25,10 @@ environments:
             enabled: true
         nginx-ingress:
           enabled: false
-      # These services are only installed in the
-      # regional cluster, so we disable them for
-      # all zonal clusters, regardless of the environment.
       - &zonal_cluster_defaults
+        # These services are only installed in the
+        # regional cluster, so we disable them for
+        # all zonal clusters, regardless of the environment.
         registry:
           enabled: true
         gitlab:
@@ -47,16 +47,14 @@ environments:
           ingress_readiness: true
         nginx-ingress:
           enabled: true
-
   ops:
     values:
-      - <<: *regional_cluster_defaults
-      -
-        google_project: "gitlab-ops"
+      - !!merge <<: *regional_cluster_defaults
+      - google_project: "gitlab-ops"
         gitlab_endpoint: "https://ops.gitlab.net"
   pre:
     values:
-      - <<: *regional_cluster_defaults
+      - !!merge <<: *regional_cluster_defaults
       - &pre_values
         gitlab_runner_chart_version: 20683318add4eb99a8a8508932860c20f0ae70f6
         gitlab_chart_version: 24fcdf944ee3cc66f87db26c6fb8149e8a1208f1
@@ -93,10 +91,9 @@ environments:
           dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAOaMyanI+FZ/JzTqRvDbHCTdXEeEtbqxMYCaJ2w6gfiql3PirxSPv3gvDsSxrvThrYfgtfy4ntU6Fe+U0PjxstWvdw8rTY7pzGkXDZWn6Rvw9MKxKeOGlAHNeJU52UynXtzcWZAr8q5V8FcjdZeMNwDnk04DCLxhab3eLTCwa2ZdAAAAFQD0P4b+KRdfFEV76ASKDZrK3xNBWwAAAIEAguFw2EldeJrgHAxHe1buwjZ24cLEB6R/EK9omg5OXIIyosxQIzb6wkcrqdJLpH7Ekj4vZBfz8TySM7ac7NUCjrQxlXjMiqnxz/rFarVHvfm40tVnActciMwbG3/JcHMGGz9Qqaa3wiSakF2LPF3BILFn1QdK1agxJxPHj14Vyl0AAACAdJrn8OK/hebmzy+B1wf5LjhnqYixNQJWuk42/A04VeYbE08GdRAikBPiFWrGLCZcdvx7ovBbKNHCqsXSy9PVz64zcvEL2zNp+VOJu1NIdWF0DimOj3qeL4zdPbh/i1cVfy1fhiqxkbqGro3jO44o6sDPT2H/1YBfk91VAZA0L0Q="
           ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKz88Ffi/VaKGYIqgPvV1NKgJBcSTakl48zR5gM5ZA0KPkQA57likgtlDNw+XSoX+M/rOCRw2m0za7/LR+eKY4I="
           rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCoSAn1VeQ4tpJ+lPYbKYo6A9TlHsTc3tzmKuPp7/83DUzgUBFYvGXBpcRYHHUCh+JSpcC9ubx+nxzETKCEA7O0nAAqF2aAx666pFaJvTlFQlHVKLoP20wc/KtP6OFG5Vw1SrzTMiB8S3Ot2nAgvRCO4L7kgHfRYjLjSIA+iXJutcP0nk8qV4Tj/TnEwaSMk0qcPkpcFVy3kUYirTmx0ukuWhfY5dr9DOKldCRjfPjoV+Wcr/WpjXVcrcBz3CVKnrhOpCROyxhNO5utcbtyZHK0HuQk7VIgd/r+pwBeAAkkZ679GP/C7gX6vHwqHiaWvGxETynjbpOK9ssKo3TbJzkl"
-
   gstg:
     values:
-      - <<: *regional_cluster_defaults
+      - !!merge <<: *regional_cluster_defaults
       - &gstg_values
         gitlab_chart_version: 24fcdf944ee3cc66f87db26c6fb8149e8a1208f1
         env_prefix: gstg
@@ -117,13 +114,11 @@ environments:
           dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAMPKInNPflcRle9F5Qt2j9aI0EZuWQzdXTbYvsl+ChaacqCOWRMiOmXHXqetFz6jD/6Fcqg20ZATxqSskQBaRn97O/mbH+GQk4d3zw9WAEURicE8rKJop3qGtdfFxLzrTuF/PAkKRDMmutT3hwZIOO8CFWOl1BiuUYTncJTeonrfAAAAFQCujauoy3Yy+ul72b/WsTECUPj9yQAAAIBIV2yyF7RZf7IYS8tsWcKP7Y5Bv9eFdbvbtsaxcFCHcmHIGoJQrIdPoueoOb5EUTYz0NgYKsKaZzDZkgFk28GsmLxKvhnPjaw0lJVSKRchEE5xVlamOlabiRMjQ7X/bAdejkBJe96AjZZL3UO4acpwfy3Tnnap0w6YCDeaxoyHpwAAAIAU+dyNaL3Hy15VIV32QwWMekvxeptUY/DW03LNcgZZDoin87TE9xuQhM0qF3pi2i2a2ExuslgdttmYWvrbEz8eW+RFgvT5pKwWpalKWetHvtN3oYZP37ZIO1Y3Hd5A4YVcpYp1ccRayveLlCRwxb4HdGXT2OmYU+lmvimIR8zQ6A=="
           ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="
           rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9"
-
   gstg-cny:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gstg_values
-      -
-        gitlab:
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gstg_values
+      - gitlab:
           gitlab-shell:
             enabled: true
           webservice:
@@ -150,40 +145,33 @@ environments:
         stage: "cny"
         web:
           enabled: true
-
   # Zonal clusters for gstg, these three environments
   # inherit from the gstg environemnt, which is the
   # regional cluster
   gstg-us-east1-b:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gstg_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gstg-us-east1-b
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gstg_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gstg-us-east1-b
         region: us-east1-b
-
   gstg-us-east1-c:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gstg_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gstg-us-east1-c
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gstg_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gstg-us-east1-c
         region: us-east1-c
-
   gstg-us-east1-d:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gstg_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gstg-us-east1-d
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gstg_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gstg-us-east1-d
         region: us-east1-d
-
   gprd:
     values:
-      - <<: *regional_cluster_defaults
+      - !!merge <<: *regional_cluster_defaults
       - &gprd_values
         cluster: gprd-gitlab-gke
         env_prefix: gprd
@@ -204,13 +192,11 @@ environments:
           ecdsa_pub: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="
           ed25519_pub: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf"
           rsa_pub: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9"
-
   gprd-cny:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gprd_values
-      -
-        gitlab:
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gprd_values
+      - gitlab:
           gitlab-shell:
             enabled: true
           webservice:
@@ -237,33 +223,27 @@ environments:
         stage: "cny"
         web:
           enabled: true
-
   # Zonal clusters for gprd, these three environments
   # inherit from the gprd environemnt, which is the
   # regional cluster
   gprd-us-east1-b:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gprd_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gprd-us-east1-b
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gprd_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gprd-us-east1-b
         region: us-east1-b
-
   gprd-us-east1-c:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gprd_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gprd-us-east1-c
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gprd_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gprd-us-east1-c
         region: us-east1-c
-
   gprd-us-east1-d:
     values:
-      - <<: *regional_cluster_defaults
-      - <<: *gprd_values
-      - <<: *zonal_cluster_defaults
-      -
-        cluster: gprd-us-east1-d
+      - !!merge <<: *regional_cluster_defaults
+      - !!merge <<: *gprd_values
+      - !!merge <<: *zonal_cluster_defaults
+      - cluster: gprd-us-east1-d
         region: us-east1-d
