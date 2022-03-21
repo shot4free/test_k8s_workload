@@ -882,6 +882,7 @@ gitlab:
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
       USE_GITLAB_LOGGER: 1
+      PUMA_EXTERNAL_METRICS_SERVER: "true"
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Values.gitlab.sidekiq.enabled }}
