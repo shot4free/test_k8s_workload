@@ -17,6 +17,8 @@ gitlab:
       GITLAB_GRAFANA_API_KEY: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.GITLAB_GRAFANA_API_KEY | select(.!=null)") | quote }}
       SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_EMAIL | select(.!=null)") | quote }}
       SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_TOKEN | select(.!=null)") | quote }}
+      ARKOSE_LABS_PRIVATE_KEY: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.ARKOSE_LABS_PRIVATE_KEY | select(.!=null)") | quote }}
+      ARKOSE_LABS_PUBLIC_KEY: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.ARKOSE_LABS_PUBLIC_KEY | select(.!=null)") | quote }}
     rack_attack:
       git_basic_auth:
         ip_whitelist: {{ $rack_attack_ip_whitelist }}
