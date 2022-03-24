@@ -1065,7 +1065,7 @@ gitlab:
         class: none # Must be set to `none` otherwise, defaults to `gitlab-nginx`; we want to use the default for GKE, which is the GCE Ingress class
     image:
       pullSecrets:
-        - name: dev-registry-access-kas-v1
+        - name: dev-registry-access-kas-v2
       repository: dev.gitlab.org:5005/gitlab/gitlab-agent/kas
     ingress:
       enabled: true

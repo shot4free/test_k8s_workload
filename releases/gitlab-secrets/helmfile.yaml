@@ -15,7 +15,7 @@ releases:
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default $env_prefix }}
 {{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=- | zcat -f")) }}
 {{- $dev_gitlab_org_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token\"") }}
-{{- $dev_gitlab_org_kas_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token-kas\"") }}
+{{- $dev_gitlab_org_kas_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token-kas2\"") }}
     - resources:
       - apiVersion: v1
         kind: Secret
@@ -30,11 +30,11 @@ releases:
         kind: Secret
         type: kubernetes.io/dockerconfigjson
         metadata:
-          name: dev-registry-access-kas-v1
+          name: dev-registry-access-kas-v2
           namespace: {{ $namespace }}
         stringData:
           .dockerconfigjson: |
-            {"auths":{"dev.gitlab.org:5005":{"username":"k8s-workloads-deploy-token","password":{{ $dev_gitlab_org_kas_docker_pass | quote }},"auth":{{ (list "k8s-workloads-deploy-token:" $dev_gitlab_org_kas_docker_pass) | join "" | b64enc | quote }}}}}
+            {"auths":{"dev.gitlab.org:5005":{"username":"k8s-workloads-deploy-token-kas2","password":{{ $dev_gitlab_org_kas_docker_pass | quote }},"auth":{{ (list "k8s-workloads-deploy-token-kas2:" $dev_gitlab_org_kas_docker_pass) | join "" | b64enc | quote }}}}}
       - apiVersion: v1
         kind: Secret
         metadata:
