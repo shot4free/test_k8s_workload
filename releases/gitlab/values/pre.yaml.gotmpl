@@ -82,6 +82,8 @@ registry:
 
 gitlab:
   gitlab-pages:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-pages-fips
     hpa:
       minReplicas: 1
       targetAverageValue: 400m

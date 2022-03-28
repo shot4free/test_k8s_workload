@@ -70,6 +70,8 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
   gitlab-pages:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-pages-fips
     hpa:
       minReplicas: 2
       targetAverageValue: 400m
