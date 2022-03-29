@@ -11,6 +11,7 @@ shellcheck:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+      - $CI_PIPELINE_SOURCE == "schedule"
   dependencies: []
 
 shfmt:
@@ -24,6 +25,7 @@ shfmt:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+      - $CI_PIPELINE_SOURCE == "schedule"
   dependencies: []
 
 tooling:
@@ -35,4 +37,5 @@ tooling:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+      - $CI_PIPELINE_SOURCE == "schedule"
   dependencies: []

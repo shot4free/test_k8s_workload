@@ -2,9 +2,6 @@
 
 set -euo pipefail
 
-# This comes from CI variables and is the access token for ops-gitlab-net
-export GITLAB_TOKEN=${GL_TOKEN}
-
 bump_chart() {
   # Get current chart ver for environment
   ENV_CHART_VER=$(yq e "(.environments.${ENVIRONMENT}.values | explode(.))[0] * (.environments.${ENVIRONMENT}.values | explode(.))[1] | .gitlab_chart_version" bases/environments.yaml)
