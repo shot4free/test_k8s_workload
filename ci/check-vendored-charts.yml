@@ -11,3 +11,4 @@ check-vendored-charts:
     variables:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
+      - $CI_PIPELINE_SOURCE == "schedule"
