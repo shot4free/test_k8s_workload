@@ -445,7 +445,7 @@ gitlab:
           port: 8600
           use_tcp: true
       ci:
-        host: pgbouncer-sidekiq.int.gstg.gitlab.net
+        host: pgbouncer-sidekiq-ci.int.gstg.gitlab.net
         load_balancing:
           discover:
             nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
@@ -676,7 +676,7 @@ global:
         port: 8600
         use_tcp: true
     ci:
-      host: pgbouncer.int.gstg.gitlab.net
+      host: pgbouncer-ci.int.gstg.gitlab.net
       port: 6432
       prepared_statements: false
       load_balancing:
