@@ -57,7 +57,7 @@ environments:
       - !!merge <<: *regional_cluster_defaults
       - &pre_values
         gitlab_runner_chart_version: 20683318add4eb99a8a8508932860c20f0ae70f6
-        gitlab_chart_version: dc4ef55fcbaf531d3824c2ac5bfe048a2cdbe31e
+        gitlab_chart_version: 5af8e6a472c88ef7176eeac26bdb2dfb7cbfbc7c
         env_prefix: pre
         google_project: "gitlab-pre"
         gitlab_domain: "pre.gitlab.com"
@@ -95,7 +95,7 @@ environments:
     values:
       - !!merge <<: *regional_cluster_defaults
       - &gstg_values
-        gitlab_chart_version: dc4ef55fcbaf531d3824c2ac5bfe048a2cdbe31e
+        gitlab_chart_version: 5af8e6a472c88ef7176eeac26bdb2dfb7cbfbc7c
         env_prefix: gstg
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
@@ -175,7 +175,8 @@ environments:
       - &gprd_values
         cluster: gprd-gitlab-gke
         env_prefix: gprd
-        gitlab_chart_version: 24fcdf944ee3cc66f87db26c6fb8149e8a1208f1
+        # gitlab_chart_version: 24fcdf944ee3cc66f87db26c6fb8149e8a1208f1
+        gitlab_chart_version: dc4ef55fcbaf531d3824c2ac5bfe048a2cdbe31e
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         nginx_ingress_server_alias: "int.gprd.gitlab.net,*.ci-gateway.int.gprd.gitlab.net"
