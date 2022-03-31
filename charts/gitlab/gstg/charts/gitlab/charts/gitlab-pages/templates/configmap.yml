@@ -76,6 +76,9 @@ data:
     {{- if .Values.maxURILength }}
     max-uri-length={{ .Values.maxURILength }}
     {{- end }}
+    {{- if .Values.serverShutdownTimeout }}
+    server-shutdown-timeout={{ .Values.serverShutdownTimeout }}
+    {{- end }}
     {{- if .Values.gitlabClientHttpTimeout }}
     gitlab-client-http-timeout={{ .Values.gitlabClientHttpTimeout }}
     {{- end }}
@@ -103,7 +106,8 @@ data:
     auth-redirect-uri={{ template "oauth.gitlab-pages.authRedirectUri" . }}
     auth-client-id={% file.Read "/etc/gitlab-secrets/pages/gitlab_appid" %}
     auth-client-secret={% file.Read "/etc/gitlab-secrets/pages/gitlab_appsecret" %}
-    auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %} 
+    auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %}
+    auth-scope={{ template "oauth.gitlab-pages.authScope" . }}
     {{- end }}
     {{- with .Values.zipCache }}
     {{- if .cleanup }}
@@ -119,6 +123,9 @@ data:
     {{- if .Values.zipOpenTimeout }}
     zip-open-timeout={{ .Values.zipOpenTimeout }}
     {{- end }}
+    {{- if .Values.zipHTTPClientTimeout }}
+    zip-http-client-timeout={{ .Values.zipHTTPClientTimeout }}
+    {{- end }}
     {{- if .Values.rateLimitSourceIP }}
     rate-limit-source-ip={{ .Values.rateLimitSourceIP }}
     {{- end }}
@@ -130,6 +137,18 @@ data:
     {{- end }}
     {{- if .Values.rateLimitDomainBurst }}
     rate-limit-domain-burst={{ .Values.rateLimitDomainBurst }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSSourceIP }}
+    rate-limit-tls-source-ip={{ .Values.rateLimitTLSSourceIP }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSSourceIPBurst }}
+    rate-limit-tls-source-ip-burst={{ .Values.rateLimitTLSSourceIPBurst }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSDomain }}
+    rate-limit-tls-domain={{ .Values.rateLimitTLSDomain }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSDomainBurst }}
+    rate-limit-tls-domain-burst={{ .Values.rateLimitTLSDomainBurst }}
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

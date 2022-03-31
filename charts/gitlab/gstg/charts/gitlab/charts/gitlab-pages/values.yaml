@@ -153,9 +153,17 @@ useHttp2: true
 #   expiration:
 #   refresh:
 
+# zipHTTPClientTimeout: 
+
 metrics:
   enabled: true
   port: 9235
+  path: /metrics
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    endpointConfig: {}
+  # DEPRECATED
   annotations: {}
 
 workhorse: {}
