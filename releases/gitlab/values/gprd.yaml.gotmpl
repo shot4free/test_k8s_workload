@@ -83,7 +83,7 @@ registry:
 gitlab:
   gitlab-pages:
     hpa:
-      minReplicas: 4
+      minReplicas: 2
       maxReplicas: 20
       targetAverageValue: 800m
     resources:
@@ -110,7 +110,7 @@ gitlab:
         cpu: 2000m
     hpa:
       targetAverageValue: 1200m
-    minReplicas: 100
+    minReplicas: 8
     maxReplicas: 150
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
@@ -131,7 +131,7 @@ gitlab:
     deployments:
       api:
         hpa:
-          minReplicas: 100
+          minReplicas: 25
           targetAverageValue: 3600m
         workhorse:
           resources:
@@ -151,7 +151,7 @@ gitlab:
           cloud.google.com/gke-nodepool: git-https-2
       web:
         hpa:
-          minReplicas: 100
+          minReplicas: 25
           maxReplicas: 150
           targetAverageValue: 3000m
         nodeSelector:
@@ -165,7 +165,7 @@ gitlab:
         workerProcesses: 6
       websockets:
         hpa:
-          minReplicas: 10
+          minReplicas: 2
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-1
         workhorse:
@@ -176,7 +176,7 @@ gitlab:
               memory: 4G
             requests:
               memory: 1G
-    minReplicas: 100
+    minReplicas: 30
     maxReplicas: 150
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
