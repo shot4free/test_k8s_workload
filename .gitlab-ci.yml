@@ -13,7 +13,7 @@ include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
-  CI_IMAGE_VERSION: 'v5.10.1'
+  CI_IMAGE_VERSION: 'v5.11.0'
   AUTO_DEPLOY: 'false'
 
 #############################################################
@@ -132,12 +132,12 @@ dependency_scanning:
 .only-auto-deploy-false:
   only:
     variables:
-      - $AUTO_DEPLOY == "false"
+      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
 
 .only-auto-deploy-false-and-config-changes:
   only:
     variables:
-      - $AUTO_DEPLOY == "false"
+      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
     changes:
       - 'charts/gitlab/**/*'
       - 'bases/**/*'
@@ -229,7 +229,7 @@ notify_com_mr:
       - $EXPEDITE_DEPLOYMENT
   only:
     variables:
-      - $AUTO_DEPLOY == "false"
+      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
 
 ###############################################################################
 ### Configuration Jobs ###
@@ -614,7 +614,7 @@ pre:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 pre:auto-deploy:
   stage: non-prod:deploy
@@ -625,7 +625,7 @@ pre:auto-deploy:
     - bin/k-ctl upgrade
   only:
     variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 ### Staging Canary
 
@@ -638,7 +638,7 @@ gstg-cny:dryrun:auto-deploy:
     - bin/k-ctl -D -s cny upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gstg-cny
 
 gstg-cny:auto-deploy:
@@ -653,7 +653,7 @@ gstg-cny:auto-deploy:
   resource_group: gstg-cny
   only:
     variables:
-      - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 ### Staging
 
@@ -666,7 +666,7 @@ gstg:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-b:dryrun:auto-deploy:
   stage: dryrun
@@ -677,7 +677,7 @@ gstg-us-east1-b:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-c:dryrun:auto-deploy:
   stage: dryrun
@@ -688,7 +688,7 @@ gstg-us-east1-c:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-d:dryrun:auto-deploy:
   stage: dryrun
@@ -699,7 +699,7 @@ gstg-us-east1-d:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg:auto-deploy:
   stage: non-prod:deploy
@@ -712,7 +712,7 @@ gstg:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-b:auto-deploy:
   stage: non-prod:deploy
@@ -725,7 +725,7 @@ gstg-us-east1-b:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-c:auto-deploy:
   stage: non-prod:deploy
@@ -738,7 +738,7 @@ gstg-us-east1-c:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gstg-us-east1-d:auto-deploy:
   stage: non-prod:deploy
@@ -751,7 +751,7 @@ gstg-us-east1-d:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 ### Production Canary
 
@@ -764,7 +764,7 @@ gprd-cny:dryrun:auto-deploy:
     - bin/k-ctl -D -s cny upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gprd-cny
 
 gprd-cny:auto-deploy:
@@ -779,7 +779,7 @@ gprd-cny:auto-deploy:
   resource_group: gprd-cny
   only:
     variables:
-      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 ### Production
 
@@ -792,7 +792,7 @@ gprd:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-b:dryrun:auto-deploy:
   stage: dryrun
@@ -803,7 +803,7 @@ gprd-us-east1-b:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-c:dryrun:auto-deploy:
   stage: dryrun
@@ -814,7 +814,7 @@ gprd-us-east1-c:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-d:dryrun:auto-deploy:
   stage: dryrun
@@ -825,7 +825,7 @@ gprd-us-east1-d:dryrun:auto-deploy:
     - bin/k-ctl -D upgrade
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd:auto-deploy:
   stage: gprd:deploy:alpha
@@ -838,7 +838,7 @@ gprd:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-b:auto-deploy:
   stage: gprd:deploy:alpha
@@ -851,7 +851,7 @@ gprd-us-east1-b:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-c:auto-deploy:
   stage: gprd:deploy:beta
@@ -864,7 +864,7 @@ gprd-us-east1-c:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 gprd-us-east1-d:auto-deploy:
   stage: gprd:deploy:beta
@@ -877,7 +877,7 @@ gprd-us-east1-d:auto-deploy:
     - sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment"
   only:
     variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true"
+      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
 
 ###############################################################################
 # Clean up
@@ -894,6 +894,8 @@ remove-expedite-variable:
       when: never
     - if: '$AUTO_DEPLOY == "true"'
       when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: '($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) && $EXPEDITE_DEPLOYMENT'
 
 ###############################################################################
@@ -905,6 +907,14 @@ open-chart-bump-mr-pre:
   stage: scheduled
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   script:
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - git config --global user.email "ops@ops.gitlab.net"
+    - git config --global user.name "ops-gitlab-net"
+    - git remote set-url origin https://ops-gitlab-net:${GITLAB_API_TOKEN}@gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com.git
+    - echo $GITLAB_API_TOKEN | glab auth login --hostname gitlab.com --stdin
+    - glab config set git_protocol https
+    - glab auth status
     - ./bin/autobump-gitlab-chart.sh pre
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -914,6 +924,14 @@ open-chart-bump-mr-gstg:
   stage: scheduled
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   script:
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - git config --global user.email "ops@ops.gitlab.net"
+    - git config --global user.name "ops-gitlab-net"
+    - git remote set-url origin https://ops-gitlab-net:${GITLAB_API_TOKEN}@gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com.git
+    - echo $GITLAB_API_TOKEN | glab auth login --hostname gitlab.com --stdin
+    - glab config set git_protocol https
+    - glab auth status
     - ./bin/autobump-gitlab-chart.sh gstg
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -923,6 +941,14 @@ open-chart-bump-mr-gprd:
   stage: scheduled
   image: "${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}"
   script:
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    - git config --global user.email "ops@ops.gitlab.net"
+    - git config --global user.name "ops-gitlab-net"
+    - git remote set-url origin https://ops-gitlab-net:${GITLAB_API_TOKEN}@gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com.git
+    - echo $GITLAB_API_TOKEN | glab auth login --hostname gitlab.com --stdin
+    - glab config set git_protocol https
+    - glab auth status
     - ./bin/autobump-gitlab-chart.sh gprd
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"

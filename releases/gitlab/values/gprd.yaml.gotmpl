@@ -204,13 +204,13 @@ gitlab:
       port: 443
     resources:
       limits:
-        memory: 768M
+        memory: 1024M
       requests:
         cpu: 100m
-        memory: 512M
+        memory: 768M
     hpa:
-      targetAverageValue: 500m
-    minReplicas: 4
+      targetAverageValue: 300m
+    minReplicas: 5
     customConfig:
       observability:
         sentry:
@@ -884,6 +884,14 @@ global:
         tlsEnabled: false
       - hostname: file-68-stor-gprd.c.gitlab-production.internal
         name: nfs-file68
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-69-stor-gprd.c.gitlab-production.internal
+        name: nfs-file69
+        port: "9999"
+        tlsEnabled: false
+      - hostname: file-70-stor-gprd.c.gitlab-production.internal
+        name: nfs-file70
         port: "9999"
         tlsEnabled: false
       - hostname: i.gprd-gcp-tcp-lb-internal-praefect.il4.us-east1.lb.gitlab-production.internal

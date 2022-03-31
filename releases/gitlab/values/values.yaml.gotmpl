@@ -882,6 +882,7 @@ gitlab:
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
       USE_GITLAB_LOGGER: 1
+      PUMA_EXTERNAL_METRICS_SERVER: "true"
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Values.gitlab.sidekiq.enabled }}
@@ -1065,8 +1066,8 @@ gitlab:
         class: none # Must be set to `none` otherwise, defaults to `gitlab-nginx`; we want to use the default for GKE, which is the GCE Ingress class
     image:
       pullSecrets:
-        - name: dev-registry-access-kas-v1
-      repository: dev.gitlab.org:5005/gitlab/gitlab-agent/kas
+        - name: dev-registry-access-v1
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-kas
     ingress:
       enabled: true
       annotations:

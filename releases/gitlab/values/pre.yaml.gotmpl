@@ -97,10 +97,16 @@ gitlab:
       FF_HANDLE_CACHE_HEADERS: "true"
       FF_ENFORCE_IP_RATE_LIMITS: "true"
       FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
+      FF_ENFORCE_IP_TLS_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "true"
     rateLimitSourceIP: 20
     rateLimitSourceIPBurst: 1000
     rateLimitDomain: 100
     rateLimitDomainBurst: 2000
+    rateLimitTLSSourceIP: 5
+    rateLimitTLSSourceIPBurst: 10
+    rateLimitTLSDomain: 20
+    rateLimitTLSDomainBurst: 100
     zipCache:
       expiration: 300s
   webservice:
@@ -217,10 +223,7 @@ gitlab:
       host: 10.33.1.14
   kas:
     image:
-      pullSecrets:
-        - name: dev-registry-access-v1
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-kas
-      tag: v14.8.1
+      tag: v14.9.0
     hpa:
       minReplicas: 1
       maxReplicas: 5

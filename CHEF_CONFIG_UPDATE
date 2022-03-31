@@ -7,6 +7,10 @@ Example:
 
 ---
 
+2022-03-23
+
+* GPRD - add new gitaly shards - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6647
+
 2022-02-07
 
 * Preprod Update secret object for Redis - https://gitlab.com/gitlab-com/gl-infra/production/-/issues/6290

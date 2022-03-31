@@ -32,8 +32,9 @@ registry:
     disablemirrorfs: true
     rootdirectory: gitlab
     importnotification:
-      enabled: true
+      enabled: tru
     testslowimport: 10m
+    maxconcurrentimports: 2
   storage:
     secret: registry-storage-v4
   # When enabled, the upload purger will attempt to make deletes against the
@@ -84,10 +85,16 @@ gitlab:
       FF_HANDLE_CACHE_HEADERS: "true"
       FF_ENFORCE_IP_RATE_LIMITS: "true"
       FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
+      FF_ENFORCE_IP_TLS_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "true"
     rateLimitSourceIP: 20
     rateLimitSourceIPBurst: 1000
     rateLimitDomain: 100
     rateLimitDomainBurst: 2000
+    rateLimitTLSSourceIP: 5
+    rateLimitTLSSourceIPBurst: 10
+    rateLimitTLSDomain: 20
+    rateLimitTLSDomainBurst: 100
     zipCache:
       expiration: 300s
   mailroom:
@@ -124,7 +131,6 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
-      PUMA_EXTERNAL_METRICS_SERVER: "true"
     workhorse:
       resources:
         limits:
@@ -141,10 +147,7 @@ gitlab:
         memory: 5G
   kas:
     image:
-      pullSecrets:
-        - name: dev-registry-access-v1
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-kas
-      tag: v14.8.1
+      tag: v14.9.0
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
     service:
@@ -447,7 +450,7 @@ gitlab:
           port: 8600
           use_tcp: true
       ci:
-        host: pgbouncer-sidekiq.int.gstg.gitlab.net
+        host: pgbouncer-sidekiq-ci.int.gstg.gitlab.net
         load_balancing:
           discover:
             nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
@@ -678,7 +681,7 @@ global:
         port: 8600
         use_tcp: true
     ci:
-      host: pgbouncer.int.gstg.gitlab.net
+      host: pgbouncer-ci.int.gstg.gitlab.net
       port: 6432
       prepared_statements: false
       load_balancing:
