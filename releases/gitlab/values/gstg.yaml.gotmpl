@@ -140,9 +140,6 @@ gitlab:
         memory: 5G
   kas:
     image:
-      pullSecrets:
-        - name: dev-registry-access-v1
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-kas
       tag: v14.9.0
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
