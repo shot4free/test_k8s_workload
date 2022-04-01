@@ -96,16 +96,10 @@ gitlab:
       FF_HANDLE_CACHE_HEADERS: "true"
       FF_ENFORCE_IP_RATE_LIMITS: "true"
       FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
-      FF_ENFORCE_IP_TLS_RATE_LIMITS: "false"
-      FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "false"
     rateLimitSourceIP: 20
     rateLimitSourceIPBurst: 1000
     rateLimitDomain: 100
     rateLimitDomainBurst: 2000
-    rateLimitTLSSourceIP: 10
-    rateLimitTLSSourceIPBurst: 50
-    rateLimitTLSDomain: 10
-    rateLimitTLSDomainBurst: 50
     zipCache:
       expiration: 300s
   gitlab-shell:
