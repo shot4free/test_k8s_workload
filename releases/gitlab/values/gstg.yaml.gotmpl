@@ -528,6 +528,10 @@ global:
     ciSecureFiles:
       enabled: true
       bucket: gitlab-gstg-ci-secure-files
+      connection:
+        secret: gitlab-object-storage-v1
+        key: gitlab-object-storage.yml
+
     uploads:
       bucket: gitlab-gstg-uploads
     extra:
