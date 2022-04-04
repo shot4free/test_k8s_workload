@@ -235,8 +235,6 @@ releases:
         stringData:
           incoming_email_password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_password") }}
           service_desk_email_password: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".service_desk_email_password") }}
-          incoming_email_auth_token: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".incoming_email_auth_token") }}
-          service_desk_email_auth_token: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".service_desk_email_auth_token") }}
       - apiVersion: v1
         kind: Secret
         metadata:
