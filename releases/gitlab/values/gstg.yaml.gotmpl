@@ -672,7 +672,6 @@ global:
   psql:
     host: pgbouncer.int.gstg.gitlab.net
     port: 6432
-    prepared_statements: false
     load_balancing:
       discover:
         nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
@@ -684,7 +683,6 @@ global:
       databaseTasks: false
       host: pgbouncer-ci.int.gstg.gitlab.net
       port: 6432
-      prepared_statements: false
       load_balancing:
         discover:
           nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>

@@ -245,7 +245,6 @@ gitlab:
     psql:
       database: gitlabhq_production_sidekiq
       host: pgbouncer-sidekiq.int.gprd.gitlab.net
-      prepared_statements: false
       load_balancing:
         discover:
           nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
@@ -1062,7 +1061,6 @@ global:
   psql:
     host: pgbouncer.int.gprd.gitlab.net
     port: 6432
-    prepared_statements: false
     load_balancing:
       discover:
         nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
@@ -1073,7 +1071,6 @@ global:
     ci:
       host: pgbouncer.int.gprd.gitlab.net
       port: 6432
-      prepared_statements: false
       load_balancing:
         discover:
           nameserver: <%= File.read('/etc/gitlab/instance_name').strip %>
