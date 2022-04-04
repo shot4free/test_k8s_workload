@@ -95,7 +95,7 @@ environments:
     values:
       - !!merge <<: *regional_cluster_defaults
       - &gstg_values
-        gitlab_chart_version: 5af8e6a472c88ef7176eeac26bdb2dfb7cbfbc7c
+        gitlab_chart_version: c4b44f4c20d108393a5cb4693a0bf854e49821b3
         env_prefix: gstg
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
