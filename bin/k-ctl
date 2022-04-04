@@ -7,11 +7,6 @@
 
 set -euf -o pipefail
 
-get_charts_version() {
-  version=$(yq eval "explode(...) | .environments.${environment}.values[0] * .environments.${environment}.values[1] | .gitlab_chart_version" bases/environments.yaml)
-  echo "$version"
-}
-
 dir="$(
   cd "$(dirname "${0}")"
   pwd
@@ -42,8 +37,6 @@ fi
 EXPEDITE_DEPLOYMENT=${EXPEDITE_DEPLOYMENT:-false}
 NAME="${NAME:-gitlab${STAGE_SUFFIX}}"
 NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
-CHART_VERSION=$(get_charts_version)
-export CHART_VERSION
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"
 HELM_DIFF_TMP_FNAME="/tmp/helm-diff"
