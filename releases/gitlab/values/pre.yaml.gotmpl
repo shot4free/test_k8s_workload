@@ -254,10 +254,6 @@ global:
     incomingEmail:
       address: "incoming-pre+%{key}@incoming.gitlab.com"
       user: incoming-pre@incoming.gitlab.com
-      deliveryMethod: webhook
-      authToken:
-        secret: gitlab-mailroom-imap-v1
-        key: incoming_email_auth_token
     lfs:
       bucket: gitlab-pre-lfs-objects
     omniauth:
@@ -289,7 +285,7 @@ global:
       - hostname: gitaly-03-sv-pre.c.gitlab-pre.internal
         name: gitaly-03
         port: "9999"
-        tlsEnabled: false
+        tlsEnabled: false    
 
   hosts:
     # gcloud compute address nginx-gke-pre
