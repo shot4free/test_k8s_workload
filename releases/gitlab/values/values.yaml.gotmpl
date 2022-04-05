@@ -479,10 +479,10 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-0
     propagateCorrelationId: true
-    rateLimitTLSSourceIP: 10
+    rateLimitTLSSourceIP: 20
     rateLimitTLSSourceIPBurst: 50
-    rateLimitTLSDomain: 10
-    rateLimitTLSDomainBurst: 50
+    rateLimitTLSDomain: 20
+    rateLimitTLSDomainBurst: 100
     sentry:
       enabled: true
       dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
