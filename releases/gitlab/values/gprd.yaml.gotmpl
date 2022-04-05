@@ -147,6 +147,8 @@ gitlab:
             cpu: 4500m
             memory: 7G
       git:
+        hpa:
+          maxReplicas: 200
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
       web:
@@ -177,7 +179,7 @@ gitlab:
             requests:
               memory: 1G
     minReplicas: 30
-    maxReplicas: 200
+    maxReplicas: 150
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
