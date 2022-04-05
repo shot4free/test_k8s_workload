@@ -462,16 +462,6 @@ global:
     contentSecurityPolicy:
       enabled: true
       report_only: false
-      directives:
-        connect_src: "'self' https://staging.gitlab.com https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net wss://gitlab.com wss://staging.gitlab.com wss://gstg.gitlab.com https://sentry.gitlab.net https://customers.staging.gitlab.com https://snowplow.trx.gitlab.net https://ec2.ap-east-1.amazonaws.com https://ec2.ap-northeast-1.amazonaws.com https://ec2.ap-northeast-2.amazonaws.com https://ec2.ap-northeast-3.amazonaws.com https://ec2.ap-south-1.amazonaws.com https://ec2.ap-southeast-1.amazonaws.com https://ec2.ap-southeast-2.amazonaws.com https://ec2.ca-central-1.amazonaws.com https://ec2.eu-central-1.amazonaws.com https://ec2.eu-north-1.amazonaws.com https://ec2.eu-west-1.amazonaws.com https://ec2.eu-west-2.amazonaws.com https://ec2.eu-west-3.amazonaws.com https://ec2.me-south-1.amazonaws.com https://ec2.sa-east-1.amazonaws.com https://ec2.us-east-1.amazonaws.com https://ec2.us-east-2.amazonaws.com https://ec2.us-west-1.amazonaws.com https://ec2.us-west-2.amazonaws.com https://ec2.af-south-1.amazonaws.com https://iam.amazonaws.com"
-        frame_ancestors: "'self'"
-        frame_src: "'self' https://gl-staging.freetls.fastly.net https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://content.googleapis.com https://content-cloudresourcemanager.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://*.codesandbox.io https://customers.staging.gitlab.com"
-        img_src: "* data: blob:"
-        object_src: "'none'"
-        report_uri: "https://sentry.gitlab.net/api/15/security/?sentry_key=526a2f38a53d44e3a8e69bfa001d1e8b"
-        script_src: "'strict-dynamic' 'self' 'unsafe-inline' 'unsafe-eval' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com https://*.pendo.io"
-        style_src: "'self' 'unsafe-inline' https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net"
-        worker_src: "https://gl-staging.freetls.fastly.net https://gl-staging-canary.freetls.fastly.net https://staging.gitlab.com blob: data:"
     cron_jobs:
       schedule_migrate_external_diffs_worker:
         cron: "*/5 * * * *"
