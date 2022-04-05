@@ -254,6 +254,7 @@ gitlab:
           port: 8600
           use_tcp: true
       ci:
+        databaseTasks: false
         host: pgbouncer-sidekiq-ci.int.gprd.gitlab.net
         load_balancing:
           discover:
