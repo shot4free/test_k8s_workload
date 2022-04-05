@@ -446,8 +446,8 @@ gitlab:
       GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
       FF_ENABLE_REDIRECTS: "true"
       FF_ENABLE_PLACEHOLDERS: "true"
-      FF_ENFORCE_IP_TLS_RATE_LIMITS: "false"
-      FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "false"
+      FF_ENFORCE_IP_TLS_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "true"
     headers:
       - "Permissions-Policy: interest-cohort=()"
     image:
@@ -479,10 +479,10 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-0
     propagateCorrelationId: true
-    rateLimitTLSSourceIP: 20
-    rateLimitTLSSourceIPBurst: 50
-    rateLimitTLSDomain: 20
-    rateLimitTLSDomainBurst: 100
+    rateLimitTLSSourceIP: 40
+    rateLimitTLSSourceIPBurst: 100
+    rateLimitTLSDomain: 40
+    rateLimitTLSDomainBurst: 200
     sentry:
       enabled: true
       dsn: https://11221aa4bbdf40f3ad857b8959012b23@sentry.gitlab.net/104
