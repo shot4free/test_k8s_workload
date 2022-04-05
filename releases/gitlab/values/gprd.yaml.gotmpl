@@ -147,6 +147,8 @@ gitlab:
             cpu: 4500m
             memory: 7G
       git:
+        hpa:
+          maxReplicas: 200
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
       web:
