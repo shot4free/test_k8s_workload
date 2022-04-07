@@ -716,6 +716,8 @@ gitlab:
         # see https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1294
         # for details
         initialDelaySeconds: 60
+        failureThreshold: 2
+        periodSeconds: 2
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
