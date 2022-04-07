@@ -53,10 +53,6 @@ gitlab:
         shard: default
         stage: cny
         tier: sv
-    deployment:
-      readinessProbe:
-        failureThreshold: 2
-        periodSeconds: 2
     deployments:
       api:
         extraEnv:
