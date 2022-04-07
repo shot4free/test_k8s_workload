@@ -102,6 +102,10 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
   webservice:
+    deployment:
+      readinessProbe:
+        failureThreshold: 2
+        periodSeconds: 2
     deployments:
       api:
         nodeSelector:
