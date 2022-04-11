@@ -213,7 +213,8 @@ gitlab:
         memory: 768M
     hpa:
       targetAverageValue: 300m
-    minReplicas: 5
+    minReplicas: 8
+    maxReplicas: 15
     customConfig:
       observability:
         sentry:
