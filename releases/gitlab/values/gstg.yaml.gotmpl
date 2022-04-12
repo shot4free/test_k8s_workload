@@ -140,7 +140,7 @@ gitlab:
         memory: 5G
   kas:
     image:
-      tag: v14.9.0
+      tag: 14-10-202204121520-1ad684ad2e5
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
     service:
@@ -157,6 +157,7 @@ gitlab:
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
         google_profiler:
           enabled: true
+          debug_logging: true
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
