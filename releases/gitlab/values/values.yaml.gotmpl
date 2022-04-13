@@ -1109,7 +1109,7 @@ gitlab:
         cloud.google.com/backend-config: '{"default": "kas-http-backendconfig"}'
     serviceAccount:
       annotations:
-        iam.gke.io/gcp-service-account: gitlab-gitlab-kas@{{ .Values.google_project }}.iam.gserviceaccount.com
+        iam.gke.io/gcp-service-account: gitlab-kas@{{ .Values.google_project }}.iam.gserviceaccount.com
 
     privateApi:
       secret: gitlab-kas-private-api-credential-v1
