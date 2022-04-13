@@ -605,6 +605,12 @@ global:
     terraformState:
       enabled: true
       bucket: gitlab-gprd-terraform-state
+    ciSecureFiles:
+      enabled: true
+      bucket: gitlab-gprd-ci-secure-files
+      connection:
+        secret: gitlab-object-storage-v1
+        key: gitlab-object-storage.yml
     uploads:
       bucket: gitlab-gprd-uploads
     extra:
