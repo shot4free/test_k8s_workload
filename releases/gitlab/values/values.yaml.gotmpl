@@ -710,7 +710,7 @@ gitlab:
     deployment:
       strategy:
         rollingUpdate:
-          maxSurge: 25%
+          maxSurge: 20%
           maxUnavailable: 0
       readinessProbe:
         # This value is set to 60 to see if we can reduce queuing on pod start,
