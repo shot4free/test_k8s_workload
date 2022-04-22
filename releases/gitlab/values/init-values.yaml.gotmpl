@@ -121,16 +121,32 @@ The RC specific logic should be removed during https://gitlab.com/gitlab-com/gl-
 {{-   $gitlab_shell_version = printf "gitlab-%s" $gitlab_version }}
 {{- end }}
 
+{{/* Get current version of the GitLab Pages */}}
+{{- $gitlab_pages_deployment_name := printf "%s%s" $namespace "-gitlab-pages" }}
+{{- $gitlab_pages_current_spec := exec "kubectl" (list "get" "deployment" $gitlab_pages_deployment_name "--namespace" $namespace "--output" "jsonpath={.spec.template.spec.containers[0].image}" "--ignore-not-found") }}
+{{- $gitlab_pages_current_tag := ($gitlab_pages_current_spec | exec "cut"  (list "-d:" "-f3")) }}
+
+{{/*
+Set GitLab-pages Version:
+  * Normally this is just $gitlab_version
+  * If the version contains the string PATCHED (meaning it came from patcher) then we
+    default back to the current running version instead (we don't have patched images
+    for gitlab-pages
+*/}}
+{{- $gitlab_pages_version := $gitlab_version }}
+{{- if regexMatch ".*PATCHED.*" $gitlab_version }}
+{{- $gitlab_pages_version = $gitlab_pages_current_tag }}
+{{- end }}
+
 ---
 
 gitlab:
   gitlab-shell:
     image:
       tag: {{ $gitlab_shell_version }}
-{{/* To be changed to something more dynamic, tracked in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1544 */}}
   gitlab-pages:
     image:
-      tag: {{ $gitlab_version }}
+      tag: {{ $gitlab_pages_version }}
 global:
   gitlabVersion: {{ $gitlab_version }}
 registry:
