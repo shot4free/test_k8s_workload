@@ -201,6 +201,8 @@ gitlab:
         - name: dev-registry-access-v1
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    workhorse:
+      serviceName: webservice-api
   sidekiq:
     pods:
       - name: catchall
