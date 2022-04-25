@@ -57,7 +57,7 @@ environments:
       - !!merge <<: *regional_cluster_defaults
       - &pre_values
         gitlab_runner_chart_version: 20683318add4eb99a8a8508932860c20f0ae70f6
-        gitlab_chart_version: ab9e27601bba2e1fc5ed9e8c0510e0eb444111a7
+        gitlab_chart_version: d29b61c856e36783531c6106175409d712e590fe
         env_prefix: pre
         google_project: "gitlab-pre"
         gitlab_domain: "pre.gitlab.com"
