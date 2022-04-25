@@ -175,7 +175,7 @@ environments:
       - &gprd_values
         cluster: gprd-gitlab-gke
         env_prefix: gprd
-        gitlab_chart_version: ab9e27601bba2e1fc5ed9e8c0510e0eb444111a7
+        gitlab_chart_version: d29b61c856e36783531c6106175409d712e590fe
         gitlab_domain: "gitlab.com"
         gitlab_endpoint: "https://gitlab.com"
         nginx_ingress_server_alias: "int.gprd.gitlab.net,*.ci-gateway.int.gprd.gitlab.net"
