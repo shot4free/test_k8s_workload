@@ -1069,6 +1069,19 @@ gitlab:
               # gstg, gprd
               - port: 26379
                 protocol: TCP
+
+          # Allow talking to our internal API endpoints
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            - port: 443
+              protocol: TCP
+            - port: 11443
+              protocol: TCP
+            - port: 8181
+              protocol: TCP
+
   kas:
     global:
       ingress:
