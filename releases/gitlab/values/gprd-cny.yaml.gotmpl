@@ -26,6 +26,7 @@ gitlab:
       GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
       enabled: true
+    minReplicas: 8
     sshDaemon: gitlab-sshd
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-2
