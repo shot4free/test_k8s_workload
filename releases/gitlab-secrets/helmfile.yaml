@@ -15,6 +15,10 @@ releases:
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default $env_prefix }}
 {{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=- | zcat -f")) }}
 {{- $dev_gitlab_org_docker_pass := $gkms_omnibus_secrets | exec "jq" (list "-jc" ".gitlab_k8s.\"k8s-workloads-deploy-token\"") }}
+{{- $chef_source_name := .Environment.Values | getOrNil "gitlab_chef_source_name" | default $env_prefix }}
+{{- $get_role_from_chef := "../../bin/get-role-from-chef" }}
+{{- $chef_base_role := exec $get_role_from_chef (list (print $chef_source_name "-base")) }}
+{{- $chef_base_fe_role := exec $get_role_from_chef (list (print $chef_source_name "-base-fe")) }}
     - resources:
       - apiVersion: v1
         kind: Secret
@@ -326,3 +330,52 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           praefect.crt: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".ssl.trusted_certs[\"praefect.crt\"]") | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-throttle-user-allowlist-v1
+          namespace: {{ $namespace }}
+        stringData:
+          GITLAB_THROTTLE_USER_ALLOWLIST: {{ (dig "default_attributes" "omnibus-gitlab" "user_ratelimit_bypasses" (dict) (mustFromJson $chef_base_fe_role)) | keys | join "," | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-upload-api-allowlist-v1
+          namespace: {{ $namespace }}
+        stringData:
+          GITLAB_UPLOAD_API_ALLOWLIST: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "GITLAB_UPLOAD_API_ALLOWLIST" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-grafana-api-key-v1
+          namespace: {{ $namespace }}
+        stringData:
+          GITLAB_GRAFANA_API_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "GITLAB_GRAFANA_API_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-subscription-portal-admin-email-v1
+          namespace: {{ $namespace }}
+        stringData:
+          SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "SUBSCRIPTION_PORTAL_ADMIN_EMAIL" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-subscription-portal-admin-token-v1
+          namespace: {{ $namespace }}
+        stringData:
+          SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "SUBSCRIPTION_PORTAL_ADMIN_TOKEN" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-arkose-labs-private-key-v1
+          namespace: {{ $namespace }}
+        stringData:
+          ARKOSE_LABS_PRIVATE_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "ARKOSE_LABS_PRIVATE_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-arkose-labs-public-key-v1
+          namespace: {{ $namespace }}
+        stringData:
+          ARKOSE_LABS_PUBLIC_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "ARKOSE_LABS_PUBLIC_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
