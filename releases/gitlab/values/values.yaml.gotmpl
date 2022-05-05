@@ -104,6 +104,8 @@ global:
         cron: "30 * * * *"
       pages_domain_verification_cron_worker:
         cron: "*/15 * * * *"
+      pseudonymizer_worker:
+        cron: "0 23 * * *"
       schedule_migrate_external_diffs_worker:
         cron: "15 * * * *"
       # An override is set here due to https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3288
@@ -148,6 +150,10 @@ global:
       connection:
         secret: gitlab-object-storage-v1
         key: gitlab-object-storage.yml
+
+    ## doc/charts/globals.md#pseudonymizer-settings
+    pseudonymizer:
+      bucket: ''
 
     ## doc/charts/globals.md#incoming-email-settings
     ## doc/installation/deployment.md#incoming-email
