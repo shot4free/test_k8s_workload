@@ -87,7 +87,6 @@ data:
       {{- include "gitlab.appConfig.terraformState.configuration" (dict "config" $.Values.global.appConfig.terraformState "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.ciSecureFiles.configuration" (dict "config" $.Values.global.appConfig.ciSecureFiles "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.dependencyProxy.configuration" (dict "config" $.Values.global.appConfig.dependencyProxy "context" $) | nindent 6 }}
-      {{- include "gitlab.appConfig.pseudonymizer.configuration" $ | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sentry.configuration" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sidekiq.configuration" $ | nindent 6 }}
@@ -122,11 +121,9 @@ data:
           port: {{ .Values.metrics.port }}
 {{- end }}
         sidekiq_health_checks:
-{{- if .Values.health_checks.enabled }}
           enabled: true
           address: 0.0.0.0
-          port: {{ .Values.health_checks.port | default .Values.metrics.port }}
-{{- end }}
+          port: {{ .Values.health_checks.port }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "gitaly registry rails-secrets") | nindent 4 -}}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
