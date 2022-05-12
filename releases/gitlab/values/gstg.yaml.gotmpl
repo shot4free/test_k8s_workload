@@ -80,18 +80,6 @@ gitlab:
         memory: 70M
       limits:
         memory: 1G
-    extraEnv:
-      FF_HANDLE_CACHE_HEADERS: "true"
-      FF_ENFORCE_IP_RATE_LIMITS: "true"
-      FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
-    rateLimitSourceIP: 20
-    rateLimitSourceIPBurst: 1000
-    rateLimitDomain: 100
-    rateLimitDomainBurst: 500
-    rateLimitTLSDomain: 30
-    rateLimitTLSDomainBurst: 100
-    zipCache:
-      expiration: 300s
   mailroom:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
