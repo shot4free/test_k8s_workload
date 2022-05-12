@@ -438,10 +438,15 @@ gitlab:
           maxUnavailable: 0
     extraEnv:
       GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
+      FF_HANDLE_CACHE_HEADERS: "true"
       FF_ENABLE_REDIRECTS: "true"
       FF_ENABLE_PLACEHOLDERS: "true"
       FF_ENFORCE_IP_TLS_RATE_LIMITS: "true"
       FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "true"
+      FF_ENFORCE_IP_RATE_LIMITS: "true"
+      FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
+    zipCache:
+      expiration: 300s
     headers:
       - "Permissions-Policy: interest-cohort=()"
     image:
@@ -473,9 +478,13 @@ gitlab:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-0
     propagateCorrelationId: true
+    rateLimitSourceIP: 20
+    rateLimitSourceIPBurst: 1000
+    rateLimitDomain: 100
+    rateLimitDomainBurst: 500
     rateLimitTLSSourceIP: 20
     rateLimitTLSSourceIPBurst: 50
-    rateLimitTLSDomain: 40
+    rateLimitTLSDomain: 30
     rateLimitTLSDomainBurst: 100
     sentry:
       enabled: true
