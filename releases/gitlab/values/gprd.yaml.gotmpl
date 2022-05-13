@@ -164,7 +164,7 @@ gitlab:
         hpa:
           minReplicas: 2
         nodeSelector:
-          cloud.google.com/gke-nodepool: websockets-1
+          cloud.google.com/gke-nodepool: websockets-2
         workhorse:
           # these limits are increased due to memory consumption observed when we
           # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413
