@@ -18,6 +18,8 @@ nginx-ingress:
 
 gitlab:
   gitlab-pages:
+    gitlabCache:
+      expiry: 30m
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
