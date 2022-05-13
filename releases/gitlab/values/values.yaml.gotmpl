@@ -445,8 +445,6 @@ gitlab:
       FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS: "true"
       FF_ENFORCE_IP_RATE_LIMITS: "true"
       FF_ENFORCE_DOMAIN_RATE_LIMITS: "true"
-    gitlabCache:
-      expiry: 30m
     headers:
       - "Permissions-Policy: interest-cohort=()"
     image:
@@ -498,6 +496,10 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
     useHTTPProxy: true
     useProxyV2: true
+
+    # Cache related settings
+    gitlabCache:
+      expiry: 30m
     zipCache:
       expiration: 300s
   gitlab-shell:
