@@ -20,6 +20,10 @@ variables:
 
 dependency_scanning:
   stage: check
+bundler-audit-dependency_scanning:
+  stage: check
+retire-js-dependency_scanning:
+  stage: check
 
 .pre-base:
   variables:
