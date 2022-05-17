@@ -8,6 +8,7 @@
 {{- $gkms_source := .Environment.Values | getOrNil "gitlab_secrets_gkms_source" | default $env_prefix }}
 {{- $gkms_omnibus_secrets := exec "bash" (list "-c" (print "gsutil cat gs://gitlab-" $gkms_source "-secrets/gitlab-omnibus-secrets/" $gkms_source ".enc | gcloud --project " .Environment.Values.google_project " kms decrypt --location global --keyring=gitlab-secrets --key " $gkms_source " --ciphertext-file=- --plaintext-file=- | zcat -f")) }}
 
+{{- if (.Environment.Values | getOrNil "env_prefix" | default .Environment.Name) | eq "gprd" }}
 gitlab:
 {{- $rack_attack_ip_whitelist := $chef_base_role | exec "jq" (list ".default_attributes.\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".rack_attack_git_basic_auth.ip_whitelist") }}
   webservice:
@@ -26,3 +27,4 @@ gitlab:
     extraEnv:
       SUBSCRIPTION_PORTAL_ADMIN_EMAIL: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_EMAIL | select(.!=null)") | quote }}
       SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ $gkms_omnibus_secrets | exec "jq" (list "-j" ".\"omnibus-gitlab\".gitlab_rb.\"gitlab-rails\".env.SUBSCRIPTION_PORTAL_ADMIN_TOKEN | select(.!=null)") | quote }}
+{{- end }}
