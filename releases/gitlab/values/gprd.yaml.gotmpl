@@ -476,11 +476,11 @@ gitlab:
         common:
           labels:
             shard: urgent-cpu-bound
-        concurrency: 5
+        concurrency: 4
         hpa:
-          targetAverageValue: 500m
-        minReplicas: 30
-        maxReplicas: 130
+          targetAverageValue: 400m
+        minReplicas: 36
+        maxReplicas: 156
         memoryKiller:
           checkInterval: 3
           graceTime: 900
