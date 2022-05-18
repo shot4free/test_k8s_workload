@@ -298,8 +298,7 @@ nginx-ingress:
       requests:
         cpu: 300m
         memory: 500Mi
-    replicaCount: 3
-    minAvailable: 2
+    maxUnavailable: 5%
     sysctls:
       "net.ipv4.ip_local_port_range": "11000 65500"
   defaultBackend:
