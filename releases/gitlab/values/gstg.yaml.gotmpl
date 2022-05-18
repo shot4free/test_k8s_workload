@@ -493,6 +493,8 @@ global:
     contentSecurityPolicy:
       enabled: true
       report_only: false
+      directives:
+        report_uri: "https://sentry.gitlab.net/api/15/security/?sentry_key=526a2f38a53d44e3a8e69bfa001d1e8b"
     cron_jobs:
       schedule_migrate_external_diffs_worker:
         cron: "*/5 * * * *"
