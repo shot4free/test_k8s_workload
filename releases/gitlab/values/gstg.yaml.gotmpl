@@ -62,6 +62,8 @@ registry:
 
 gitlab:
   gitlab-shell:
+    config:
+      proxyProtocol: true
     extraEnv:
       GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
