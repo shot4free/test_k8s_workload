@@ -167,14 +167,17 @@ gitlab:
           minReplicas: 2
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-2
+        resources:
+          limits:
+            memory: 12G
+          requests:
+            memory: 6G
         workhorse:
-          # these limits are increased due to memory consumption observed when we
-          # turned on ActionCable https://gitlab.com/gitlab-com/gl-infra/production/-/issues/3413
           resources:
             limits:
               memory: 4G
             requests:
-              memory: 1G
+              memory: 2G
     minReplicas: 30
     maxReplicas: 150
     extraEnv:
