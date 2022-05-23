@@ -862,7 +862,7 @@ gitlab:
     workhorse:
       # This will need to be set here until https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2365
       # is resolved
-      extraArgs: '-apiLimit 5 -apiQueueDuration 60s -apiQueueLimit 200'
+      extraArgs: '-apiLimit 5 -apiQueueDuration 60s -apiQueueLimit 200 -propagateCorrelationID'
       image: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-workhorse-ee
       imageScaler:
         maxProcs: 8
