@@ -122,6 +122,10 @@ gitlab:
         - name: dev-registry-access-v1
     nodeSelector:
       cloud.google.com/gke-nodepool: default-3
+    workhorse:
+      scheme: 'https'
+      host: 'int.gprd.gitlab.net'
+      port: 11443
   webservice:
     deployments:
       api:
@@ -569,6 +573,10 @@ global:
     incomingEmail:
       address: "incoming+%{key}@incoming.gitlab.com"
       user: incoming@gitlab.com
+      deliveryMethod: webhook
+      authToken:
+        secret: gitlab-mailroom-imap-v2
+        key: incoming_email_auth_token
     lfs:
       bucket: gitlab-gprd-lfs-objects
     omniauth:
@@ -589,6 +597,10 @@ global:
       enabled: true
       address: "contact-project+%{key}@incoming.gitlab.com"
       user: contact-project@incoming.gitlab.com
+      deliveryMethod: webhook
+      authToken:
+        secret: gitlab-mailroom-imap-v2
+        key: service_desk_email_auth_token
     sidekiq:
       routingRules:
         # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
