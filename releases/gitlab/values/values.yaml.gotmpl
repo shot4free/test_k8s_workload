@@ -552,6 +552,35 @@ gitlab:
     enabled: false
   # doc/charts/gitlab/webservice
   webservice:
+    extraEnvFrom:
+      GITLAB_THROTTLE_USER_ALLOWLIST:
+        secretKeyRef:
+          name: gitlab-throttle-user-allowlist-v1
+          key: GITLAB_THROTTLE_USER_ALLOWLIST
+      GITLAB_UPLOAD_API_ALLOWLIST:
+        secretKeyRef:
+          name: gitlab-upload-api-allowlist-v1
+          key: GITLAB_UPLOAD_API_ALLOWLIST
+      GITLAB_GRAFANA_API_KEY:
+        secretKeyRef:
+          name: gitlab-grafana-api-key-v1
+          key: GITLAB_GRAFANA_API_KEY
+      SUBSCRIPTION_PORTAL_ADMIN_EMAIL:
+        secretKeyRef:
+          name: gitlab-subscription-portal-admin-email-v1
+          key: SUBSCRIPTION_PORTAL_ADMIN_EMAIL
+      SUBSCRIPTION_PORTAL_ADMIN_TOKEN:
+        secretKeyRef:
+          name: gitlab-subscription-portal-admin-token-v1
+          key: SUBSCRIPTION_PORTAL_ADMIN_TOKEN
+      ARKOSE_LABS_PRIVATE_KEY:
+        secretKeyRef:
+          name: gitlab-arkose-labs-private-key-v1
+          key: ARKOSE_LABS_PRIVATE_KEY
+      ARKOSE_LABS_PUBLIC_KEY:
+        secretKeyRef:
+          name: gitlab-arkose-labs-public-key-v1
+          key: ARKOSE_LABS_PUBLIC_KEY
     deployments:
       api:
         common:
@@ -919,6 +948,15 @@ gitlab:
       SIDEKIQ_LOG_ARGUMENTS: "1"
       USE_GITLAB_LOGGER: 1
       ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
+    extraEnvFrom:
+      SUBSCRIPTION_PORTAL_ADMIN_EMAIL:
+        secretKeyRef:
+          name: gitlab-subscription-portal-admin-email-v1
+          key: SUBSCRIPTION_PORTAL_ADMIN_EMAIL
+      SUBSCRIPTION_PORTAL_ADMIN_TOKEN:
+        secretKeyRef:
+          name: gitlab-subscription-portal-admin-token-v1
+          key: SUBSCRIPTION_PORTAL_ADMIN_TOKEN
     networkpolicy:
       enabled: true
       egress:
