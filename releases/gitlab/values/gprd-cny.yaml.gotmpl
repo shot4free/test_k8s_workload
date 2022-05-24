@@ -63,8 +63,6 @@ gitlab:
           # keeping minReplicas high enough to not suffer from node scaling
           # during deployments (https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1592)
           minReplicas: 16
-        nodeSelector:
-          cloud.google.com/gke-nodepool: api-1
         service:
           # gcloud compute address api-gke-gprd-cny
           loadBalancerIP: 10.216.8.13
