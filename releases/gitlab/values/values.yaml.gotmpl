@@ -573,14 +573,6 @@ gitlab:
         secretKeyRef:
           name: gitlab-subscription-portal-admin-token-v1
           key: SUBSCRIPTION_PORTAL_ADMIN_TOKEN
-      ARKOSE_LABS_PRIVATE_KEY:
-        secretKeyRef:
-          name: gitlab-arkose-labs-private-key-v1
-          key: ARKOSE_LABS_PRIVATE_KEY
-      ARKOSE_LABS_PUBLIC_KEY:
-        secretKeyRef:
-          name: gitlab-arkose-labs-public-key-v1
-          key: ARKOSE_LABS_PUBLIC_KEY
     deployments:
       api:
         common:

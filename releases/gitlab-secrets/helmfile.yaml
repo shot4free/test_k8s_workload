@@ -365,17 +365,3 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           SUBSCRIPTION_PORTAL_ADMIN_TOKEN: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "SUBSCRIPTION_PORTAL_ADMIN_TOKEN" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
-      - apiVersion: v1
-        kind: Secret
-        metadata:
-          name: gitlab-arkose-labs-private-key-v1
-          namespace: {{ $namespace }}
-        stringData:
-          ARKOSE_LABS_PRIVATE_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "ARKOSE_LABS_PRIVATE_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
-      - apiVersion: v1
-        kind: Secret
-        metadata:
-          name: gitlab-arkose-labs-public-key-v1
-          namespace: {{ $namespace }}
-        stringData:
-          ARKOSE_LABS_PUBLIC_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "ARKOSE_LABS_PUBLIC_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
