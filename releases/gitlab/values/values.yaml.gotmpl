@@ -646,8 +646,6 @@ gitlab:
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-1
-        shutdown:
-          blackoutSeconds: 240
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
