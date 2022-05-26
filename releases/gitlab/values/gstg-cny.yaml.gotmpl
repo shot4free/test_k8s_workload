@@ -42,7 +42,7 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-0
+      cloud.google.com/gke-nodepool: shell-1
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
@@ -66,7 +66,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         nodeSelector:
-          cloud.google.com/gke-nodepool: api-0
+          cloud.google.com/gke-nodepool: api-1
         service:
           # gcloud compute address api-gke-gstg-cny
           loadBalancerIP: 10.224.34.72
@@ -75,7 +75,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-0
+          cloud.google.com/gke-nodepool: git-https-1
         service:
           # gcloud compute address git-https-gke-gstg-cny
           loadBalancerIP: 10.224.34.201
@@ -84,7 +84,7 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
           CANARY: "true"
         nodeSelector:
-          cloud.google.com/gke-nodepool: web-0
+          cloud.google.com/gke-nodepool: web-1
         service:
           # gcloud compute address web-gke-gstg-cny
           loadBalancerIP: 10.224.34.199
@@ -92,7 +92,7 @@ gitlab:
         hpa:
           minReplicas: 1
         nodeSelector:
-          cloud.google.com/gke-nodepool: web-0
+          cloud.google.com/gke-nodepool: web-1
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
