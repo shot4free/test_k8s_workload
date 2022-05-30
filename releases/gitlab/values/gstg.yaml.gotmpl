@@ -120,6 +120,17 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
+    extraVolumeMounts: |
+      - name: gitlab-rack-attack-ip-whitelist
+        mountPath: /var/opt/gitlab/rack_attack_ip_whitelist
+        readOnly: true
+    extraVolumes: |
+      - name: gitlab-rack-attack-ip-whitelist
+        secret:
+          secretName: gitlab-rack-attack-ip-whitelist-v1
+    rack_attack:
+      git_basic_auth:
+        ip_whitelist: <%= File.read("/var/opt/gitlab/rack_attack_ip_whitelist/ip_whitelist") %>
     workhorse:
       resources:
         limits:
