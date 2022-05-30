@@ -379,3 +379,10 @@ releases:
           namespace: {{ $namespace }}
         stringData:
           ARKOSE_LABS_PUBLIC_KEY: {{ dig "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "env" "ARKOSE_LABS_PUBLIC_KEY" "" (mustFromJson $gkms_omnibus_secrets) | quote }}
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: gitlab-rack-attack-ip-whitelist-v1
+          namespace: {{ $namespace }}
+        stringData:
+          ip_whitelist: {{ (dig "default_attributes" "omnibus-gitlab" "gitlab_rb" "gitlab-rails" "rack_attack_git_basic_auth" "ip_whitelist" (dict) (mustFromJson $chef_base_role)) | quote }}
