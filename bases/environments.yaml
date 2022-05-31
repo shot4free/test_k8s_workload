@@ -132,9 +132,6 @@ environments:
           namespace: "gitlab-cny"
         gitlab_namespace: "gitlab-cny"
         gitlab_release_name: "gitlab-cny"
-        gitlab_secrets_gkms_source: "gstg"
-        gitlab_secrets_namespace: "gitlab-cny"
-        gitlab_secrets_release_name: "gitlab-secrets-cny"
         nginx-ingress:
           enabled: true
         registry_bucket_name: "gitlab-gstg-registry"
@@ -210,9 +207,6 @@ environments:
           namespace: "gitlab-cny"
         gitlab_namespace: "gitlab-cny"
         gitlab_release_name: "gitlab-cny"
-        gitlab_secrets_gkms_source: "gprd"
-        gitlab_secrets_namespace: "gitlab-cny"
-        gitlab_secrets_release_name: "gitlab-secrets-cny"
         nginx-ingress:
           enabled: true
         registry:
