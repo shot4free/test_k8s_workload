@@ -86,49 +86,9 @@ The CI job will disable access to these urls if the following conditions are met
 
 ## GitLab Secrets
 
-In order to work with the existing omnibus installation of GitLab.com, we will need to bring in a few already configured items that exist in that environment.  These items will ensure that when the Deployment is spun up inside of Kubernetes we interact appropriately with our existing infrastructure.
+:warning: Please note that from the work done in https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2384 all Kubernetes secrets we use for this repository are now stored in a separate Git repo called [gitlab-secrets](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-secrets). Please see that repository for details on how to sync secrets from chef into Kubernetes.
 
-:warning: This guide assumes you are connected to the appropriate Kubernetes cluster :warning:
-
-There is an upstream helm chart wrapped into a helm release called `gitlab-secrets` which is installed in order to populate all the secrets needed to run the GitLab helm chart. [Helmfile](https://github.com/roboll/helmfile) is used to obtain the values for these secrets from our existing infrastructure that is used for chef, and populate the values for the helm chart in the appropriate locations. In order to install this chart, you need to have a working `gcloud` setup. These secrets will be deployed along with our gitlab helm chart at the same time using the `k-ctl` wrapper script.
-
-When creating a secret, attempt to follow the documentation as close as possible and utilize the default values where possible.  Except when naming the secret.  When naming the secret, attempt to provide some form of version control that way if we need to rotate a secret we can do so and still have a fall back in the case where a new secret prevents the start-up of a Pod.  Example, if we utilize the name `some-secret` in our own documentation, utilize `some-secret-v1`, where `-v1` will be utilize for future usage in secret rotations.
-
-### Secret Rotation (including secrets synced from chef)
-
-Note that the below process will create two secrets with the same content, but this is important as Kubernetes
-will only rotate the pods if we change the name of the secret object used in the deployment.
-
-1. Duplicate the secret that already exists
-1. Change the name of the secret by incrementing it's version control portion of the name
-    * Example `some-secret-v1` is then named `some-secret-v2`
-1. Find the location in our `gitlab` release and modify the secret object to be used by changing the name appropriately
-1. Create a Merge Request
-1. Proceed to follow our [CONTRIBUTING.md](CONTRIBUTING.md) document to complete the roll-out of said secret
-1. Optionally do another MR to remove the previous version of the secret
-
-## Create/Apply Configurations
-
-### Chef Managed Configurations
-
-For any changes to configurations that are stored in Chef:
-
-* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab-secrets/helmfile.yaml
-* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/values-from-external-sources.yaml.gotmpl
-
-We must ensure that our Chef infrastructure and Kubernetes infrastructure match.
-To apply a change that is stored inside of chef perform the following tasks:
-
-1. Add a line to the file `CHEF_CONFIG_UPDATE` in the root of this directory (see file for example)
-1. Create a Merge Request with this file that links to the change contained in Chef for auditing purposes.
-    * When the pipelines execute, we should see the configuration change as desired.
-1. Proceed to have a member of Delivery merge/review the MR
-1. After the change has been applied, proceed to verification of the change as
-   necessary.
-
-The above steps are not our desired state.  We have issue
-https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1128 to make this
-procedure friendlier.
+Note that if you wish to update a secret, you will need to make a new version of the secret object in that repository, merge it, then do a merge request against this repository to change what Kubernetes secret object is being used.
 
 ## Decisions
 
