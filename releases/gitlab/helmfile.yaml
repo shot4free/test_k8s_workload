@@ -39,6 +39,3 @@ releases:
       - 'values/{{ .Environment.Values.env_prefix }}.yaml.gotmpl'
 {{ end }}
       - 'values/{{ .Environment.Name }}.yaml.gotmpl'
-{{- if eq ( .Environment.Values | getOrNil "env_prefix" | default .Environment.Name) "gprd" }}
-      - values/values-from-external-sources.yaml.gotmpl
-{{- end }}
