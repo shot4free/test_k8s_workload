@@ -121,6 +121,11 @@ global:
     externalHttps:
       # gcloud compute address pages-gke-gprd-cny
       - 10.216.8.25
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+      directives:
+        report_uri: "https://sentry.gitlab.net/api/105/security/?sentry_key=a42ea3adc19140d9a6424906e12fba86"
 
 registry:
   hpa:
