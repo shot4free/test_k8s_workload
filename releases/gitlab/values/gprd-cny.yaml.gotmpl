@@ -24,11 +24,13 @@ gitlab:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
+    minReplicas: 8
+    nodeSelector:
+      cloud.google.com/gke-nodepool: shell-cny-1
     extraEnv:
       GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
       enabled: true
-    minReplicas: 8
     sshDaemon: gitlab-sshd
     serviceAccount:
       annotations:
