@@ -75,7 +75,9 @@ registry:
       enabled: false
   gc:
     disabled: false
-    reviewafter: 48h
+    reviewafter: 24h
+    manifests:
+      interval: 1s
     blobs:
       interval: 1s
   validation:
