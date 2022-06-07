@@ -26,9 +26,9 @@ usage() {
 }
 
 ping_gitlab() {
-  ping -c4 gitlab.com
-  ping -c4 registry.gitlab.com
-  ping -c4 charts.gitlab.io
+  ping -c2 gitlab.com
+  ping -c2 registry.gitlab.com
+  ping -c2 charts.gitlab.io
 }
 
 if [[ -z ${GITLAB_ACCESS_DISABLE} ]]; then
