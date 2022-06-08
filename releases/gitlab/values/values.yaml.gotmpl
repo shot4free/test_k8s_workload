@@ -681,6 +681,8 @@ gitlab:
             - 10.0.0.0/8
           annotations:
             cloud.google.com/load-balancer-type: Internal
+        shutdown:
+          blackoutSeconds: 0
         ingress:
           path:
         pod:
