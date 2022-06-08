@@ -118,8 +118,6 @@ gitlab:
       websockets:
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-2
-        shutdown:
-          blackoutSeconds: 0
     minReplicas: 2
     maxReplicas: 30
     extraEnv:
