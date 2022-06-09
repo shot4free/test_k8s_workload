@@ -97,7 +97,7 @@ gitlab:
           loadBalancerIP: 10.216.8.87
       websockets:
         hpa:
-          minReplicas: 1
+          minReplicas: 3
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
