@@ -20,7 +20,7 @@ bump_chart() {
 Changes can be viewed at
 
 https://gitlab.com/gitlab-org/charts/gitlab/-/compare/${ENV_CHART_VER}...${UPSTREAM_VER}"
-    glab mr create -f -y --squash-before-merge --remove-source-branch --push -a ggillies -a hphilipps -a skarbek -a ahyield -l "automation:bot-authored"
+    glab mr create -f -y --squash-before-merge --remove-source-branch --push -a ggillies -a skarbek -a ahyield -l "automation:bot-authored"
   fi
 }
 
