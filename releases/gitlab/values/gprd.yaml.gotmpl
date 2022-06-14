@@ -162,6 +162,19 @@ gitlab:
           maxReplicas: 200
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-2
+        resources:
+          limits:
+            memory: 5.0G
+          requests:
+            cpu: 3
+            memory: 4G
+        workhorse:
+          resources:
+            limits:
+              memory: 1G
+            requests:
+              cpu: 500m
+              memory: 200M
       web:
         hpa:
           minReplicas: 25
