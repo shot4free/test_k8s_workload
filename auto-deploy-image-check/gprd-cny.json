@@ -17,12 +17,6 @@
   "name": "gitlab-cny-gitlab-shell",
   "change": "MODIFY"
 },{
-  "api": "batch",
-  "kind": "Job",
-  "namespace": "gitlab-cny",
-  "name": "gitlab-cny-gitlab-upgrade-check",
-  "change": "MODIFY"
-},{
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab-cny",
