@@ -248,6 +248,19 @@ global:
       key: secret
       secret: gitlab-redis-credential-v1
     port: "6379"
+    rateLimiting:
+      host: pre-redis-ratelimiting
+      password:
+        enabled: true
+        key: secret
+        secret: gitlab-redis-credential-v1
+      sentinels:
+      - host: redis-ratelimiting-01-db-pre.c.gitlab-pre.internal
+        port: 26379
+      - host: redis-ratelimiting-02-db-pre.c.gitlab-pre.internal
+        port: 26379
+      - host: redis-ratelimiting-03-db-pre.c.gitlab-pre.internal
+        port: 26379
   smtp:
     domain: mg.pre.gitlab.com
     user_name: postmaster@mg.pre.gitlab.com
