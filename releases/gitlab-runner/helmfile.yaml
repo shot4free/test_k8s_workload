@@ -6,7 +6,7 @@ bases:
 ---
 releases:
 - name:  gitlab-runner
-  chart: "../../charts/gitlab-runner/{{ .Values.env_prefix }}"
+  chart: "../../vendor/charts/gitlab-runner/{{ .Values.env_prefix }}"
   namespace: {{ .Values | getOrNil "gitlab_runner.namespace" | default "gitlab-runner" }}
   installed: {{ .Values | getOrNil "gitlab_runner.enabled" | default "false" }}
   values:
