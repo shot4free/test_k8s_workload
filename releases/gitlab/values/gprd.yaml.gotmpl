@@ -92,6 +92,8 @@ registry:
 
 gitlab:
   gitlab-pages:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: pages-1
     hpa:
       minReplicas: 2
       maxReplicas: 20
