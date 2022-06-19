@@ -4,17 +4,17 @@ set -euo pipefail
 
 bump_chart() {
   # Get current chart ver for environment
-  ENV_CHART_VER=$(yq e "(.environments.${ENVIRONMENT}.values | explode(.))[0] * (.environments.${ENVIRONMENT}.values | explode(.))[1] | .gitlab_chart_version" bases/environments.yaml)
+  ENV_CHART_VER=$(yq e ".directories[0].contents[] | select(.path == \"gitlab/${ENVIRONMENT}\").git.ref" vendir.yml)
 
   # Get chart version from dev.gitlab.org
   UPSTREAM_VER=$(git ls-remote git@dev.gitlab.org:gitlab/charts/gitlab.git HEAD | awk '{ print $1}')
 
   if [[ ${ENV_CHART_VER} != "${UPSTREAM_VER}" ]]; then
-    yq -i e ".environments.${ENVIRONMENT}.values[1].gitlab_chart_version = \"${UPSTREAM_VER}\"" bases/environments.yaml
-    ./bin/vendor-chart.sh gitlab "${ENVIRONMENT}"
+    yq -i e ".directories[0].contents |= map(select(.path == \"gitlab/${ENVIRONMENT}\").git.ref = \"${UPSTREAM_VER}\")" vendir.yml
+    vendir sync
     git checkout -b "${ENVIRONMENT}-chart-bump-${UPSTREAM_VER}"
-    git add bases/environments.yaml
-    git add "charts/gitlab/${ENVIRONMENT}"
+    git add vendir.yml vendir.lock.yml
+    git add "vendor/charts/gitlab/${ENVIRONMENT}"
     git commit -m "Bump to Gitlab chart ${UPSTREAM_VER} in ${ENVIRONMENT}
 
 Changes can be viewed at

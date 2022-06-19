@@ -19,7 +19,7 @@ releases:
     labels:
       autodeploy: true
     namespace: {{.Environment.Values | getOrNil "gitlab_namespace" | default "gitlab"}}
-    chart: "../../charts/gitlab/{{ .Values.env_prefix }}"
+    chart: "../../vendor/charts/gitlab/{{ .Values.env_prefix }}"
     set:
       - name: "global.deployment.annotations.app\\.gitlab\\.com/app"
         value: {{env "CI_PROJECT_PATH_SLUG" | default "gitlab-com-gl-infra-k8s-workloads-gitlab-com"}}

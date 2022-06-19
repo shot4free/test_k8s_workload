@@ -1,0 +1,46 @@
+---
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+  - path: vendor/charts
+    contents:
+      - path: gitlab/pre
+        git:
+          url: git@dev.gitlab.org:gitlab/charts/gitlab.git
+          ref: 1666f50f8a4d4192d4b100cafeb5828c4f2e661d
+        excludePaths:
+          - '.git/**'
+          - 'doc/**'
+          - 'examples/**'
+          - 'scripts/**'
+          - 'spec/**'
+      - path: gitlab/gstg
+        git:
+          url: git@dev.gitlab.org:gitlab/charts/gitlab.git
+          ref: 1666f50f8a4d4192d4b100cafeb5828c4f2e661d
+        excludePaths:
+          - '.git/**'
+          - 'doc/**'
+          - 'examples/**'
+          - 'scripts/**'
+          - 'spec/**'
+      - path: gitlab/gprd
+        git:
+          url: git@dev.gitlab.org:gitlab/charts/gitlab.git
+          ref: 1666f50f8a4d4192d4b100cafeb5828c4f2e661d
+        excludePaths:
+          - '.git/**'
+          - 'doc/**'
+          - 'examples/**'
+          - 'scripts/**'
+          - 'spec/**'
+      - path: gitlab-runner/pre
+        git:
+          url: git@dev.gitlab.org:gitlab/charts/gitlab-runner.git
+          ref: 20683318add4eb99a8a8508932860c20f0ae70f6
+        excludePaths:
+          - '.git/**'
+          - 'doc/**'
+          - 'examples/**'
+          - 'scripts/**'
+          - 'spec/**'

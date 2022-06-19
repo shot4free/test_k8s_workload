@@ -7,7 +7,7 @@ bases:
 {{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
 releases:
 - name:  {{ .Values | getOrNil "gitlab_extras.release_name" | default "gitlab-extras" }}
-  chart: "../../charts/raw"
+  chart: "charts/raw"
   namespace: {{ $namespace }}
   values:
     - values.yaml.gotmpl

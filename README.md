@@ -136,26 +136,23 @@ We vendor the `gitlab` and `gitlab-runner` charts into this repo. This allows
 us to minimise the amount of external dependencies invoked at runtime, and allow
 easier understanding of this repo by including all "code" needed inside it.
 
-We track the version of chart used in a specific environment as a `helmfile`
-value `${chart}_chart_version`. You will need to update `bases/environments.yaml`
-in the appropriate place to bump charts for your environment(s).
-
-Once you have updated `environments.yaml`, you can use `./bin/vendor-chart.sh`
-to easily commit the new chart to this repo. You need to pass the `vendor-chart.sh`
-two options.
-
-1) The name of the chart to vendor (currently `gitlab` or `gitlab-runner`)
-2) The environment to vendor the chart in (you need to invoke this separately
-   for each environment if multiple)
+We use a tool called [vendir](https://carvel.dev/vendir) to handle the process
+of "vendoring" the charts into this repo (and checking they are the same as
+their upstream versions during merge requests). In order to bump the version
+of the GitLab chart used in an environment, you will need to edit `vendir.yml`
+file, and look for the `ref` field under the chart directory you are interested
+(these are in the format `gitlab/${environment name}`. Change the ref to the
+new git ref (from the charts repository) you wish to use, then run the command
+`vendir sync` which will vendor the new copy locally. Then feel free to do an MR
+with these changes to actually get the change applied.
 
 An example to commit the new chart for in `gstg` for the `gitlab` chart
 
 ```
 git checkout -b username/bump-chart-gitlab-in-gstg
-# edit bases/environments.yaml changing gitlab_chart_version to the new SHA
-# under the `gstg` environment
-./bin/vendor-chart.sh gitlab gstg
-git add charts/gitlab/gstg bases/environments.yaml
+# edit vendir.yml changing `ref` for the `gitlab/gstg` path to the new SHA
+vendir sync
+git add vendor/charts/gitlab/gstg vendir.yml vendir.lock.yml
 git commit -m "Bump chart in gstg"
 # You are now ready to push and open an MR
 ```
@@ -171,13 +168,12 @@ other work ongoing on pre that shouldn't be interrupted, etc.)
 In order to minimise the amount of external dependencies this repo has (as it's
 part of our critical deployment pipeline), and to make it easier to read and
 understand this repository, we vendor the charts that we use into this repo
-under the directory `charts`.
+under the directory `vendor/charts`.
 
 Currently the following charts are vendored in this repo
 
 | Chart | Vendored | How to correctly do modifications |
 | -- | -- | -- |
-| `raw` | yes | This was forked from an abandoned upstream chart, so local modifications as necessary are fine |
 | `gitlab` | yes | Work in upstream chart repo and then see instructions above |
 | `gitlab-runner` | yes | Work in upstream chart repo and then see instructions above |
 

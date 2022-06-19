@@ -4,7 +4,8 @@ check-vendored-charts:
   script:
     - chmod 400 "$SSH_PRIVATE_KEY"
     - export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
-    - bin/check-vendored-charts.sh
+    - vendir sync
+    - git diff --exit-code vendor || (echo "Charts in this commit are not the same as upstream" >&2 && exit 1)
   extends:
     - .except-ops
   except:

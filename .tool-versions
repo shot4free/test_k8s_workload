@@ -2,3 +2,4 @@ helm 3.9.0
 helmfile 0.144.0
 yq 4.25.2
 glab 1.22.0
+vendir 0.27.0
