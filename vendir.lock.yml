@@ -8,10 +8,10 @@ directories:
       - 12.10.202004211640+297d8250845-3556-g1666f50f8
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch 'sh-support-puma-ssl' into 'master'...
-      sha: 1666f50f8a4d4192d4b100cafeb5828c4f2e661d
+      commitTitle: Merge branch 'mk-disable-pwk' into 'master'...
+      sha: 1ea8fdae83d5c7f8e095641539bacb4a51bc8ead
       tags:
-      - 12.10.202004211640+297d8250845-3556-g1666f50f8
+      - 12.10.202004211640+297d8250845-3578-g1ea8fdae8
     path: gitlab/gstg
   - git:
       commitTitle: Merge branch 'sh-support-puma-ssl' into 'master'...
