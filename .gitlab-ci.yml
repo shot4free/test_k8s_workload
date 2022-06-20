@@ -143,11 +143,12 @@ retire-js-dependency_scanning:
     variables:
       - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
     changes:
-      - 'charts/gitlab/**/*'
+      - 'vendor/charts/gitlab/**/*'
       - 'bases/**/*'
       - 'bin/**/*'
       - 'releases/**/*'
       - '*.yaml'
+      - '*.yml'
       - .gitlab-ci.yml
       - CHEF_CONFIG_UPDATE
 
