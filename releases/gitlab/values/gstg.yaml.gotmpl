@@ -86,6 +86,7 @@ gitlab:
         memory: 70M
       limits:
         memory: 1G
+    rateLimitSourceIPBurst: 300
   mailroom:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-mailroom
