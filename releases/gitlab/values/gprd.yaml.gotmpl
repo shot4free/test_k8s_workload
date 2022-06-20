@@ -263,6 +263,8 @@ gitlab:
           environment: {{ .Environment.Values | getOrNil "env_prefix" }}
         google_profiler:
           enabled: true
+      redis:
+        pool_size: 30
   sidekiq:
     extraEnv:
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
