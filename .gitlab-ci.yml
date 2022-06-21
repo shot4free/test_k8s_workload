@@ -566,7 +566,8 @@ pre:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
-      - 'charts/gitlab/**/*'
+      - 'vendor/charts/gitlab/pre/**/*'
+      - 'vendor/charts/gitlab-runner/pre/**/*'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
@@ -588,7 +589,7 @@ gstg:qa:
       - $EXPEDITE_DEPLOYMENT
   only:
     changes:
-      - 'charts/gitlab/**/*'
+      - 'vendor/charts/gitlab/gstg/**/*'
       - '.gitlab-ci.yml'
       - '*.yaml'
       - 'releases/gitlab-secrets/*'
