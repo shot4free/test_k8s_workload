@@ -195,12 +195,14 @@ gitlab:
       websockets:
         hpa:
           minReplicas: 4
+          targetAverageValue: 2500m
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-2
         resources:
           limits:
             memory: 12G
           requests:
+            cpu: 4000m
             memory: 6G
         workhorse:
           resources:
