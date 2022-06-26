@@ -363,7 +363,7 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}
         # secret:
         # key:
@@ -389,7 +389,7 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}
         # secret:
         # key:
@@ -431,6 +431,10 @@ global:
       dsn:
       clientside_dsn:
       environment:
+
+    gitlab_docs:
+      enabled: false
+      host: ""
 
     smartcard:
       enabled: false
