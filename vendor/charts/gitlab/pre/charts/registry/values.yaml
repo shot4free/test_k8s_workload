@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.48.0-gitlab'
+  tag: 'v3.49.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -224,9 +224,11 @@ hpa:
   maxReplicas: 10
   cpu:
     targetAverageUtilization: 75
-
-  # Note that the HPA is limited to autoscaling/v2beta1
-  customMetrics: []
+  # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
+  customMetrics: []  # Overrides HPA metrics definition
+  behaviour:
+    scaleDown:
+      stabilizationWindowSeconds: 300
 
 storage: {}
 # secret:

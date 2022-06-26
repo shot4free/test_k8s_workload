@@ -7,7 +7,7 @@ directories:
       - path: gitlab/pre
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: 1ea8fdae83d5c7f8e095641539bacb4a51bc8ead
+          ref: d6745f35b096c25b8b52fe4d8271c76036273cb7
         excludePaths:
           - '.git/**'
           - 'doc/**'
