@@ -120,6 +120,8 @@ gitlab:
           cloud.google.com/gke-nodepool: websockets-2
     minReplicas: 2
     maxReplicas: 30
+    puma:
+      disableWorkerKiller: true
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated_files_api,throttle_authenticated_files_api"
