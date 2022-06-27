@@ -395,7 +395,9 @@ gitlab:
         extraVolumes: |
           - name: sidekiq-shared
             emptyDir:
-              sizeLimit: 70G
+              # We are overprovisioning storage per Pod
+              # https://gitlab.com/gitlab-org/gitlab/-/issues/363655
+              sizeLimit: 120G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"memory-bound\"}"
       # Run background migrations in their own shard
