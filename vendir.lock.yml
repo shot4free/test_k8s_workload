@@ -14,10 +14,10 @@ directories:
       - 12.10.202004211640+297d8250845-3613-gd6745f35b
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch 'mk-disable-pwk' into 'master'...
-      sha: 1ea8fdae83d5c7f8e095641539bacb4a51bc8ead
+      commitTitle: Merge branch 'add_gitlab_docs_config_for_webservice' into 'master'...
+      sha: d6745f35b096c25b8b52fe4d8271c76036273cb7
       tags:
-      - 12.10.202004211640+297d8250845-3578-g1ea8fdae8
+      - 12.10.202004211640+297d8250845-3613-gd6745f35b
     path: gitlab/gprd
   - git:
       commitTitle: Update CHANGELOG for v0.27.0
