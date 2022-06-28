@@ -323,7 +323,7 @@ gitlab:
         minReplicas: 56
         maxReplicas: 300
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-catchall-2
+          cloud.google.com/gke-nodepool: sidekiq-catchall-3
         podLabels:
           shard: catchall
           deployment: sidekiq-catchall
@@ -352,7 +352,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-catchall-2
+          cloud.google.com/gke-nodepool: sidekiq-catchall-3
         podLabels:
           deployment: sidekiq-imports
           shard: imports
@@ -375,7 +375,7 @@ gitlab:
         minReplicas: 8
         maxReplicas: 60
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-4
         podLabels:
           shard: memory-bound
           deployment: sidekiq-memory-bound
@@ -482,7 +482,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 100
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-3
         podLabels:
           shard: low-urgency-cpu-bound
           deployment: sidekiq-low-urgency-cpu-bound
@@ -506,7 +506,7 @@ gitlab:
         minReplicas: 10
         maxReplicas: 50
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-catchall-2
+          cloud.google.com/gke-nodepool: sidekiq-catchall-3
         podLabels:
           shard: quarantine
           deployment: sidekiq-quarantine
@@ -539,7 +539,7 @@ gitlab:
           maxRss: 3000000
           shutdownWait: 30
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-3
         podLabels:
           shard: urgent-cpu-bound
           deployment: sidekiq-urgent-cpu-bound
