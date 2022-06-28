@@ -284,16 +284,16 @@ global:
     external:
       - hostname: gitaly-01-sv-pre.c.gitlab-pre.internal
         name: default
-        port: "9999"
-        tlsEnabled: false
+        port: "9998"
+        tlsEnabled: true
       - hostname: praefect-01-stor-pre.c.gitlab-pre.internal
         name: praefect
-        port: "2305"
-        tlsEnabled: false
+        port: "2306"
+        tlsEnabled: true
       - hostname: gitaly-03-sv-pre.c.gitlab-pre.internal
         name: gitaly-03
-        port: "9999"
-        tlsEnabled: false
+        port: "9998"
+        tlsEnabled: true
 
   hosts:
     # gcloud compute address nginx-gke-pre
