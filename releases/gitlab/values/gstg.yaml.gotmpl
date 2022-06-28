@@ -501,6 +501,30 @@ gitlab:
             memory: 3G
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-other\"}"
+      # Run authorized project workers in their own shard
+      - name: urgent-authorized-projects
+        common:
+          labels:
+            shard: urgent-authorized-projects
+        concurrency: 2 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/15955#note_1001179468
+        minReplicas: 1
+        maxReplicas: 1
+        nodeSelector:
+          cloud.google.com/gke-nodepool: default-2
+        podLabels:
+          deployment: sidekiq-urgent-authorized-projects
+          shard: urgent-authorized-projects
+        queueSelector: false
+        queues: urgent_authorized_projects
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2G
+          limits:
+            cpu: 1.5
+            memory: 3G
+        extraEnv:
+          GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"sidekiq\", \"stage\": \"main\", \"shard\": \"urgent-authorized-projects\"}"
     psql:
       database: gitlabhq_production_sidekiq
       host: pgbouncer-sidekiq.int.gstg.gitlab.net
@@ -576,6 +600,7 @@ global:
         - ["tags=needs_own_queue", null]
         - ["worker_name=AuthorizedProjectUpdate::UserRefreshFromReplicaWorker,AuthorizedProjectUpdate::UserRefreshWithLowUrgencyWorker", "quarantine"] # move this to the quarantine shard
         - ["worker_name=RepositoryImportWorker,BulkImports::PipelineWorker", "imports"] # imports
+        - ["worker_name=AuthorizedProjectsWorker", "urgent_authorized_projects"] # urgent-authorized-projects
         - ["resource_boundary=cpu&urgency=high", "urgent_cpu_bound"] # urgent-cpu-bound
         - ["resource_boundary=memory", "memory_bound"] # memory-bound
         - ["feature_category=global_search&urgency=throttled", "elasticsearch"] # elasticsearch
