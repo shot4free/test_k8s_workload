@@ -508,7 +508,7 @@ gitlab:
             shard: urgent-authorized-projects
         concurrency: 2 # Discussion on this value in https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/15955#note_1001179468
         minReplicas: 1
-        maxReplicas: 1
+        maxReplicas: 26
         nodeSelector:
           cloud.google.com/gke-nodepool: default-2
         podLabels:
