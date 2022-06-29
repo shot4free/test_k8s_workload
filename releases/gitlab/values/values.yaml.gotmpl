@@ -893,7 +893,7 @@ gitlab:
             protocol: TCP
 
     puma:
-      workerMaxMemory: 1342 # in MB units
+      disableWorkerKiller: true
       threads:
         min: 1
         max: 4
