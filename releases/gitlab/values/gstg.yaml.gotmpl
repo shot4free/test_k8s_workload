@@ -77,6 +77,8 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
   gitlab-pages:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: pages-1
     hpa:
       minReplicas: 2
       targetAverageValue: 400m
