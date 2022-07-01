@@ -232,6 +232,70 @@ gitlab:
       loadBalancerIP: 10.232.20.117
     workhorse:
       host: 'gitlab-webservice-api.gitlab.svc'
+    networkpolicy:
+      enabled: true
+      egress:
+        enabled: true
+        rules:
+          # Disables all outgoing traffic except to specific ports on the internal network
+          # Allow internal traffic for DNS
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            - port: 53
+              protocol: UDP
+            - port: 53
+              protocol: TCP
+          # Allow talking to our internal API endpoints
+          - to:
+            - podSelector:
+                matchLabels:
+                  gitlab.com/webservice-name: api
+            ports:
+            - port: 8181
+              protocol: TCP
+          # Allow internal traffic to Gitaly
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+            # Gitaly non-TLS
+            - port: 9999
+              protocol: TCP
+            # Gitaly TLS
+            - port: 9998
+              protocol: TCP
+            # Praefect
+            - port: 2305
+              protocol: TCP
+          # Allow internal traffic to Redis
+          - to:
+            - ipBlock:
+                cidr: 10.0.0.0/8
+            ports:
+              # pre Memorystore instance
+            - port: 6379
+              protocol: TCP
+          # Allow all outgoing HTTPS/443
+          - ports:
+            - port: 443
+              protocol: TCP
+          # GKE metadata - https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#pod_cant_authenticate_to
+          - to:
+            - ipBlock:
+                cidr: 169.254.169.252/32
+            ports:
+            - port: 988
+              protocol: TCP
+          # KAS internal traffic
+          - to:
+            - podSelector:
+                matchLabels:
+                  app: kas
+            ports:
+            - port: 8155
+              protocol: TCP
 global:
   appConfig:
     artifacts:
