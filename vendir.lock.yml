@@ -2,22 +2,22 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'add_gitlab_docs_config_for_webservice' into 'master'...
-      sha: d6745f35b096c25b8b52fe4d8271c76036273cb7
+      commitTitle: Merge branch 'update-runner-locked-chart' into 'master'...
+      sha: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
       tags:
-      - 12.10.202004211640+297d8250845-3613-gd6745f35b
+      - 12.10.202004211640+297d8250845-3629-g77436bcdb
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch 'add_gitlab_docs_config_for_webservice' into 'master'...
-      sha: d6745f35b096c25b8b52fe4d8271c76036273cb7
+      commitTitle: Merge branch 'update-runner-locked-chart' into 'master'...
+      sha: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
       tags:
-      - 12.10.202004211640+297d8250845-3613-gd6745f35b
+      - 12.10.202004211640+297d8250845-3629-g77436bcdb
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch 'add_gitlab_docs_config_for_webservice' into 'master'...
-      sha: d6745f35b096c25b8b52fe4d8271c76036273cb7
+      commitTitle: Merge branch 'update-runner-locked-chart' into 'master'...
+      sha: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
       tags:
-      - 12.10.202004211640+297d8250845-3613-gd6745f35b
+      - 12.10.202004211640+297d8250845-3629-g77436bcdb
     path: gitlab/gprd
   - git:
       commitTitle: Update CHANGELOG for v0.27.0

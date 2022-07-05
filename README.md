@@ -152,6 +152,10 @@ An example to commit the new chart for in `gstg` for the `gitlab` chart
 git checkout -b username/bump-chart-gitlab-in-gstg
 # edit vendir.yml changing `ref` for the `gitlab/gstg` path to the new SHA
 vendir sync
+# manually sync helm deps
+cd vendor/charts/gitlab/gstg
+helm dep update
+cd ../../../..
 git add vendor/charts/gitlab/gstg vendir.yml vendir.lock.yml
 git commit -m "Bump chart in gstg"
 # You are now ready to push and open an MR
