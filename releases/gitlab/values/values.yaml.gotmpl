@@ -267,12 +267,6 @@ nginx-ingress:
     image:
       repository: k8s.gcr.io/ingress-nginx/controller
     terminationGracePeriodSeconds: 120
-    autoscaling:
-      enabled: true
-      minReplicas: 3
-      maxReplicas: 100
-      targetCPUUtilizationPercentage: 50
-      targetMemoryUtilizationPercentage: 75
     config:
       upstream-keepalive-timeout: "30"
       upstream-keepalive-requests: "0"
@@ -298,6 +292,12 @@ nginx-ingress:
       requests:
         cpu: 300m
         memory: 500Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
     maxUnavailable: 5%
     sysctls:
       "net.ipv4.ip_local_port_range": "11000 65500"
@@ -338,9 +338,6 @@ registry:
     repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-container-registry
     pullSecrets:
       - name: dev-registry-access-v1
-  hpa:
-    cpu:
-      targetAverageUtilization: 70
   draintimeout: '60s'
   deployment:
     readinessProbe:
@@ -379,6 +376,10 @@ registry:
       memory: 3G
     requests:
       cpu: 300m
+  hpa:
+    cpu:
+      targetAverageUtilization: 70
+  maxUnavailable: 1
   debug:
     prometheus:
       enabled: true
@@ -428,6 +429,7 @@ gitlab-runner:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
+  # doc/charts/gitlab/gitlab-pages
   gitlab-pages:
     common:
       labels:
@@ -438,6 +440,7 @@ gitlab:
         rollingUpdate:
           maxSurge: 25%
           maxUnavailable: 0
+    maxUnavailable: 1
     extraEnv:
       GITLAB_CONTINUOUS_PROFILING: "stackdriver?service=gitlab-pages"
       FF_HANDLE_CACHE_HEADERS: "true"
@@ -500,6 +503,8 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
     useHTTPProxy: true
     useProxyV2: true
+
+  # doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     deployment:
       strategy:
@@ -515,12 +520,6 @@ gitlab:
       # we may want to use that instead
       # https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1401
       serviceName: webservice-git
-    resources:
-      requests:
-        cpu: 1
-        memory: 1G
-      limits:
-        memory: 1G
     service:
       annotations:
         cloud.google.com/load-balancer-type: Internal
@@ -536,8 +535,15 @@ gitlab:
     global:
       shell:
         port: 2222
+    resources:
+      requests:
+        cpu: 1
+        memory: 1G
+      limits:
+        memory: 1G
     hpa:
       targetAverageValue: 800m
+    maxUnavailable: 1
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-shell
       pullSecrets:
@@ -550,9 +556,11 @@ gitlab:
       labels:
         deployment: gitlab-shell
         type: git
+
   # doc/charts/gitlab/migrations
   migrations:
     enabled: false
+
   # doc/charts/gitlab/webservice
   webservice:
     extraEnvFrom:
@@ -668,8 +676,6 @@ gitlab:
         common:
           labels:
             type: websockets
-        hpa:
-          minReplicas: 2
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"main\"}"
@@ -736,8 +742,6 @@ gitlab:
             name: webservice-secrets
     workerProcesses: 4
     enabled: {{ .Values.gitlab.webservice.enabled }}
-    hpa:
-      targetAverageValue: 1600m
     registry:
       tokenIssuer: omnibus-gitlab-issuer
     deployment:
@@ -777,9 +781,9 @@ gitlab:
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-connect-timeout: 300
         nginx.ingress.kubernetes.io/proxy-read-timeout: 3600
-{{- if (.Values | getOrNil "nginx_ingress_server_alias") | default false }}
+        {{- if (.Values | getOrNil "nginx_ingress_server_alias") | default false }}
         nginx.ingress.kubernetes.io/server-alias: {{ .Values | getOrNil "nginx_ingress_server_alias" }}
-{{- end }}
+        {{- end }}
       proxyBodySize: 0
     rack_attack:
       git_basic_auth:
@@ -922,14 +926,18 @@ gitlab:
       requests:
         cpu: 4
         memory: 5G
+    hpa:
+      targetAverageValue: 1600m
     minReplicas: 2
     maxReplicas: 10
+    maxUnavailable: 1
     extraEnv:
       ACTION_CABLE_IN_APP: "true"
       BYPASS_SCHEMA_VERSION: "true"
       STACKPROF_ENABLED: "true"
       UNSTRUCTURED_RAILS_LOG: "false"
       USE_GITLAB_LOGGER: 1
+
   # doc/charts/gitlab/sidekiq
   sidekiq:
     enabled: {{ .Values.gitlab.sidekiq.enabled }}
@@ -1069,6 +1077,8 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2254#note_358815700
       targetAverageValue: 450m
 
+    maxUnavailable: 1
+
     registry:
       api:
         protocol: "https"
@@ -1077,8 +1087,12 @@ gitlab:
       tokenIssuer: omnibus-gitlab-issuer
     trusted_proxies:
       - 10.0.0.0/8
+
+  # doc/charts/gitlab/gitlab-exporter
   gitlab-exporter:
     enabled: false
+
+  # doc/charts/gitlab/mailroom
   mailroom:
     enabled: {{ .Values.gitlab.mailroom.enabled }}
     common:
@@ -1135,6 +1149,7 @@ gitlab:
             - port: 8181
               protocol: TCP
 
+  # doc/charts/gitlab/kas
   kas:
     global:
       ingress:
@@ -1187,6 +1202,7 @@ gitlab:
       limits:
         cpu: 500m
         memory: 256M
+    maxUnavailable: 1
     networkpolicy:
       enabled: true
       egress:
@@ -1257,6 +1273,8 @@ gitlab:
             ports:
             - port: 8155
               protocol: TCP
+
+  # doc/charts/gitlab/toolbox
   toolbox:
     backups:
       objectStorage:
