@@ -61,6 +61,7 @@ registry:
           - .*
   hpa:
     maxReplicas: 20
+  maxUnavailable: 5%
 
 gitlab:
   gitlab-shell:
@@ -76,12 +77,14 @@ gitlab:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
+    maxUnavailable: 5%
   gitlab-pages:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-1
     hpa:
       minReplicas: 2
       targetAverageValue: 400m
+    maxUnavailable: 5%
     resources:
       requests:
         cpu: 500m
@@ -122,6 +125,7 @@ gitlab:
           cloud.google.com/gke-nodepool: websockets-2
     minReplicas: 2
     maxReplicas: 30
+    maxUnavailable: 5%
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated_files_api,throttle_authenticated_files_api"
@@ -164,6 +168,7 @@ gitlab:
       tag: 15-1-202206161021-2fdace73b98
     nodeSelector:
       cloud.google.com/gke-nodepool: default-2
+    maxUnavailable: 5%
     service:
       # gcloud compute address kas-internal-gke-gstg
       loadBalancerIP: 10.224.34.18
@@ -214,6 +219,7 @@ gitlab:
         concurrency: 15
         minReplicas: 1
         maxReplicas: 100
+        maxUnavailable: 5%
         nodeSelector:
           cloud.google.com/gke-nodepool: catchall-0
         podLabels:
