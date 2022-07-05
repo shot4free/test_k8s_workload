@@ -1,9 +1,0 @@
-config.yaml
-.DS_Store
-tags
-.markdownlintrc
-gems
-.bundle
-build
-spec/examples.txt
-knapsack_rspec_report.json

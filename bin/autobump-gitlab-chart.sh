@@ -12,6 +12,9 @@ bump_chart() {
   if [[ ${ENV_CHART_VER} != "${UPSTREAM_VER}" ]]; then
     yq -i e ".directories[0].contents |= map(select(.path == \"gitlab/${ENVIRONMENT}\").git.ref = \"${UPSTREAM_VER}\")" vendir.yml
     vendir sync
+    pushd "vendor/charts/gitlab/${ENVIRONMENT}"
+    helm dep update
+    popd
     git checkout -b "${ENVIRONMENT}-chart-bump-${UPSTREAM_VER}"
     git add vendir.yml vendir.lock.yml
     git add "vendor/charts/gitlab/${ENVIRONMENT}"

@@ -7,9 +7,10 @@ directories:
       - path: gitlab/pre
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: d6745f35b096c25b8b52fe4d8271c76036273cb7
+          ref: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
         excludePaths:
           - '.git/**'
+          - '.gitignore'
           - 'doc/**'
           - 'examples/**'
           - 'scripts/**'
@@ -17,9 +18,10 @@ directories:
       - path: gitlab/gstg
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: d6745f35b096c25b8b52fe4d8271c76036273cb7
+          ref: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
         excludePaths:
           - '.git/**'
+          - '.gitignore'
           - 'doc/**'
           - 'examples/**'
           - 'scripts/**'
@@ -27,9 +29,10 @@ directories:
       - path: gitlab/gprd
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: d6745f35b096c25b8b52fe4d8271c76036273cb7
+          ref: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
         excludePaths:
           - '.git/**'
+          - '.gitignore'
           - 'doc/**'
           - 'examples/**'
           - 'scripts/**'
@@ -40,6 +43,7 @@ directories:
           ref: 20683318add4eb99a8a8508932860c20f0ae70f6
         excludePaths:
           - '.git/**'
+          - '.gitignore'
           - 'doc/**'
           - 'examples/**'
           - 'scripts/**'
