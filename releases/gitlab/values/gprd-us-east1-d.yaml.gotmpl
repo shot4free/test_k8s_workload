@@ -34,17 +34,6 @@ gitlab:
         service:
           # gcloud compute address websockets-gke-gprd-us-east1-d
           loadBalancerIP: 10.221.15.37
-        # Test CPU limits for https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/15961
-        hpa:
-          minReplicas: 8
-          targetAverageValue: 2500m
-        resources:
-          limits:
-            cpu: 4000m
-            memory: 12G
-          requests:
-            cpu: 2300m
-            memory: 6G
 registry:
   service:
     # gcloud compute address registry-gke-gprd-us-east1-d
