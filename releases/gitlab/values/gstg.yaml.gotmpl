@@ -61,6 +61,14 @@ registry:
           - .*
   hpa:
     maxReplicas: 20
+    behaviour:
+      scaleDown:
+        stabilizationWindowSeconds: 900
+        policies:
+          - type: Percent
+            value: 10
+            periodSeconds: 300
+
   maxUnavailable: 5%
 
 gitlab:
@@ -78,12 +86,27 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
     sshDaemon: gitlab-sshd
     maxUnavailable: 5%
+    hpa:
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
   gitlab-pages:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-1
     hpa:
       minReplicas: 2
       targetAverageValue: 400m
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     maxUnavailable: 5%
     resources:
       requests:
@@ -125,6 +148,14 @@ gitlab:
           cloud.google.com/gke-nodepool: websockets-2
     minReplicas: 2
     maxReplicas: 30
+    hpa:
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     maxUnavailable: 5%
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
@@ -211,6 +242,14 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
+    hpa:
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     pods:
       - name: catchall
         common:
