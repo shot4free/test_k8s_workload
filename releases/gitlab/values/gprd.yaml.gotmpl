@@ -27,6 +27,13 @@ registry:
     # and should stay above 20 until we solve https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
     minReplicas: 50
     maxReplicas: 90
+    behaviour:
+      scaleDown:
+        stabilizationWindowSeconds: 900
+        policies:
+          - type: Percent
+            value: 10
+            periodSeconds: 300
   resources:
     requests:
       memory: 3G
@@ -98,6 +105,13 @@ gitlab:
       minReplicas: 2
       maxReplicas: 20
       targetAverageValue: 800m
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     resources:
       requests:
         cpu: 1000m
@@ -118,6 +132,13 @@ gitlab:
         cpu: 2000m
     hpa:
       targetAverageValue: 1200m
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     minReplicas: 100
     maxReplicas: 150
     nodeSelector:
@@ -213,6 +234,14 @@ gitlab:
               memory: 2G
     minReplicas: 30
     maxReplicas: 150
+    hpa:
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     extraEnv:
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
@@ -303,6 +332,14 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
+    hpa:
+      behaviour:
+        scaleDown:
+          stabilizationWindowSeconds: 900
+          policies:
+            - type: Percent
+              value: 10
+              periodSeconds: 300
     psql:
       database: gitlabhq_production_sidekiq
       host: pgbouncer-sidekiq.int.gprd.gitlab.net
