@@ -1,0 +1,27 @@
+{
+  "extends": [
+    "config:base",
+    ":disableDependencyDashboard",
+    ":disableRateLimiting"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "assigneesFromCodeOwners": true,
+  "regexManagers": [
+    {
+      "fileMatch": ["\\.ya?ml(\\.gotmpl)?$"],
+      "matchStrings": [
+        "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?( depType=(?<depType>.*?))?\\s*(chart_version|tag):\\s*(?<currentValue>.*)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": ["pre", "gstg", "gprd"],
+      "additionalBranchPrefix": "{{depType}}-",
+      "commitMessagePrefix": "[{{depType}}]"
+    }
+  ]
+}
