@@ -25,7 +25,7 @@ nginx-ingress:
               topologyKey: kubernetes.io/hostname
 
   nodeSelector:
-    cloud.google.com/gke-nodepool: default-2
+    cloud.google.com/gke-nodepool: default-3
 
 registry:
   middleware:
@@ -58,7 +58,7 @@ registry:
     importnotification:
       enabled: true
   nodeSelector:
-    cloud.google.com/gke-nodepool: default-2
+    cloud.google.com/gke-nodepool: default-3
   gc:
     disabled: false
     maxbackoff: 30m
@@ -88,7 +88,7 @@ gitlab:
       minReplicas: 1
       targetAverageValue: 400m
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     resources:
       requests:
         cpu: 500m
@@ -124,13 +124,13 @@ gitlab:
         ingress:
           path: '/api'
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address api-gke-pre
           loadBalancerIP: 10.232.20.95
       git:
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address git-https-gke-pre
           loadBalancerIP: 10.232.20.118
@@ -138,7 +138,7 @@ gitlab:
           blackoutSeconds: 0
       web:
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address web-gke-pre
           loadBalancerIP: 10.232.20.112
@@ -148,7 +148,7 @@ gitlab:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address websockets-gke-pre
           loadBalancerIP: 10.232.20.115
@@ -182,7 +182,7 @@ gitlab:
     minReplicas: 2
     maxReplicas: 5
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     service:
       # gcloud compute address ssh-gke-pre
       loadBalancerIP: 10.232.20.28
@@ -199,7 +199,7 @@ gitlab:
       pullSecrets:
         - name: dev-registry-access-v1
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     workhorse:
       serviceName: webservice-api
   sidekiq:
@@ -209,7 +209,7 @@ gitlab:
           labels:
             shard: catchall
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         concurrency: 25
         minReplicas: 1
         maxReplicas: 5
@@ -225,7 +225,7 @@ gitlab:
     minReplicas: 2
     maxReplicas: 5
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     service:
       # gcloud compute address kas-internal-gke-pre
       loadBalancerIP: 10.232.20.117
