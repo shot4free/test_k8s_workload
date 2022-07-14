@@ -146,7 +146,8 @@ gitlab:
       tag: {{ $gitlab_shell_version }}
   gitlab-pages:
     image:
-      tag: {{ $gitlab_pages_version }}
+      # Remove this pin prior to the next fixed version of working GitLab Pages version
+      tag: 15-2-202207140620-6915c17934a
 global:
   gitlabVersion: {{ $gitlab_version }}
 registry:
