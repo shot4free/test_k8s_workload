@@ -16,7 +16,6 @@ variables:
   # renovate: datasource=docker depName=gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci registryUrl=https://registry.gitlab.com versioning=docker
   CI_IMAGE_VERSION: v12.2.1
   AUTO_DEPLOY: 'false'
-  SKIP_VENDOR_CHECK: 'true'
 
 #############################################################
 
