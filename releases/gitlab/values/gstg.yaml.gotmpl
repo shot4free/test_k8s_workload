@@ -313,7 +313,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 16
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-memory-bound-1
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-2
         podLabels:
           deployment: sidekiq-memory-bound
           shard: memory-bound
@@ -417,7 +417,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-1
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
         podLabels:
           deployment: sidekiq-low-urgency-cpu-bound
           shard: low-urgency-cpu-bound
@@ -464,7 +464,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-1
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
         podLabels:
           deployment: sidekiq-urgent-cpu-bound
           shard: urgent-cpu-bound
@@ -487,7 +487,7 @@ gitlab:
         minReplicas: 5
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-urgent-other-1
+          cloud.google.com/gke-nodepool: sidekiq-urgent-other-2
         podLabels:
           deployment: sidekiq-urgent-other
           shard: urgent-other
