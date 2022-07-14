@@ -8,12 +8,6 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab-cny",
-  "name": "gitlab-cny-gitlab-pages",
-  "change": "MODIFY"
-},{
-  "api": "apps",
-  "kind": "Deployment",
-  "namespace": "gitlab-cny",
   "name": "gitlab-cny-gitlab-shell",
   "change": "MODIFY"
 },{
