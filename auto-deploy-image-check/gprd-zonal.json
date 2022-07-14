@@ -8,12 +8,6 @@
   "api": "apps",
   "kind": "Deployment",
   "namespace": "gitlab",
-  "name": "gitlab-gitlab-pages",
-  "change": "MODIFY"
-},{
-  "api": "apps",
-  "kind": "Deployment",
-  "namespace": "gitlab",
   "name": "gitlab-gitlab-shell",
   "change": "MODIFY"
 },{
