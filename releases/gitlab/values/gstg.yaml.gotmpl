@@ -2,7 +2,7 @@
 
 nginx-ingress:
   nodeSelector:
-    cloud.google.com/gke-nodepool: default-2
+    cloud.google.com/gke-nodepool: default-3
 
 registry:
   middleware:
@@ -123,7 +123,7 @@ gitlab:
       pullSecrets:
         - name: dev-registry-access-v1
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     workhorse:
       scheme: 'https'
       host: 'int.gstg.gitlab.net'
@@ -198,7 +198,7 @@ gitlab:
     image:
       tag: 15-1-202206161021-2fdace73b98
     nodeSelector:
-      cloud.google.com/gke-nodepool: default-2
+      cloud.google.com/gke-nodepool: default-3
     maxUnavailable: 5%
     service:
       # gcloud compute address kas-internal-gke-gstg
@@ -344,7 +344,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 1
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           deployment: sidekiq-database-throttled
           shard: database-throttled
@@ -370,7 +370,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 3
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           deployment: sidekiq-gitaly-throttled
           shard: gitaly-throttled
@@ -393,7 +393,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 2
         nodeSelector:
-          cloud.google.com/gke-nodepool: default-2
+          cloud.google.com/gke-nodepool: default-3
         podLabels:
           deployment: sidekiq-elasticsearch
           shard: elasticsearch
