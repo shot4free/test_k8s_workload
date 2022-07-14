@@ -326,8 +326,6 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: {{ .Values.registry.enabled }}
-  nodeSelector:
-    cloud.google.com/gke-nodepool: registry-2
   common:
     labels:
       type: registry
@@ -480,8 +478,6 @@ gitlab:
               except:
               - 10.0.0.0/8
               - 169.254.169.254/32
-    nodeSelector:
-      cloud.google.com/gke-nodepool: pages-0
     propagateCorrelationId: true
     rateLimitSourceIP: 20
     rateLimitSourceIPBurst: 300
@@ -550,8 +546,6 @@ gitlab:
         - name: dev-registry-access-v1
     logging:
       format: "json"
-    nodeSelector:
-      cloud.google.com/gke-nodepool: shell-2
     common:
       labels:
         deployment: gitlab-shell
@@ -603,8 +597,6 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
-        nodeSelector:
-          cloud.google.com/gke-nodepool: api-1
         shutdown:
           blackoutSeconds: 10
         ingress:
@@ -644,8 +636,6 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-web
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
-        nodeSelector:
-          cloud.google.com/gke-nodepool: web-1
         sharedTmpDir:
           sizeLimit: 10G
         shutdown:
@@ -682,8 +672,6 @@ gitlab:
           # See https://gitlab.com/gitlab-org/gitlab-workhorse/-/issues/352
           GODEBUG: madvdontneed=1
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
-        nodeSelector:
-          cloud.google.com/gke-nodepool: websockets-1
         service:
           type: LoadBalancer
           loadBalancerSourceRanges:
@@ -709,8 +697,6 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"main\"}"
           ENABLE_RAILS_61_CONNECTION_HANDLING: "true"
-        nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-2
         shutdown:
           blackoutSeconds: 240
         service:

@@ -59,6 +59,8 @@ registry:
         # this is needed to keep backwards compatibility when `validation.disabled: false`, as by default an empty `allow` means no URLs are allowed
         allow:
           - .*
+  nodeSelector:
+    cloud.google.com/gke-nodepool: registry-2
   hpa:
     maxReplicas: 20
     behaviour:
@@ -68,7 +70,6 @@ registry:
           - type: Percent
             value: 10
             periodSeconds: 300
-
   maxUnavailable: 5%
 
 gitlab:

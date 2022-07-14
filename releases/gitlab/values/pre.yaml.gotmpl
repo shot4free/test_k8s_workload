@@ -24,9 +24,6 @@ nginx-ingress:
                       - controller
               topologyKey: kubernetes.io/hostname
 
-  nodeSelector:
-    cloud.google.com/gke-nodepool: default-3
-
 registry:
   middleware:
     storage:
@@ -57,8 +54,6 @@ registry:
     preimporttimeout: 48h
     importnotification:
       enabled: true
-  nodeSelector:
-    cloud.google.com/gke-nodepool: default-3
   gc:
     disabled: false
     maxbackoff: 30m
@@ -87,8 +82,6 @@ gitlab:
     hpa:
       minReplicas: 1
       targetAverageValue: 400m
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
     resources:
       requests:
         cpu: 500m
@@ -123,22 +116,16 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"main\"}"
         ingress:
           path: '/api'
-        nodeSelector:
-          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address api-gke-pre
           loadBalancerIP: 10.232.20.95
       git:
-        nodeSelector:
-          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address git-https-gke-pre
           loadBalancerIP: 10.232.20.118
         shutdown:
           blackoutSeconds: 0
       web:
-        nodeSelector:
-          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address web-gke-pre
           loadBalancerIP: 10.232.20.112
@@ -147,8 +134,6 @@ gitlab:
           readinessProbe:
             initialDelaySeconds: 0
           terminationGracePeriodSeconds: 30
-        nodeSelector:
-          cloud.google.com/gke-nodepool: default-3
         service:
           # gcloud compute address websockets-gke-pre
           loadBalancerIP: 10.232.20.115
@@ -181,8 +166,6 @@ gitlab:
       enabled: true
     minReplicas: 2
     maxReplicas: 5
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
     service:
       # gcloud compute address ssh-gke-pre
       loadBalancerIP: 10.232.20.28
@@ -198,8 +181,6 @@ gitlab:
       tag: 0.0.19
       pullSecrets:
         - name: dev-registry-access-v1
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
     workhorse:
       serviceName: webservice-api
   sidekiq:
@@ -208,8 +189,6 @@ gitlab:
         common:
           labels:
             shard: catchall
-        nodeSelector:
-          cloud.google.com/gke-nodepool: default-3
         concurrency: 25
         minReplicas: 1
         maxReplicas: 5
@@ -224,8 +203,6 @@ gitlab:
       tag: 15-1-202206161021-2fdace73b98
     minReplicas: 2
     maxReplicas: 5
-    nodeSelector:
-      cloud.google.com/gke-nodepool: default-3
     service:
       # gcloud compute address kas-internal-gke-pre
       loadBalancerIP: 10.232.20.117
