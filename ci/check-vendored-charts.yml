@@ -14,4 +14,3 @@ check-vendored-charts:
       - $AUTO_DEPLOY == "true"
       - $CI_COMMIT_REF_NAME == 'master'
       - $CI_PIPELINE_SOURCE == "schedule"
-      - $SKIP_VENDOR_CHECK == "true"
