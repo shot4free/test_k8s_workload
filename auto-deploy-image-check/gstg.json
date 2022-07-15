@@ -58,12 +58,6 @@
   "namespace": "gitlab",
   "name": "gitlab-sidekiq-urgent-other-v2",
   "change": "MODIFY"
-},{
-  "api": "apps",
-  "kind": "Deployment",
-  "namespace": "gitlab",
-  "name": "gitlab-sidekiq-urgent-authorized-projects",
-  "change": "MODIFY"
 },
 {
   "api": "apps",
