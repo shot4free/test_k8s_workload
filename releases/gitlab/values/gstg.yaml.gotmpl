@@ -159,6 +159,7 @@ gitlab:
               periodSeconds: 300
     maxUnavailable: 5%
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated_files_api,throttle_authenticated_files_api"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
@@ -171,10 +172,16 @@ gitlab:
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
     extraVolumeMounts: |
+      - name: diag-reports
+        mountPath: /tmp/diag-reports
+        readOnly: false
       - name: gitlab-rack-attack-ip-whitelist
         mountPath: /var/opt/gitlab/rack_attack_ip_whitelist
         readOnly: true
     extraVolumes: |
+      - name: diag-reports
+        emptyDir:
+          sizeLimit: 1G
       - name: gitlab-rack-attack-ip-whitelist
         secret:
           secretName: gitlab-rack-attack-ip-whitelist-v2
@@ -218,6 +225,7 @@ gitlab:
           debug_logging: true
   sidekiq:
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       USE_GITLAB_LOGGER: 1
       GITLAB_LOG_DEPRECATIONS: "true"
@@ -243,6 +251,14 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
+    extraVolumeMounts: |
+      - name: diag-reports
+        mountPath: /tmp/diag-reports
+        readOnly: false
+    extraVolumes: |
+      - name: diag-reports
+        emptyDir:
+          sizeLimit: 1G
     hpa:
       behaviour:
         scaleDown:
