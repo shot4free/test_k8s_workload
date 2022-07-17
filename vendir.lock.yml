@@ -2,10 +2,11 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'update-runner-locked-chart' into 'master'...
-      sha: 77436bcdb0d5494d707ff73f8d889fca5ca2df9c
+      commitTitle: Merge branch '3369-expose-tls-for-rails-metric-exporters' into
+        'master'...
+      sha: e54285b8f778891f3d122c36b1d10aca1ffc556c
       tags:
-      - 12.10.202004211640+297d8250845-3629-g77436bcdb
+      - 12.10.202004211640+297d8250845-3664-ge54285b8f
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'update-runner-locked-chart' into 'master'...
