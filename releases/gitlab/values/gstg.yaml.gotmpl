@@ -159,6 +159,7 @@ gitlab:
               periodSeconds: 300
     maxUnavailable: 5%
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_ENABLED: "true"
       GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       GITLAB_THROTTLE_DRY_RUN: "throttle_unauthenticated_files_api,throttle_authenticated_files_api"
@@ -226,6 +227,7 @@ gitlab:
           debug_logging: true
   sidekiq:
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_ENABLED: "true"
       GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       USE_GITLAB_LOGGER: 1
