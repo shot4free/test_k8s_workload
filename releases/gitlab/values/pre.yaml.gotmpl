@@ -204,6 +204,8 @@ gitlab:
     minReplicas: 2
     maxReplicas: 5
     service:
+      annotations:
+        cloud.google.com/app-protocols: '{"tcp-kas-external-api": "HTTP2"}'
       # gcloud compute address kas-internal-gke-pre
       loadBalancerIP: 10.232.20.117
     workhorse:
