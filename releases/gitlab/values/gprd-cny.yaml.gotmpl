@@ -112,6 +112,21 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
 
 global:
+  appConfig:
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+      directives:
+        connect_src: "<default_value>"
+        frame_ancestors: "<default_value>"
+        frame_src: "<default_value>"
+        img_src: "<default_value>"
+        object_src: "<default_value>"
+        script_src: "<default_value>"
+        style_src: "<default_value>"
+        worker_src: "<default_value>"
+        report_uri: "https://sentry.gitlab.net/api/105/security/?sentry_key=a42ea3adc19140d9a6424906e12fba86&sentry_environment=gprd-cny"
+
   pages:
     enabled: true
     externalHttp:
