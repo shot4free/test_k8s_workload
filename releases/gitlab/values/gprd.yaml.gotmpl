@@ -23,7 +23,7 @@ registry:
           keyname: gprd-registry-cdn
           ipfilteredby: gcp
   nodeSelector:
-    cloud.google.com/gke-nodepool: registry-2
+    cloud.google.com/gke-nodepool: registry-3
   hpa:
     # min is set higher for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2380
     # and should stay above 20 until we solve https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
