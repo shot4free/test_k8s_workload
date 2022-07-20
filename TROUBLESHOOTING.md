@@ -76,3 +76,21 @@ Note that both diff jobs as well as deployments will be skipped for the target
 cluster.  This works for both auto-deploys as well as configuration changes
 initiated by the pipelines on this repository.
 
+## In Case of Emergency
+
+During outages, it may be difficult to get things deployed quickly.  Perform the
+following steps in the case of a full blown outage of .com:
+
+1. Add an environment variable to the Ops instance for this repository: `EXPEDITE_DEPLOYMENT` with a value set to `true`
+1. Open a Merge Request on the ops instance for proper review
+1. Complete the review as normal and merge the MR when ready
+1. Ensure the change rolls out as desired, repeat the above as necessary
+   * Note that the variable `EXPEDITE_DEPLOYMENT` will be removed with each
+     merge into the default branch.  If further configurations require the use
+     of this variable, it will need to be set into place.
+1. When the .com instance is back online, we must re-sync the repos as mirroring
+   will now be broken.
+1. On .com, unprotect the default branch - note the settings as we'll restore
+   this later
+1. Push the latest change on Ops default branch to .com's default branch
+1. Protect the default branch using the settings that you noted prior

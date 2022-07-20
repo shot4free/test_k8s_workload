@@ -70,8 +70,8 @@ Each of the below variables is applied to the environment defined above
 | Variable | Description |
 | -------- | ----------- |
 | `OPS_API_TOKEN`       | Token utilized by the ops.gitlab.com instance to make API calls on behalf of the CI jobs. |
-| `CLUSTER_SKIP`        | Input the name of a single cluster to be skipped during the next run of a CI JOB |
-| `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. This is to be used [in cases of emergency](./DEPLOYMENT.md#in-case-of-emergency) |
+| `CLUSTER_SKIP`        | Input the name of a single cluster to be skipped during the next run of a CI JOB.  This is to be used [in cases of emergency or maintenance](./TROUBLESHOOTING.md#skipping-cluster-deployments) |
+| `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. This is to be used [in cases of emergency](./TROUBLESHOOTING.md#in-case-of-emergency) |
 
 ### Access to GitLab production website blocked in CI
 
