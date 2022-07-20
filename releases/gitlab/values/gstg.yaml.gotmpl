@@ -171,7 +171,6 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
-      GITLAB_MEMORY_WATCHDOG_ENABLED: "true"
     extraVolumeMounts: |
       - name: diag-reports
         mountPath: /tmp/diag-reports
@@ -236,7 +235,6 @@ gitlab:
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/5950
       GITLAB_ENABLE_QUERY_ANALYZERS: "true"
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
-      GITLAB_MEMORY_WATCHDOG_ENABLED: "true"
     extraInitContainers: |
       - name: write-instance-name
         args:
