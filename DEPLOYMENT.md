@@ -106,7 +106,7 @@ The trigger is initiated from [deployer](https://ops.gitlab.net/gitlab-com/gl-in
 * `ENVIRONMENT`: Environment for deployment, this should be the prefixed environment name. ex: `gprd` for the helmfile environment`gprd-us-east1-b`
 
 To ensure that only image updates occur during an auto-deploy, only the [gitlab](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/tree/master/releases/gitlab) release is applied when `AUTO_DEPLOY=true` is set, which means that secrets are not updated.
-There is also a safety mechanism in the [`bin/k-ctl`](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/bin/k-ctl) wrapper that ensures that changes listed in the helm diff are limited to the changes we expect to see for an image update. To do this, we match the json diff output to `auto-deploy-image-check/<env>.json`.  This mechanism MUST be updated if a new component is added that is subject to auto-deploy.
+There is also a safety mechanism in the [`bin/k-ctl`](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/bin/k-ctl) wrapper that ensures that changes listed in the helm diff are limited to the changes we expect to see for an image update. To do this, we match the json diff output to `auto-deploy-image-check/<env>.json`.  This mechanism MUST be updated if a new component is added that is subject to auto-deploy.  Additional details located [in the auto-deploy-checker README.md.](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/027a4ae0eb15c83cae9fcb4eaaad7f833ee76971/auto-deploy-image-check/README.md)
 
 ## Upgrades and Rollbacks
 
