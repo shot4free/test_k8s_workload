@@ -19,6 +19,8 @@ CHART="${CHART:-gitlab}"
 
 COMMON_SCRIPT_PATH="${COMMON_SCRIPT_PATH:-/k8s-workloads/common.bash}"
 AUTO_DEPLOY="${AUTO_DEPLOY:-false}"
+CLUSTER_SKIP_CHECK_EXIT_CODE=${CLUSTER_SKIP_CHECK_EXIT_CODE:-0}
+CLUSTER_SKIP=${CLUSTER_SKIP:-''}
 
 if [[ -r "$COMMON_SCRIPT_PATH" ]]; then
   source "$COMMON_SCRIPT_PATH"
@@ -46,6 +48,21 @@ is_semver() {
     return 0
   else
     return 1
+  fi
+}
+
+##
+# Skip the desired cluster if specified
+# Note that we'll do this for Diff jobs as well in the case that a cluster may be offline entirely
+cluster_skip_check() {
+  if [[ "${environment}" == "${CLUSTER_SKIP}" ]]; then
+    debug "You've asked to skip deploying to this cluster" "${_BRED}"
+    debug "-- Cluster Skip Check --" "${_CYN}"
+    debug "CI Environment: ${_BLU}${environment}" "${_MAG}"
+    debug "CLUSTER_SKIP  : ${_BLU}${CLUSTER_SKIP}" "${_MAG}"
+    debug "Desired Exit Code: ${_BLU}${CLUSTER_SKIP_CHECK_EXIT_CODE}" "${_MAG}"
+    debug "Exiting immediately to prevent a deployment" "${_BRED}"
+    exit "${CLUSTER_SKIP_CHECK_EXIT_CODE}"
   fi
 }
 
@@ -124,6 +141,7 @@ auto_deploy_check() {
 case "$ACTION" in
   install | upgrade)
     overview
+    cluster_skip_check
 
     if [[ ${dry_run:-} == "true" ]]; then
       debug "-- Helm Diff --" "${_CYN}"
