@@ -1166,6 +1166,8 @@ gitlab:
       labels:
         type: kas
         deployment: kas
+    deployment:
+      minReadySeconds: 60
     service:
       type: LoadBalancer
       loadBalancerSourceRanges:
