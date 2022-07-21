@@ -8,6 +8,7 @@ Kubernetes Workload configurations for GitLab.com
 
 * [CONTRIBUTING.md](CONTRIBUTING.md)
 * [DEPLOYMENT.md](DEPLOYMENT.md)
+* [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
 :warning: **WARNING** :warning:
 
@@ -21,10 +22,12 @@ The following services are managed by this Chart:
 | Service | Upgrades |
 | --- | --- |
 | [API](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/tree/master/api-k8s-migration)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
+| [KAS](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/kubernetes-agent/index.md)) | Upgrades are performed manually by setting a version in the appropriate [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/027a4ae0eb15c83cae9fcb4eaaad7f833ee76971/releases/gitlab/values/pre.yaml.gotmpl#L203) |
 | [Web](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/web-k8s-migration/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
+| [Websockets](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/tree/master/websockets)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
 | [Git](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/git-https-websockets/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
-| [Mailroom](https://gitlab.com/gitlab-org/gitlab-mail_room) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md)) | Upgrades are done manually be setting a version in [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/values.yaml.gotmpl#L1076-1080) ([release template](https://gitlab.com/gitlab-org/gitlab-mail_room/-/blob/master/.gitlab/issue_templates/Release.md)). |
-| [Container Registry](https://gitlab.com/gitlab-org/container-registry) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md)) | Done by manually setting a version in [init-values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/init-values.yaml.gotmpl#L75) ([release template](https://gitlab.com/gitlab-org/container-registry/-/blob/master/.gitlab/issue_templates/Release%20Plan.md)). |
+| [Mailroom](https://gitlab.com/gitlab-org/gitlab-mail_room) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md)) | Upgrades are performed manually by setting a version in [values.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/7bd15324144a2c85699bf685fb606b6dd7c92975/releases/gitlab/values/values.yaml.gotmpl#L1076-1080) ([release template](https://gitlab.com/gitlab-org/gitlab-mail_room/-/blob/master/.gitlab/issue_templates/Release.md)). |
+| [Container Registry](https://gitlab.com/gitlab-org/container-registry) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md)) | Upgrades are performed manually by setting a version in [environments.yaml](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/027a4ae0eb15c83cae9fcb4eaaad7f833ee76971/bases/environments.yaml#L68) ([release template](https://gitlab.com/gitlab-org/container-registry/-/blob/master/.gitlab/issue_templates/Release%20Plan.md)). |
 | [Sidekiq](https://gitlab.com/gitlab-org/gitlab) ([readiness](https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/sidekiq/index.md)) | Auto-deploy pipeline created from a pipeline trigger from the deployer pipeline |
 
 ## GitLab Environments Configuration
@@ -50,14 +53,7 @@ On merge, configuration changes will be deployed to the following environments:
 
 ## GitLab CI/CD Variables Configuration
 
-On the Ops instance, a special variable is used [in cases of
-emergency](./DEPLOYMENT.md#in-case-of-emergency)
-
-| Variable | Description |
-| -------- | ----------- |
-| `OPS_API_TOKEN`       | Token utilized by the ops.gitlab.com instance to make
-API calls on behalf of the CI jobs. |
-| `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. |
+### Input Variables
 
 Each of the below variables is applied to the environment defined above
 
@@ -69,9 +65,17 @@ Each of the below variables is applied to the environment defined above
 | `SERVICE_KEY`   | Service Account key used for CI for write operations to the cluster
 | `SERVICE_KEY_RO`| Service Account key used for CI for read operations, used on branches
 
+### Ops Instance Specific
+
+| Variable | Description |
+| -------- | ----------- |
+| `OPS_API_TOKEN`       | Token utilized by the ops.gitlab.com instance to make API calls on behalf of the CI jobs. |
+| `CLUSTER_SKIP`        | Input the name of a single cluster to be skipped during the next run of a CI JOB.  This is to be used [in cases of emergency or maintenance](./TROUBLESHOOTING.md#skipping-cluster-deployments) |
+| `EXPEDITE_DEPLOYMENT` | Skips select processes and CI Jobs to push a configuration change out to production faster than normal. This is to be used [in cases of emergency](./TROUBLESHOOTING.md#in-case-of-emergency) |
+
 ### Access to GitLab production website blocked in CI
 
-Please note that the tooling in this repository specificly sometimes blocks access to the following URLs when running CI Jobs, only during the execution of helm/helmfile
+Please note that the tooling in this repository specifically sometimes blocks access to the following URLs when running CI Jobs, only during the execution of helm/helmfile
 
 * gitlab.com
 * registy.gitlab.com

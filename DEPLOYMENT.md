@@ -22,31 +22,6 @@ output very basic information per environment if changes are detected.  Team
 members whom have access to the ops instance will use the links provided to
 assist them in completing the review, per our [CONTRIBUTING] document.
 
-### Chart Management
-
-In CI, we've reduced the need to constantly ask for our dependencies by building
-the chart once at the start of all CI jobs, and carrying that build as an
-artifact for all CI jobs following.  Doing so is defined in our .gitlab-ci.yml
-file.  With this, we intentionally set the version of the chart used to
-`0.0.0+<SHA>`.  `SHA` representing the version of the Helm Chart defined.  If
-the build is successful, we set the variable `ARTIFACT_AVIALABLE` for all jobs
-in the pipeline.  Should a build fail for any reason, we attempt to not block
-ourselves by falling back to using helmfiles method and the `git` plugin for
-helm to pull down and use this version of the chart.  The downside to this is
-that we'll see more changes in our diff jobs, and this may fail auto-deployments
-due to changes to the version of the helm chart.  There does not exist a
-workaround for this.
-
-Testing this locally involves the following steps:
-
-1. Check out the appropriate version of our helm chart
-1. Package the chart: `helm package ./ --dependency-update --version
-   "0.0.0+$(git rev-parse --verify HEAD)" --destination
-   /path/to/k8s-workloads/gitlab-com`
-1. Change to: `/path/to/k8s-workloads/gitlab-com`
-1. Untar the package: `tar xf gitlab-0.0.0+<SHA>.tgz`
-1. Now you can prefix any `k-ctl` commands with `ARTIFACT_AVILABLE=true`
-
 ## Configuration Changes
 
 Configuration change constitute any change that is created manually via an MR
@@ -106,7 +81,7 @@ The trigger is initiated from [deployer](https://ops.gitlab.net/gitlab-com/gl-in
 * `ENVIRONMENT`: Environment for deployment, this should be the prefixed environment name. ex: `gprd` for the helmfile environment`gprd-us-east1-b`
 
 To ensure that only image updates occur during an auto-deploy, only the [gitlab](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/tree/master/releases/gitlab) release is applied when `AUTO_DEPLOY=true` is set, which means that secrets are not updated.
-There is also a safety mechanism in the [`bin/k-ctl`](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/bin/k-ctl) wrapper that ensures that changes listed in the helm diff are limited to the changes we expect to see for an image update. To do this, we match the json diff output to `auto-deploy-image-check/<env>.json`.  This mechanism MUST be updated if a new component is added that is subject to auto-deploy.
+There is also a safety mechanism in the [`bin/k-ctl`](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/bin/k-ctl) wrapper that ensures that changes listed in the helm diff are limited to the changes we expect to see for an image update. To do this, we match the json diff output to `auto-deploy-image-check/<env>.json`.  This mechanism MUST be updated if a new component is added that is subject to auto-deploy.  Additional details located [in the auto-deploy-checker README.md.](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/027a4ae0eb15c83cae9fcb4eaaad7f833ee76971/auto-deploy-image-check/README.md)
 
 ## Upgrades and Rollbacks
 
@@ -116,21 +91,4 @@ When this happens, the application will not be upgraded, but the master branch o
 This must be addressed immediately, if there's a failure to deploy, perform a revert of the commit immediately to ensure the master branch represents what is in production.
 Once the revert commit is in place, proceed to perform the investigation to continue towards the desired state.
 
-## In Case of Emergency
-
-During outages, it may be difficult to get things deployed quickly.  Perform the
-following steps in the case of a full blown outage of .com:
-
-1. Add an environment variable to the Ops instance for this repository: `EXPEDITE_DEPLOYMENT` with a value set to `true`
-1. Open a Merge Request on the ops instance for proper review
-1. Complete the review as normal and merge the MR when ready
-1. Ensure the change rolls out as desired, repeat the above as necessary
-   * Note that the variable `EXPEDITE_DEPLOYMENT` will be removed with each
-     merge into the default branch.  If further configurations require the use
-     of this variable, it will need to be set into place.
-1. When the .com instance is back online, we must re-sync the repos as mirroring
-   will now be broken.
-1. On .com, unprotect the default branch - note the settings as we'll restore
-   this later
-1. Push the latest change on Ops default branch to .com's default branch
-1. Protect the default branch using the settings that you noted prior
+[CONTRIBUTING]: ./CONTRIBUTING.md
