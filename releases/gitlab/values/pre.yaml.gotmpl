@@ -81,7 +81,8 @@ gitlab:
   gitlab-pages:
     hpa:
       minReplicas: 1
-      targetAverageValue: 400m
+      cpu:
+        targetAverageValue: 400m
     resources:
       requests:
         cpu: 500m

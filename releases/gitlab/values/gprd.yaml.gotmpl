@@ -29,7 +29,7 @@ registry:
     # and should stay above 20 until we solve https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
     minReplicas: 50
     maxReplicas: 90
-    behaviour:
+    behavior:
       scaleDown:
         stabilizationWindowSeconds: 900
         policies:
@@ -106,8 +106,9 @@ gitlab:
     hpa:
       minReplicas: 2
       maxReplicas: 20
-      targetAverageValue: 800m
-      behaviour:
+      cpu:
+        targetAverageValue: 800m
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -133,8 +134,9 @@ gitlab:
       requests:
         cpu: 2000m
     hpa:
-      targetAverageValue: 1200m
-      behaviour:
+      cpu:
+        targetAverageValue: 1200m
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -237,7 +239,7 @@ gitlab:
     minReplicas: 30
     maxReplicas: 150
     hpa:
-      behaviour:
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -287,7 +289,8 @@ gitlab:
         cpu: 100m
         memory: 768M
     hpa:
-      targetAverageValue: 300m
+      cpu:
+        targetAverageValue: 300m
     minReplicas: 8
     maxReplicas: 15
     customConfig:
@@ -335,7 +338,7 @@ gitlab:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
     hpa:
-      behaviour:
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
