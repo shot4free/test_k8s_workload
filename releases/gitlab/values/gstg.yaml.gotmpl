@@ -63,7 +63,7 @@ registry:
     cloud.google.com/gke-nodepool: registry-3
   hpa:
     maxReplicas: 20
-    behaviour:
+    behavior:
       scaleDown:
         stabilizationWindowSeconds: 900
         policies:
@@ -88,7 +88,7 @@ gitlab:
     sshDaemon: gitlab-sshd
     maxUnavailable: 5%
     hpa:
-      behaviour:
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -100,8 +100,9 @@ gitlab:
       cloud.google.com/gke-nodepool: pages-1
     hpa:
       minReplicas: 2
-      targetAverageValue: 400m
-      behaviour:
+      cpu:
+        targetAverageValue: 400m
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -150,7 +151,7 @@ gitlab:
     minReplicas: 2
     maxReplicas: 30
     hpa:
-      behaviour:
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:
@@ -262,7 +263,7 @@ gitlab:
         emptyDir:
           sizeLimit: 1G
     hpa:
-      behaviour:
+      behavior:
         scaleDown:
           stabilizationWindowSeconds: 900
           policies:

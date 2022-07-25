@@ -7,7 +7,7 @@ directories:
       - path: gitlab/pre
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: e54285b8f778891f3d122c36b1d10aca1ffc556c
+          ref: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
         excludePaths:
           - '.git/**'
           - '.gitignore'
@@ -18,7 +18,7 @@ directories:
       - path: gitlab/gstg
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: e54285b8f778891f3d122c36b1d10aca1ffc556c
+          ref: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
         excludePaths:
           - '.git/**'
           - '.gitignore'
@@ -29,7 +29,7 @@ directories:
       - path: gitlab/gprd
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: e54285b8f778891f3d122c36b1d10aca1ffc556c
+          ref: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
         excludePaths:
           - '.git/**'
           - '.gitignore'

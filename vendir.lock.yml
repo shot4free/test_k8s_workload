@@ -2,25 +2,22 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch '3369-expose-tls-for-rails-metric-exporters' into
-        'master'...
-      sha: e54285b8f778891f3d122c36b1d10aca1ffc556c
+      commitTitle: Merge branch 'add-fips-notes' into 'master'...
+      sha: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
       tags:
-      - 12.10.202004211640+297d8250845-3664-ge54285b8f
+      - 12.10.202004211640+297d8250845-3692-g4c4c6a8a3
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch '3369-expose-tls-for-rails-metric-exporters' into
-        'master'...
-      sha: e54285b8f778891f3d122c36b1d10aca1ffc556c
+      commitTitle: Merge branch 'add-fips-notes' into 'master'...
+      sha: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
       tags:
-      - 12.10.202004211640+297d8250845-3664-ge54285b8f
+      - 12.10.202004211640+297d8250845-3692-g4c4c6a8a3
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch '3369-expose-tls-for-rails-metric-exporters' into
-        'master'...
-      sha: e54285b8f778891f3d122c36b1d10aca1ffc556c
+      commitTitle: Merge branch 'add-fips-notes' into 'master'...
+      sha: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
       tags:
-      - 12.10.202004211640+297d8250845-3664-ge54285b8f
+      - 12.10.202004211640+297d8250845-3692-g4c4c6a8a3
     path: gitlab/gprd
   - git:
       commitTitle: Update CHANGELOG for v0.27.0

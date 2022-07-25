@@ -538,7 +538,8 @@ gitlab:
       limits:
         memory: 1G
     hpa:
-      targetAverageValue: 800m
+      cpu:
+        targetAverageValue: 800m
     maxUnavailable: 1
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-shell
@@ -913,7 +914,8 @@ gitlab:
         cpu: 4
         memory: 5G
     hpa:
-      targetAverageValue: 1600m
+      cpu:
+        targetAverageValue: 1600m
     minReplicas: 2
     maxReplicas: 10
     maxUnavailable: 1
@@ -1061,7 +1063,8 @@ gitlab:
     hpa:
       # Changed from default for urgent-other
       # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2254#note_358815700
-      targetAverageValue: 450m
+      cpu:
+        targetAverageValue: 450m
 
     maxUnavailable: 1
 
