@@ -247,6 +247,7 @@ gitlab:
               value: 10
               periodSeconds: 300
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_PERFORMANCE_BAR_STATS_URL: "https://log.gprd.gitlab.net/app/dashboards#/view/823ed530-655a-11eb-a318-db81ec4462fa?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-24h%2Cto%3Anow))"
@@ -258,10 +259,16 @@ gitlab:
       ENABLE_CROSS_DATABASE_MODIFICATION_DETECTION: "true"
       GEO_SECONDARY_PROXY: "0"
     extraVolumeMounts: |
+      - name: diag-reports
+        mountPath: /tmp/diag-reports
+        readOnly: false
       - name: gitlab-rack-attack-ip-whitelist
         mountPath: /var/opt/gitlab/rack_attack_ip_whitelist
         readOnly: true
     extraVolumes: |
+      - name: diag-reports
+        emptyDir:
+          sizeLimit: 1G
       - name: gitlab-rack-attack-ip-whitelist
         secret:
           secretName: gitlab-rack-attack-ip-whitelist-v2
@@ -314,6 +321,7 @@ gitlab:
           refill_rate_per_second: 25.0
   sidekiq:
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       GITLAB_LOG_DEPRECATIONS: "true"
       GITLAB_LOAD_BALANCING_REUSE_PRIMARY_ci: "main"
@@ -337,6 +345,14 @@ gitlab:
         volumeMounts:
           - mountPath: /etc/gitlab
             name: sidekiq-secrets
+    extraVolumeMounts: |
+      - name: diag-reports
+        mountPath: /tmp/diag-reports
+        readOnly: false
+    extraVolumes: |
+      - name: diag-reports
+        emptyDir:
+          sizeLimit: 1G
     hpa:
       behavior:
         scaleDown:
