@@ -393,6 +393,11 @@ gitlab:
         concurrency: 15
         minReplicas: 56
         maxReplicas: 300
+        memoryKiller:
+          checkInterval: 3
+          graceTime: 900
+          maxRss: 2000000
+          shutdownWait: 30
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-catchall-4
         podLabels:
