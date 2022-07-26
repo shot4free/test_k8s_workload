@@ -248,6 +248,7 @@ gitlab:
               value: 10
               periodSeconds: 300
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_ENABLED: "true"
       GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       GITLAB_THROTTLE_BYPASS_HEADER: "X-GitLab-RateLimit-Bypass"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
@@ -322,6 +323,7 @@ gitlab:
           refill_rate_per_second: 25.0
   sidekiq:
     extraEnv:
+      GITLAB_DIAGNOSTIC_REPORTS_ENABLED: "true"
       GITLAB_DIAGNOSTIC_REPORTS_PATH: /tmp/diag-reports
       SIDEKIQ_SEMI_RELIABLE_FETCH_TIMEOUT: 5
       GITLAB_LOG_DEPRECATIONS: "true"
