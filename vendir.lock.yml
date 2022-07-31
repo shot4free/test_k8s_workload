@@ -8,10 +8,10 @@ directories:
       - 12.10.202004211640+297d8250845-3724-g6d5de06e9
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch 'add-fips-notes' into 'master'...
-      sha: 4c4c6a8a38145c6888cb4cb876f888a5fe231d81
+      commitTitle: Merge branch 'deps/09ce048-f780bc3' into 'master'...
+      sha: 6d5de06e9b86d6f687eb9bebfeb69b750697f4a5
       tags:
-      - 12.10.202004211640+297d8250845-3692-g4c4c6a8a3
+      - 12.10.202004211640+297d8250845-3724-g6d5de06e9
     path: gitlab/gstg
   - git:
       commitTitle: Merge branch 'add-fips-notes' into 'master'...
