@@ -236,7 +236,7 @@ global:
       #   cron: "30 * * * *"
       ## Periodically update ci_runner_versions table with up-to-date versions and status
       # ci_runner_versions_reconciliation_worker:
-      #   cron: "20 * * * *"
+      #   cron: "@daily"
       ### GitLab Geo
       # Geo Primary only!
       # geo_prune_event_log_worker:
@@ -775,6 +775,7 @@ nginx-ingress:
   controller:
     addHeaders:
       Referrer-Policy: strict-origin-when-cross-origin
+    allowSnippetAnnotations: false
     config:
       hsts: "true"
       hsts-include-subdomains: "false"
@@ -810,9 +811,6 @@ nginx-ingress:
     admissionWebhooks:
       enabled: false
   defaultBackend:
-    enabled: true
-    minAvailable: 1
-    replicaCount: 1
     resources:
       requests:
         cpu: 5m
@@ -1083,6 +1081,9 @@ gitlab-runner:
 ## See requirements.yaml for current version
 ## Controlled by `global.grafana.enabled`
 grafana:
+  # Overrides the Grafana image tag for the 7.5.16 security update
+  image:
+    tag: 7.5.16
   ## Override and provide "bogus" administation secrets
   ## gitlab/gitlab-grafana provides overrides via shared-secrets
   nameOverride: grafana-app
