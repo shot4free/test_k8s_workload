@@ -108,6 +108,7 @@ gitlab:
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_LOG_DEPRECATIONS: "true"
       GITLAB_MEMORY_WATCHDOG_ENABLED: "true"
+      GITLAB_MEMWD_MAX_HEAP_FRAG: 0.3
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
