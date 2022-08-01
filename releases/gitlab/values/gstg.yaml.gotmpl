@@ -63,6 +63,15 @@ registry:
           - .*
   nodeSelector:
     cloud.google.com/gke-nodepool: registry-3
+  tolerations:
+    - key: gitlab.com/type
+      operator: Equal
+      value: registry
+      effect: NoSchedule
+    - key: gitlab.com/stage
+      operator: Equal
+      value: main
+      effect: NoSchedule
   hpa:
     maxReplicas: 20
     behavior:
@@ -84,6 +93,19 @@ gitlab:
       enabled: true
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-3
+    tolerations:
+      - key: gitlab.com/type
+        operator: Equal
+        value: git
+        effect: NoSchedule
+      - key: gitlab.com/shard
+        operator: Equal
+        value: git-ssh
+        effect: NoSchedule
+      - key: gitlab.com/stage
+        operator: Equal
+        value: main
+        effect: NoSchedule
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
@@ -100,6 +122,15 @@ gitlab:
   gitlab-pages:
     nodeSelector:
       cloud.google.com/gke-nodepool: pages-1
+    tolerations:
+      - key: gitlab.com/type
+        operator: Equal
+        value: web-pages
+        effect: NoSchedule
+      - key: gitlab.com/stage
+        operator: Equal
+        value: main
+        effect: NoSchedule
     hpa:
       minReplicas: 2
       cpu:
@@ -137,9 +168,31 @@ gitlab:
       api:
         nodeSelector:
           cloud.google.com/gke-nodepool: api-3
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: api
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
       git:
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-3
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: git
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: git-https
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
       web:
         extraEnv:
           CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
@@ -147,9 +200,27 @@ gitlab:
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
         nodeSelector:
           cloud.google.com/gke-nodepool: web-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: web
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
       websockets:
         nodeSelector:
           cloud.google.com/gke-nodepool: websockets-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: websockets
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
     minReplicas: 2
     maxReplicas: 30
     hpa:
@@ -285,6 +356,19 @@ gitlab:
         maxUnavailable: 5%
         nodeSelector:
           cloud.google.com/gke-nodepool: catchall-0
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: catchall
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-catchall
           shard: catchall
@@ -314,6 +398,19 @@ gitlab:
         maxReplicas: 2
         nodeSelector:
           cloud.google.com/gke-nodepool: catchall-0
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: catchall
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-imports
           shard: imports
@@ -337,6 +434,19 @@ gitlab:
         maxReplicas: 16
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-memory-bound-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: memory-bound
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-memory-bound
           shard: memory-bound
@@ -441,6 +551,19 @@ gitlab:
         maxReplicas: 10
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: low-urgency-cpu-bound
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-low-urgency-cpu-bound
           shard: low-urgency-cpu-bound
@@ -465,6 +588,19 @@ gitlab:
         maxReplicas: 50
         nodeSelector:
           cloud.google.com/gke-nodepool: catchall-0
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: catchall
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-quarantine
           shard: quarantine
@@ -488,6 +624,19 @@ gitlab:
         maxReplicas: 10
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: urgent-cpu-bound
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-urgent-cpu-bound
           shard: urgent-cpu-bound
@@ -511,6 +660,19 @@ gitlab:
         maxReplicas: 10
         nodeSelector:
           cloud.google.com/gke-nodepool: sidekiq-urgent-other-2
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: sidekiq
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: urgent-other
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: main
+            effect: NoSchedule
         podLabels:
           deployment: sidekiq-urgent-other
           shard: urgent-other
