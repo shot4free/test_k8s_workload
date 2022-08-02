@@ -43,6 +43,19 @@ gitlab:
   gitlab-shell:
     nodeSelector:
       cloud.google.com/gke-nodepool: shell-1
+    tolerations:
+      - key: gitlab.com/type
+        operator: Equal
+        value: git
+        effect: NoSchedule
+      - key: gitlab.com/shard
+        operator: Equal
+        value: git-ssh
+        effect: NoSchedule
+      - key: gitlab.com/stage
+        operator: Equal
+        value: cny
+        effect: NoSchedule
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-shell@{{ .Values.google_project }}.iam.gserviceaccount.com
@@ -67,6 +80,15 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         nodeSelector:
           cloud.google.com/gke-nodepool: api-1
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: api
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
         service:
           # gcloud compute address api-gke-gstg-cny
           loadBalancerIP: 10.224.34.72
@@ -76,6 +98,19 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
           cloud.google.com/gke-nodepool: git-https-1
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: git
+            effect: NoSchedule
+          - key: gitlab.com/shared
+            operator: Equal
+            value: git-https
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
         service:
           # gcloud compute address git-https-gke-gstg-cny
           loadBalancerIP: 10.224.34.201
@@ -85,6 +120,15 @@ gitlab:
           CANARY: "true"
         nodeSelector:
           cloud.google.com/gke-nodepool: web-1
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: web
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
         service:
           # gcloud compute address web-gke-gstg-cny
           loadBalancerIP: 10.224.34.199
@@ -93,6 +137,15 @@ gitlab:
           minReplicas: 1
         nodeSelector:
           cloud.google.com/gke-nodepool: web-1
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: web
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-websockets
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"websockets\", \"stage\": \"cny\"}"
@@ -113,6 +166,15 @@ registry:
     minReplicas: 2
   nodeSelector:
     cloud.google.com/gke-nodepool: registry-3
+  tolerations:
+    - key: gitlab.com/type
+      operator: Equal
+      value: registry
+      effect: NoSchedule
+    - key: gitlab.com/stage
+      operator: Equal
+      value: cny
+      effect: NoSchedule
   service:
     # gcloud compute address registry-gke-gstg-cny
     loadBalancerIP: 10.224.34.100
