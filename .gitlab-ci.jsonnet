@@ -16,8 +16,6 @@ local stages = {
 
 local includes = {
   include: [
-    '/ci/deploy.yml',
-    '/ci/except-com.yml',
     '/ci/except-ops.yml',
     '/ci/cluster-init-before-script.yml',
     '/ci/shellcheck.yml',
@@ -30,16 +28,16 @@ local includes = {
 };
 
 local exceptCom = {
-  except: {
-    variables: [
+  except+: {
+    variables+: [
       '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
     ],
   },
 };
 
 local exceptOps = {
-  except: {
-    variables: [
+  except+: {
+    variables+: [
       '$CI_API_V4_URL == "https://ops.gitlab.net/api/v4"',
     ],
   },
@@ -308,7 +306,6 @@ local notifyComMR = {
     allow_failure: true,
     except: {
       variables: [
-        '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
         '$EXPEDITE_DEPLOYMENT',
       ],
     },
@@ -317,7 +314,7 @@ local notifyComMR = {
         '$AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"',
       ],
     },
-  },
+  } + exceptCom,
 };
 
 local dependencyScanning = {
@@ -343,9 +340,10 @@ local deploy(environment, stage, cluster, ciStage) = {
   ['%s:dryrun:auto-deploy' % cluster]: {
     stage: 'dryrun',
     extends: [
-      '.deploy',
+      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
     ],
+    image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       bin/k-ctl -D %s upgrade
     ||| % if isCanary then '-s cny' else '',
@@ -354,14 +352,18 @@ local deploy(environment, stage, cluster, ciStage) = {
         '$ENVIRONMENT == "%s" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
       ],
     },
+    tags: [
+      'k8s-workloads',
+    ],
     [if isCanary then 'resource_group']: environment,
-  },
+  } + exceptCom,
   ['%s:auto-deploy' % cluster]: {
     stage: ciStage,
     extends: [
-      '.deploy',
+      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
     ],
+    image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       sendEvent "Starting k8s deployment for $CLUSTER" "%s" "deployment" %s
       bin/k-ctl %s upgrade
@@ -375,27 +377,35 @@ local deploy(environment, stage, cluster, ciStage) = {
         '$ENVIRONMENT == "%s" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
       ],
     },
+    tags: [
+      'k8s-workloads',
+    ],
     [if isCanary then 'resource_group']: environment,
-  },
+  } + exceptCom,
   ['%s:dryrun' % cluster]: {
     stage: 'dryrun',
     extends: [
-      '.deploy',
+      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
       '.only-auto-deploy-false-and-config-changes',
     ],
+    image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       bin/k-ctl -D %s upgrade
     ||| % if isCanary then '-s cny' else '',
+    tags: [
+      'k8s-workloads',
+    ],
     [if isCanary then 'resource_group']: environment,
-  },
+  } + exceptCom,
   ['%s:upgrade' % cluster]: {
     stage: ciStage,
     extends: [
-      '.deploy',
+      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
       '.only-auto-deploy-false-and-config-changes',
     ],
+    image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
       sendEvent "Starting k8s configuration for $CLUSTER" "%s" "configuration" %s
@@ -410,17 +420,19 @@ local deploy(environment, stage, cluster, ciStage) = {
         'master',
       ],
     },
+    tags: [
+      'k8s-workloads',
+    ],
     variables: {
       DRY_RUN: 'false',
     },
     [if isCanary then 'resource_group']: environment,
-  },
+  } + exceptCom,
 };
 
 local triggerQaSmoke = {
   '.trigger-qa-smoke': {
     extends: [
-      '.except-com',
       // Skip QA smoke tests for auto-deploy because
       // QA is run in the context of the deployer
       // pipeline
@@ -432,7 +444,6 @@ local triggerQaSmoke = {
     // https://gitlab.com/gitlab-org/gitlab/-/issues/32559
     except: {
       variables: [
-        '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
         "$CI_COMMIT_REF_NAME != 'master'",
       ],
       refs: [
@@ -467,7 +478,7 @@ local triggerQaSmoke = {
         exit 1
       fi
     |||,
-  },
+  } + exceptCom,
 };
 
 local qaJob(name, project, allow_failure=false) = {
@@ -482,7 +493,6 @@ local qaJob(name, project, allow_failure=false) = {
     },
     except: {
       variables: [
-        '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
         "$CI_COMMIT_REF_NAME != 'master'",
         '$EXPEDITE_DEPLOYMENT',
       ],
@@ -498,7 +508,7 @@ local qaJob(name, project, allow_failure=false) = {
         'releases/gitlab/values/%s*' % name,
       ],
     },
-  },
+  } + exceptCom,
 };
 
 local openChartBumpMR(name) = {

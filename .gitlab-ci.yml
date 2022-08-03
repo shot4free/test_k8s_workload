@@ -121,10 +121,9 @@
     refs:
       - tags
     variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
       - $CI_COMMIT_REF_NAME != 'master'
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .except-com
     - .only-auto-deploy-false-and-config-changes
   image: alpine:3.12.0
   script: |
@@ -174,9 +173,13 @@ ci_config_generated:
 dependency_scanning:
   stage: check
 gprd-cny:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
@@ -186,19 +189,31 @@ gprd-cny:auto-deploy:
     bin/k-ctl -s cny upgrade
     sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment" "cny"
   stage: gprd-cny:deploy
+  tags:
+    - k8s-workloads
 gprd-cny:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   resource_group: gprd-cny
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-cny:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
@@ -206,11 +221,17 @@ gprd-cny:dryrun:auto-deploy:
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-cny:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
@@ -221,168 +242,270 @@ gprd-cny:upgrade:
     bin/k-ctl -s cny upgrade
     sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
   stage: gprd-cny:deploy
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-b:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-b
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
   stage: gprd:deploy:alpha
+  tags:
+    - k8s-workloads
 gprd-us-east1-b:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-b:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-b
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-b:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
   stage: gprd:deploy:alpha
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-c:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-c
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
   stage: gprd:deploy:beta
+  tags:
+    - k8s-workloads
 gprd-us-east1-c:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-c
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-c:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-c
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-c:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-c
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
   stage: gprd:deploy:beta
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-d:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-d
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
   stage: gprd:deploy:beta
+  tags:
+    - k8s-workloads
 gprd-us-east1-d:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-d
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-d:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-d
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd-us-east1-d:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd-us-east1-d
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
   stage: gprd:deploy:beta
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
   stage: gprd:deploy:alpha
+  tags:
+    - k8s-workloads
 gprd:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gprd:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
   stage: gprd:deploy:alpha
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-cny:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gstg
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
@@ -392,19 +515,31 @@ gstg-cny:auto-deploy:
     bin/k-ctl -s cny upgrade
     sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment" "cny"
   stage: non-prod-cny:deploy
+  tags:
+    - k8s-workloads
 gstg-cny:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   resource_group: gstg-cny
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gstg-cny:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gstg
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
@@ -412,11 +547,17 @@ gstg-cny:dryrun:auto-deploy:
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 gstg-cny:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
@@ -427,158 +568,250 @@ gstg-cny:upgrade:
     bin/k-ctl -s cny upgrade
     sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration" "cny"
   stage: non-prod-cny:deploy
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-us-east1-b:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-b
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
-  stage: non-prod:deploy
-gstg-us-east1-b:dryrun:
-  extends:
-    - .deploy
-    - .gstg-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-b:dryrun:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-b
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-b:upgrade:
-  extends:
-    - .deploy
-    - .gstg-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
-  only:
-    refs:
-      - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
-  stage: non-prod:deploy
-  variables:
-    DRY_RUN: "false"
-gstg-us-east1-c:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-c
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
-  stage: non-prod:deploy
-gstg-us-east1-c:dryrun:
-  extends:
-    - .deploy
-    - .gstg-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-c:dryrun:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-c
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-c:upgrade:
-  extends:
-    - .deploy
-    - .gstg-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
-  only:
-    refs:
-      - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
-  stage: non-prod:deploy
-  variables:
-    DRY_RUN: "false"
-gstg-us-east1-d:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-d
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
-  stage: non-prod:deploy
-gstg-us-east1-d:dryrun:
-  extends:
-    - .deploy
-    - .gstg-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-d:dryrun:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg-us-east1-d
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg-us-east1-d:upgrade:
-  extends:
-    - .deploy
-    - .gstg-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
-  only:
-    refs:
-      - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
-  stage: non-prod:deploy
-  variables:
-    DRY_RUN: "false"
-gstg:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
-  stage: non-prod:deploy
-gstg:dryrun:
-  extends:
-    - .deploy
-    - .gstg
-    - .only-auto-deploy-false-and-config-changes
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg:dryrun:auto-deploy:
-  extends:
-    - .deploy
-    - .gstg
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: |
-    bin/k-ctl -D  upgrade
-  stage: dryrun
-gstg:qa:
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-b
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+gstg-us-east1-b:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-b:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-b
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-b:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-b
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    refs:
+      - master
+  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+  variables:
+    DRY_RUN: "false"
+gstg-us-east1-c:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-c
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+gstg-us-east1-c:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-c:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-c
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-c:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-c
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    refs:
+      - master
+  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+  variables:
+    DRY_RUN: "false"
+gstg-us-east1-d:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-d
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+gstg-us-east1-d:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-d:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-d
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg-us-east1-d:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg-us-east1-d
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    refs:
+      - master
+  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+  variables:
+    DRY_RUN: "false"
+gstg:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  stage: non-prod:deploy
+  tags:
+    - k8s-workloads
+gstg:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg
+    - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
+  extends:
+    - .cluster-init-before-script
+    - .gstg
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  only:
+    variables:
+      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  script: |
+    bin/k-ctl -D  upgrade
+  stage: dryrun
+  tags:
+    - k8s-workloads
+gstg:qa:
+  except:
+    variables:
       - $CI_COMMIT_REF_NAME != 'master'
       - $EXPEDITE_DEPLOYMENT
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .trigger-qa-smoke
   only:
@@ -594,20 +827,24 @@ gstg:qa:
   variables:
     project: gitlab-org/quality/staging
 gstg:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
   stage: non-prod:deploy
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 include:
-  - /ci/deploy.yml
-  - /ci/except-com.yml
   - /ci/except-ops.yml
   - /ci/cluster-init-before-script.yml
   - /ci/shellcheck.yml
@@ -618,8 +855,8 @@ notify_com_mr:
   allow_failure: true
   except:
     variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
       - $EXPEDITE_DEPLOYMENT
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/notify-mr:${CI_IMAGE_VERSION}
   only:
     variables:
@@ -676,39 +913,57 @@ open-chart-bump-mr-pre:
     ./bin/autobump-gitlab-chart.sh pre
   stage: scheduled
 pre:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .pre
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"pre\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"pre\" \"deployment\" \n"
   stage: non-prod:deploy
+  tags:
+    - k8s-workloads
 pre:dryrun:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .pre
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 pre:dryrun:auto-deploy:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .pre
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
+  tags:
+    - k8s-workloads
 pre:qa:
   allow_failure: true
   except:
     variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
       - $CI_COMMIT_REF_NAME != 'master'
       - $EXPEDITE_DEPLOYMENT
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .trigger-qa-smoke
   only:
@@ -724,15 +979,21 @@ pre:qa:
   variables:
     project: gitlab-org/quality/preprod
 pre:upgrade:
+  except:
+    variables:
+      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .deploy
+    - .cluster-init-before-script
     - .pre
     - .only-auto-deploy-false-and-config-changes
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
   script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"pre\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"pre\" \"configuration\" \n"
   stage: non-prod:deploy
+  tags:
+    - k8s-workloads
   variables:
     DRY_RUN: "false"
 remove-expedite-variable:
