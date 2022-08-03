@@ -42,7 +42,7 @@ gitlab:
         iam.gke.io/gcp-service-account: gitlab-cny-gitlab-pages@{{ .Values.google_project }}.iam.gserviceaccount.com
   gitlab-shell:
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-1
+      cloud.google.com/gke-nodepool: shell-2
     tolerations:
       - key: gitlab.com/type
         operator: Equal
@@ -79,7 +79,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-api
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"api\", \"stage\": \"cny\"}"
         nodeSelector:
-          cloud.google.com/gke-nodepool: api-1
+          cloud.google.com/gke-nodepool: api-2
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -97,7 +97,7 @@ gitlab:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
         nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-1
+          cloud.google.com/gke-nodepool: git-https-2
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -119,7 +119,7 @@ gitlab:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
           CANARY: "true"
         nodeSelector:
-          cloud.google.com/gke-nodepool: web-1
+          cloud.google.com/gke-nodepool: web-2
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -136,7 +136,7 @@ gitlab:
         hpa:
           minReplicas: 1
         nodeSelector:
-          cloud.google.com/gke-nodepool: web-1
+          cloud.google.com/gke-nodepool: web-2
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -165,7 +165,7 @@ registry:
   hpa:
     minReplicas: 2
   nodeSelector:
-    cloud.google.com/gke-nodepool: registry-3
+    cloud.google.com/gke-nodepool: registry-4
   tolerations:
     - key: gitlab.com/type
       operator: Equal
