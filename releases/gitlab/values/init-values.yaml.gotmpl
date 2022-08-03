@@ -147,6 +147,9 @@ gitlab:
   gitlab-pages:
     image:
       tag: {{ $gitlab_pages_version }}
+  kas:
+    image:
+      tag: {{ $gitlab_version }}
 global:
   gitlabVersion: {{ $gitlab_version }}
 registry:

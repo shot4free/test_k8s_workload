@@ -71,4 +71,10 @@
   "namespace": "gitlab",
   "name": "gitlab-sidekiq-quarantine-v2",
   "change": "MODIFY"
+},{
+  "api": "apps",
+  "kind": "Deployment",
+  "namespace": "gitlab",
+  "name": "gitlab-kas",
+  "change": "MODIFY"
 }]
