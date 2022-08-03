@@ -51,9 +51,17 @@ On merge, configuration changes will be deployed to the following environments:
 | `gprd`      | `https://gitlab.com`         | gprd-us-east1-c |
 | `gprd`      | `https://gitlab.com`         | gprd-us-east1-d |
 
-## GitLab CI/CD Variables Configuration
+## GitLab CI/CD Configuration
 
-### Input Variables
+Our GitLab CI/CD configuration for this repository is written in [jsonnet](https://jsonnet.org).
+Note that the `.gitlab-ci.yml` for this repository is not to be modified by
+hand, it is instead to be modified through the corresponding source file
+`.gitlab-ci.jsonnet`, and then rendered out using `make generate-ci-config`. When
+doing a merge request to change the CI/CD configuration of this repository, make
+sure the MR includes both files.
+### GitLab CI/CD Variables Configuration
+
+#### Input Variables
 
 Each of the below variables is applied to the environment defined above
 
@@ -65,7 +73,7 @@ Each of the below variables is applied to the environment defined above
 | `SERVICE_KEY`   | Service Account key used for CI for write operations to the cluster
 | `SERVICE_KEY_RO`| Service Account key used for CI for read operations, used on branches
 
-### Ops Instance Specific
+#### Ops Instance Specific
 
 | Variable | Description |
 | -------- | ----------- |

@@ -3,3 +3,4 @@ helmfile 0.145.2
 yq 4.27.2
 glab 1.22.0
 vendir 0.29.0
+go-jsonnet 0.18.0
