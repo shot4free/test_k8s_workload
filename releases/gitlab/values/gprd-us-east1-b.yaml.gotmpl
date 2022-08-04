@@ -34,6 +34,9 @@ gitlab:
         service:
           # gcloud compute address websockets-gke-gprd-us-east1-b
           loadBalancerIP: 10.221.13.19
+    extraEnv:
+      GITLAB_MEMORY_WATCHDOG_ENABLED: "true"
+
 registry:
   service:
     # gcloud compute address registry-gke-gprd-us-east1-b
