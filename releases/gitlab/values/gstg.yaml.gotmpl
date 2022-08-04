@@ -62,7 +62,7 @@ registry:
         allow:
           - .*
   nodeSelector:
-    cloud.google.com/gke-nodepool: registry-3
+    cloud.google.com/gke-nodepool: registry-4
   tolerations:
     - key: gitlab.com/type
       operator: Equal
@@ -92,7 +92,7 @@ gitlab:
     metrics:
       enabled: true
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-3
+      cloud.google.com/gke-nodepool: shell-4
     tolerations:
       - key: gitlab.com/type
         operator: Equal
@@ -121,7 +121,7 @@ gitlab:
               periodSeconds: 300
   gitlab-pages:
     nodeSelector:
-      cloud.google.com/gke-nodepool: pages-1
+      cloud.google.com/gke-nodepool: pages-2
     tolerations:
       - key: gitlab.com/type
         operator: Equal
@@ -167,7 +167,7 @@ gitlab:
     deployments:
       api:
         nodeSelector:
-          cloud.google.com/gke-nodepool: api-3
+          cloud.google.com/gke-nodepool: api-4
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -179,7 +179,7 @@ gitlab:
             effect: NoSchedule
       git:
         nodeSelector:
-          cloud.google.com/gke-nodepool: git-https-3
+          cloud.google.com/gke-nodepool: git-https-4
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -199,7 +199,7 @@ gitlab:
           GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
           GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
         nodeSelector:
-          cloud.google.com/gke-nodepool: web-2
+          cloud.google.com/gke-nodepool: web-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -211,7 +211,7 @@ gitlab:
             effect: NoSchedule
       websockets:
         nodeSelector:
-          cloud.google.com/gke-nodepool: websockets-2
+          cloud.google.com/gke-nodepool: websockets-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -355,7 +355,7 @@ gitlab:
         maxReplicas: 100
         maxUnavailable: 5%
         nodeSelector:
-          cloud.google.com/gke-nodepool: catchall-0
+          cloud.google.com/gke-nodepool: sidekiq-catchall-1
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -397,7 +397,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 2
         nodeSelector:
-          cloud.google.com/gke-nodepool: catchall-0
+          cloud.google.com/gke-nodepool: sidekiq-catchall-1
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -433,7 +433,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 16
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-memory-bound-2
+          cloud.google.com/gke-nodepool: sidekiq-memory-bound-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -550,7 +550,7 @@ gitlab:
         minReplicas: 2
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-2
+          cloud.google.com/gke-nodepool: sidekiq-low-urgency-cpu-bound-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -587,7 +587,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 50
         nodeSelector:
-          cloud.google.com/gke-nodepool: catchall-0
+          cloud.google.com/gke-nodepool: sidekiq-catchall-1
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -623,7 +623,7 @@ gitlab:
         minReplicas: 1
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-2
+          cloud.google.com/gke-nodepool: sidekiq-urgent-cpu-bound-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
@@ -659,7 +659,7 @@ gitlab:
         minReplicas: 5
         maxReplicas: 10
         nodeSelector:
-          cloud.google.com/gke-nodepool: sidekiq-urgent-other-2
+          cloud.google.com/gke-nodepool: sidekiq-urgent-other-3
         tolerations:
           - key: gitlab.com/type
             operator: Equal
