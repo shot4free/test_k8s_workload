@@ -4,17 +4,12 @@
 # this file is for `cny` specific overrides
 
 nginx-ingress:
+  common:
+    labels:
+      stage: cny
   controller:
     autoscaling:
       minReplicas: 3
-    labels: &nginx_labels
-      shard: default
-      stage: cny
-    podLabels:
-      <<: *nginx_labels
-    service:
-      labels:
-        <<: *nginx_labels
 
 gitlab:
   gitlab-pages:
