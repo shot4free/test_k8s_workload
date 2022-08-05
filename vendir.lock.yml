@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'deps/09ce048-f780bc3' into 'master'...
-      sha: 6d5de06e9b86d6f687eb9bebfeb69b750697f4a5
+      commitTitle: Merge branch 'shell-fix-keywalk' into 'master'...
+      sha: 5ca661235c4148cb54822ef8fa4b0e480ab2a440
       tags:
-      - 12.10.202004211640+297d8250845-3724-g6d5de06e9
+      - 12.10.202004211640+297d8250845-3737-g5ca661235
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'deps/09ce048-f780bc3' into 'master'...
