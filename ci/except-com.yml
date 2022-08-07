@@ -1,8 +1,0 @@
----
-
-.except-com:
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
-    refs:
-      - tags
