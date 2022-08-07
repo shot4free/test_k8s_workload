@@ -154,10 +154,10 @@
       exit 1
     fi
 assert_formatting:
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+      when: never
   script: |
     find . -name '*.*sonnet' | xargs -n1 jsonnetfmt -i
     git diff --exit-code
@@ -845,7 +845,6 @@ gstg:upgrade:
   variables:
     DRY_RUN: "false"
 include:
-  - /ci/except-ops.yml
   - /ci/cluster-init-before-script.yml
   - /ci/shellcheck.yml
   - /ci/version-checks.yml
