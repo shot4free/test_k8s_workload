@@ -16,7 +16,6 @@ local stages = {
 
 local includes = {
   include: [
-    '/ci/except-ops.yml',
     '/ci/cluster-init-before-script.yml',
     '/ci/shellcheck.yml',
     '/ci/version-checks.yml',
@@ -36,11 +35,12 @@ local exceptCom = {
 };
 
 local exceptOps = {
-  except+: {
-    variables+: [
-      '$CI_API_V4_URL == "https://ops.gitlab.net/api/v4"',
-    ],
-  },
+  rules+: [
+    {
+      'if': '$CI_API_V4_URL == "https://ops.gitlab.net/api/v4"',
+      when: 'never',
+    },
+  ],
 };
 
 local variables = {
