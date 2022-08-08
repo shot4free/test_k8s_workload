@@ -271,7 +271,7 @@ nginx-ingress:
   enabled: {{ (.Values | getOrNil "nginx-ingress.enabled") | default "false" }}
   controller:
     image:
-      repository: k8s.gcr.io/ingress-nginx/controller
+      repository: registry.k8s.io/ingress-nginx/controller
     terminationGracePeriodSeconds: 120
     config:
       upstream-keepalive-timeout: "30"
@@ -300,7 +300,7 @@ nginx-ingress:
       "net.ipv4.ip_local_port_range": "11000 65500"
   defaultBackend:
     image:
-      repository: k8s.gcr.io/defaultbackend-amd64
+      repository: registry.k8s.io/defaultbackend-amd64
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
