@@ -13,6 +13,15 @@ nginx-ingress:
 
 gitlab:
   gitlab-pages:
+    tolerations:
+      - key: gitlab.com/type
+        operator: Equal
+        value: web-pages
+        effect: NoSchedule
+      - key: gitlab.com/stage
+        operator: Equal
+        value: cny
+        effect: NoSchedule
     gitlabCache:
       expiry: 30m
     serviceAccount:
@@ -21,7 +30,20 @@ gitlab:
   gitlab-shell:
     minReplicas: 8
     nodeSelector:
-      cloud.google.com/gke-nodepool: shell-cny-1
+      cloud.google.com/gke-nodepool: shell-2
+    tolerations:
+      - key: gitlab.com/type
+        operator: Equal
+        value: git
+        effect: NoSchedule
+      - key: gitlab.com/shard
+        operator: Equal
+        value: git-ssh
+        effect: NoSchedule
+      - key: gitlab.com/stage
+        operator: Equal
+        value: cny
+        effect: NoSchedule
     extraEnv:
       GITLAB_CONTINUOUS_PROFILING: stackdriver?service=gitlab-shell
     metrics:
@@ -63,6 +85,15 @@ gitlab:
         service:
           # gcloud compute address api-gke-gprd-cny
           loadBalancerIP: 10.216.8.13
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: api
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
       git:
         extraEnv:
           GITLAB_CONTINUOUS_PROFILING: stackdriver?service=workhorse-git
@@ -70,6 +101,19 @@ gitlab:
         service:
           # gcloud compute address git-https-gke-gprd-cny
           loadBalancerIP: 10.216.8.10
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: git
+            effect: NoSchedule
+          - key: gitlab.com/shard
+            operator: Equal
+            value: git-https
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
       web:
         extraEnv:
           GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"web\", \"stage\": \"cny\"}"
@@ -87,6 +131,15 @@ gitlab:
         service:
           # gcloud compute address web-gke-gprd-cny
           loadBalancerIP: 10.216.8.87
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: web
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
       websockets:
         hpa:
           minReplicas: 3
@@ -97,6 +150,15 @@ gitlab:
         service:
           # gcloud compute address websockets-gke-gprd-cny
           loadBalancerIP: 10.216.8.15
+        tolerations:
+          - key: gitlab.com/type
+            operator: Equal
+            value: websockets
+            effect: NoSchedule
+          - key: gitlab.com/stage
+            operator: Equal
+            value: cny
+            effect: NoSchedule
     minReplicas: 5
     extraEnv:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
@@ -135,6 +197,15 @@ registry:
   hpa:
     # min is set higher for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2380
     minReplicas: 20
+  tolerations:
+    - key: gitlab.com/type
+      operator: Equal
+      value: registry
+      effect: NoSchedule
+    - key: gitlab.com/stage
+      operator: Equal
+      value: cny
+      effect: NoSchedule
   service:
     # gcloud compute address registry-gke-gprd-cny
     loadBalancerIP: 10.216.8.18
