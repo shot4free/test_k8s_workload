@@ -271,6 +271,7 @@ nginx-ingress:
   enabled: {{ (.Values | getOrNil "nginx-ingress.enabled") | default "false" }}
   controller:
     image:
+      digest: ''
       repository: registry.k8s.io/ingress-nginx/controller
     terminationGracePeriodSeconds: 120
     config:
