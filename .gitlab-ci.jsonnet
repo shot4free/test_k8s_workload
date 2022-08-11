@@ -16,13 +16,12 @@ local stages = {
 
 local includes = {
   include: [
-    '/ci/cluster-init-before-script.yml',
-    '/ci/shellcheck.yml',
-    '/ci/version-checks.yml',
-    '/ci/check-vendored-charts.yml',
     // Dependency scanning
     // https://docs.gitlab.com/ee/user/application_security/dependency_scanning/
     { template: 'Security/Dependency-Scanning.gitlab-ci.yml' },
+    // Make sure we do branch pipelines only (no duplicate pipelines)
+    // https://docs.gitlab.com/ee/ci/yaml/workflow.html#workflowrules-templates
+    { template: 'Workflows/Branch-Pipelines.gitlab-ci.yml' },
   ],
 };
 
@@ -274,6 +273,10 @@ local baseCiConfigs = {
   },
 };
 
+local checkVendoredCharts = import 'ci/check-vendored-charts.libsonnet';
+local shellcheck = import 'ci/shellcheck.libsonnet';
+local versionChecks = import 'ci/version-checks.libsonnet';
+
 local assertFormatting = {
   assert_formatting: {
     stage: 'check',
@@ -282,6 +285,9 @@ local assertFormatting = {
       find . -name '*.*sonnet' | xargs -n1 jsonnetfmt -i
       git diff --exit-code
     |||,
+    rules: [
+      { when: 'always' },
+    ],
   } + exceptOps,
 };
 
@@ -335,12 +341,32 @@ local retireJsDependencyScanning = {
   },
 };
 
+local clusterInitBeforeScript = {
+  before_script: |||
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
+  |||,
+};
+
 local deploy(environment, stage, cluster, ciStage) = {
   local isCanary = stage == 'cny',
   ['%s:dryrun:auto-deploy' % cluster]: {
     stage: 'dryrun',
     extends: [
-      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
     ],
     image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
@@ -356,22 +382,16 @@ local deploy(environment, stage, cluster, ciStage) = {
       'k8s-workloads',
     ],
     [if isCanary then 'resource_group']: environment,
-  } + exceptCom,
+  } + clusterInitBeforeScript + exceptCom,
   ['%s:auto-deploy' % cluster]: {
     stage: ciStage,
     extends: [
-      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
     ],
     image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
-      sendEvent "Starting k8s deployment for $CLUSTER" "%s" "deployment" %s
       bin/k-ctl %s upgrade
-      sendEvent "Finished k8s deployment for $CLUSTER" "%s" "deployment" %s
-    ||| % if isCanary then
-      [std.strReplace(environment, '-cny', ''), '"cny"', '-s cny', std.strReplace(environment, '-cny', ''), '"cny"']
-    else
-      [environment, '', '', environment, ''],
+    ||| % if isCanary then '-s cny' else '',
     only: {
       variables: [
         '$ENVIRONMENT == "%s" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
@@ -381,11 +401,10 @@ local deploy(environment, stage, cluster, ciStage) = {
       'k8s-workloads',
     ],
     [if isCanary then 'resource_group']: environment,
-  } + exceptCom,
+  } + clusterInitBeforeScript + exceptCom,
   ['%s:dryrun' % cluster]: {
     stage: 'dryrun',
     extends: [
-      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
       '.only-auto-deploy-false-and-config-changes',
     ],
@@ -397,24 +416,18 @@ local deploy(environment, stage, cluster, ciStage) = {
       'k8s-workloads',
     ],
     [if isCanary then 'resource_group']: environment,
-  } + exceptCom,
+  } + clusterInitBeforeScript + exceptCom,
   ['%s:upgrade' % cluster]: {
     stage: ciStage,
     extends: [
-      '.cluster-init-before-script',
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
       '.only-auto-deploy-false-and-config-changes',
     ],
     image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-      sendEvent "Starting k8s configuration for $CLUSTER" "%s" "configuration" %s
       bin/k-ctl %s upgrade
-      sendEvent "Finished k8s configuration for $CLUSTER" "%s" "configuration" %s
-    ||| % if isCanary then
-      [std.strReplace(environment, '-cny', ''), '"cny"', '-s cny', std.strReplace(environment, '-cny', ''), '"cny"']
-    else
-      [environment, '', '', environment, ''],
+    ||| % if isCanary then '-s cny' else '',
     only: {
       refs: [
         'master',
@@ -427,7 +440,7 @@ local deploy(environment, stage, cluster, ciStage) = {
       DRY_RUN: 'false',
     },
     [if isCanary then 'resource_group']: environment,
-  } + exceptCom,
+  } + clusterInitBeforeScript + exceptCom,
 };
 
 local triggerQaSmoke = {
@@ -566,6 +579,9 @@ local removeExpediteVariable = {
 
 local gitlabCIConf =
   stages
+  + shellcheck
+  + versionChecks
+  + checkVendoredCharts
   + variables
   + includes
   + notifyComMR

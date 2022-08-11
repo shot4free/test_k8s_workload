@@ -66,6 +66,45 @@ cluster_skip_check() {
   fi
 }
 
+# Function to send messages to events elasticsearch index
+sendEvent() {
+  if [[ -z "$ES_NONPROD_EVENTS_URL" || $ES_EVENT_OVERRIDE == "true" ]]; then
+    echo "Warning: Not sending events because ES_NONPROD_EVENTS_URL is not set or ES_EVENT_OVERRIDE is set to true"
+    return
+  fi
+  command -v curl >/dev/null 2>&1 ||
+    {
+      echo >&2 "sending events requires curl but it's not installed."
+      return
+    }
+  MSG="$1"
+  ENV="$2"
+  TYPE="$3"
+  STAGE="${4:-main}"
+  TS=$(date -u +%s000)
+  USERNAME="${GITLAB_USER_LOGIN:-unknown}"
+  SOURCE="${CI_JOB_URL:-unknown}"
+  image_tag="${GITLAB_IMAGE_TAG:-$COMPONENT_VERSION}"
+  VERSION="${image_tag:-not set}"
+  DATA="
+    {
+      \"time\": \"$TS\",
+      \"type\": \"$TYPE\",
+      \"message\": \"$MSG\",
+      \"env\": \"$ENV\",
+      \"username\": \"$USERNAME\",
+      \"source\": \"$SOURCE\",
+      \"version\": \"$VERSION\",
+      \"stage\": \"$STAGE\"
+    }
+  "
+  echo "Sending event: \"$MSG\""
+  curl -s -X POST \
+    --retry 5 \
+    --retry-max-time 20 \
+    "$ES_NONPROD_EVENTS_URL/events-${ENV/-cny/}/_doc" -H 'Content-Type: application/json' -d "$DATA" >/dev/null
+}
+
 environment=${ENV}${STAGE_SUFFIX}
 auto_deploy_changes_fname="${dir}/../auto-deploy-image-check/${environment}.json"
 helmfile_common_options=(
@@ -164,7 +203,9 @@ case "$ACTION" in
     else
       ./bin/watch-gitlab-deployments.sh "${NAMESPACE}" &
 
+      sendEvent "Starting k8s deployment for ${CLUSTER}" "${ENV}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
       helmfile "${helmfile_common_options[@]}" apply "${helmfile_cmd_options[@]}"
+      sendEvent "Finished k8s deployment for ${CLUSTER}" "${ENV}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
     fi
     ;;
 
