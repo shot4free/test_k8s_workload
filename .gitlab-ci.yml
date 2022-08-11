@@ -153,9 +153,23 @@
       echo "$web_url has status $status, failing"
       exit 1
     fi
+assert_consistent_tool_versions:
+  allow_failure: true
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+      when: never
+    - when: always
+  script: /k8s-workloads/assert-tool-versions.sh
+  stage: check
 assert_formatting:
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   rules:
+    - when: always
     - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       when: never
   script: |
@@ -163,6 +177,25 @@ assert_formatting:
     git diff --exit-code
   stage: check
 bundler-audit-dependency_scanning:
+  stage: check
+check-vendored-charts:
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_COMMIT_REF_NAME == "master"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+      when: never
+    - when: always
+  script: |
+    chmod 400 "$SSH_PRIVATE_KEY"
+    export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
+    vendir sync
+    for i in pre gstg gprd;do pushd vendor/charts/gitlab/$i;helm dep update;popd;done
+    git diff --exit-code vendor || (echo "Charts in this commit are not the same as upstream" >&2 && exit 1)
   stage: check
 ci_config_generated:
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -173,11 +206,27 @@ ci_config_generated:
 dependency_scanning:
   stage: check
 gprd-cny:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -185,18 +234,32 @@ gprd-cny:auto-deploy:
       - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gprd-cny
   script: |
-    sendEvent "Starting k8s deployment for $CLUSTER" "gprd" "deployment" "cny"
     bin/k-ctl -s cny upgrade
-    sendEvent "Finished k8s deployment for $CLUSTER" "gprd" "deployment" "cny"
   stage: gprd-cny:deploy
   tags:
     - k8s-workloads
 gprd-cny:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -207,11 +270,27 @@ gprd-cny:dryrun:
   tags:
     - k8s-workloads
 gprd-cny:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -224,11 +303,27 @@ gprd-cny:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gprd-cny:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -238,35 +333,66 @@ gprd-cny:upgrade:
   resource_group: gprd-cny
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-    sendEvent "Starting k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
     bin/k-ctl -s cny upgrade
-    sendEvent "Finished k8s configuration for $CLUSTER" "gprd" "configuration" "cny"
   stage: gprd-cny:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-b:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
   tags:
     - k8s-workloads
 gprd-us-east1-b:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -276,11 +402,27 @@ gprd-us-east1-b:dryrun:
   tags:
     - k8s-workloads
 gprd-us-east1-b:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -292,44 +434,95 @@ gprd-us-east1-b:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gprd-us-east1-b:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-b
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-c:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: gprd:deploy:beta
   tags:
     - k8s-workloads
 gprd-us-east1-c:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-c
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -339,11 +532,27 @@ gprd-us-east1-c:dryrun:
   tags:
     - k8s-workloads
 gprd-us-east1-c:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -355,44 +564,95 @@ gprd-us-east1-c:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gprd-us-east1-c:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-c
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: gprd:deploy:beta
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd-us-east1-d:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: gprd:deploy:beta
   tags:
     - k8s-workloads
 gprd-us-east1-d:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-d
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -402,11 +662,27 @@ gprd-us-east1-d:dryrun:
   tags:
     - k8s-workloads
 gprd-us-east1-d:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -418,44 +694,95 @@ gprd-us-east1-d:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gprd-us-east1-d:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd-us-east1-d
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: gprd:deploy:beta
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gprd:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gprd\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
   tags:
     - k8s-workloads
 gprd:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -465,11 +792,27 @@ gprd:dryrun:
   tags:
     - k8s-workloads
 gprd:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -481,29 +824,63 @@ gprd:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gprd:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gprd
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gprd\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-cny:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -511,18 +888,32 @@ gstg-cny:auto-deploy:
       - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gstg-cny
   script: |
-    sendEvent "Starting k8s deployment for $CLUSTER" "gstg" "deployment" "cny"
     bin/k-ctl -s cny upgrade
-    sendEvent "Finished k8s deployment for $CLUSTER" "gstg" "deployment" "cny"
   stage: non-prod-cny:deploy
   tags:
     - k8s-workloads
 gstg-cny:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -533,11 +924,27 @@ gstg-cny:dryrun:
   tags:
     - k8s-workloads
 gstg-cny:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -550,11 +957,27 @@ gstg-cny:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gstg-cny:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -564,35 +987,66 @@ gstg-cny:upgrade:
   resource_group: gstg-cny
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
-    sendEvent "Starting k8s configuration for $CLUSTER" "gstg" "configuration" "cny"
     bin/k-ctl -s cny upgrade
-    sendEvent "Finished k8s configuration for $CLUSTER" "gstg" "configuration" "cny"
   stage: non-prod-cny:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-us-east1-b:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
 gstg-us-east1-b:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-b
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -602,11 +1056,27 @@ gstg-us-east1-b:dryrun:
   tags:
     - k8s-workloads
 gstg-us-east1-b:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -618,44 +1088,95 @@ gstg-us-east1-b:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gstg-us-east1-b:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-b
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-us-east1-c:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
 gstg-us-east1-c:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-c
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -665,11 +1186,27 @@ gstg-us-east1-c:dryrun:
   tags:
     - k8s-workloads
 gstg-us-east1-c:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -681,44 +1218,95 @@ gstg-us-east1-c:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gstg-us-east1-c:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-c
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg-us-east1-d:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
 gstg-us-east1-d:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-d
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -728,11 +1316,27 @@ gstg-us-east1-d:dryrun:
   tags:
     - k8s-workloads
 gstg-us-east1-d:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -744,44 +1348,95 @@ gstg-us-east1-d:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gstg-us-east1-d:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg-us-east1-d
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 gstg:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"gstg\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
 gstg:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -791,11 +1446,27 @@ gstg:dryrun:
   tags:
     - k8s-workloads
 gstg:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -827,29 +1498,44 @@ gstg:qa:
   variables:
     project: gitlab-org/quality/staging
 gstg:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .gstg
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"gstg\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
   variables:
     DRY_RUN: "false"
 include:
-  - /ci/cluster-init-before-script.yml
-  - /ci/shellcheck.yml
-  - /ci/version-checks.yml
-  - /ci/check-vendored-charts.yml
   - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Workflows/Branch-Pipelines.gitlab-ci.yml
 notify_com_mr:
   allow_failure: true
   except:
@@ -912,26 +1598,59 @@ open-chart-bump-mr-pre:
     ./bin/autobump-gitlab-chart.sh pre
   stage: scheduled
 pre:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .pre
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     variables:
       - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-  script: "sendEvent \"Starting k8s deployment for $CLUSTER\" \"pre\" \"deployment\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s deployment for $CLUSTER\" \"pre\" \"deployment\" \n"
+  script: |
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
 pre:dryrun:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .pre
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -941,11 +1660,27 @@ pre:dryrun:
   tags:
     - k8s-workloads
 pre:dryrun:auto-deploy:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .pre
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
@@ -978,18 +1713,36 @@ pre:qa:
   variables:
     project: gitlab-org/quality/preprod
 pre:upgrade:
+  before_script: |
+    if [[ $LOG_LEVEL == "debug" ]]; then
+      echo "A high debug level may expose secrets, this job will now exit..."
+      exit 1
+    fi
+    eval $(./bin/k-ctl config 2>/dev/null)
+    if [[ $DRY_RUN == "false" ]]; then
+      echo 'Using SERVICE_KEY'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY
+    else
+      echo 'Using SERVICE_KEY_RO'
+      gcloud auth activate-service-account --key-file $SERVICE_KEY_RO
+    fi
+    gcloud config set project $PROJECT
+    gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    # For logging events
+    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   except:
     variables:
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
-    - .cluster-init-before-script
     - .pre
     - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   only:
     refs:
       - master
-  script: "bin/grafana-annotate -e $CI_ENVIRONMENT_NAME\nsendEvent \"Starting k8s configuration for $CLUSTER\" \"pre\" \"configuration\" \nbin/k-ctl  upgrade\nsendEvent \"Finished k8s configuration for $CLUSTER\" \"pre\" \"configuration\" \n"
+  script: |
+    bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
+    bin/k-ctl  upgrade
   stage: non-prod:deploy
   tags:
     - k8s-workloads
@@ -1010,6 +1763,40 @@ remove-expedite-variable:
   stage: cleanup
 retire-js-dependency_scanning:
   stage: check
+shellcheck:
+  image:
+    entrypoint:
+      - /bin/sh
+      - -c
+    name: nlknguyen/alpine-shellcheck
+  rules:
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_COMMIT_REF_NAME == "master"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - when: always
+  script:
+    - find bin/ -maxdepth 1 -type f | xargs -r shellcheck -e SC1090,SC1091
+  stage: check
+shfmt:
+  image:
+    entrypoint:
+      - /bin/sh
+      - -c
+    name: peterdavehello/shfmt:2.6.4
+  rules:
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_COMMIT_REF_NAME == "master"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - when: always
+  script:
+    - find bin/ -maxdepth 1 -type f | xargs -r shfmt -i 2 -ci -l -d
+  stage: check
 stages:
   - check
   - dryrun-check
@@ -1022,6 +1809,19 @@ stages:
   - gprd:deploy:beta
   - cleanup
   - scheduled
+tooling:
+  image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_COMMIT_REF_NAME == "master"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - when: always
+  script:
+    - bin/k-ctl -t
+  stage: check
 variables:
   AUTO_DEPLOY: "false"
   CI_IMAGE_VERSION: v15.4.0
