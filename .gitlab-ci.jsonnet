@@ -357,8 +357,6 @@ local clusterInitBeforeScript = {
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-    # For logging events
-    # https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/events/README.md
   |||,
 };
 
