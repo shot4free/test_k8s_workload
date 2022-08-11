@@ -68,7 +68,7 @@ cluster_skip_check() {
 
 # Function to send messages to events elasticsearch index
 sendEvent() {
-  if [[ -z "$ES_NONPROD_EVENTS_URL" || $ES_EVENT_OVERRIDE == "true" ]]; then
+  if [[ -z "${ES_NONPROD_EVENTS_URL:-}" || "${ES_EVENT_OVERRIDE:-}" == "true" ]]; then
     echo "Warning: Not sending events because ES_NONPROD_EVENTS_URL is not set or ES_EVENT_OVERRIDE is set to true"
     return
   fi
@@ -84,8 +84,7 @@ sendEvent() {
   TS=$(date -u +%s000)
   USERNAME="${GITLAB_USER_LOGIN:-unknown}"
   SOURCE="${CI_JOB_URL:-unknown}"
-  image_tag="${GITLAB_IMAGE_TAG:-$COMPONENT_VERSION}"
-  VERSION="${image_tag:-not set}"
+  VERSION="${GITLAB_IMAGE_TAG:-not set}"
   DATA="
     {
       \"time\": \"$TS\",
