@@ -8,10 +8,10 @@ directories:
       - 12.10.202004211640+297d8250845-3737-g5ca661235
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch 'shell-fix-keywalk' into 'master'...
-      sha: 5ca661235c4148cb54822ef8fa4b0e480ab2a440
+      commitTitle: Merge branch 'update-pipeline-config-skip-mr-pipelines' into 'master'...
+      sha: 4456dd0cd3fa2296d613b6061b328c7c48638263
       tags:
-      - 12.10.202004211640+297d8250845-3737-g5ca661235
+      - 12.10.202004211640+297d8250845-3759-g4456dd0cd
     path: gitlab/gstg
   - git:
       commitTitle: Merge branch 'shell-fix-keywalk' into 'master'...
