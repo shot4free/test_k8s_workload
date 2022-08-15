@@ -68,8 +68,8 @@ cluster_skip_check() {
 
 # Function to send messages to events elasticsearch index
 sendEvent() {
-  if [[ -z "${ES_NONPROD_EVENTS_URL:-}" || "${ES_EVENT_OVERRIDE:-}" == "true" ]]; then
-    echo "Warning: Not sending events because ES_NONPROD_EVENTS_URL is not set or ES_EVENT_OVERRIDE is set to true"
+  if [[ -z "${ENVIRONMENT_WITHOUT_STAGE}" || -z "${ES_NONPROD_EVENTS_URL:-}" || "${ES_EVENT_OVERRIDE:-}" == "true" ]]; then
+    echo "Warning: Not sending events because one of ENVIRONMENT_WITHOUT_STAGE, ES_NONPROD_EVENTS_URL is not set or ES_EVENT_OVERRIDE is set to true"
     return
   fi
   command -v curl >/dev/null 2>&1 ||
@@ -78,7 +78,6 @@ sendEvent() {
       return
     }
   MSG="$1"
-  ENV="$2"
   TYPE="$3"
   STAGE="${4:-main}"
   TS=$(date -u +%s000)
@@ -90,7 +89,7 @@ sendEvent() {
       \"time\": \"$TS\",
       \"type\": \"$TYPE\",
       \"message\": \"$MSG\",
-      \"env\": \"$ENV\",
+      \"env\": \"$ENVIRONMENT_WITHOUT_STAGE\",
       \"username\": \"$USERNAME\",
       \"source\": \"$SOURCE\",
       \"version\": \"$VERSION\",
@@ -101,7 +100,7 @@ sendEvent() {
   curl -s -X POST \
     --retry 5 \
     --retry-max-time 20 \
-    "$ES_NONPROD_EVENTS_URL/events-${ENV/-cny/}/_doc" -H 'Content-Type: application/json' -d "$DATA" >/dev/null
+    "$ES_NONPROD_EVENTS_URL/events-${ENVIRONMENT_WITHOUT_STAGE}/_doc" -H 'Content-Type: application/json' -d "$DATA" >/dev/null
 }
 
 environment=${ENV}${STAGE_SUFFIX}
@@ -202,9 +201,9 @@ case "$ACTION" in
     else
       ./bin/watch-gitlab-deployments.sh "${NAMESPACE}" &
 
-      sendEvent "Starting k8s deployment for ${CLUSTER}" "${ENV}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
+      sendEvent "Starting k8s deployment for ${CLUSTER}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
       helmfile "${helmfile_common_options[@]}" apply "${helmfile_cmd_options[@]}"
-      sendEvent "Finished k8s deployment for ${CLUSTER}" "${ENV}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
+      sendEvent "Finished k8s deployment for ${CLUSTER}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
     fi
     ;;
 

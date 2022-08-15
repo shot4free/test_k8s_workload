@@ -53,52 +53,49 @@ local mainRegion = 'us-east1';
 
 local clusterAttrs = {
   pre: {
+    ENVIRONMENT_WITHOUT_STAGE: 'pre',
     GOOGLE_PROJECT: 'gitlab-pre',
     GKE_CLUSTER: 'pre-gitlab-gke',
     GOOGLE_REGION: mainRegion,
   },
   gstg: {
+    ENVIRONMENT_WITHOUT_STAGE: 'gstg',
     GOOGLE_PROJECT: 'gitlab-staging-1',
     GKE_CLUSTER: 'gstg-gitlab-gke',
     GOOGLE_REGION: mainRegion,
   },
   'gstg-us-east1-b': {
-    ENVIRONMENT: 'gstg',
     GOOGLE_PROJECT: 'gitlab-staging-1',
     GKE_CLUSTER: 'gstg-us-east1-b',
     GOOGLE_ZONE: 'us-east1-b',
   },
   'gstg-us-east1-c': {
-    ENVIRONMENT: 'gstg',
     GOOGLE_PROJECT: 'gitlab-staging-1',
     GKE_CLUSTER: 'gstg-us-east1-c',
     GOOGLE_ZONE: 'us-east1-c',
   },
   'gstg-us-east1-d': {
-    ENVIRONMENT: 'gstg',
     GOOGLE_PROJECT: 'gitlab-staging-1',
     GKE_CLUSTER: 'gstg-us-east1-d',
     GOOGLE_ZONE: 'us-east1-d',
   },
   gprd: {
+    ENVIRONMENT_WITHOUT_STAGE: 'gprd',
     GOOGLE_PROJECT: 'gitlab-production',
     GKE_CLUSTER: 'gprd-gitlab-gke',
     GOOGLE_REGION: mainRegion,
   },
   'gprd-us-east1-b': {
-    ENVIRONMENT: 'gprd',
     GOOGLE_PROJECT: 'gitlab-production',
     GKE_CLUSTER: 'gprd-us-east1-b',
     GOOGLE_ZONE: 'us-east1-b',
   },
   'gprd-us-east1-c': {
-    ENVIRONMENT: 'gprd',
     GOOGLE_PROJECT: 'gitlab-production',
     GKE_CLUSTER: 'gprd-us-east1-c',
     GOOGLE_ZONE: 'us-east1-c',
   },
   'gprd-us-east1-d': {
-    ENVIRONMENT: 'gprd',
     GOOGLE_PROJECT: 'gitlab-production',
     GKE_CLUSTER: 'gprd-us-east1-d',
     GOOGLE_ZONE: 'us-east1-d',
@@ -110,6 +107,7 @@ local baseCiConfigs = {
     variables: {
       PROJECT: clusterAttrs.pre.GOOGLE_PROJECT,
       REGION: clusterAttrs.pre.GOOGLE_REGION,
+      ENVIRONMENT_WITHOUT_STAGE: clusterAttrs.pre.ENVIRONMENT_WITHOUT_STAGE,
     },
     environment: {
       name: 'pre',
@@ -131,6 +129,7 @@ local baseCiConfigs = {
   '.gstg-base': {
     variables: {
       PROJECT: clusterAttrs.gstg.GOOGLE_PROJECT,
+      ENVIRONMENT_WITHOUT_STAGE: clusterAttrs.gstg.ENVIRONMENT_WITHOUT_STAGE,
     },
     environment: {
       url: 'https://staging.gitlab.com',
@@ -191,6 +190,7 @@ local baseCiConfigs = {
   '.gprd-base': {
     variables: {
       PROJECT: clusterAttrs.gprd.GOOGLE_PROJECT,
+      ENVIRONMENT_WITHOUT_STAGE: clusterAttrs.gprd.ENVIRONMENT_WITHOUT_STAGE,
     },
     environment: {
       url: 'https://gitlab.com',
