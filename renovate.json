@@ -15,6 +15,20 @@
         "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?( depType=(?<depType>.*?))?\\s*(chart_version|tag):\\s*(?<currentValue>.*)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "fileMatch": ["^ci/.+\\.libsonnet$"],
+      "matchStrings": [
+        "^\\s*name:\\s*'(?<depName>.*?):(?<currentValue>[^']*)',"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^\.tool-versions$"],
+      "matchStrings": [
+        "^# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?( depType=(?<depType>.*?))?\\n[^\\s]+\\s+(?<currentValue>.*)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
   "packageRules": [

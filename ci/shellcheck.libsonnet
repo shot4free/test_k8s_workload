@@ -1,7 +1,7 @@
 {
   shellcheck: {
     image: {
-      name: 'nlknguyen/alpine-shellcheck',
+      name: 'koalaman/shellcheck-alpine:v0.8.0',
       entrypoint: [
         '/bin/sh',
         '-c',
@@ -31,7 +31,7 @@
   },
   shfmt: {
     image: {
-      name: 'peterdavehello/shfmt:2.6.4',
+      name: 'mvdan/shfmt:v3.5.1-alpine',
       entrypoint: [
         '/bin/sh',
         '-c',

@@ -1680,7 +1680,7 @@ shellcheck:
     entrypoint:
       - /bin/sh
       - -c
-    name: nlknguyen/alpine-shellcheck
+    name: koalaman/shellcheck-alpine:v0.8.0
   rules:
     - if: $AUTO_DEPLOY == "true"
       when: never
@@ -1697,7 +1697,7 @@ shfmt:
     entrypoint:
       - /bin/sh
       - -c
-    name: peterdavehello/shfmt:2.6.4
+    name: mvdan/shfmt:v3.5.1-alpine
   rules:
     - if: $AUTO_DEPLOY == "true"
       when: never
