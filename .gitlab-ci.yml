@@ -16,6 +16,7 @@
   environment:
     url: https://gitlab.com
   variables:
+    ENVIRONMENT_WITHOUT_STAGE: gprd
     PROJECT: gitlab-production
 .gprd-us-east1-b:
   environment:
@@ -57,6 +58,7 @@
   environment:
     url: https://staging.gitlab.com
   variables:
+    ENVIRONMENT_WITHOUT_STAGE: gstg
     PROJECT: gitlab-staging-1
 .gstg-us-east1-b:
   environment:
@@ -114,6 +116,7 @@
     name: pre
     url: https://pre.gitlab.com
   variables:
+    ENVIRONMENT_WITHOUT_STAGE: pre
     PROJECT: gitlab-pre
     REGION: us-east1
 .trigger-qa-smoke:
