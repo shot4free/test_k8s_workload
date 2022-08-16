@@ -1,5 +1,5 @@
 # renovate: datasource=github-releases depName=helm/helm
-helm 3.9.2
+helm v3.9.3
 # renovate: datasource=github-releases depName=helmfile/helmfile
 helmfile 0.145.2
 # renovate: datasource=github-releases depName=mikefarah/yq
