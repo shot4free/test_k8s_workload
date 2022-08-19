@@ -451,6 +451,24 @@ local deploy(environment, stage, cluster, ciStage) = {
     },
     [if isCanary then 'resource_group']: environment,
   } + clusterInitBeforeScript + onlyAutoDeployFalseAndConfigChanges,
+  ['%s:check-label-taxonomy' % cluster]: {
+    stage: 'dryrun',
+    extends: [
+      '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
+    ],
+    image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
+    script: |||
+      bin/k-ctl %s template
+      ./bin/check-label-taxonomy.sh
+    ||| % if isCanary then '-s cny' else '',
+    tags: [
+      'k8s-workloads',
+    ],
+    rules: [
+      exceptCom,
+    ],
+    [if isCanary then 'resource_group']: environment,
+  } + clusterInitBeforeScript + onlyAutoDeployFalseAndConfigChanges,
 };
 
 local qaJob(name, project, allow_failure=false) = {
