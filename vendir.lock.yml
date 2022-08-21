@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'update-pipeline-config-skip-mr-pipelines' into 'master'...
-      sha: 4456dd0cd3fa2296d613b6061b328c7c48638263
+      commitTitle: Merge branch '3443-fix-scripts-config' into 'master'...
+      sha: 30b26521017178031bf2cfdacd3d4eab78e8af82
       tags:
-      - 12.10.202004211640+297d8250845-3759-g4456dd0cd
+      - 12.10.202004211640+297d8250845-3792-g30b265210
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'update-pipeline-config-skip-mr-pipelines' into 'master'...
