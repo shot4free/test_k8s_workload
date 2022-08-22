@@ -44,7 +44,8 @@ local exceptOps = {
 
 local variables = {
   variables: {
-    CI_IMAGE_VERSION: 'v15.4.0',
+    // renovate: datasource=docker depName=registry.gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci versioning=docker
+    CI_IMAGE_VERSION: 'v17.3.0',
     AUTO_DEPLOY: 'false',
   },
 };
@@ -449,7 +450,7 @@ local triggerQaSmoke = {
       // pipeline
       '.only-auto-deploy-false-and-config-changes',
     ],
-    image: 'alpine:3.12.0',
+    image: 'alpine:3.16',
     // This script can be replaced with the `trigger:` keyword
     // when the product supports retries for triggers
     // https://gitlab.com/gitlab-org/gitlab/-/issues/32559

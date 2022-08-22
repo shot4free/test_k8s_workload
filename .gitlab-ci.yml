@@ -128,7 +128,7 @@
       - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .only-auto-deploy-false-and-config-changes
-  image: alpine:3.12.0
+  image: alpine:3.16
   script: |
     if [[ $SKIP_QA == "true" ]]; then
       echo "Skipping QA because SKIP_QA is set to true"
@@ -1739,4 +1739,4 @@ tooling:
   stage: check
 variables:
   AUTO_DEPLOY: "false"
-  CI_IMAGE_VERSION: v15.4.0
+  CI_IMAGE_VERSION: v17.3.0
