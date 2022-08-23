@@ -17,18 +17,27 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     },
     {
-      "fileMatch": ["^ci/.+\\.libsonnet$"],
+      "fileMatch": ["^\.gitlab-ci\.jsonnet$", "^ci/.+\\.libsonnet$"],
       "matchStrings": [
-        "^\\s*name:\\s*'(?<depName>.*?):(?<currentValue>[^']*)',"
+        "^\\s*(image|name):\\s*'(?<depName>.*?):(?<currentValue>.*?)',"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^\.gitlab-ci\.jsonnet$", "^ci/.+\\.libsonnet$"],
+      "matchStrings": [
+        "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?( depType=(?<depType>.*?))?\\s*CI_IMAGE_VERSION:\\s*'(?<currentValue>.*?)',"
+      ],
+      "datasourceTemplate": "docker",
+      "groupName": "Tools"
     },
     {
       "fileMatch": ["^\.tool-versions$"],
       "matchStrings": [
         "^# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?( depType=(?<depType>.*?))?\\n[^\\s]+\\s+(?<currentValue>.*)"
       ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+      "groupName": "Tools"
     }
   ],
   "packageRules": [
