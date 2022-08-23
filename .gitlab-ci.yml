@@ -87,22 +87,6 @@
   variables:
     CLUSTER: gstg-us-east1-d
     REGION: us-east1-d
-.only-auto-deploy-false:
-  only:
-    variables:
-      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
-.only-auto-deploy-false-and-config-changes:
-  only:
-    changes:
-      - vendor/charts/gitlab/**/*
-      - bases/**/*
-      - bin/**/*
-      - releases/**/*
-      - '*.yaml'
-      - '*.yml'
-      - .gitlab-ci.yml
-    variables:
-      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
 .pre:
   environment:
     name: pre
@@ -120,15 +104,23 @@
     PROJECT: gitlab-pre
     REGION: us-east1
 .trigger-qa-smoke:
-  except:
-    refs:
-      - tags
-    variables:
-      - $CI_COMMIT_REF_NAME != 'master'
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
-  extends:
-    - .only-auto-deploy-false-and-config-changes
   image: alpine:3.16
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     if [[ $SKIP_QA == "true" ]]; then
       echo "Skipping QA because SKIP_QA is set to true"
@@ -172,9 +164,9 @@ assert_consistent_tool_versions:
 assert_formatting:
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   rules:
-    - when: always
     - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       when: never
+    - when: always
   script: |
     find . -name '*.*sonnet' | xargs -n1 jsonnetfmt -i
     git diff --exit-code
@@ -224,16 +216,15 @@ gprd-cny:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gprd-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -s cny upgrade
   stage: gprd-cny:deploy
@@ -255,14 +246,26 @@ gprd-cny:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   resource_group: gprd-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -284,16 +287,15 @@ gprd-cny:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gprd-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -315,17 +317,28 @@ gprd-cny:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
   resource_group: gprd-cny
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl -s cny upgrade
@@ -350,15 +363,14 @@ gprd-us-east1-b:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
@@ -380,13 +392,25 @@ gprd-us-east1-b:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -408,15 +432,14 @@ gprd-us-east1-b:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -438,16 +461,27 @@ gprd-us-east1-b:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -472,15 +506,14 @@ gprd-us-east1-c:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:beta
@@ -502,13 +535,25 @@ gprd-us-east1-c:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -530,15 +575,14 @@ gprd-us-east1-c:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -560,16 +604,27 @@ gprd-us-east1-c:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -594,15 +649,14 @@ gprd-us-east1-d:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:beta
@@ -624,13 +678,25 @@ gprd-us-east1-d:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -652,15 +718,14 @@ gprd-us-east1-d:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -682,16 +747,27 @@ gprd-us-east1-d:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -716,15 +792,14 @@ gprd:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
@@ -746,13 +821,25 @@ gprd:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -774,15 +861,14 @@ gprd:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -804,16 +890,27 @@ gprd:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gprd
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -838,16 +935,15 @@ gstg-cny:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gstg-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -s cny upgrade
   stage: non-prod-cny:deploy
@@ -869,14 +965,26 @@ gstg-cny:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
   resource_group: gstg-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -898,16 +1006,15 @@ gstg-cny:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: gstg-cny
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -929,17 +1036,28 @@ gstg-cny:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
   resource_group: gstg-cny
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl -s cny upgrade
@@ -964,15 +1082,14 @@ gstg-us-east1-b:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -994,13 +1111,25 @@ gstg-us-east1-b:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1022,15 +1151,14 @@ gstg-us-east1-b:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-b
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1052,16 +1180,27 @@ gstg-us-east1-b:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-b
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1086,15 +1225,14 @@ gstg-us-east1-c:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1116,13 +1254,25 @@ gstg-us-east1-c:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1144,15 +1294,14 @@ gstg-us-east1-c:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-c
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1174,16 +1323,27 @@ gstg-us-east1-c:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-c
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1208,15 +1368,14 @@ gstg-us-east1-d:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1238,13 +1397,25 @@ gstg-us-east1-d:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1266,15 +1437,14 @@ gstg-us-east1-d:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-d
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1296,16 +1466,27 @@ gstg-us-east1-d:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg-us-east1-d
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1330,15 +1511,14 @@ gstg:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1360,13 +1540,25 @@ gstg:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1388,37 +1580,38 @@ gstg:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
   tags:
     - k8s-workloads
 gstg:qa:
-  except:
-    variables:
-      - $CI_COMMIT_REF_NAME != 'master'
-      - $EXPEDITE_DEPLOYMENT
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .trigger-qa-smoke
-  only:
-    changes:
-      - vendor/charts/gitlab/gstg/**/*
-      - vendor/charts/gitlab-runner/gstg/**/*
-      - .gitlab-ci.yml
-      - '*.yaml'
-      - releases/gitlab/helmfile.yaml
-      - releases/gitlab/values/values*
-      - releases/gitlab/values/gstg*
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $EXPEDITE_DEPLOYMENT
+      when: never
+    - changes:
+        - vendor/charts/gitlab/gstg/**/*
+        - vendor/charts/gitlab-runner/gstg/**/*
+        - .gitlab-ci.yml
+        - '*.yaml'
+        - releases/gitlab/helmfile.yaml
+        - releases/gitlab/values/values*
+        - releases/gitlab/values/gstg*
+      when: always
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/staging
@@ -1438,16 +1631,27 @@ gstg:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .gstg
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1461,14 +1665,17 @@ include:
   - template: Workflows/Branch-Pipelines.gitlab-ci.yml
 notify_com_mr:
   allow_failure: true
-  except:
-    variables:
-      - $EXPEDITE_DEPLOYMENT
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/notify-mr:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $EXPEDITE_DEPLOYMENT
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - when: always
   script: |
     notify-mr -s
   stage: check
@@ -1536,15 +1743,14 @@ pre:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .pre
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1566,13 +1772,25 @@ pre:dryrun:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .pre
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1594,15 +1812,14 @@ pre:dryrun:auto-deploy:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .pre
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    variables:
-      - $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
+      when: always
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1610,22 +1827,24 @@ pre:dryrun:auto-deploy:
     - k8s-workloads
 pre:qa:
   allow_failure: true
-  except:
-    variables:
-      - $CI_COMMIT_REF_NAME != 'master'
-      - $EXPEDITE_DEPLOYMENT
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .trigger-qa-smoke
-  only:
-    changes:
-      - vendor/charts/gitlab/pre/**/*
-      - vendor/charts/gitlab-runner/pre/**/*
-      - .gitlab-ci.yml
-      - '*.yaml'
-      - releases/gitlab/helmfile.yaml
-      - releases/gitlab/values/values*
-      - releases/gitlab/values/pre*
+  rules:
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $EXPEDITE_DEPLOYMENT
+      when: never
+    - changes:
+        - vendor/charts/gitlab/pre/**/*
+        - vendor/charts/gitlab-runner/pre/**/*
+        - .gitlab-ci.yml
+        - '*.yaml'
+        - releases/gitlab/helmfile.yaml
+        - releases/gitlab/values/values*
+        - releases/gitlab/values/pre*
+      when: always
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/preprod
@@ -1645,16 +1864,27 @@ pre:upgrade:
     fi
     gcloud config set project $PROJECT
     gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
-  except:
-    variables:
-      - $CI_API_V4_URL == "https://gitlab.com/api/v4"
   extends:
     - .pre
-    - .only-auto-deploy-false-and-config-changes
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
-  only:
-    refs:
-      - master
+  rules:
+    - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
+      when: never
+    - if: $AUTO_DEPLOY == "true"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - changes:
+        - vendor/charts/gitlab/**/*
+        - bases/**/*
+        - bin/**/*
+        - releases/**/*
+        - '*.yaml'
+        - '*.yml'
+        - .gitlab-ci.yml
+      when: always
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade

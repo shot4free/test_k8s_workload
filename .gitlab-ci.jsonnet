@@ -26,20 +26,13 @@ local includes = {
 };
 
 local exceptCom = {
-  except+: {
-    variables+: [
-      '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
-    ],
-  },
+  'if': '$CI_API_V4_URL == "https://gitlab.com/api/v4"',
+  when: 'never',
 };
 
 local exceptOps = {
-  rules+: [
-    {
-      'if': '$CI_API_V4_URL == "https://ops.gitlab.net/api/v4"',
-      when: 'never',
-    },
-  ],
+  'if': '$CI_API_V4_URL == "https://ops.gitlab.net/api/v4"',
+  when: 'never',
 };
 
 local variables = {
@@ -249,18 +242,20 @@ local baseCiConfigs = {
     },
     resource_group: 'gprd-us-east1-d',
   },
-  '.only-auto-deploy-false': {
-    only: {
-      variables: [
-        '$AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"',
-      ],
+};
+
+local onlyAutoDeployFalseAndConfigChanges = {
+  rules+: [
+    {
+      'if': '$AUTO_DEPLOY == "true"',
+      when: 'never',
     },
-  },
-  '.only-auto-deploy-false-and-config-changes': {
-    only: {
-      variables: [
-        '$AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"',
-      ],
+    {
+      'if': '$CI_PIPELINE_SOURCE == "schedule"',
+      when: 'never',
+    },
+    {
+      when: 'always',
       changes: [
         'vendor/charts/gitlab/**/*',
         'bases/**/*',
@@ -271,7 +266,7 @@ local baseCiConfigs = {
         '.gitlab-ci.yml',
       ],
     },
-  },
+  ],
 };
 
 local checkVendoredCharts = import 'ci/check-vendored-charts.libsonnet';
@@ -287,9 +282,10 @@ local assertFormatting = {
       git diff --exit-code
     |||,
     rules: [
+      exceptOps,
       { when: 'always' },
     ],
-  } + exceptOps,
+  },
 };
 
 local ciConfigGenerated = {
@@ -311,17 +307,25 @@ local notifyComMR = {
       notify-mr -s
     |||,
     allow_failure: true,
-    except: {
-      variables: [
-        '$EXPEDITE_DEPLOYMENT',
-      ],
-    },
-    only: {
-      variables: [
-        '$AUTO_DEPLOY == "false" && $CI_PIPELINE_SOURCE != "schedule"',
-      ],
-    },
-  } + exceptCom,
+    rules: [
+      {
+        'if': '$EXPEDITE_DEPLOYMENT',
+        when: 'never',
+      },
+      {
+        'if': '$AUTO_DEPLOY == "true"',
+        when: 'never',
+      },
+      {
+        'if': '$CI_PIPELINE_SOURCE == "schedule"',
+        when: 'never',
+      },
+      exceptCom,
+      {
+        when: 'always',
+      },
+    ],
+  },
 };
 
 local dependencyScanning = {
@@ -372,16 +376,18 @@ local deploy(environment, stage, cluster, ciStage) = {
     script: |||
       bin/k-ctl -D %s upgrade
     ||| % if isCanary then '-s cny' else '',
-    only: {
-      variables: [
-        '$ENVIRONMENT == "%s" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
-      ],
-    },
+    rules: [
+      exceptCom,
+      {
+        'if': '$ENVIRONMENT == "%s" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
+        when: 'always',
+      },
+    ],
     tags: [
       'k8s-workloads',
     ],
     [if isCanary then 'resource_group']: environment,
-  } + clusterInitBeforeScript + exceptCom,
+  } + clusterInitBeforeScript,
   ['%s:auto-deploy' % cluster]: {
     stage: ciStage,
     extends: [
@@ -391,21 +397,22 @@ local deploy(environment, stage, cluster, ciStage) = {
     script: |||
       bin/k-ctl %s upgrade
     ||| % if isCanary then '-s cny' else '',
-    only: {
-      variables: [
-        '$ENVIRONMENT == "%s" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
-      ],
-    },
+    rules: [
+      exceptCom,
+      {
+        'if': '$ENVIRONMENT == "%s" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
+        when: 'always',
+      },
+    ],
     tags: [
       'k8s-workloads',
     ],
     [if isCanary then 'resource_group']: environment,
-  } + clusterInitBeforeScript + exceptCom,
+  } + clusterInitBeforeScript,
   ['%s:dryrun' % cluster]: {
     stage: 'dryrun',
     extends: [
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
-      '.only-auto-deploy-false-and-config-changes',
     ],
     image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
@@ -414,24 +421,28 @@ local deploy(environment, stage, cluster, ciStage) = {
     tags: [
       'k8s-workloads',
     ],
+    rules: [
+      exceptCom,
+    ],
     [if isCanary then 'resource_group']: environment,
-  } + clusterInitBeforeScript + exceptCom,
+  } + clusterInitBeforeScript + onlyAutoDeployFalseAndConfigChanges,
   ['%s:upgrade' % cluster]: {
     stage: ciStage,
     extends: [
       '.%s' % (if isCanary then std.strReplace(environment, '-cny', '') else cluster),
-      '.only-auto-deploy-false-and-config-changes',
     ],
     image: '${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}',
     script: |||
       bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
       bin/k-ctl %s upgrade
     ||| % if isCanary then '-s cny' else '',
-    only: {
-      refs: [
-        'master',
-      ],
-    },
+    rules: [
+      {
+        'if': '$CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME',
+        when: 'never',
+      },
+      exceptCom,
+    ],
     tags: [
       'k8s-workloads',
     ],
@@ -439,29 +450,15 @@ local deploy(environment, stage, cluster, ciStage) = {
       DRY_RUN: 'false',
     },
     [if isCanary then 'resource_group']: environment,
-  } + clusterInitBeforeScript + exceptCom,
+  } + clusterInitBeforeScript + onlyAutoDeployFalseAndConfigChanges,
 };
 
 local triggerQaSmoke = {
   '.trigger-qa-smoke': {
-    extends: [
-      // Skip QA smoke tests for auto-deploy because
-      // QA is run in the context of the deployer
-      // pipeline
-      '.only-auto-deploy-false-and-config-changes',
-    ],
     image: 'alpine:3.16',
     // This script can be replaced with the `trigger:` keyword
     // when the product supports retries for triggers
     // https://gitlab.com/gitlab-org/gitlab/-/issues/32559
-    except: {
-      variables: [
-        "$CI_COMMIT_REF_NAME != 'master'",
-      ],
-      refs: [
-        'tags',
-      ],
-    },
     script: |||
       if [[ $SKIP_QA == "true" ]]; then
         echo "Skipping QA because SKIP_QA is set to true"
@@ -490,7 +487,10 @@ local triggerQaSmoke = {
         exit 1
       fi
     |||,
-  } + exceptCom,
+    rules: [
+      exceptCom,
+    ],
+  } + onlyAutoDeployFalseAndConfigChanges,
 };
 
 local qaJob(name, project, allow_failure=false) = {
@@ -503,24 +503,30 @@ local qaJob(name, project, allow_failure=false) = {
     variables: {
       project: project,
     },
-    except: {
-      variables: [
-        "$CI_COMMIT_REF_NAME != 'master'",
-        '$EXPEDITE_DEPLOYMENT',
-      ],
-    },
-    only: {
-      changes: [
-        'vendor/charts/gitlab/%s/**/*' % name,
-        'vendor/charts/gitlab-runner/%s/**/*' % name,
-        '.gitlab-ci.yml',
-        '*.yaml',
-        'releases/gitlab/helmfile.yaml',
-        'releases/gitlab/values/values*',
-        'releases/gitlab/values/%s*' % name,
-      ],
-    },
-  } + exceptCom,
+    rules: [
+      exceptCom,
+      {
+        'if': '$CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME',
+        when: 'never',
+      },
+      {
+        'if': '$EXPEDITE_DEPLOYMENT',
+        when: 'never',
+      },
+      {
+        when: 'always',
+        changes: [
+          'vendor/charts/gitlab/%s/**/*' % name,
+          'vendor/charts/gitlab-runner/%s/**/*' % name,
+          '.gitlab-ci.yml',
+          '*.yaml',
+          'releases/gitlab/helmfile.yaml',
+          'releases/gitlab/values/values*',
+          'releases/gitlab/values/%s*' % name,
+        ],
+      },
+    ],
+  },
 };
 
 local openChartBumpMR(name) = {
