@@ -1,5 +1,23 @@
 ---
 
+gitlab-runner:
+  gitlabUrl: {{ .Values.gitlab_endpoint }}
+  install: true
+  rbac:
+    create: true
+  runners:
+    config: |
+      [[runners]]
+        [runners.kubernetes]
+          namespace = "gitlab-runner"
+          image = "debian:buster-slim"
+          privileged = true
+          allow_privilege_escalation = true
+        [[runners.kubernetes.volumes.empty_dir]]
+          name = "docker-certs"
+          mount_path = "/certs/client"
+          medium = "Memory"
+
 # Force PreProd config for https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/merge_requests/1163
 nginx-ingress:
   controller:
@@ -374,6 +392,9 @@ global:
         port: 26379
       - host: redis-ratelimiting-03-db-pre.c.gitlab-pre.internal
         port: 26379
+  runner:
+    registrationToken:
+      secret: gitlab-runner-registration-credential-v1
   smtp:
     domain: mg.pre.gitlab.com
     user_name: postmaster@mg.pre.gitlab.com
