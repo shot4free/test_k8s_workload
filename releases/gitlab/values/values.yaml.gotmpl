@@ -556,6 +556,9 @@ gitlab:
 
   # doc/charts/gitlab/webservice
   webservice:
+    common:
+      labels:
+        type: webservice
     extraEnvFrom:
       GITLAB_THROTTLE_USER_ALLOWLIST:
         secretKeyRef:
