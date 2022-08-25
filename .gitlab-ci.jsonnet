@@ -453,9 +453,14 @@ local deploy(environment, stage, cluster, ciStage) = {
   } + clusterInitBeforeScript + onlyAutoDeployFalseAndConfigChanges,
 };
 
-local triggerQaSmoke = {
-  '.trigger-qa-smoke': {
+local qaJob(name, project, allow_failure=false) = {
+  ['%s:qa' % name]: {
     image: 'alpine:3.16',
+    stage: 'non-prod:QA',
+    [if allow_failure then 'allow_failure']: allow_failure,
+    variables: {
+      project: project,
+    },
     // This script can be replaced with the `trigger:` keyword
     // when the product supports retries for triggers
     // https://gitlab.com/gitlab-org/gitlab/-/issues/32559
@@ -489,24 +494,12 @@ local triggerQaSmoke = {
     |||,
     rules: [
       exceptCom,
-    ],
-  } + onlyAutoDeployFalseAndConfigChanges,
-};
-
-local qaJob(name, project, allow_failure=false) = {
-  ['%s:qa' % name]: {
-    extends: [
-      '.trigger-qa-smoke',
-    ],
-    stage: 'non-prod:QA',
-    [if allow_failure then 'allow_failure']: allow_failure,
-    variables: {
-      project: project,
-    },
-    rules: [
-      exceptCom,
       {
         'if': '$CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME',
+        when: 'never',
+      },
+      {
+        'if': '$AUTO_DEPLOY == "true"',
         when: 'never',
       },
       {
@@ -520,6 +513,9 @@ local qaJob(name, project, allow_failure=false) = {
           'vendor/charts/gitlab-runner/%s/**/*' % name,
           '.gitlab-ci.yml',
           '*.yaml',
+          '*.yml',
+          'bases/**/*',
+          'bin/**/*',
           'releases/gitlab/helmfile.yaml',
           'releases/gitlab/values/values*',
           'releases/gitlab/values/%s*' % name,
@@ -590,7 +586,6 @@ local gitlabCIConf =
   + variables
   + includes
   + notifyComMR
-  + triggerQaSmoke
   + baseCiConfigs
   + dependencyScanning
   + bundlerAuditDependencyScanning

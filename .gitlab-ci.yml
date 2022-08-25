@@ -103,51 +103,6 @@
     ENVIRONMENT_WITHOUT_STAGE: pre
     PROJECT: gitlab-pre
     REGION: us-east1
-.trigger-qa-smoke:
-  image: alpine:3.16
-  rules:
-    - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
-      when: never
-    - if: $AUTO_DEPLOY == "true"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - changes:
-        - vendor/charts/gitlab/**/*
-        - bases/**/*
-        - bin/**/*
-        - releases/**/*
-        - '*.yaml'
-        - '*.yml'
-        - .gitlab-ci.yml
-      when: always
-  script: |
-    if [[ $SKIP_QA == "true" ]]; then
-      echo "Skipping QA because SKIP_QA is set to true"
-      exit 0
-    fi
-    apk add curl jq
-    # project=full/path/to/project
-    echo "Sending trigger to $project"
-    # URL encode the project
-    project=$(echo -n "$project" | jq -sRr @uri)
-    trigger_url="$CI_API_V4_URL/projects/$project/trigger/pipeline"
-    resp=$(curl -s --request POST --form "variables[SMOKE_ONLY]=true" --form "token=$CI_JOB_TOKEN" --form ref=master $trigger_url)
-    id=$(echo "$resp" | jq -r ".id")
-    web_url=$(echo "$resp" | jq -r ".web_url")
-    echo "Waiting for pipeline $web_url ..."
-    status_url="$CI_API_V4_URL/projects/$project/pipelines/$id"
-    for retry in $(seq 1 120); do
-      resp=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_OPS_API_TOKEN" "$status_url")
-      status=$(echo "$resp" | jq -r '.status')
-      echo "Got pipeline status $status, retry $retry/10"
-      [[ $status == "success" || $status == "failed" || $status == "canceled" ]] && break
-      sleep 30
-    done
-    if [[ $status != "success" ]]; then
-      echo "$web_url has status $status, failing"
-      exit 1
-    fi
 assert_consistent_tool_versions:
   allow_failure: true
   image: ${CI_REGISTRY}/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci:${CI_IMAGE_VERSION}
@@ -1594,12 +1549,13 @@ gstg:dryrun:auto-deploy:
   tags:
     - k8s-workloads
 gstg:qa:
-  extends:
-    - .trigger-qa-smoke
+  image: alpine:3.16
   rules:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $AUTO_DEPLOY == "true"
       when: never
     - if: $EXPEDITE_DEPLOYMENT
       when: never
@@ -1608,10 +1564,40 @@ gstg:qa:
         - vendor/charts/gitlab-runner/gstg/**/*
         - .gitlab-ci.yml
         - '*.yaml'
+        - '*.yml'
+        - bases/**/*
+        - bin/**/*
         - releases/gitlab/helmfile.yaml
         - releases/gitlab/values/values*
         - releases/gitlab/values/gstg*
       when: always
+  script: |
+    if [[ $SKIP_QA == "true" ]]; then
+      echo "Skipping QA because SKIP_QA is set to true"
+      exit 0
+    fi
+    apk add curl jq
+    # project=full/path/to/project
+    echo "Sending trigger to $project"
+    # URL encode the project
+    project=$(echo -n "$project" | jq -sRr @uri)
+    trigger_url="$CI_API_V4_URL/projects/$project/trigger/pipeline"
+    resp=$(curl -s --request POST --form "variables[SMOKE_ONLY]=true" --form "token=$CI_JOB_TOKEN" --form ref=master $trigger_url)
+    id=$(echo "$resp" | jq -r ".id")
+    web_url=$(echo "$resp" | jq -r ".web_url")
+    echo "Waiting for pipeline $web_url ..."
+    status_url="$CI_API_V4_URL/projects/$project/pipelines/$id"
+    for retry in $(seq 1 120); do
+      resp=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_OPS_API_TOKEN" "$status_url")
+      status=$(echo "$resp" | jq -r '.status')
+      echo "Got pipeline status $status, retry $retry/10"
+      [[ $status == "success" || $status == "failed" || $status == "canceled" ]] && break
+      sleep 30
+    done
+    if [[ $status != "success" ]]; then
+      echo "$web_url has status $status, failing"
+      exit 1
+    fi
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/staging
@@ -1827,12 +1813,13 @@ pre:dryrun:auto-deploy:
     - k8s-workloads
 pre:qa:
   allow_failure: true
-  extends:
-    - .trigger-qa-smoke
+  image: alpine:3.16
   rules:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $CI_DEFAULT_BRANCH != $CI_COMMIT_REF_NAME
+      when: never
+    - if: $AUTO_DEPLOY == "true"
       when: never
     - if: $EXPEDITE_DEPLOYMENT
       when: never
@@ -1841,10 +1828,40 @@ pre:qa:
         - vendor/charts/gitlab-runner/pre/**/*
         - .gitlab-ci.yml
         - '*.yaml'
+        - '*.yml'
+        - bases/**/*
+        - bin/**/*
         - releases/gitlab/helmfile.yaml
         - releases/gitlab/values/values*
         - releases/gitlab/values/pre*
       when: always
+  script: |
+    if [[ $SKIP_QA == "true" ]]; then
+      echo "Skipping QA because SKIP_QA is set to true"
+      exit 0
+    fi
+    apk add curl jq
+    # project=full/path/to/project
+    echo "Sending trigger to $project"
+    # URL encode the project
+    project=$(echo -n "$project" | jq -sRr @uri)
+    trigger_url="$CI_API_V4_URL/projects/$project/trigger/pipeline"
+    resp=$(curl -s --request POST --form "variables[SMOKE_ONLY]=true" --form "token=$CI_JOB_TOKEN" --form ref=master $trigger_url)
+    id=$(echo "$resp" | jq -r ".id")
+    web_url=$(echo "$resp" | jq -r ".web_url")
+    echo "Waiting for pipeline $web_url ..."
+    status_url="$CI_API_V4_URL/projects/$project/pipelines/$id"
+    for retry in $(seq 1 120); do
+      resp=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_OPS_API_TOKEN" "$status_url")
+      status=$(echo "$resp" | jq -r '.status')
+      echo "Got pipeline status $status, retry $retry/10"
+      [[ $status == "success" || $status == "failed" || $status == "canceled" ]] && break
+      sleep 30
+    done
+    if [[ $status != "success" ]]; then
+      echo "$web_url has status $status, failing"
+      exit 1
+    fi
   stage: non-prod:QA
   variables:
     project: gitlab-org/quality/preprod
