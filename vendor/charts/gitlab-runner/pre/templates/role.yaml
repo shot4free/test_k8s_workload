@@ -8,6 +8,10 @@ metadata:
     chart: {{ include "gitlab-runner.chart" . }}
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
+    tier: sv
+    type: "{{ .Release.Name }}"
+    shard: default
+    stage: main
 rules:
 {{- if .Values.rbac.podSecurityPolicy.enabled }}
 - apiGroups: ['policy']

@@ -7,6 +7,10 @@ metadata:
     chart: {{ include "gitlab-runner.chart" . }}
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
+    tier: sv
+    type: "{{ .Release.Name }}"
+    shard: default
+    stage: main
 spec:
   replicas: {{ default 1 .Values.replicas }}
   selector:
