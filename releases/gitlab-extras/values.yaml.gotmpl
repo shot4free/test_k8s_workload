@@ -51,7 +51,7 @@ resources:
         solvers:
           - dns01:
               cloudflare:
-                apiKeySecretRef:
+                apiTokenSecretRef:
                   # This is defined in `k8s-workloads/gitlab-secrets`
                   name: cloudflare-api-token-v1
                   key: token
