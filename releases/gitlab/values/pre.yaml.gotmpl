@@ -215,6 +215,22 @@ gitlab:
     psql:
       host: 10.33.1.14
   kas:
+    customConfig:
+      agent:
+        listen:
+          certificate_file: /etc/ssl/kas/certs/tls.crt
+          key_file: /etc/ssl/kas/certs/tls.key
+    extraVolumes: |
+      - name: kas1-certificate
+        projected:
+          defaultMode: 0444
+          sources:
+            - secret:
+                name: kas1-v1
+    extraVolumeMounts: |
+      - mountPath: /etc/ssl/kas/certs/
+        name: kas1-certificate
+        readOnly: true
     image:
       tag: 15-3-202208121920-b73c3dee750
     minReplicas: 2

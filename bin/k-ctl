@@ -68,7 +68,7 @@ cluster_skip_check() {
 
 # Function to send messages to events elasticsearch index
 sendEvent() {
-  if [[ -z "${ENVIRONMENT_WITHOUT_STAGE}" || -z "${ES_NONPROD_EVENTS_URL:-}" || "${ES_EVENT_OVERRIDE:-}" == "true" ]]; then
+  if [[ -z "${ENVIRONMENT_WITHOUT_STAGE:-}" || -z "${ES_NONPROD_EVENTS_URL:-}" || "${ES_EVENT_OVERRIDE:-}" == "true" ]]; then
     echo "Warning: Not sending events because one of ENVIRONMENT_WITHOUT_STAGE, ES_NONPROD_EVENTS_URL is not set or ES_EVENT_OVERRIDE is set to true"
     return
   fi
