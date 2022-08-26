@@ -8,6 +8,7 @@ global:
       stage: {{ if eq $namespace "gitlab-cny" }}"cny"{{ else }}"main"{{ end }}
       shard: default
       tier: sv
+      type: gitlab
 
   ## doc/charts/globals.md#configure-host-settings
   hosts:
@@ -75,6 +76,14 @@ global:
     internal:
       names: []
     external: []
+    common:
+      labels:
+        type: gitaly
+  
+  geo-logcursor:
+    common:
+      labels:
+        type: geo-logcursor
 
   ## doc/charts/globals.md#configure-minio-settings
   minio:
@@ -1274,6 +1283,9 @@ gitlab:
 
   # doc/charts/gitlab/toolbox
   toolbox:
+    common:
+      labels:
+        type: toolbox
     backups:
       objectStorage:
         config:
