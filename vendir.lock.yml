@@ -14,10 +14,10 @@ directories:
       - 12.10.202004211640+297d8250845-3792-g30b265210
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch '3443-fix-scripts-config' into 'master'...
-      sha: 30b26521017178031bf2cfdacd3d4eab78e8af82
+      commitTitle: Merge branch 'security-bump-gitlab-eporter-version' into 'master'...
+      sha: bd28c5fa265008b1176a25270167d8ff145e0e0e
       tags:
-      - 12.10.202004211640+297d8250845-3792-g30b265210
+      - 12.10.202004211640+297d8250845-3821-gbd28c5fa2
     path: gitlab/gprd
   - git:
       commitTitle: Update CHANGELOG for v0.27.0
