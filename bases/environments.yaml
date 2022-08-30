@@ -76,9 +76,6 @@ environments:
         kas:
           managed_cert_name: kas-pre-gitlab-com
           domain: kas.pre.gitlab.com
-        gitlab_runner:
-          enabled: true
-          namespace: gitlab-runner
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
