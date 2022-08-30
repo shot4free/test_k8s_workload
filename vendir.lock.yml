@@ -19,11 +19,5 @@ directories:
       tags:
       - 12.10.202004211640+297d8250845-3792-g30b265210
     path: gitlab/gprd
-  - git:
-      commitTitle: Update CHANGELOG for v0.27.0
-      sha: 20683318add4eb99a8a8508932860c20f0ae70f6
-      tags:
-      - v0.27.0
-    path: gitlab-runner/pre
   path: vendor/charts
 kind: LockConfig

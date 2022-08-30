@@ -144,7 +144,7 @@ Then apply using `k-ctl`
 
 ## Setting Chart Version
 
-We vendor the `gitlab` and `gitlab-runner` charts into this repo. This allows
+We vendor the `gitlab` chart into this repo, located in `vendor/charts`. This allows
 us to minimise the amount of external dependencies invoked at runtime, and allow
 easier understanding of this repo by including all "code" needed inside it.
 
@@ -178,20 +178,6 @@ take responsibility for bumping all other environments in due course.  If your
 focus/requirement is only `gstg` and `gprd`, you should probably do `pre` when
 you do `gstg` (same MR) unless there are extenuating circumstances (e.g.
 other work ongoing on pre that shouldn't be interrupted, etc.)
-
-## Helm Charts and this Repository
-
-In order to minimise the amount of external dependencies this repo has (as it's
-part of our critical deployment pipeline), and to make it easier to read and
-understand this repository, we vendor the charts that we use into this repo
-under the directory `vendor/charts`.
-
-Currently the following charts are vendored in this repo
-
-| Chart | Vendored | How to correctly do modifications |
-| -- | -- | -- |
-| `gitlab` | yes | Work in upstream chart repo and then see instructions above |
-| `gitlab-runner` | yes | Work in upstream chart repo and then see instructions above |
 
 ## Node Selectors
 
