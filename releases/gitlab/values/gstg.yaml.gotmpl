@@ -241,11 +241,6 @@ gitlab:
       USE_NEW_LOAD_BALANCER_QUERY: "true"
       GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
       GITLAB_LOG_DEPRECATIONS: "true"
-    extraEnvFrom:
-      GITLAB_TRACING:
-        secretKeyRef:
-          name: gitlab-tracing-endpoint-v2
-          key: GITLAB_TRACING
     extraVolumeMounts: |
       - name: diag-reports
         mountPath: /tmp/diag-reports
