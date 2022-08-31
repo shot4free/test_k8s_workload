@@ -244,7 +244,7 @@ gitlab:
     extraEnvFrom:
       GITLAB_TRACING:
         secretKeyRef:
-          name: gitlab-tracing-endpoint-v1
+          name: gitlab-tracing-endpoint-v2
           key: GITLAB_TRACING
     extraVolumeMounts: |
       - name: diag-reports
