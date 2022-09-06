@@ -14,10 +14,10 @@ directories:
       - 12.10.202004211640+297d8250845-3844-g83c80f177
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch 'security-bump-gitlab-eporter-version' into 'master'...
-      sha: bd28c5fa265008b1176a25270167d8ff145e0e0e
+      commitTitle: Merge branch 'pages-metric-service' into 'master'...
+      sha: 83c80f177d2cab81659b4b9b8d805abc12ca57ab
       tags:
-      - 12.10.202004211640+297d8250845-3821-gbd28c5fa2
+      - 12.10.202004211640+297d8250845-3844-g83c80f177
     path: gitlab/gprd
   path: vendor/charts
 kind: LockConfig
