@@ -302,6 +302,7 @@ gitlab:
       GITLAB_LOG_DEPRECATIONS: "true"
       CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
       GITLAB_MEMORY_WATCHDOG_ENABLED: "true"
+      GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
     extraInitContainers: |
       - name: write-instance-name
         args:
