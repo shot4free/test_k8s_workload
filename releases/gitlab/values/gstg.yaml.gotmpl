@@ -197,6 +197,7 @@ gitlab:
         extraEnv:
           CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
           GITLAB_PERFORMANCE_BAR_STATS_URL: "https://nonprod-log.gitlab.net/app/dashboards#/view/8d301370-72b4-11eb-9f15-4952965e0e78?_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))"
+          GITLAB_LICENSE_MODE: test # This should be enabled only for staging, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11393#note_631781706
         nodeSelector:
           cloud.google.com/gke-nodepool: web-3
         tolerations:
