@@ -150,9 +150,9 @@ gitlab:
         service:
           # gcloud compute address web-gke-pre
           loadBalancerIP: 10.232.20.112
-          extraEnv:
-            CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
-            GITLAB_LICENSE_MODE: test
+        extraEnv:
+          CUSTOMER_PORTAL_URL: "https://customers.staging.gitlab.com"
+          GITLAB_LICENSE_MODE: test
       websockets:
         deployment:
           readinessProbe:
