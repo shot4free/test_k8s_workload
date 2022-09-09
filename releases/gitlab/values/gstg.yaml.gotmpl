@@ -273,6 +273,10 @@ gitlab:
       requests:
         cpu: 4
         memory: 5G
+    deployment:
+      livesnessProbe:
+        failureThreshold: 2
+        periodSeconds: 2
   kas:
     image:
       tag: 15-4-202208300320-27fe07ebcb2
