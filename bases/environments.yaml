@@ -118,7 +118,8 @@ environments:
           webservice:
             enabled: true
           kas:
-            enabled: false
+            managed_cert_name: kas-staging-gitlab-com
+            domain: kas.staging.gitlab.com
         gitlab_chef_source_name: "gstg"
         gitlab_extras:
           api_no_proxy: true
