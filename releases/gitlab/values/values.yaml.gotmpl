@@ -733,8 +733,8 @@ gitlab:
     deployment:
       strategy:
         rollingUpdate:
-          maxSurge: 20%
-          maxUnavailable: 0
+          maxSurge: 12%
+          maxUnavailable: 2
       readinessProbe:
         # This value is set to 60 to see if we can reduce queuing on pod start,
         # see https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1294
