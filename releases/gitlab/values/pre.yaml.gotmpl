@@ -402,11 +402,9 @@ global:
       sentinels:
       - host: redis-ratelimiting-node-0.redis-ratelimiting.pre.gke.gitlab.net
         port: 26379
-      - host: redis-ratelimiting-01-db-pre.c.gitlab-pre.internal
+      - host: redis-ratelimiting-node-1.redis-ratelimiting.pre.gke.gitlab.net
         port: 26379
-      - host: redis-ratelimiting-02-db-pre.c.gitlab-pre.internal
-        port: 26379
-      - host: redis-ratelimiting-03-db-pre.c.gitlab-pre.internal
+      - host: redis-ratelimiting-node-2.redis-ratelimiting.pre.gke.gitlab.net
         port: 26379
   runner:
     registrationToken:
