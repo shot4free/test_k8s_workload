@@ -228,6 +228,7 @@ gitlab:
             memory: 7G
         extraEnv:
           GITLAB_DIAGNOSTIC_REPORTS_ENABLED: "true"
+          GITLAB_WORKHORSE_REDIS_SUBSCRIBE_MANY: "1"
       git:
         hpa:
           maxReplicas: 200
