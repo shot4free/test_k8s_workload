@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'pages-metric-service' into 'master'...
-      sha: 83c80f177d2cab81659b4b9b8d805abc12ca57ab
+      commitTitle: Merge branch 'registry-support-local-redis-sentinels' into 'master'...
+      sha: 4651156c014a63886d64369b1432415ed4ee5ed3
       tags:
-      - 12.10.202004211640+297d8250845-3844-g83c80f177
+      - 12.10.202004211640+297d8250845-3854-g4651156c0
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'pages-metric-service' into 'master'...
