@@ -29,7 +29,7 @@ directories:
       - path: gitlab/gprd
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: 83c80f177d2cab81659b4b9b8d805abc12ca57ab
+          ref: 4651156c014a63886d64369b1432415ed4ee5ed3
         excludePaths:
           - '.git/**'
           - '.gitignore'
