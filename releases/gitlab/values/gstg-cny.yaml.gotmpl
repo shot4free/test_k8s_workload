@@ -155,6 +155,9 @@ gitlab:
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
+  kas:
+    ingress:
+      enabled: false
 
 registry:
   hpa:
