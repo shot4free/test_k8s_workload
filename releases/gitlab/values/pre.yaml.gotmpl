@@ -96,6 +96,27 @@ registry:
         # this is needed to keep backwards compatibility when `validation.disabled: false`, as by default an empty `allow` means no URLs are allowed
         allow:
           - .*
+  redis:
+    cache:
+      enabled: true
+      host: mymaster
+      sentinels:
+        - host: redis-registry-cache-node-0.redis-registry-cache.pre.gke.gitlab.net
+          port: 26379
+        - host: redis-registry-cache-node-1.redis-registry-cache.pre.gke.gitlab.net
+          port: 26379
+        - host: redis-registry-cache-node-2.redis-registry-cache.pre.gke.gitlab.net
+          port: 26379
+      password:
+        secret: redis-registry-cache-password-v1
+        key: redis-password
+      dialtimeout: 2s
+      readtimeout: 2s
+      writetimeout: 2s
+      pool:
+        size: 10
+        maxlifetime: 1h
+        idletimeout: 5m
 
 gitlab:
   gitlab-pages:
