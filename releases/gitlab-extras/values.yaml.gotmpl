@@ -37,39 +37,6 @@ resources:
     spec:
       redirectToHttps:
         enabled: true
-{{- if eq .Environment.Name "pre" }}
-  - apiVersion: cert-manager.io/v1
-    kind: Issuer
-    metadata:
-      name: kas1-issuer
-      namespace: {{ $namespace }}
-    spec:
-      acme:
-        privateKeySecretRef:
-          name: kas-letsencrypt-private-key
-        server: https://acme-v02.api.letsencrypt.org/directory
-        solvers:
-          - dns01:
-              cloudflare:
-                apiTokenSecretRef:
-                  # This is defined in `k8s-workloads/gitlab-secrets`
-                  name: cloudflare-api-token-v1
-                  key: token
-                email: ops-contact+kas1-issuer@gitlab.com
-
-  - apiVersion: cert-manager.io/v1
-    kind: Certificate
-    metadata:
-      name: kas1
-      namespace: {{ $namespace }}
-    spec:
-      secretName: kas1-v1
-      dnsNames:
-        - kas1.pre.gitlab.com
-      issuerRef:
-        name: kas1-issuer
-        kind: Issuer
-{{- end }}
 {{- end }}
 
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
