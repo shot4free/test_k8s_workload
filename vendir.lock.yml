@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'registry-support-local-redis-sentinels' into 'master'...
-      sha: 4651156c014a63886d64369b1432415ed4ee5ed3
+      commitTitle: Merge branch 'redis-reg-mainname' into 'master'...
+      sha: 12babc6236daf7878f24394aac4fc4c5c0a22bae
       tags:
-      - 12.10.202004211640+297d8250845-3854-g4651156c0
+      - 12.10.202004211640+297d8250845-3856-g12babc623
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'registry-support-local-redis-sentinels' into 'master'...
