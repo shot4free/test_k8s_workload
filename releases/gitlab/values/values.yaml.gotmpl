@@ -358,8 +358,14 @@ registry:
         # cloudsql in pre
         - port: 5432
           protocol: TCP
+        # redis
+        - port: 6379
+          protocol: TCP
         # pgbouncer in gstg and gprd
         - port: 6432
+          protocol: TCP
+        # sentinel
+        - port: 26379
           protocol: TCP
       - to:
         - ipBlock:
