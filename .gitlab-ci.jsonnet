@@ -255,7 +255,7 @@ local onlyAutoDeployFalseAndConfigChanges = {
       when: 'never',
     },
     {
-      when: 'always',
+      when: 'on_success',
       changes: [
         'vendor/charts/gitlab/**/*',
         'bases/**/*',
@@ -283,7 +283,7 @@ local assertFormatting = {
     |||,
     rules: [
       exceptOps,
-      { when: 'always' },
+      { when: 'on_success' },
     ],
   },
 };
@@ -322,7 +322,7 @@ local notifyComMR = {
       },
       exceptCom,
       {
-        when: 'always',
+        when: 'on_success',
       },
     ],
   },
@@ -380,7 +380,7 @@ local deploy(environment, stage, cluster, ciStage) = {
       exceptCom,
       {
         'if': '$ENVIRONMENT == "%s" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
-        when: 'always',
+        when: 'on_success',
       },
     ],
     tags: [
@@ -401,7 +401,7 @@ local deploy(environment, stage, cluster, ciStage) = {
       exceptCom,
       {
         'if': '$ENVIRONMENT == "%s" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"' % environment,
-        when: 'always',
+        when: 'on_success',
       },
     ],
     tags: [
@@ -507,7 +507,7 @@ local qaJob(name, project, allow_failure=false) = {
         when: 'never',
       },
       {
-        when: 'always',
+        when: 'on_success',
         changes: [
           'vendor/charts/gitlab/%s/**/*' % name,
           'vendor/charts/gitlab-runner/%s/**/*' % name,

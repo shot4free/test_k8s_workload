@@ -113,7 +113,7 @@ assert_consistent_tool_versions:
       when: never
     - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       when: never
-    - when: always
+    - when: on_success
   script: /k8s-workloads/assert-tool-versions.sh
   stage: check
 assert_formatting:
@@ -121,7 +121,7 @@ assert_formatting:
   rules:
     - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       when: never
-    - when: always
+    - when: on_success
   script: |
     find . -name '*.*sonnet' | xargs -n1 jsonnetfmt -i
     git diff --exit-code
@@ -139,7 +139,7 @@ check-vendored-charts:
       when: never
     - if: $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
       when: never
-    - when: always
+    - when: on_success
   script: |
     chmod 400 "$SSH_PRIVATE_KEY"
     export GIT_SSH_COMMAND="ssh -i $SSH_PRIVATE_KEY -o IdentitiesOnly=yes -o GlobalKnownHostsFile=$SSH_KNOWN_HOSTS"
@@ -179,7 +179,7 @@ gprd-cny:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -s cny upgrade
   stage: gprd-cny:deploy
@@ -220,7 +220,7 @@ gprd-cny:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -250,7 +250,7 @@ gprd-cny:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -293,7 +293,7 @@ gprd-cny:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl -s cny upgrade
@@ -325,7 +325,7 @@ gprd-us-east1-b:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
@@ -365,7 +365,7 @@ gprd-us-east1-b:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -394,7 +394,7 @@ gprd-us-east1-b:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -436,7 +436,7 @@ gprd-us-east1-b:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -468,7 +468,7 @@ gprd-us-east1-c:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:beta
@@ -508,7 +508,7 @@ gprd-us-east1-c:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -537,7 +537,7 @@ gprd-us-east1-c:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -579,7 +579,7 @@ gprd-us-east1-c:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -611,7 +611,7 @@ gprd-us-east1-d:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:beta
@@ -651,7 +651,7 @@ gprd-us-east1-d:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -680,7 +680,7 @@ gprd-us-east1-d:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -722,7 +722,7 @@ gprd-us-east1-d:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -754,7 +754,7 @@ gprd:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: gprd:deploy:alpha
@@ -794,7 +794,7 @@ gprd:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -823,7 +823,7 @@ gprd:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gprd" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -865,7 +865,7 @@ gprd:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -898,7 +898,7 @@ gstg-cny:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg-cny" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -s cny upgrade
   stage: non-prod-cny:deploy
@@ -939,7 +939,7 @@ gstg-cny:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -969,7 +969,7 @@ gstg-cny:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg-cny" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D -s cny upgrade
   stage: dryrun
@@ -1012,7 +1012,7 @@ gstg-cny:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl -s cny upgrade
@@ -1044,7 +1044,7 @@ gstg-us-east1-b:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1084,7 +1084,7 @@ gstg-us-east1-b:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1113,7 +1113,7 @@ gstg-us-east1-b:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1155,7 +1155,7 @@ gstg-us-east1-b:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1187,7 +1187,7 @@ gstg-us-east1-c:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1227,7 +1227,7 @@ gstg-us-east1-c:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1256,7 +1256,7 @@ gstg-us-east1-c:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1298,7 +1298,7 @@ gstg-us-east1-c:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1330,7 +1330,7 @@ gstg-us-east1-d:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1370,7 +1370,7 @@ gstg-us-east1-d:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1399,7 +1399,7 @@ gstg-us-east1-d:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1441,7 +1441,7 @@ gstg-us-east1-d:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1473,7 +1473,7 @@ gstg:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1513,7 +1513,7 @@ gstg:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1542,7 +1542,7 @@ gstg:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "gstg" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1570,7 +1570,7 @@ gstg:qa:
         - releases/gitlab/helmfile.yaml
         - releases/gitlab/values/values*
         - releases/gitlab/values/gstg*
-      when: always
+      when: on_success
   script: |
     if [[ $SKIP_QA == "true" ]]; then
       echo "Skipping QA because SKIP_QA is set to true"
@@ -1637,7 +1637,7 @@ gstg:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1661,7 +1661,7 @@ notify_com_mr:
       when: never
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
-    - when: always
+    - when: on_success
   script: |
     notify-mr -s
   stage: check
@@ -1736,7 +1736,7 @@ pre:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "pre" && $DRY_RUN == "false" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl  upgrade
   stage: non-prod:deploy
@@ -1776,7 +1776,7 @@ pre:dryrun:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1805,7 +1805,7 @@ pre:dryrun:auto-deploy:
     - if: $CI_API_V4_URL == "https://gitlab.com/api/v4"
       when: never
     - if: $ENVIRONMENT == "pre" && $AUTO_DEPLOY == "true" && $CI_PIPELINE_SOURCE != "schedule"
-      when: always
+      when: on_success
   script: |
     bin/k-ctl -D  upgrade
   stage: dryrun
@@ -1834,7 +1834,7 @@ pre:qa:
         - releases/gitlab/helmfile.yaml
         - releases/gitlab/values/values*
         - releases/gitlab/values/pre*
-      when: always
+      when: on_success
   script: |
     if [[ $SKIP_QA == "true" ]]; then
       echo "Skipping QA because SKIP_QA is set to true"
@@ -1901,7 +1901,7 @@ pre:upgrade:
         - '*.yaml'
         - '*.yml'
         - .gitlab-ci.yml
-      when: always
+      when: on_success
   script: |
     bin/grafana-annotate -e $CI_ENVIRONMENT_NAME
     bin/k-ctl  upgrade
@@ -1938,7 +1938,7 @@ shellcheck:
       when: never
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
-    - when: always
+    - when: on_success
   script:
     - find bin/ -maxdepth 1 -type f | xargs -r shellcheck -e SC1090,SC1091
   stage: check
@@ -1955,7 +1955,7 @@ shfmt:
       when: never
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
-    - when: always
+    - when: on_success
   script:
     - find bin/ -maxdepth 1 -type f | xargs -r shfmt -i 2 -ci -l -d
   stage: check
@@ -1980,7 +1980,7 @@ tooling:
       when: never
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
-    - when: always
+    - when: on_success
   script:
     - bin/k-ctl -t
   stage: check

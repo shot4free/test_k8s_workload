@@ -18,7 +18,7 @@
         when: 'never',
       },
       {
-        when: 'always',
+        when: 'on_success',
       },
     ],
   },
