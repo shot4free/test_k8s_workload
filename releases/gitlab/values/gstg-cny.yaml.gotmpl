@@ -158,6 +158,9 @@ gitlab:
   kas:
     ingress:
       enabled: false
+    service:
+      # gcloud compute address kas-internal-gke-gstg-cny
+      loadBalancerIP: 10.224.34.10
 
 registry:
   hpa:
