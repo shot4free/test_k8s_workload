@@ -117,8 +117,6 @@ environments:
             enabled: true
           webservice:
             enabled: true
-          kas:
-            enabled: false
         gitlab_chef_source_name: "gstg"
         gitlab_extras:
           api_no_proxy: true

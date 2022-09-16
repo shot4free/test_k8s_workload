@@ -1274,6 +1274,19 @@ gitlab:
             - podSelector:
                 matchLabels:
                   app: kas
+              namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: gitlab 
+            ports:
+            - port: 8155
+              protocol: TCP
+          - to:
+            - podSelector:
+                matchLabels:
+                  app: kas
+              namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: gitlab-cny
             ports:
             - port: 8155
               protocol: TCP
