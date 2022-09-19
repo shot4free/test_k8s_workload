@@ -167,6 +167,11 @@ gitlab:
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
+  kas:
+    # ingress is turned off, inherited from gprd.yaml.gotmpl file
+    service:
+      # gcloud compute address kas-internal-gke-gprd-cny
+      loadBalancerIP: 10.216.8.85
 
 global:
   appConfig:

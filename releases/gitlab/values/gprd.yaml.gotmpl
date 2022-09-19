@@ -351,6 +351,8 @@ gitlab:
   kas:
     image:
       tag: 15-4-202208300320-27fe07ebcb2
+    ingress:
+      enabled: false
     nodeSelector:
       cloud.google.com/gke-nodepool: default-4
     service:
