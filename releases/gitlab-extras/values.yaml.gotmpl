@@ -3,42 +3,6 @@
 {{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
 
 resources:
-{{- if eq .Environment.Name "gprd" }}
-  - apiVersion: networking.gke.io/v1
-    kind: ManagedCertificate
-    metadata:
-      name: {{ .Values.kas.managed_cert_name }}
-      namespace: {{ $namespace }}
-    spec:
-      domains:
-        - {{ .Values.kas.domain }}
-
-  - apiVersion: cloud.google.com/v1
-    kind: BackendConfig
-    metadata:
-      name: kas-http-backendconfig
-      namespace: {{ $namespace }}
-    spec:
-      healthCheck:
-        port: 8151
-        type: HTTP
-        requestPath: /liveness
-        checkIntervalSec: 5
-        timeoutSec: 3
-      timeoutSec: 1830
-      securityPolicy:
-        name: "kas-ingress-policy"
-
-  - apiVersion: networking.gke.io/v1beta1
-    kind: FrontendConfig
-    metadata:
-      name: kas-http-frontendconfig
-      namespace: {{ $namespace }}
-    spec:
-      redirectToHttps:
-        enabled: true
-{{- end }}
-
 {{- if .Values | getOrNil "gitlab_extras.api_no_proxy" | default false }}
   - apiVersion: networking.k8s.io/v1
     kind: Ingress

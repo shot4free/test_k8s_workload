@@ -162,9 +162,6 @@ environments:
         gitlab_endpoint: "https://gitlab.com"
         nginx_ingress_server_alias: "int.gprd.gitlab.net,*.ci-gateway.int.gprd.gitlab.net"
         google_project: "gitlab-production"
-        kas:
-          managed_cert_name: kas-gitlab-com
-          domain: kas.gitlab.com
         region: us-east1
         registry_api_host: "registry.gitlab.com"
         registry_deployment_for_image_tag: "gitlab-registry"
