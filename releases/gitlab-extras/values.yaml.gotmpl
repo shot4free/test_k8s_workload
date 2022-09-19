@@ -3,7 +3,7 @@
 {{ $namespace := .Values | getOrNil "gitlab_extras.namespace" | default "gitlab" }}
 
 resources:
-{{- if .Environment.Name eq "gprd" }}
+{{- if eq .Environment.Name "gprd" }}
   - apiVersion: networking.gke.io/v1
     kind: ManagedCertificate
     metadata:
