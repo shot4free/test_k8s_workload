@@ -69,8 +69,6 @@ environments:
         gitlab:
           gitlab-shell:
             enabled: true
-          kas:
-            enabled: false
           webservice:
             enabled: true
         cluster: pre-gitlab-gke
@@ -89,9 +87,6 @@ environments:
     values:
       - !!merge <<: *regional_cluster_defaults
       - &gstg_values
-        gitlab:
-          kas:
-            enabled: false
         env_prefix: gstg
         google_project: "gitlab-staging-1"
         gitlab_domain: "staging.gitlab.com"
