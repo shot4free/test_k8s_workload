@@ -14,10 +14,10 @@ directories:
       - 12.10.202004211640+297d8250845-3854-g4651156c0
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch 'registry-support-local-redis-sentinels' into 'master'...
-      sha: 4651156c014a63886d64369b1432415ed4ee5ed3
+      commitTitle: Merge branch 'tnir-bundler-2.3.22' into 'master'...
+      sha: fab415ebb68590c370b51b931a547b2b2db190b1
       tags:
-      - 12.10.202004211640+297d8250845-3854-g4651156c0
+      - 12.10.202004211640+297d8250845-3882-gfab415ebb
     path: gitlab/gprd
   path: vendor/charts
 kind: LockConfig
