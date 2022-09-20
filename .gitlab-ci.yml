@@ -1559,6 +1559,8 @@ gstg:qa:
       when: never
     - if: $EXPEDITE_DEPLOYMENT
       when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - changes:
         - vendor/charts/gitlab/gstg/**/*
         - vendor/charts/gitlab-runner/gstg/**/*
@@ -1822,6 +1824,8 @@ pre:qa:
     - if: $AUTO_DEPLOY == "true"
       when: never
     - if: $EXPEDITE_DEPLOYMENT
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - changes:
         - vendor/charts/gitlab/pre/**/*

@@ -507,6 +507,10 @@ local qaJob(name, project, allow_failure=false) = {
         when: 'never',
       },
       {
+        'if': '$CI_PIPELINE_SOURCE == "schedule"',
+        when: 'never',
+      },
+      {
         when: 'on_success',
         changes: [
           'vendor/charts/gitlab/%s/**/*' % name,
