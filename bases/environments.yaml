@@ -73,9 +73,6 @@ environments:
             enabled: true
         cluster: pre-gitlab-gke
         region: us-east1
-        kas:
-          managed_cert_name: kas-pre-gitlab-com
-          domain: kas.pre.gitlab.com
         gitlab_extras:
           api_no_proxy: true
           ingress_readiness: true
@@ -100,9 +97,6 @@ environments:
         registry_version: v3.57.0-gitlab
         cluster: gstg-gitlab-gke
         region: us-east1
-        kas:
-          managed_cert_name: kas-staging-gitlab-com
-          domain: kas.staging.gitlab.com
         ssh:
           ed25519_pub: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf"
           dsa_pub: "ssh-dss AAAAB3NzaC1kc3MAAACBAMPKInNPflcRle9F5Qt2j9aI0EZuWQzdXTbYvsl+ChaacqCOWRMiOmXHXqetFz6jD/6Fcqg20ZATxqSskQBaRn97O/mbH+GQk4d3zw9WAEURicE8rKJop3qGtdfFxLzrTuF/PAkKRDMmutT3hwZIOO8CFWOl1BiuUYTncJTeonrfAAAAFQCujauoy3Yy+ul72b/WsTECUPj9yQAAAIBIV2yyF7RZf7IYS8tsWcKP7Y5Bv9eFdbvbtsaxcFCHcmHIGoJQrIdPoueoOb5EUTYz0NgYKsKaZzDZkgFk28GsmLxKvhnPjaw0lJVSKRchEE5xVlamOlabiRMjQ7X/bAdejkBJe96AjZZL3UO4acpwfy3Tnnap0w6YCDeaxoyHpwAAAIAU+dyNaL3Hy15VIV32QwWMekvxeptUY/DW03LNcgZZDoin87TE9xuQhM0qF3pi2i2a2ExuslgdttmYWvrbEz8eW+RFgvT5pKwWpalKWetHvtN3oYZP37ZIO1Y3Hd5A4YVcpYp1ccRayveLlCRwxb4HdGXT2OmYU+lmvimIR8zQ6A=="
