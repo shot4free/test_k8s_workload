@@ -164,7 +164,6 @@ gitlab:
       GITLAB_SENTRY_EXTRA_TAGS: "{\"type\": \"git\", \"stage\": \"cny\"}"
       DISABLE_PUMA_NAKAYOSHI_FORK: "true"
       GITLAB_LOG_DEPRECATIONS: "true"
-      GITLAB_WORKHORSE_REDIS_SUBSCRIBE_MANY: "1"
     serviceAccount:
       annotations:
         iam.gke.io/gcp-service-account: gitlab-cny-webservice@{{ .Values.google_project }}.iam.gserviceaccount.com
