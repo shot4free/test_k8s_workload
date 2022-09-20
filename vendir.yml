@@ -18,7 +18,7 @@ directories:
       - path: gitlab/gstg
         git:
           url: git@dev.gitlab.org:gitlab/charts/gitlab.git
-          ref: 4651156c014a63886d64369b1432415ed4ee5ed3
+          ref: fab415ebb68590c370b51b931a547b2b2db190b1
         excludePaths:
           - '.git/**'
           - '.gitignore'
