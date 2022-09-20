@@ -1,0 +1,27 @@
+---
+externalSecrets:
+  - name: redis-registry-cache-password-v1
+    refreshInterval: 0
+    secretStoreName: gitlab-shared-secrets
+    target:
+      creationPolicy: Owner
+      deletionPolicy: Delete
+    data:
+      - remoteRef:
+          key: env/{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}/redis/redis-registry-cache
+          property: password
+          version: "1"
+        secretKey: redis-password
+
+  - name: cloudflare-api-token-v1
+    refreshInterval: 0
+    secretStoreName: gitlab-shared-secrets
+    target:
+      creationPolicy: Owner
+      deletionPolicy: Delete
+    data:
+      - remoteRef:
+          key: env/{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}/gitlab/cloudflare-api
+          property: token
+          version: "1"
+        secretKey: token

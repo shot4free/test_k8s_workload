@@ -1,0 +1,12 @@
+---
+clusterName: {{ .Environment.Values.cluster }}
+
+secretStores:
+  - name: gitlab-secrets
+    role: gitlab
+  - name: gitlab-shared-secrets
+    role: gitlab
+    path: shared
+
+serviceAccount:
+  name: gitlab-secrets

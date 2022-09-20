@@ -1,0 +1,13 @@
+---
+apiVersion: v2
+name: vault-secrets
+description: A Helm chart External Secrets from Vault
+
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: common
+    version: 2.x
+    # repository: https://charts.bitnami.com/bitnami
+    repository: file://../../../../vendor/charts/bitnami/common
