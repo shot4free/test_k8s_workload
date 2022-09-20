@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: Merge branch 'redis-reg-mainname' into 'master'...
-      sha: 12babc6236daf7878f24394aac4fc4c5c0a22bae
+      commitTitle: Merge branch 'tnir-bundler-2.3.22' into 'master'...
+      sha: fab415ebb68590c370b51b931a547b2b2db190b1
       tags:
-      - 12.10.202004211640+297d8250845-3856-g12babc623
+      - 12.10.202004211640+297d8250845-3882-gfab415ebb
     path: gitlab/pre
   - git:
       commitTitle: Merge branch 'registry-support-local-redis-sentinels' into 'master'...
