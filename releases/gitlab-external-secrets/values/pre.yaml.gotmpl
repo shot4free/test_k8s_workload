@@ -21,7 +21,7 @@ externalSecrets:
       deletionPolicy: Delete
     data:
       - remoteRef:
-          key: env/{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}/gitlab/cloudflare-api
+          key: env/{{ .Environment.Values | getOrNil "env_prefix" | default .Environment.Name }}/ns/gitlab/cloudflare-api
           property: token
           version: "1"
         secretKey: token
