@@ -37,3 +37,9 @@ directories:
           - 'examples/**'
           - 'scripts/**'
           - 'spec/**'
+      - path: bitnami/common
+        helmChart:
+          name: common
+          version: 2.x
+          repository:
+            url: https://charts.bitnami.com/bitnami

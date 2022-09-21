@@ -19,5 +19,9 @@ directories:
       tags:
       - 12.10.202004211640+297d8250845-3882-gfab415ebb
     path: gitlab/gprd
+  - helmChart:
+      appVersion: 2.0.3
+      version: 2.0.3
+    path: bitnami/common
   path: vendor/charts
 kind: LockConfig

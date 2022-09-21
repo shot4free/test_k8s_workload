@@ -1,0 +1,17 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml
+
+---
+{{ $namespace := .Environment.Values | getOrNil "gitlab_external_secrets.namespace" | default "gitlab" }}
+releases:
+  - name: {{ .Environment.Values | getOrNil "gitlab_external_secrets.release_name" | default "gitlab-external-secrets" }}
+    chart: charts/vault-secrets
+    namespace: {{ $namespace }}
+    values:
+      - values/values.yaml.gotmpl
+      {{- if .Values | getOrNil "env_prefix" | default false }}
+      - values/{{ .Environment.Values.env_prefix }}.yaml.gotmpl
+      {{- end }}
+      - values/{{ .Environment.Name }}.yaml.gotmpl

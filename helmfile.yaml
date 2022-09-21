@@ -1,9 +1,10 @@
 ---
 bases:
-  - "bases/helmDefaults.yaml"
-  - "bases/environments.yaml"
+  - bases/helmDefaults.yaml
+  - bases/environments.yaml
 
 helmfiles:
+  - path: releases/gitlab-external-secrets/helmfile.yaml
   - path: releases/gitlab-extras/helmfile.yaml
   - path: releases/gitlab/helmfile.yaml
 

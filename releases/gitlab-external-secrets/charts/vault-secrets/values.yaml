@@ -1,0 +1,71 @@
+---
+## @param nameOverride String to partially override vault-secrets.fullname include (will maintain the release name)
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override vault-secrets.fullname template
+##
+fullnameOverride: ""
+## @param commonAnnotations Annotations to add to all deployed objects
+##
+commonAnnotations: {}
+## @param commonLabels Labels to add to all deployed objects
+##
+commonLabels: {}
+
+## @param clusterName Name of the Kubernetes cluster this chart is deployed to, to use for the Kubernetes auth path in Vault
+clusterName: foo-gitlab-gke
+
+## External Secret
+## ref: https://external-secrets.io/v0.5.8/api-externalsecret/
+## @param externalSecrets Array containing External Secrets to create
+## Example:
+## externalSecrets:
+##   - name: foo
+##     labels: {}
+##     annotations: {}
+##     refreshInterval: 0
+##     secretStoreName: ""
+##     target:
+##       type: Opaque
+##       creationPolicy: Owner
+##       deletionPolicy: Delete
+##       template:
+##         metadata:
+##           annotations:
+##             foo: bar
+##     data:
+##       - remoteRef:
+##           key: "{{ .Values.clusterName }}/my-namespace/my-app/some-service"
+##           property: user
+##           version: 1
+##         secretKey: user
+##       - remoteRef:
+##           key: "{{ .Values.clusterName }}/my-namespace/my-app/some-service"
+##           property: password
+##           version: 4
+##         secretKey: password
+externalSecrets: []
+
+## Secret Store
+## ref: https://external-secrets.io/v0.5.8/api-secretstore/
+## @param secretStores Array containing Secret Stores to create
+## Example:
+## secretStores:
+##   - name: mysecretstore
+##     authMountPath: kubernetes/mycluster
+##     role: my-app
+##     path: k8skv
+##     version: v2
+##     server: https://vault.domain
+secretStores: []
+
+## External Secret Store Service Account
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+## @param serviceAccount.name Name of the service account to use. If not set and create is true, a name is generated using the fullname template.
+## @param serviceAccount.annotations Annotations for service account. Evaluated as a template. Only used if `create` is `true`.
+##
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
