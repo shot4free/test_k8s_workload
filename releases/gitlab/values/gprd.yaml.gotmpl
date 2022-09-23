@@ -77,8 +77,8 @@ registry:
     rootdirectory: gitlab
     disablemirrorfs: true
     tagconcurrency: 6
-    importtimeout: 30m
-    preimporttimeout: 48h
+    importtimeout: 1h
+    preimporttimeout: 72h
     importnotification:
       enabled: true
   storage:
@@ -93,7 +93,7 @@ registry:
       enabled: false
   gc:
     disabled: false
-    reviewafter: 24h
+    reviewafter: 72h
     manifests:
       interval: 2s
     blobs:
