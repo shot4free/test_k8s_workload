@@ -14,10 +14,10 @@ directories:
       - 12.10.202004211640+297d8250845-3882-gfab415ebb
     path: gitlab/gstg
   - git:
-      commitTitle: Merge branch 'tnir-bundler-2.3.22' into 'master'...
-      sha: fab415ebb68590c370b51b931a547b2b2db190b1
+      commitTitle: Merge branch 'tnir-nokogiri-1.13.8' into 'master'...
+      sha: 8f8d255d74a83881702e60f3d3cbefb489d077bd
       tags:
-      - 12.10.202004211640+297d8250845-3882-gfab415ebb
+      - 12.10.202004211640+297d8250845-3910-g8f8d255d7
     path: gitlab/gprd
   - helmChart:
       appVersion: 2.0.3
