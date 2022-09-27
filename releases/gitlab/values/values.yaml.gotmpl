@@ -591,6 +591,10 @@ gitlab:
         secretKeyRef:
           name: gitlab-arkose-labs-public-key-v1
           key: ARKOSE_LABS_PUBLIC_KEY
+      SUGGESTED_REVIEWERS_SECRET:
+        secretKeyRef:
+          name: gitlab-suggested-reviewers-token-v1
+          key: SUGGESTED_REVIEWERS_SECRET
     deployments:
       api:
         common:
@@ -1276,7 +1280,7 @@ gitlab:
                   app: kas
               namespaceSelector:
                 matchLabels:
-                  kubernetes.io/metadata.name: gitlab 
+                  kubernetes.io/metadata.name: gitlab
             ports:
             - port: 8155
               protocol: TCP
