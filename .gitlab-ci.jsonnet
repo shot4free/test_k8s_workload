@@ -38,7 +38,7 @@ local exceptOps = {
 local variables = {
   variables: {
     // renovate: datasource=docker depName=registry.gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/k8-helm-ci versioning=docker
-    CI_IMAGE_VERSION: 'v17.3.0',
+    CI_IMAGE_VERSION: 'v17.8.0',
     AUTO_DEPLOY: 'false',
   },
 };

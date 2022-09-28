@@ -1990,4 +1990,4 @@ tooling:
   stage: check
 variables:
   AUTO_DEPLOY: "false"
-  CI_IMAGE_VERSION: v17.3.0
+  CI_IMAGE_VERSION: v17.8.0
