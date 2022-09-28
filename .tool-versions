@@ -1,9 +1,9 @@
 # renovate: datasource=github-releases depName=helm/helm
-helm 3.9.3
+helm 3.10.0
 # renovate: datasource=github-releases depName=helmfile/helmfile
-helmfile 0.145.3
+helmfile 0.146.0
 # renovate: datasource=github-releases depName=mikefarah/yq
-yq 4.27.2
+yq 4.27.5
 # renovate: datasource=github-releases depName=profclems/glab
 glab 1.22.0
 # renovate: datasource=github-releases depName=vmware-tanzu/carvel-vendir

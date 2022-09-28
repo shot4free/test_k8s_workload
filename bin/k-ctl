@@ -42,6 +42,8 @@ NAMESPACE="${NAMESPACE:-gitlab${STAGE_SUFFIX}}"
 CHARTS_DIR=$(mktemp -d)
 MANIFESTS_DIR="$dir/../manifests"
 HELM_DIFF_TMP_FNAME="/tmp/helm-diff"
+# Make helmfile/helm-diff normalized manifests for whitespace
+export HELM_DIFF_NORMALIZE_MANIFESTS=true
 
 is_semver() {
   if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
