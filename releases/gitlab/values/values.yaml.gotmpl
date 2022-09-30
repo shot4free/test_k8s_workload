@@ -976,6 +976,10 @@ gitlab:
         secretKeyRef:
           name: gitlab-subscription-portal-admin-token-v1
           key: SUBSCRIPTION_PORTAL_ADMIN_TOKEN
+      SUGGESTED_REVIEWERS_SECRET:
+        secretKeyRef:
+          name: gitlab-suggested-reviewers-token-v1
+          key: SUGGESTED_REVIEWERS_SECRET
     networkpolicy:
       enabled: true
       egress:
