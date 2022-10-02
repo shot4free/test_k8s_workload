@@ -8,10 +8,10 @@ directories:
       - 12.10.202004211640+297d8250845-3910-g8f8d255d7
     path: gitlab/pre
   - git:
-      commitTitle: Merge branch 'tnir-nokogiri-1.13.8' into 'master'...
-      sha: 8f8d255d74a83881702e60f3d3cbefb489d077bd
+      commitTitle: Merge branch 'ci-issue-bot-labels' into 'master'...
+      sha: 185c26aff38295742e4d9264fa920c1775883baa
       tags:
-      - 12.10.202004211640+297d8250845-3910-g8f8d255d7
+      - 12.10.202004211640+297d8250845-3930-g185c26aff
     path: gitlab/gstg
   - git:
       commitTitle: Merge branch 'tnir-nokogiri-1.13.8' into 'master'...
