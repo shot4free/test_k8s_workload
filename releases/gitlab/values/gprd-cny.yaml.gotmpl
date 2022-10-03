@@ -195,8 +195,7 @@ global:
 
 registry:
   hpa:
-    # min is set higher for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2380
-    minReplicas: 20
+    minReplicas: 5
   tolerations:
     - key: gitlab.com/type
       operator: Equal
