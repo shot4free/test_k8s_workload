@@ -108,6 +108,7 @@ registry:
         - host: redis-registry-cache-node-2.redis-registry-cache.pre.gke.gitlab.net
           port: 26379
       password:
+        enabled: true
         secret: redis-registry-cache-password-v1
         key: redis-password
       dialtimeout: 2s
