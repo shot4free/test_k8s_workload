@@ -34,9 +34,7 @@ registry:
       value: main
       effect: NoSchedule
   hpa:
-    # min is set higher for https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/2380
-    # and should stay above 20 until we solve https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/1510
-    minReplicas: 50
+    minReplicas: 20
     maxReplicas: 90
     behavior:
       scaleDown:
