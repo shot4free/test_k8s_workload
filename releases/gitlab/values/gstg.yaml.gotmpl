@@ -82,6 +82,28 @@ registry:
             value: 10
             periodSeconds: 300
   maxUnavailable: 5%
+  redis:
+    cache:
+      enabled: true
+      host: mymaster
+      sentinels:
+        - host: redis-registry-cache-node-0.redis-registry-cache.gstg.gke.gitlab.net
+          port: 26379
+        - host: redis-registry-cache-node-1.redis-registry-cache.gstg.gke.gitlab.net
+          port: 26379
+        - host: redis-registry-cache-node-2.redis-registry-cache.gstg.gke.gitlab.net
+          port: 26379
+      password:
+        enabled: true
+        secret: redis-registry-cache-password-v1
+        key: redis-password
+      dialtimeout: 2s
+      readtimeout: 2s
+      writetimeout: 2s
+      pool:
+        size: 10
+        maxlifetime: 1h
+        idletimeout: 5m
 
 gitlab:
   gitlab-shell:
