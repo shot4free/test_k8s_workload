@@ -110,6 +110,7 @@ auto_deploy_changes_fname="${dir}/../auto-deploy-image-check/${environment}.json
 helmfile_common_options=(
   "--log-level" "${LOG_LEVEL:-info}"
   "--environment" "${environment}"
+  "--enable-live-output"
 )
 
 helmfile_cmd_options=(
@@ -201,10 +202,8 @@ case "$ACTION" in
         auto_deploy_check "$HELM_DIFF_TMP_FNAME"
       fi
     else
-      ./bin/watch-gitlab-deployments.sh "${NAMESPACE}" &
-
       sendEvent "Starting k8s deployment for ${CLUSTER}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
-      helmfile "${helmfile_common_options[@]}" apply "${helmfile_cmd_options[@]}"
+      helmfile "${helmfile_common_options[@]}" apply --args "--debug" "${helmfile_cmd_options[@]}" | sed -n '/^USER-SUPPLIED VALUES:/,/^NOTES:/d;p'
       sendEvent "Finished k8s deployment for ${CLUSTER}" "$(if [[ $AUTO_DEPLOY == "false" ]]; then echo "configuration"; else echo "deployment"; fi)" "${STAGE}"
     fi
     ;;
