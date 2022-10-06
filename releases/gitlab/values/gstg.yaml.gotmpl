@@ -773,6 +773,8 @@ global:
       authToken:
         secret: gitlab-mailroom-imap-v2
         key: service_desk_email_auth_token
+    metrics:
+      log_enabled: true
     sidekiq:
       routingRules:
         # We cannot migrate these workers yet: https://gitlab.com/gitlab-org/gitlab/-/issues/340630 / https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/1263 / https://gitlab.com/gitlab-org/gitlab/-/issues/340629
